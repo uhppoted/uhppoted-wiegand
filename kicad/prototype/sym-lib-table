@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "/Users/tonyseebregts/Development/uhppote/uhppoted/uhppoted-wiegand/kicad/libraries/pico/MCU_RaspberryPi_and_Boards.kicad_sym")(options "")(descr ""))
+  (lib (name "adafruit")(type "KiCad")(uri "/Users/tonyseebregts/Development/uhppote/uhppoted/uhppoted-wiegand/kicad/libraries/adafruit/adafruit.kicad_sym")(options "")(descr ""))
+  (lib (name "yaaj_dcdc_stepdown_lm2596")(type "Legacy")(uri "/Users/tonyseebregts/Development/uhppote/uhppoted/uhppoted-wiegand/kicad/libraries/KiCad-Chinese_Modules-main/DCDC_StepDown_LM2596/Symbols/yaaj_dcdc_stepdown_lm2596.lib")(options "")(descr ""))
+)

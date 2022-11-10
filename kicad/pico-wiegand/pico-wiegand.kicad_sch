@@ -340,6 +340,8 @@
     )
     (symbol "Device:R" (pin_numbers hide) (pin_names (offset 0)) (in_bom yes) (on_board yes)
       (property "Reference" "R" (id 0) (at 2.032 0 90)
+<<<<<<< Updated upstream
+=======
         (effects (font (size 1.27 1.27)))
       )
       (property "Value" "R" (id 1) (at 0 0 90)
@@ -373,6 +375,56 @@
         )
         (pin passive line (at 0 -3.81 90) (length 1.27)
           (name "~" (effects (font (size 1.27 1.27))))
+          (number "2" (effects (font (size 1.27 1.27))))
+        )
+      )
+    )
+    (symbol "Jumper:Jumper_2_Open" (pin_names (offset 0) hide) (in_bom yes) (on_board yes)
+      (property "Reference" "JP" (id 0) (at 0 2.794 0)
+>>>>>>> Stashed changes
+        (effects (font (size 1.27 1.27)))
+      )
+      (property "Value" "Jumper_2_Open" (id 1) (at 0 -2.286 0)
+        (effects (font (size 1.27 1.27)))
+      )
+      (property "Footprint" "" (id 2) (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "Datasheet" "~" (id 3) (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_keywords" "Jumper SPST" (id 4) (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_description" "Jumper, 2-pole, open" (id 5) (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (property "ki_fp_filters" "Jumper* TestPoint*2Pads* TestPoint*Bridge*" (id 6) (at 0 0 0)
+        (effects (font (size 1.27 1.27)) hide)
+      )
+      (symbol "Jumper_2_Open_0_0"
+        (circle (center -2.032 0) (radius 0.508)
+          (stroke (width 0) (type default) (color 0 0 0 0))
+          (fill (type none))
+        )
+        (circle (center 2.032 0) (radius 0.508)
+          (stroke (width 0) (type default) (color 0 0 0 0))
+          (fill (type none))
+        )
+      )
+      (symbol "Jumper_2_Open_0_1"
+        (arc (start 1.524 1.27) (mid 0 1.778) (end -1.524 1.27)
+          (stroke (width 0) (type default) (color 0 0 0 0))
+          (fill (type none))
+        )
+      )
+      (symbol "Jumper_2_Open_1_1"
+        (pin passive line (at -5.08 0 0) (length 2.54)
+          (name "A" (effects (font (size 1.27 1.27))))
+          (number "1" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 5.08 0 180) (length 2.54)
+          (name "B" (effects (font (size 1.27 1.27))))
           (number "2" (effects (font (size 1.27 1.27))))
         )
       )
@@ -1126,6 +1178,12 @@
   (junction (at 138.43 62.23) (diameter 0) (color 0 0 0 0)
     (uuid bf46ade9-3c14-461c-88f0-8bc7b8523efe)
   )
+<<<<<<< Updated upstream
+=======
+  (junction (at 228.6 40.64) (diameter 0) (color 0 0 0 0)
+    (uuid c20e1391-ebeb-462e-b705-58e59038817b)
+  )
+>>>>>>> Stashed changes
   (junction (at 147.32 99.06) (diameter 0) (color 0 0 0 0)
     (uuid cfbc6dec-f03e-4e3d-92de-2f04d9b60309)
   )
@@ -1151,6 +1209,7 @@
     (uuid 06dfc129-ff79-4a3e-b393-0379d549ff3d)
   )
   (wire (pts (xy 138.43 86.36) (xy 138.43 90.17))
+<<<<<<< Updated upstream
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 083f3cbc-a7ca-40f4-992a-7c2f3a24640b)
   )
@@ -1162,11 +1221,28 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 0e86f64a-5579-43ab-acc8-0839587342c6)
   )
+=======
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 083f3cbc-a7ca-40f4-992a-7c2f3a24640b)
+  )
+  (wire (pts (xy 138.43 62.23) (xy 138.43 63.5))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 0c0e733a-39fb-46d5-b174-d072cded684d)
+  )
+  (wire (pts (xy 228.6 129.54) (xy 228.6 132.08))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 0e86f64a-5579-43ab-acc8-0839587342c6)
+  )
+>>>>>>> Stashed changes
   (wire (pts (xy 199.39 78.74) (xy 199.39 72.39))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 120b0677-3c4c-4a01-ac16-be4dc16a15f7)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 226.06 132.08) (xy 228.6 132.08))
+=======
+  (wire (pts (xy 226.06 144.78) (xy 228.6 144.78))
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 12113468-6f2f-4ab1-b151-a22786cdbfb9)
   )
@@ -1191,6 +1267,7 @@
     (uuid 1671092f-5498-40b4-93c2-9dbce5a90cfd)
   )
   (wire (pts (xy 157.48 62.23) (xy 165.1 62.23))
+<<<<<<< Updated upstream
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 1dde1fc2-cd87-401e-b506-046cd552fc52)
   )
@@ -1199,9 +1276,12 @@
     (uuid 1f3900d0-7d8a-45f0-b52c-8a1cf7c18c8b)
   )
   (wire (pts (xy 191.77 81.28) (xy 236.22 81.28))
+=======
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 227a95d3-f093-40d5-94a7-f57000c7f0bb)
+    (uuid 1dde1fc2-cd87-401e-b506-046cd552fc52)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 228.6 132.08) (xy 228.6 135.89))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 262678d8-9e10-4a37-b2b9-f6486dc43879)
@@ -1213,6 +1293,61 @@
   (wire (pts (xy 120.65 62.23) (xy 129.54 62.23))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 2e8c5fa2-d2c9-4f81-8a22-9a41fe8b9d55)
+=======
+  (wire (pts (xy 173.99 62.23) (xy 173.99 82.55))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 1f3900d0-7d8a-45f0-b52c-8a1cf7c18c8b)
+  )
+  (wire (pts (xy 233.68 113.03) (xy 233.68 114.3))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 1f956cf2-b76b-4fb9-b9c3-2661e20caba1)
+>>>>>>> Stashed changes
+  )
+  (wire (pts (xy 191.77 81.28) (xy 236.22 81.28))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 227a95d3-f093-40d5-94a7-f57000c7f0bb)
+  )
+<<<<<<< Updated upstream
+  (wire (pts (xy 236.22 101.6) (xy 233.68 101.6))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 3885fae2-b15b-4250-a4c0-8f039447b7fb)
+  )
+  (wire (pts (xy 217.17 62.23) (xy 217.17 63.5))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 3ab236be-c593-4e66-ba5d-eefcfe81b3b7)
+  )
+  (wire (pts (xy 208.28 83.82) (xy 236.22 83.82))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 3ea1333e-d76b-40ee-8057-84e14f958221)
+  )
+  (wire (pts (xy 147.32 99.06) (xy 177.8 99.06))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 472a2d88-ab2d-48d3-81fc-5f3ddb3e7807)
+  )
+  (wire (pts (xy 96.52 43.18) (xy 107.95 43.18))
+=======
+  (wire (pts (xy 228.6 144.78) (xy 228.6 148.59))
+>>>>>>> Stashed changes
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 262678d8-9e10-4a37-b2b9-f6486dc43879)
+  )
+<<<<<<< Updated upstream
+=======
+  (wire (pts (xy 151.13 129.54) (xy 163.83 129.54))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 2e2d0cdd-e591-4450-a51d-a7a4ca2c069d)
+  )
+  (wire (pts (xy 210.82 144.78) (xy 208.28 143.51))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 2e7db296-78bf-44a6-aaf4-ec5f03cf31a2)
+  )
+  (wire (pts (xy 120.65 62.23) (xy 129.54 62.23))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 2e8c5fa2-d2c9-4f81-8a22-9a41fe8b9d55)
+  )
+  (wire (pts (xy 234.95 45.72) (xy 234.95 46.99))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 2ead528c-b197-4b2b-a039-de44acde1b07)
   )
   (wire (pts (xy 129.54 71.12) (xy 129.54 81.28))
     (stroke (width 0) (type default) (color 0 0 0 0))
@@ -1238,6 +1373,7 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 4963f553-b0da-4fc9-8a91-29b249dfb8fb)
   )
+>>>>>>> Stashed changes
   (wire (pts (xy 217.17 99.06) (xy 236.22 99.06))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 4af0d5fa-f962-472e-80c8-45e4bcf5361e)
@@ -1255,6 +1391,7 @@
     (uuid 55089fcf-d8e1-4200-9e07-4b841de8d2f0)
   )
   (wire (pts (xy 120.65 71.12) (xy 120.65 72.39))
+<<<<<<< Updated upstream
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 5be8f7ca-300c-41b9-8d80-8f9a37e3bafb)
   )
@@ -1268,12 +1405,42 @@
   )
   (wire (pts (xy 208.28 71.12) (xy 208.28 83.82))
     (stroke (width 0) (type default) (color 0 0 0 0))
+=======
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 5be8f7ca-300c-41b9-8d80-8f9a37e3bafb)
+  )
+  (wire (pts (xy 135.89 88.9) (xy 96.52 88.9))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 5c19861e-2a6b-4506-a884-397e81d82862)
+  )
+  (wire (pts (xy 120.65 57.15) (xy 120.65 62.23))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 603deef4-457e-42a4-99d0-0935ca4e35a3)
+  )
+  (wire (pts (xy 223.52 43.18) (xy 236.22 43.18))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 636074da-25fe-49b5-8c19-97ea24e84465)
+  )
+  (wire (pts (xy 208.28 71.12) (xy 208.28 83.82))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+>>>>>>> Stashed changes
     (uuid 6bc9c21c-81f3-4630-aa38-c5ff87161490)
   )
   (wire (pts (xy 120.65 62.23) (xy 120.65 63.5))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 6c1923d3-2542-45b5-9107-6d71b77bc673)
   )
+<<<<<<< Updated upstream
+=======
+  (wire (pts (xy 163.83 121.92) (xy 151.13 121.92))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 6f29220a-e61f-4dc2-af26-d6a5da125dd7)
+  )
+  (wire (pts (xy 151.13 127) (xy 163.83 127))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 6f9dba1a-ad4b-4b83-afc4-6828bbbd836b)
+  )
+>>>>>>> Stashed changes
   (wire (pts (xy 233.68 101.6) (xy 233.68 102.87))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 73a6c348-8a6a-4260-a559-a881b81c3a76)
@@ -1282,7 +1449,11 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 749c7fcf-c5a7-46ce-bafd-a20559e7be15)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 228.6 119.38) (xy 226.06 119.38))
+=======
+  (wire (pts (xy 228.6 132.08) (xy 226.06 132.08))
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 76ab4884-dbfa-4402-8572-7aa97a2ea2b9)
   )
@@ -1294,7 +1465,11 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 80e9243c-a5b4-497c-a9d8-5a8ec137d443)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 210.82 114.3) (xy 236.22 114.3))
+=======
+  (wire (pts (xy 210.82 127) (xy 236.22 127))
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 8281dfb0-de77-49b1-9145-8b2eb9654f5f)
   )
@@ -1318,7 +1493,11 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 89b0a666-1b39-4214-b271-738d0776ee50)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 236.22 76.2) (xy 233.68 76.2))
+=======
+  (wire (pts (xy 236.22 76.2) (xy 234.95 76.2))
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 8b7aaab3-1091-4a9c-a049-3e85f08b1f8e)
   )
@@ -1326,11 +1505,22 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 8f4645e2-0166-4d39-b07a-4dee9b18dd8d)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 208.28 62.23) (xy 208.28 63.5))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 94576b84-bfa5-4ea7-8754-5c9b484c2289)
   )
   (wire (pts (xy 226.06 124.46) (xy 231.14 124.46))
+=======
+  (wire (pts (xy 236.22 113.03) (xy 233.68 113.03))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 927b13de-a1b2-4c42-9cb3-5b1a43c05216)
+  )
+  (wire (pts (xy 208.28 62.23) (xy 208.28 63.5))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 94576b84-bfa5-4ea7-8754-5c9b484c2289)
+  )
+  (wire (pts (xy 226.06 137.16) (xy 231.14 137.16))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 94e28bd3-80a5-4b78-af49-e0c835c53c46)
   )
@@ -1338,6 +1528,28 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 99009acb-87a6-4c65-91d0-996001410b42)
   )
+  (wire (pts (xy 228.6 40.64) (xy 228.6 73.66))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 99942f1a-f681-4ffe-bf56-8278a8e1d3c5)
+  )
+  (wire (pts (xy 199.39 71.12) (xy 199.39 72.39))
+>>>>>>> Stashed changes
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 94e28bd3-80a5-4b78-af49-e0c835c53c46)
+  )
+<<<<<<< Updated upstream
+  (wire (pts (xy 208.28 90.17) (xy 208.28 83.82))
+=======
+  (wire (pts (xy 236.22 45.72) (xy 234.95 45.72))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid a3183834-5d8c-4ed6-950b-c4664ae79e73)
+  )
+  (wire (pts (xy 234.95 76.2) (xy 234.95 86.36))
+>>>>>>> Stashed changes
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 99009acb-87a6-4c65-91d0-996001410b42)
+  )
+<<<<<<< Updated upstream
   (wire (pts (xy 233.68 59.69) (xy 233.68 73.66))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 99942f1a-f681-4ffe-bf56-8278a8e1d3c5)
@@ -1358,6 +1570,20 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid ace3a400-9c48-4bf7-8d2f-018a3c1a25bc)
   )
+=======
+  (wire (pts (xy 138.43 62.23) (xy 147.32 62.23))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid aa4829eb-5b17-4684-9016-c97c28def7a8)
+  )
+  (wire (pts (xy 116.84 86.36) (xy 138.43 86.36))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid ace3a400-9c48-4bf7-8d2f-018a3c1a25bc)
+  )
+  (wire (pts (xy 151.13 124.46) (xy 163.83 124.46))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid adaf72b0-a5eb-44ed-a2b5-3b03545f5e72)
+  )
+>>>>>>> Stashed changes
   (wire (pts (xy 96.52 45.72) (xy 107.95 45.72))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid ae9f9f3d-3a2f-4680-b292-0a3ae219517a)
@@ -1382,6 +1608,7 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid b8d86324-540d-46cc-8ed3-1153415929ec)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 231.14 124.46) (xy 231.14 119.38))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid bd536c6f-9f78-4566-8d10-3b5195d4fb01)
@@ -1391,6 +1618,21 @@
     (uuid c2f55be4-9413-44f3-9deb-66cbd1472a39)
   )
   (wire (pts (xy 236.22 73.66) (xy 233.68 73.66))
+=======
+  (wire (pts (xy 231.14 137.16) (xy 231.14 132.08))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid bd536c6f-9f78-4566-8d10-3b5195d4fb01)
+  )
+  (wire (pts (xy 217.17 62.23) (xy 222.25 62.23))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid c2f55be4-9413-44f3-9deb-66cbd1472a39)
+  )
+  (wire (pts (xy 151.13 132.08) (xy 163.83 132.08))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid c34b3aca-f805-40a2-8f09-5fe411b055d8)
+  )
+  (wire (pts (xy 236.22 73.66) (xy 228.6 73.66))
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid c8522faf-6adc-4351-813a-0d53f2d29c48)
   )
@@ -1410,11 +1652,19 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid d1628a6c-76e0-4f60-b68a-e660923209fa)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 231.14 119.38) (xy 236.22 119.38))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid db11009f-6965-4a01-a590-711840eb050a)
   )
   (wire (pts (xy 236.22 116.84) (xy 228.6 116.84))
+=======
+  (wire (pts (xy 231.14 132.08) (xy 236.22 132.08))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid db11009f-6965-4a01-a590-711840eb050a)
+  )
+  (wire (pts (xy 236.22 129.54) (xy 228.6 129.54))
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid db2483a2-a220-466b-b4ff-6f52746aee40)
   )
@@ -1422,10 +1672,24 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid dc5d5301-c666-4fb7-98e8-4fa79789c354)
   )
+<<<<<<< Updated upstream
+=======
+  (wire (pts (xy 228.6 36.83) (xy 228.6 40.64))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid de59c335-2cc5-45bf-a7a0-f47433d6f80d)
+  )
+>>>>>>> Stashed changes
   (wire (pts (xy 191.77 63.5) (xy 191.77 62.23))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid df5384d1-0dc2-448e-b5c6-a2737f59ad05)
   )
+<<<<<<< Updated upstream
+=======
+  (wire (pts (xy 223.52 36.83) (xy 228.6 36.83))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid e4c47344-a274-408b-aee5-2be4a6ab6524)
+  )
+>>>>>>> Stashed changes
   (wire (pts (xy 217.17 71.12) (xy 217.17 99.06))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid e6dd5881-6180-49b4-83f7-00ba782da761)
@@ -1446,28 +1710,53 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid f35317f8-0324-46f0-8e14-a36444ef13a5)
   )
+<<<<<<< Updated upstream
   (wire (pts (xy 210.82 121.92) (xy 210.82 114.3))
+=======
+  (wire (pts (xy 210.82 134.62) (xy 210.82 127))
+>>>>>>> Stashed changes
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid f704b487-2291-47fe-bdba-4d275833bcdb)
   )
   (wire (pts (xy 101.6 50.8) (xy 101.6 34.29))
+<<<<<<< Updated upstream
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid fad3ab79-5ac1-4c48-8170-22cb53b2ca22)
+=======
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid fad3ab79-5ac1-4c48-8170-22cb53b2ca22)
+  )
+  (wire (pts (xy 228.6 40.64) (xy 236.22 40.64))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid fbc6c91d-80ca-43fd-90a3-781cbdb71243)
+>>>>>>> Stashed changes
   )
   (wire (pts (xy 96.52 81.28) (xy 129.54 81.28))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid ffe9f9db-7b95-48f3-8eff-4c85da58abe6)
   )
 
+<<<<<<< Updated upstream
   (text "5-12VDC" (at 236.22 57.15 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 6f16384c-0565-435c-982a-1eb87678fbb7)
   )
 
+=======
+  (label "12VDC" (at 231.14 40.64 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 2bb18317-cb8b-40f3-839f-3ba3cc630821)
+  )
+  (label "5VDC" (at 231.14 43.18 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 3adad95e-756c-4269-bcda-1d0928a3b491)
+  )
+>>>>>>> Stashed changes
   (label "DATA" (at 99.06 81.28 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 3ee557c9-9e76-4e35-9db8-31ec8c51334f)
   )
+<<<<<<< Updated upstream
   (label "NC" (at 231.14 119.38 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 4e7cb327-d3ed-4082-8343-f97db8234673)
@@ -1481,6 +1770,25 @@
     (uuid 611ec67d-8761-4d78-87b0-b34fcca38a4e)
   )
   (label "CLOCK" (at 226.06 78.74 0)
+=======
+  (label "12VDC" (at 229.87 73.66 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 49d344ac-ce14-464c-a802-3dfe8261b773)
+  )
+  (label "NC" (at 231.14 132.08 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 4e7cb327-d3ed-4082-8343-f97db8234673)
+  )
+  (label "COM" (at 231.14 127 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 5d9c22fb-42c3-4167-a359-ed95935ae3c8)
+  )
+  (label "NO" (at 231.14 129.54 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 611ec67d-8761-4d78-87b0-b34fcca38a4e)
+  )
+  (label "CLOCK" (at 227.33 78.74 0)
+>>>>>>> Stashed changes
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 72d8b2bf-0b1d-46a2-8f98-3b4e9878f766)
   )
@@ -1488,15 +1796,46 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 7f0aaea2-f71d-4d93-9d39-0793ad892491)
   )
+<<<<<<< Updated upstream
+=======
+  (label "RED LED" (at 152.4 121.92 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 807afd4c-248e-40e5-8d21-6627e8b704ec)
+  )
+  (label "HOLD" (at 152.4 127 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 832ce300-5dca-4ac6-8418-9701d8b58306)
+  )
+  (label "BEEP" (at 152.4 124.46 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 87aba1fa-c19f-40e9-8e9d-b92543a5dff6)
+  )
+  (label "VIO" (at 152.4 129.54 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 9b0d8dde-97e3-41c8-9c3c-5d6de50af053)
+  )
+>>>>>>> Stashed changes
   (label "DOOR" (at 99.06 88.9 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid b1971218-8cf2-4659-b2ef-4cfaf3f220c8)
   )
+<<<<<<< Updated upstream
   (label "LED" (at 226.06 83.82 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid d8930b16-3d1a-471e-acb4-e93717289c47)
   )
   (label "DATA" (at 226.06 81.28 0)
+=======
+  (label "SHIELD GROUND" (at 148.59 132.08 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid cb91dc43-8e00-40e6-acf3-cea9310b7ce9)
+  )
+  (label "LED" (at 227.33 83.82 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid d8930b16-3d1a-471e-acb4-e93717289c47)
+  )
+  (label "DATA" (at 227.33 81.28 0)
+>>>>>>> Stashed changes
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid f18d4aed-645b-4658-bcd1-774340c9fc3d)
   )
@@ -1562,6 +1901,7 @@
     (pin "3" (uuid 28d06b14-6015-4648-8932-63296edf0859))
   )
 
+<<<<<<< Updated upstream
   (symbol (lib_id "Device:R") (at 138.43 67.31 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 28dfb894-5997-44c5-82df-e0ae395c7e1d)
@@ -1577,6 +1917,38 @@
     (property "Datasheet" "~" (id 3) (at 138.43 67.31 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+=======
+  (symbol (lib_id "Jumper:Jumper_2_Open") (at 218.44 36.83 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid 210301cb-1541-4f5f-82c3-f04e188de6f0)
+    (property "Reference" "JP1" (id 0) (at 222.25 34.29 0))
+    (property "Value" "12V" (id 1) (at 214.63 34.29 0))
+    (property "Footprint" "" (id 2) (at 218.44 36.83 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 218.44 36.83 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 89ecbf46-23fe-48ff-8fbc-b7a4126d6076))
+    (pin "2" (uuid 703234b0-874f-4501-8d02-c2e60993ca52))
+  )
+
+  (symbol (lib_id "Device:R") (at 138.43 67.31 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid 28dfb894-5997-44c5-82df-e0ae395c7e1d)
+    (property "Reference" "R3" (id 0) (at 140.97 66.0399 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "10k" (id 1) (at 140.97 68.5799 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "" (id 2) (at 136.652 67.31 90)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 138.43 67.31 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+>>>>>>> Stashed changes
     (pin "1" (uuid e689905d-c73e-485b-a621-9962a19d49c9))
     (pin "2" (uuid 32259910-a9c6-43f4-ab15-0bc5043047b8))
   )
@@ -1616,6 +1988,7 @@
     (pin "2" (uuid ed03764c-eab9-48a1-8eab-6fbe52370284))
   )
 
+<<<<<<< Updated upstream
   (symbol (lib_id "power:+3.3V") (at 101.6 34.29 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 47bf731f-24bf-4989-91f2-4337ee034854)
@@ -1645,10 +2018,41 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 241.3 39.37 0)
+=======
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 241.3 110.49 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid 3bd73262-7ee1-4541-8298-a0d7411e1d75)
+    (property "Reference" "J4" (id 0) (at 243.84 110.4899 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "Push Button" (id 1) (at 243.84 113.0299 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "" (id 2) (at 241.3 110.49 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 89b94c15-0393-4f72-98d8-b64917b15599))
-    (pin "2" (uuid 5ce4ff5d-85a9-437f-9cea-09a898741fd0))
+    (property "Datasheet" "~" (id 3) (at 241.3 110.49 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 42b93640-dc22-413d-916b-9e4ab2755ea6))
+    (pin "2" (uuid 87a79b8f-2884-4c6d-9e08-6da03103a9bc))
+  )
+
+  (symbol (lib_id "power:+3.3V") (at 101.6 34.29 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid 47bf731f-24bf-4989-91f2-4337ee034854)
+    (property "Reference" "#PWR?" (id 0) (at 101.6 38.1 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "+3.3V" (id 1) (at 101.6 29.21 0))
+    (property "Footprint" "" (id 2) (at 101.6 34.29 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 101.6 34.29 0)
+>>>>>>> Stashed changes
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 98f6b143-62a2-49d8-98e3-6c5ff93031f8))
   )
 
   (symbol (lib_id "Transistor_FET:BSS138") (at 165.1 78.74 270) (unit 1)
@@ -1683,6 +2087,24 @@
     (pin "1" (uuid 64ad0ff6-717b-4c0b-b871-e8ced397abb7))
   )
 
+<<<<<<< Updated upstream
+=======
+  (symbol (lib_id "Jumper:Jumper_2_Open") (at 218.44 43.18 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid 5e88cabf-4637-408d-b3dc-5f21d460b323)
+    (property "Reference" "JP2" (id 0) (at 222.25 40.64 0))
+    (property "Value" "5V" (id 1) (at 214.63 40.64 0))
+    (property "Footprint" "" (id 2) (at 218.44 43.18 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 218.44 43.18 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 65469b4d-19fc-4482-9cb9-17cdb5cb4354))
+    (pin "2" (uuid 6bfa8a2d-5b89-42d9-87f7-390be4f9bf1f))
+  )
+
+>>>>>>> Stashed changes
   (symbol (lib_id "Device:R") (at 147.32 67.31 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 6a96605c-e8a1-4c9d-8c4b-0af4c302a8a3)
@@ -1721,6 +2143,7 @@
     (pin "2" (uuid 243db792-3244-48f9-8822-9a5343f75e6d))
   )
 
+<<<<<<< Updated upstream
   (symbol (lib_id "power:+VDC") (at 233.68 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 7ef508b4-60e9-408f-becc-d8c60a776841)
@@ -1737,11 +2160,17 @@
     (pin "1" (uuid 1b8c6dd0-52c7-4103-8793-c44103771171))
   )
 
+=======
+>>>>>>> Stashed changes
   (symbol (lib_id "Device:R") (at 113.03 86.36 270) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 8aaa3345-c586-4729-9584-3137be876023)
     (property "Reference" "R8" (id 0) (at 110.49 83.82 90))
+<<<<<<< Updated upstream
     (property "Value" "" (id 1) (at 114.3 83.82 90))
+=======
+    (property "Value" "220" (id 1) (at 114.3 83.82 90))
+>>>>>>> Stashed changes
     (property "Footprint" "" (id 2) (at 113.03 84.582 90)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -1752,6 +2181,7 @@
     (pin "2" (uuid ee94ab47-8315-46a5-bfc7-60550df5879d))
   )
 
+<<<<<<< Updated upstream
   (symbol (lib_id "Connector:Screw_Terminal_01x03") (at 241.3 116.84 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 90bb95c5-bb37-457a-b0b4-a5d162c21a3a)
@@ -1765,6 +2195,21 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 241.3 116.84 0)
+=======
+  (symbol (lib_id "Connector:Screw_Terminal_01x03") (at 241.3 129.54 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid 90bb95c5-bb37-457a-b0b4-a5d162c21a3a)
+    (property "Reference" "J5" (id 0) (at 243.84 128.2699 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "Lock Relay" (id 1) (at 243.84 130.8099 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "" (id 2) (at 241.3 129.54 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 241.3 129.54 0)
+>>>>>>> Stashed changes
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid a88ccf81-24ae-4ff6-8b56-135e6f801af7))
@@ -1823,6 +2268,25 @@
     (pin "3" (uuid 9b710854-fa73-43dd-8af4-fc8207dc7fd2))
   )
 
+<<<<<<< Updated upstream
+=======
+  (symbol (lib_id "power:GND") (at 234.95 46.99 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid a6c2d17b-77ab-4b23-acd0-b85ceca88b32)
+    (property "Reference" "#PWR?" (id 0) (at 234.95 53.34 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (id 1) (at 234.95 52.07 0))
+    (property "Footprint" "" (id 2) (at 234.95 46.99 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 234.95 46.99 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 81b27a91-be7d-4df0-9ce9-5ad4390963e6))
+  )
+
+>>>>>>> Stashed changes
   (symbol (lib_id "Device:R") (at 217.17 67.31 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid aabb7c7e-a14f-4e9f-b61d-e78ffd3296d7)
@@ -1877,6 +2341,7 @@
     (pin "2" (uuid a4432672-565c-47bc-85b5-6f19b7da0ee3))
   )
 
+<<<<<<< Updated upstream
   (symbol (lib_id "power:GND") (at 228.6 135.89 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid cc0eb0ba-33a8-4fe6-9590-65bf8c1373b3)
@@ -1908,6 +2373,39 @@
     (property "Datasheet" "~" (id 3) (at 208.28 67.31 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+=======
+  (symbol (lib_id "power:GND") (at 228.6 148.59 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid cc0eb0ba-33a8-4fe6-9590-65bf8c1373b3)
+    (property "Reference" "#PWR?" (id 0) (at 228.6 154.94 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (id 1) (at 228.6 153.67 0))
+    (property "Footprint" "" (id 2) (at 228.6 148.59 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 228.6 148.59 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 1cdf38a5-e487-4ad5-a631-06c286946d4a))
+  )
+
+  (symbol (lib_id "Device:R") (at 208.28 67.31 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid d566bbb5-b8b8-4fa2-a4af-9a23dd08c0a3)
+    (property "Reference" "R8" (id 0) (at 210.82 66.0399 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "10k" (id 1) (at 210.82 68.5799 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "" (id 2) (at 206.502 67.31 90)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 208.28 67.31 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+>>>>>>> Stashed changes
     (pin "1" (uuid d5976dc2-5545-420b-afbc-eec4e12f7baf))
     (pin "2" (uuid 0b855ef3-253c-4f54-b40f-84aa9010e630))
   )
@@ -1984,6 +2482,7 @@
     (pin "9" (uuid bdf0cc18-9128-4f3b-bd06-a5cdd45acd49))
   )
 
+<<<<<<< Updated upstream
   (symbol (lib_id "Relay:DIPxx-1Cxx-51x") (at 218.44 127 270) (mirror x) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid e23187f9-dcd6-499f-90d3-0eec00b87622)
@@ -1993,6 +2492,17 @@
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
     (property "Datasheet" "https://standexelectronics.com/wp-content/uploads/datasheet_reed_relay_DIP.pdf" (id 3) (at 218.44 127 0)
+=======
+  (symbol (lib_id "Relay:DIPxx-1Cxx-51x") (at 218.44 139.7 270) (mirror x) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid e23187f9-dcd6-499f-90d3-0eec00b87622)
+    (property "Reference" "K1" (id 0) (at 218.44 152.4 90))
+    (property "Value" "" (id 1) (at 218.44 154.94 90))
+    (property "Footprint" "Relay_THT:Relay_StandexMeder_DIP_LowProfile" (id 2) (at 217.17 128.27 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "Datasheet" "https://standexelectronics.com/wp-content/uploads/datasheet_reed_relay_DIP.pdf" (id 3) (at 218.44 139.7 0)
+>>>>>>> Stashed changes
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 3fe57f75-cef2-49bf-8f39-08e2d5e470a6))
@@ -2003,6 +2513,31 @@
     (pin "8" (uuid 02dfc196-d6a5-419a-a42c-6b68de976338))
   )
 
+<<<<<<< Updated upstream
+=======
+  (symbol (lib_id "Connector:Screw_Terminal_01x05") (at 168.91 127 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid ea3735d1-c9c0-41f4-9556-ea1adf76c52c)
+    (property "Reference" "J?" (id 0) (at 171.45 125.7299 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "Reader" (id 1) (at 171.45 128.2699 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "" (id 2) (at 168.91 127 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 168.91 127 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid e8138f24-a748-4677-85e2-cd15c03e13a0))
+    (pin "2" (uuid f558eab4-7145-4274-bb17-71d8e37130e9))
+    (pin "3" (uuid d6dc534e-6e8d-415a-9caa-ec4f0dc84478))
+    (pin "4" (uuid b5d4883b-bb98-4c7c-b2bd-c776b32d1838))
+    (pin "5" (uuid 51469661-4062-44ed-b4f1-f2328dbe72e1))
+  )
+
+>>>>>>> Stashed changes
   (symbol (lib_id "power:+3.3V") (at 120.65 57.15 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid f21812bf-ce29-47c7-9764-568b5f4dd92e)
@@ -2019,6 +2554,7 @@
     (pin "1" (uuid cba5ed95-95f2-4683-b9e3-2f2499757f3e))
   )
 
+<<<<<<< Updated upstream
   (symbol (lib_id "power:GND") (at 233.68 86.36 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid fb5f9ffb-1140-4674-b871-69923e1bef04)
@@ -2030,9 +2566,58 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 233.68 86.36 0)
+=======
+  (symbol (lib_id "Connector:Screw_Terminal_01x03") (at 241.3 43.18 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid fa41102b-8163-4b6e-a5da-850b9aac1839)
+    (property "Reference" "J1" (id 0) (at 243.84 41.9099 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "Power/GND" (id 1) (at 243.84 44.4499 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "" (id 2) (at 241.3 43.18 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 241.3 43.18 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid ff60da9d-fe92-4759-b91e-bcaff4d8cbf3))
+    (pin "2" (uuid 23fd8ab2-9115-4418-91e6-98eecb4fbf95))
+    (pin "3" (uuid 89a5c41e-d361-4706-aae5-5c9b84b69e11))
+  )
+
+  (symbol (lib_id "power:GND") (at 234.95 86.36 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid fb5f9ffb-1140-4674-b871-69923e1bef04)
+    (property "Reference" "#PWR?" (id 0) (at 234.95 92.71 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (id 1) (at 234.95 91.44 0))
+    (property "Footprint" "" (id 2) (at 234.95 86.36 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 234.95 86.36 0)
+>>>>>>> Stashed changes
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid dc5bf275-3bd9-4dcf-a030-e5aed83b3791))
+  )
+
+  (symbol (lib_id "power:GND") (at 233.68 114.3 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid fd4c7d1c-8c57-45d5-ae7b-8381a3e73b19)
+    (property "Reference" "#PWR?" (id 0) (at 233.68 120.65 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (id 1) (at 233.68 119.38 0))
+    (property "Footprint" "" (id 2) (at 233.68 114.3 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 233.68 114.3 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid 2a0557af-99f5-4d4f-a3f5-32287aa44770))
   )
 
   (sheet_instances
@@ -2049,16 +2634,30 @@
     (path "/55d4220c-1373-4d6c-a20e-70673ae16d9a"
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
+<<<<<<< Updated upstream
     (path "/7ef508b4-60e9-408f-becc-d8c60a776841"
       (reference "#PWR?") (unit 1) (value "+VDC") (footprint "")
     )
+=======
+>>>>>>> Stashed changes
     (path "/9d12e3f6-29b3-46fa-8673-3d0fb80d09da"
       (reference "#PWR?") (unit 1) (value "+5V") (footprint "")
+    )
+    (path "/a6c2d17b-77ab-4b23-acd0-b85ceca88b32"
+      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
     (path "/b365a9d6-66fc-4e8f-9d97-95e3533585ac"
       (reference "#PWR?") (unit 1) (value "+5V") (footprint "")
     )
     (path "/cc0eb0ba-33a8-4fe6-9590-65bf8c1373b3"
+<<<<<<< Updated upstream
+      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/f21812bf-ce29-47c7-9764-568b5f4dd92e"
+      (reference "#PWR?") (unit 1) (value "+3.3V") (footprint "")
+    )
+    (path "/fb5f9ffb-1140-4674-b871-69923e1bef04"
+=======
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
     (path "/f21812bf-ce29-47c7-9764-568b5f4dd92e"
@@ -2067,7 +2666,11 @@
     (path "/fb5f9ffb-1140-4674-b871-69923e1bef04"
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
-    (path "/4cc47521-973e-47e0-b93a-e73cf0687131"
+    (path "/fd4c7d1c-8c57-45d5-ae7b-8381a3e73b19"
+>>>>>>> Stashed changes
+      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/fa41102b-8163-4b6e-a5da-850b9aac1839"
       (reference "J1") (unit 1) (value "Power/GND") (footprint "")
     )
     (path "/0768db54-0c12-44f5-9ae8-ffd8775e2d8c"
@@ -2076,8 +2679,23 @@
     (path "/302c4e8f-7a2e-4a43-91e2-b2d908c406d7"
       (reference "J3") (unit 1) (value "Door Contact") (footprint "")
     )
+    (path "/3bd73262-7ee1-4541-8298-a0d7411e1d75"
+      (reference "J4") (unit 1) (value "Push Button") (footprint "")
+    )
     (path "/90bb95c5-bb37-457a-b0b4-a5d162c21a3a"
-      (reference "J4") (unit 1) (value "Lock Relay") (footprint "")
+      (reference "J5") (unit 1) (value "Lock Relay") (footprint "")
+    )
+    (path "/ea3735d1-c9c0-41f4-9556-ea1adf76c52c"
+      (reference "J?") (unit 1) (value "Reader") (footprint "")
+    )
+    (path "/210301cb-1541-4f5f-82c3-f04e188de6f0"
+      (reference "JP1") (unit 1) (value "12V") (footprint "")
+    )
+    (path "/5e88cabf-4637-408d-b3dc-5f21d460b323"
+      (reference "JP2") (unit 1) (value "5V") (footprint "")
+    )
+    (path "/e23187f9-dcd6-499f-90d3-0eec00b87622"
+      (reference "K1") (unit 1) (value "SPDT") (footprint "Relay_THT:Relay_StandexMeder_DIP_LowProfile")
     )
     (path "/e23187f9-dcd6-499f-90d3-0eec00b87622"
       (reference "K1") (unit 1) (value "DPST") (footprint "Relay_THT:Relay_StandexMeder_DIP_LowProfile")
@@ -2119,7 +2737,11 @@
       (reference "R8") (unit 1) (value "220") (footprint "")
     )
     (path "/d566bbb5-b8b8-4fa2-a4af-9a23dd08c0a3"
+<<<<<<< Updated upstream
       (reference "R8") (unit 1) (value "480") (footprint "")
+=======
+      (reference "R8") (unit 1) (value "10k") (footprint "")
+>>>>>>> Stashed changes
     )
     (path "/d9df6135-439d-48d2-96bd-9ad112ffd471"
       (reference "U1") (unit 1) (value "Pico") (footprint "RPi_Pico:RPi_Pico_SMD_TH")
