@@ -19,5 +19,9 @@
 13. https://forum.arduino.cc/t/wiegand-interface/19830/3
 14. https://2.bp.blogspot.com/-4SggMoZkTW8/UNhpZZauP6I/AAAAAAAABR4/IZM5tjfpcT4/s1600/screenshot.606.jpg
 15. http://uggettif.blogspot.com/2014/01/access-control-with-arduino-mega.html
+<<<<<<< Updated upstream
+16. https://github.com/ugge75/Wiegand-Protocol-Library-for-Arduino-MEGA-2560
+>>>>>>> Stashed changes
+=======
 16. https://github.com/ugge75/Wiegand-Protocol-Library-for-Arduino-MEGA-2560
 >>>>>>> Stashed changes
