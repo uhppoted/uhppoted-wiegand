@@ -1,7 +1,13 @@
+#include "hardware/clocks.h"
 #include "hardware/gpio.h"
+#include "hardware/pio.h"
 #include "pico/binary_info.h"
 #include "pico/stdlib.h"
+#include "pico/util/queue.h"
+
 #include <stdio.h>
+
+#include <IN.pio.h>
 
 #define VERSION "v0.0.0"
 #define UART0 uart0
@@ -34,6 +40,8 @@ const uint UART1_RX = GPIO_21; // Pico 27
 
 const uint LED_PIN = GPIO_25;
 const uint READER_LED = GPIO_15;
+const uint DEBUG_LED = GPIO_16;
+const float FREQ = 2000;
 
 bool on = false;
 
@@ -56,6 +64,8 @@ void on_uart0_rx() {
     }
 }
 
+queue_t queue;
+
 int main() {
     bi_decl(bi_program_description("Pico-Wiegand interface"));
     bi_decl(bi_program_version_string(VERSION));
@@ -73,6 +83,13 @@ int main() {
     gpio_pull_up(READER_LED);
     gpio_put(READER_LED, 1);
 
+    gpio_init(DEBUG_LED);
+    gpio_set_dir(DEBUG_LED, GPIO_OUT);
+    gpio_put(DEBUG_LED, 0);
+
+    // ... initialise FIFO
+    queue_init(&queue, sizeof(uint8_t), 32);
+
     // ... initialise UARTs
     uart_init(UART0, 2400);
     gpio_set_function(UART0_TX, GPIO_FUNC_UART);
@@ -85,8 +102,16 @@ int main() {
     irq_set_enabled(UART0_IRQ, true);
     uart_set_irq_enables(UART0, true, false);
 
-    while (1) {
+    // ... initialise PIOs
+    PIO pio = pio0;
+    uint sm = 0;
+    uint offset = pio_add_program(pio, &reader_program);
+    float div = (float)clock_get_hz(clk_sys) / FREQ;
 
+    reader_program_init(pio, sm, offset, DEBUG_LED, div);
+    pio_sm_set_enabled(pio, sm, true);
+
+    while (1) {
         gpio_put(LED_PIN, 0);
         sleep_ms(250);
 
@@ -99,4 +124,8 @@ int main() {
 
         sleep_ms(1000);
     }
+
+    // ... cleanup
+
+    queue_free(&queue);
 }

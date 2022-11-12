@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
-include(pico_sdk_import.cmake)
+include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
 
 project(wiegand C CXX ASM)
 
@@ -13,8 +14,18 @@ add_executable(wiegand
   wiegand.c
 )
 
+pico_generate_pio_header(
+        wiegand
+        ${CMAKE_CURRENT_LIST_DIR}/IN.pio
+)
+
 pico_enable_stdio_usb (wiegand 0)
 pico_enable_stdio_uart(wiegand 1)
 pico_add_extra_outputs(wiegand)
 
-target_link_libraries(wiegand pico_stdlib)
+target_link_libraries(
+    wiegand 
+    pico_stdlib
+    pico_multicore
+    hardware_pio
+)
