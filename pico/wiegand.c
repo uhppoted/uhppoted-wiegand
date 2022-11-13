@@ -2,6 +2,7 @@
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "pico/binary_info.h"
+#include "pico/multicore.h"
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
@@ -10,12 +11,16 @@
 #include <IN.pio.h>
 
 #define VERSION "v0.0.0"
+
 #define UART0 uart0
 #define UART1 uart1
 #define BAUD_RATE 115200
 #define DATA_BITS 8
 #define STOP_BITS 1
 #define PARITY UART_PARITY_NONE
+
+#define PIO_IN pio0
+#define PIO_OUT pio1
 
 const uint GPIO_0 = 0;   // Pico 1
 const uint GPIO_1 = 1;   // Pico 2
@@ -41,10 +46,11 @@ const uint UART1_RX = GPIO_21; // Pico 27
 const uint LED_PIN = GPIO_25;
 const uint READER_LED = GPIO_15;
 const uint DEBUG_LED = GPIO_16;
-const float FREQ = 2000;
 
 bool on = false;
+queue_t queue;
 
+// UART
 void on_uart0_rx() {
     while (uart_is_readable(UART0)) {
         uint8_t ch = uart_getc(UART0);
@@ -64,7 +70,19 @@ void on_uart0_rx() {
     }
 }
 
-queue_t queue;
+// READER
+void rx() {
+    uint sm = 0;
+
+    while (true) {
+        char c = reader_program_getc(PIO_IN, sm);
+        uint16_t value = c;
+
+        if (!queue_is_full(&queue)) {
+            queue_try_add(&queue, &value);
+        }
+    }
+}
 
 int main() {
     bi_decl(bi_program_description("Pico-Wiegand interface"));
@@ -103,20 +121,30 @@ int main() {
     uart_set_irq_enables(UART0, true, false);
 
     // ... initialise PIOs
-    PIO pio = pio0;
+    PIO pio = PIO_IN;
     uint sm = 0;
     uint offset = pio_add_program(pio, &reader_program);
-    float div = (float)clock_get_hz(clk_sys) / FREQ;
+
+    const uint freq = 1;
+    const float div = 2; // (float)clock_get_hz(clk_sys) / FREQ;
 
     reader_program_init(pio, sm, offset, DEBUG_LED, div);
     pio_sm_set_enabled(pio, sm, true);
+    pio->txf[sm] = (clock_get_hz(clk_sys) / (2 * freq)) - 3;
+
+    sleep_ms(10); // Ref. https://github.com/raspberrypi/pico-sdk/issues/386
+    multicore_launch_core1(rx);
 
     while (1) {
         gpio_put(LED_PIN, 0);
         sleep_ms(250);
 
         gpio_put(LED_PIN, 1);
-        if (on) {
+
+        uint16_t value;
+        if (queue_try_remove(&queue, &value)) {
+            puts("Pico/Wiegand QUTE");
+        } else if (on) {
             puts("Pico/Wiegand ON");
         } else {
             puts("Pico/Wiegand OFF");
