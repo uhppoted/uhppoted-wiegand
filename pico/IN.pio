@@ -28,8 +28,21 @@ static inline void reader_program_init(PIO pio, uint sm, uint offset, uint pin, 
 
 static inline char reader_program_getc(PIO pio, uint sm) {
     io_rw_8 *rxfifo_shift = (io_rw_8*)&pio->rxf[sm] + 3;
+
     while (pio_sm_is_rx_fifo_empty(pio, sm))
         tight_loop_contents();
+
     return (char)*rxfifo_shift;
 }
+
+static inline char reader_program_get(PIO pio, uint sm) {
+    io_rw_8 *rxfifo_shift = (io_rw_8*)&pio->rxf[sm] + 3;
+
+    if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
+        return (char)*rxfifo_shift;
+    }
+    
+    return -1;
+}
+
 %}  

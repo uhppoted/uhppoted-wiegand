@@ -71,11 +71,24 @@ void on_uart0_rx() {
 }
 
 // READER
-void rx() {
-    uint sm = 0;
+// void rx() {
+//     uint sm = 0;
+//
+//     while (true) {
+//         char c = reader_program_getc(PIO_IN, sm);
+//         uint16_t value = c;
+//
+//         if (!queue_is_full(&queue)) {
+//             queue_try_add(&queue, &value);
+//         }
+//     }
+// }
 
-    while (true) {
-        char c = reader_program_getc(PIO_IN, sm);
+void rxi() {
+    uint sm = 0;
+    char c = reader_program_get(PIO_IN, sm);
+
+    if (c != -1) {
         uint16_t value = c;
 
         if (!queue_is_full(&queue)) {
@@ -132,8 +145,13 @@ int main() {
     pio_sm_set_enabled(pio, sm, true);
     pio->txf[sm] = (clock_get_hz(clk_sys) / (2 * freq)) - 3;
 
-    sleep_ms(10); // Ref. https://github.com/raspberrypi/pico-sdk/issues/386
-    multicore_launch_core1(rx);
+    // sleep_ms(10); // Ref. https://github.com/raspberrypi/pico-sdk/issues/386
+    // multicore_launch_core1(rx);
+
+    irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
+    irq_set_enabled(PIO0_IRQ_0, true);
+    pio_set_irq0_source_enabled(pio, pis_sm0_rx_fifo_not_empty, true);
+    // pio0->inte0 |= PIO_IRQ0_INTE_SM0_RXNEMPTY_BITS;
 
     while (1) {
         gpio_put(LED_PIN, 0);
@@ -142,9 +160,11 @@ int main() {
         gpio_put(LED_PIN, 1);
 
         uint16_t value;
-        if (queue_try_remove(&queue, &value)) {
+        while (queue_try_remove(&queue, &value)) {
             puts("Pico/Wiegand QUTE");
-        } else if (on) {
+        }
+
+        if (on) {
             puts("Pico/Wiegand ON");
         } else {
             puts("Pico/Wiegand OFF");
