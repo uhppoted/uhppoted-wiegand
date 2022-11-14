@@ -2,46 +2,59 @@
     pull block
     out y, 32
 .wrap_target
-    mov x, y
+    wait 0 gpio 16  ; Wait for D0
+    set x, 13
+    mov isr,x
+    push
     set pins, 1   ; Turn LED on
+    mov x, y
 lp1:
     jmp x-- lp1   ; Delay for (x + 1) cycles, x is a 32 bit number
-    mov x, y
     set pins, 0   ; Turn LED off
+    mov x, y
 lp2:
     jmp x-- lp2   ; Delay for the same number of cycles again
-    push
 .wrap             ; Blink forever!
 
 
 % c-sdk {
-static inline void reader_program_init(PIO pio, uint sm, uint offset, uint pin, float div) {
-    pio_gpio_init(pio, pin);
-    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+static inline void reader_program_init(PIO pio, uint sm, uint offset, uint led, uint d0, uint d1, float div) {
+    pio_sm_set_pindirs_with_mask(pio, sm, 0x00004000, 0x00034000);
+
+    pio_gpio_init(pio, led);
+    pio_gpio_init(pio, d0);
+    pio_gpio_init(pio, d1);
+
+    gpio_pull_up(d0);
+    gpio_pull_up(d1);
+
     pio_sm_config c = reader_program_get_default_config(offset);
     
-    sm_config_set_set_pins(&c, pin, 1);
+    sm_config_set_set_pins(&c, led, 1);
+//  sm_config_set_in_pins(&c, d0);
+//  sm_config_set_in_pins(&c, d1);
     sm_config_set_clkdiv(&c, div);
 
     pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
 }
 
-static inline char reader_program_getc(PIO pio, uint sm) {
-    io_rw_8 *rxfifo_shift = (io_rw_8*)&pio->rxf[sm] + 3;
-
-    while (pio_sm_is_rx_fifo_empty(pio, sm))
-        tight_loop_contents();
-
-    return (char)*rxfifo_shift;
-}
+// static inline char reader_program_getc(PIO pio, uint sm) {
+//     io_rw_8 *rxfifo_shift = (io_rw_8*)&pio->rxf[sm] + 3;
+// 
+//     while (pio_sm_is_rx_fifo_empty(pio, sm))
+//         tight_loop_contents();
+// 
+//     return (char) *rxfifo_shift;
+// }
 
 static inline char reader_program_get(PIO pio, uint sm) {
-    io_rw_8 *rxfifo_shift = (io_rw_8*)&pio->rxf[sm] + 3;
+    io_rw_8 *fifo = (io_rw_8 *)&pio->rxf[sm];
 
     if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
-        return (char)*rxfifo_shift;
+        return (char) *fifo;
     }
-    
+
     return -1;
 }
 

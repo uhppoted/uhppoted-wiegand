@@ -34,6 +34,7 @@ const uint GPIO_8 = 8;   // Pico 11
 const uint GPIO_14 = 14; // Pico 19
 const uint GPIO_15 = 15; // Pico 20
 const uint GPIO_16 = 16; // Pico 21
+const uint GPIO_17 = 17; // Pico 22
 const uint GPIO_20 = 20; // Pico 26
 const uint GPIO_21 = 21; // Pico 27
 const uint GPIO_25 = 25; // Pico LED
@@ -45,7 +46,9 @@ const uint UART1_RX = GPIO_21; // Pico 27
 
 const uint LED_PIN = GPIO_25;
 const uint READER_LED = GPIO_15;
-const uint DEBUG_LED = GPIO_16;
+const uint DEBUG_LED = GPIO_14;
+const uint D0 = GPIO_16;
+const uint D1 = GPIO_17;
 
 bool on = false;
 queue_t queue;
@@ -71,25 +74,12 @@ void on_uart0_rx() {
 }
 
 // READER
-// void rx() {
-//     uint sm = 0;
-//
-//     while (true) {
-//         char c = reader_program_getc(PIO_IN, sm);
-//         uint16_t value = c;
-//
-//         if (!queue_is_full(&queue)) {
-//             queue_try_add(&queue, &value);
-//         }
-//     }
-// }
-
 void rxi() {
     uint sm = 0;
     char c = reader_program_get(PIO_IN, sm);
 
     if (c != -1) {
-        uint16_t value = c;
+        uint8_t value = c;
 
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &value);
@@ -141,8 +131,7 @@ int main() {
     const uint freq = 1;
     const float div = 2; // (float)clock_get_hz(clk_sys) / FREQ;
 
-    reader_program_init(pio, sm, offset, DEBUG_LED, div);
-    pio_sm_set_enabled(pio, sm, true);
+    reader_program_init(pio, sm, offset, DEBUG_LED, D0, D1, div);
     pio->txf[sm] = (clock_get_hz(clk_sys) / (2 * freq)) - 3;
 
     // sleep_ms(10); // Ref. https://github.com/raspberrypi/pico-sdk/issues/386
@@ -159,9 +148,11 @@ int main() {
 
         gpio_put(LED_PIN, 1);
 
-        uint16_t value;
+        uint8_t value;
         while (queue_try_remove(&queue, &value)) {
-            puts("Pico/Wiegand QUTE");
+            char s[64];
+            snprintf(s, sizeof(s), "QUTE:%d", value);
+            puts(s);
         }
 
         if (on) {
