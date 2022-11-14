@@ -76,14 +76,10 @@ void on_uart0_rx() {
 // READER
 void rxi() {
     uint sm = 0;
-    char c = reader_program_get(PIO_IN, sm);
+    uint32_t value = reader_program_get(PIO_IN, sm);
 
-    if (c != -1) {
-        uint8_t value = c;
-
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &value);
-        }
+    if (!queue_is_full(&queue)) {
+        queue_try_add(&queue, &value);
     }
 }
 
@@ -109,7 +105,7 @@ int main() {
     gpio_put(DEBUG_LED, 0);
 
     // ... initialise FIFO
-    queue_init(&queue, sizeof(uint8_t), 32);
+    queue_init(&queue, sizeof(uint32_t), 32);
 
     // ... initialise UARTs
     uart_init(UART0, 2400);
@@ -142,16 +138,23 @@ int main() {
     pio_set_irq0_source_enabled(pio, pis_sm0_rx_fifo_not_empty, true);
     // pio0->inte0 |= PIO_IRQ0_INTE_SM0_RXNEMPTY_BITS;
 
+    {   // 125MHz
+        uint32_t hz = clock_get_hz(clk_sys);
+        char s[64];
+        snprintf(s, sizeof(s), "CLOCK %d", hz);
+        puts(s);
+    }
+
     while (1) {
         gpio_put(LED_PIN, 0);
         sleep_ms(250);
 
         gpio_put(LED_PIN, 1);
 
-        uint8_t value;
+        uint32_t value;
         while (queue_try_remove(&queue, &value)) {
             char s[64];
-            snprintf(s, sizeof(s), "QUTE:%d", value);
+            snprintf(s, sizeof(s), "QUTE:%08x", value);
             puts(s);
         }
 

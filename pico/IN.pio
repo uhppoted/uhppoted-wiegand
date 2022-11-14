@@ -1,17 +1,24 @@
 .program reader
     pull block
-    out y, 32
+    set y, 3
+
 .wrap_target
-    wait 0 gpio 16  ; Wait for D0
-    set x, 13
-    mov isr,x
-    push
+    in null, 32
+    in pins, 2
+    mov x, isr
+    jmp x != y blink
+    jmp lpx
+
+blink:
+    push block
+
+lpx:
     set pins, 1   ; Turn LED on
-    mov x, y
+    mov x, osr
 lp1:
     jmp x-- lp1   ; Delay for (x + 1) cycles, x is a 32 bit number
     set pins, 0   ; Turn LED off
-    mov x, y
+    mov x, osr
 lp2:
     jmp x-- lp2   ; Delay for the same number of cycles again
 .wrap             ; Blink forever!
@@ -31,28 +38,19 @@ static inline void reader_program_init(PIO pio, uint sm, uint offset, uint led, 
     pio_sm_config c = reader_program_get_default_config(offset);
     
     sm_config_set_set_pins(&c, led, 1);
-//  sm_config_set_in_pins(&c, d0);
-//  sm_config_set_in_pins(&c, d1);
+    sm_config_set_in_pins(&c, d0);
+    sm_config_set_in_shift(&c,false,false,32);
     sm_config_set_clkdiv(&c, div);
 
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
 }
 
-// static inline char reader_program_getc(PIO pio, uint sm) {
-//     io_rw_8 *rxfifo_shift = (io_rw_8*)&pio->rxf[sm] + 3;
-// 
-//     while (pio_sm_is_rx_fifo_empty(pio, sm))
-//         tight_loop_contents();
-// 
-//     return (char) *rxfifo_shift;
-// }
-
-static inline char reader_program_get(PIO pio, uint sm) {
-    io_rw_8 *fifo = (io_rw_8 *)&pio->rxf[sm];
+static inline uint32_t reader_program_get(PIO pio, uint sm) {
+    io_rw_32 *fifo = (io_rw_32 *)&pio->rxf[sm];
 
     if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
-        return (char) *fifo;
+        return *fifo;
     }
 
     return -1;
