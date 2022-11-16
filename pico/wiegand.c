@@ -22,6 +22,8 @@
 #define PIO_IN pio0
 #define PIO_OUT pio1
 
+int count(uint32_t);
+
 const uint GPIO_0 = 0;   // Pico 1
 const uint GPIO_1 = 1;   // Pico 2
 const uint GPIO_2 = 2;   // Pico 4
@@ -174,12 +176,19 @@ int main() {
 
         uint32_t v;
         while (queue_try_remove(&queue, &v)) {
+            int even = count(v & 0x03ffe000) % 2;
+            int odd = count(v & 0x00001fff) % 2;
             uint32_t card = (v >> 1) & 0x00ffffff;
-            uint32_t site_code = (card >> 16) & 0x000000ff;
+            uint32_t facility = (card >> 16) & 0x000000ff;
             uint32_t card_number = card & 0x0000ffff;
 
             char s[64];
-            snprintf(s, sizeof(s), "CARD %d%05d", site_code, card_number);
+            if (even != 0 || odd != 1) {
+                snprintf(s, sizeof(s), "%d%05d INVALID", facility, card_number);
+            } else {
+                snprintf(s, sizeof(s), "CARD %d%05d OK", facility, card_number);
+            }
+
             puts(s);
         }
 
@@ -195,4 +204,15 @@ int main() {
     // ... cleanup
 
     queue_free(&queue);
+}
+
+int count(uint32_t v) {
+    int N = 0;
+
+    while (v != 0) {
+        N++;
+        v &= v - 1;
+    }
+
+    return N;
 }
