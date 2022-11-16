@@ -1,27 +1,22 @@
 .program reader
-    pull block
     set y, 3
 
-.wrap_target
-    in null, 32
-    in pins, 2
-    mov x, isr
-    jmp x != y blink
-    jmp lpx
+loop:                 ; wait for D0/D1
+    in null, 32       ; 
+    in pins, 2        ;
+    mov x, isr        ;
+    jmp x != y rx     ;
+    jmp loop          ;
 
-blink:
-    push block
+rx:                   ; push D0/D1 to FIFO
+    push block        ;
 
-lpx:
-    set pins, 1   ; Turn LED on
-    mov x, osr
-lp1:
-    jmp x-- lp1   ; Delay for (x + 1) cycles, x is a 32 bit number
-    set pins, 0   ; Turn LED off
-    mov x, osr
-lp2:
-    jmp x-- lp2   ; Delay for the same number of cycles again
-.wrap             ; Blink forever!
+loop1:                ; wait for !D0 && !D1
+    in null, 32       ;
+    in pins, 2        ;
+    mov y, isr        ;
+    jmp x != y loop   ;
+    jmp loop1         ;   
 
 
 % c-sdk {

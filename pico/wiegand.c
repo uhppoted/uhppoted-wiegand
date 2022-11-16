@@ -75,11 +75,33 @@ void on_uart0_rx() {
 
 // READER
 void rxi() {
-    uint sm = 0;
+    const uint sm = 0;
+    static uint32_t card = 0;
+    static uint32_t bits = 0;
+
     uint32_t value = reader_program_get(PIO_IN, sm);
 
-    if (!queue_is_full(&queue)) {
-        queue_try_add(&queue, &value);
+    switch (value) {
+    case 1:
+        card <<= 1;
+        card |= 0x00000001;
+        bits++;
+        break;
+
+    case 2:
+        card <<= 1;
+        bits++;
+        break;
+    }
+
+    if (bits >= 26) {
+        uint32_t v = card;
+        if (!queue_is_full(&queue)) {
+            queue_try_add(&queue, &v);
+        }
+
+        card = 0;
+        bits = 0;
     }
 }
 
@@ -128,7 +150,6 @@ int main() {
     const float div = 2; // (float)clock_get_hz(clk_sys) / FREQ;
 
     reader_program_init(pio, sm, offset, DEBUG_LED, D0, D1, div);
-    pio->txf[sm] = (clock_get_hz(clk_sys) / (2 * freq)) - 3;
 
     // sleep_ms(10); // Ref. https://github.com/raspberrypi/pico-sdk/issues/386
     // multicore_launch_core1(rx);
@@ -138,7 +159,7 @@ int main() {
     pio_set_irq0_source_enabled(pio, pis_sm0_rx_fifo_not_empty, true);
     // pio0->inte0 |= PIO_IRQ0_INTE_SM0_RXNEMPTY_BITS;
 
-    {   // 125MHz
+    { // 125MHz
         uint32_t hz = clock_get_hz(clk_sys);
         char s[64];
         snprintf(s, sizeof(s), "CLOCK %d", hz);
@@ -151,10 +172,14 @@ int main() {
 
         gpio_put(LED_PIN, 1);
 
-        uint32_t value;
-        while (queue_try_remove(&queue, &value)) {
+        uint32_t v;
+        while (queue_try_remove(&queue, &v)) {
+            uint32_t card = (v >> 1) & 0x00ffffff;
+            uint32_t site_code = (card >> 16) & 0x000000ff;
+            uint32_t card_number = card & 0x0000ffff;
+
             char s[64];
-            snprintf(s, sizeof(s), "QUTE:%08x", value);
+            snprintf(s, sizeof(s), "CARD %d%05d", site_code, card_number);
             puts(s);
         }
 
