@@ -13,9 +13,6 @@ rx: push block        ; push D0/D1 to FIFO
     set y,31          ; debounce
 lp: nop [31]          ;
     jmp y-- lp        ;
-    set y,31          ; 
-lp1: nop [31]         ;
-    jmp y-- lp1       ;
 
 loop1:                ; wait for !D0 && !D1
     in null, 32       ;
@@ -26,7 +23,7 @@ loop1:                ; wait for !D0 && !D1
 
 
 % c-sdk {
-static inline void reader_program_init(PIO pio, uint sm, uint offset, uint led, uint d0, uint d1, float div) {
+static inline void reader_program_init(PIO pio, uint sm, uint offset, uint led, uint d0, uint d1) {
     pio_sm_set_pindirs_with_mask(pio, sm, 0x00004000, 0x00034000);
 
     pio_gpio_init(pio, led);
@@ -41,7 +38,9 @@ static inline void reader_program_init(PIO pio, uint sm, uint offset, uint led, 
     sm_config_set_set_pins(&c, led, 1);
     sm_config_set_in_pins(&c, d0);
     sm_config_set_in_shift(&c,false,false,32);
-    sm_config_set_clkdiv(&c, div);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+
+    sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms debounce delay
 
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);

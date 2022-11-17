@@ -86,7 +86,7 @@ void rxi() {
     absolute_time_t now = get_absolute_time();
     uint32_t delta = absolute_time_diff_us(start, now) / 1000;
 
-    if (bits != 0 && delta > READ_TIMEOUT) {
+    if (bits == 0 || delta > READ_TIMEOUT) {
         start = now;
         bits = 0;
     }
@@ -110,7 +110,6 @@ void rxi() {
         uint32_t v = card;
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
-            queue_try_add(&queue, &delta);
         }
 
         card = 0;
@@ -159,13 +158,7 @@ int main() {
     uint sm = 0;
     uint offset = pio_add_program(pio, &reader_program);
 
-    const uint freq = 1;
-    const float div = 2; // (float)clock_get_hz(clk_sys) / FREQ;
-
-    reader_program_init(pio, sm, offset, DEBUG_LED, D0, D1, div);
-
-    // sleep_ms(10); // Ref. https://github.com/raspberrypi/pico-sdk/issues/386
-    // multicore_launch_core1(rx);
+    reader_program_init(pio, sm, offset, DEBUG_LED, D0, D1);
 
     irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
     irq_set_enabled(PIO0_IRQ_0, true);
@@ -201,12 +194,6 @@ int main() {
             }
 
             puts(s);
-
-            char delta[64];
-            if (queue_try_remove(&queue, &v)) {
-                snprintf(delta, sizeof(delta), "DELTA: %d", v);
-                puts(delta);
-            }
         }
 
         if (on) {

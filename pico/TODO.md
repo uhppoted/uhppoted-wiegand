@@ -1,22 +1,29 @@
 # TODO
 
-1. [x] Replace `tight_loop_contents` with PIO FIFO interrupt
-2. [x] JMP loop
-3. [ ] Debounce 
-3. [ ] Reset bit decoder on timeout
-4. [ ] Join FIFOs
-5. [ ] gpio_set_function(0, GPIO_FUNC_PIO0);
-6. [ ] Move LED from PIO to main loop
+1. [x] Reset bit decoder on timeout
+2. [x] Join FIFOs
+3. [x] Debounce properly
+4. [ ] Signal read timeout
+5. [ ] Move LED from PIO to main loop
        - green for ok
        - red for bad
        - route ok/bad to HID
-7. [ ] Replace sleep with queue wait/interrupt
+6. [ ] Replace sleep with queue wait/interrupt
        - (?) blink in timer interrupt or something
-8. [ ] Alternative implementations
+7. [ ] Alternative implementations
        - Use two SMs and WAIT pin
        - Accumulate 26 bits in ISR
-9. [ ] Query last read + delta
+8. [ ] SPI: query last read + delta
 
 ## NOTES
 
 1. https://stackoverflow.com/questions/109023/count-the-number-of-set-bits-in-a-32-bit-integer
+2. Delta time for card read is 53ms (~2ms/bit)
+3. PIO clock 
+   - 125MHz   -> 8ns per instruction
+   - nop [32] -> 256ns  => 0.256us
+   - 32x loop -> 8192ns => 8.192us
+   - div 64 => 0.5ms
+   - configured at 152.588 (~1.25s)
+   - maximum div for reliable reads is 192 (~1.6ms)
+
