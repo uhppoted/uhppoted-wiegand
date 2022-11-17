@@ -1,15 +1,21 @@
 .program reader
-    set y, 3
 
 loop:                 ; wait for D0/D1
     in null, 32       ; 
     in pins, 2        ;
+    set y, 3
     mov x, isr        ;
     jmp x != y rx     ;
     jmp loop          ;
 
-rx:                   ; push D0/D1 to FIFO
-    push block        ;
+rx: push block        ; push D0/D1 to FIFO
+
+    set y,31          ; debounce
+lp: nop [31]          ;
+    jmp y-- lp        ;
+    set y,31          ; 
+lp1: nop [31]         ;
+    jmp y-- lp1       ;
 
 loop1:                ; wait for !D0 && !D1
     in null, 32       ;

@@ -51,6 +51,7 @@ const uint READER_LED = GPIO_15;
 const uint DEBUG_LED = GPIO_14;
 const uint D0 = GPIO_16;
 const uint D1 = GPIO_17;
+const uint32_t READ_TIMEOUT = 100;
 
 bool on = false;
 queue_t queue;
@@ -80,6 +81,15 @@ void rxi() {
     const uint sm = 0;
     static uint32_t card = 0;
     static uint32_t bits = 0;
+    static absolute_time_t start;
+
+    absolute_time_t now = get_absolute_time();
+    uint32_t delta = absolute_time_diff_us(start, now) / 1000;
+
+    if (bits != 0 && delta > READ_TIMEOUT) {
+        start = now;
+        bits = 0;
+    }
 
     uint32_t value = reader_program_get(PIO_IN, sm);
 
@@ -100,6 +110,7 @@ void rxi() {
         uint32_t v = card;
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
+            queue_try_add(&queue, &delta);
         }
 
         card = 0;
@@ -179,17 +190,23 @@ int main() {
             int even = count(v & 0x03ffe000) % 2;
             int odd = count(v & 0x00001fff) % 2;
             uint32_t card = (v >> 1) & 0x00ffffff;
-            uint32_t facility = (card >> 16) & 0x000000ff;
+            uint32_t facility_code = (card >> 16) & 0x000000ff;
             uint32_t card_number = card & 0x0000ffff;
 
             char s[64];
             if (even != 0 || odd != 1) {
-                snprintf(s, sizeof(s), "%d%05d INVALID", facility, card_number);
+                snprintf(s, sizeof(s), "%d%05d INVALID", facility_code, card_number);
             } else {
-                snprintf(s, sizeof(s), "CARD %d%05d OK", facility, card_number);
+                snprintf(s, sizeof(s), "CARD %d%05d OK", facility_code, card_number);
             }
 
             puts(s);
+
+            char delta[64];
+            if (queue_try_remove(&queue, &v)) {
+                snprintf(delta, sizeof(delta), "DELTA: %d", v);
+                puts(delta);
+            }
         }
 
         if (on) {
