@@ -22,6 +22,9 @@
 #define PIO_IN pio0
 #define PIO_OUT pio1
 
+void setup_gpio(void);
+void setup_uart(void);
+int64_t callback(alarm_id_t, void *);
 int count(uint32_t);
 
 const uint GPIO_0 = 0;   // Pico 1
@@ -77,43 +80,63 @@ void on_uart0_rx() {
 }
 
 // READER
+
+typedef struct reader {
+    uint32_t card;
+    uint32_t bits;
+    int32_t timer;
+    bool busy;
+    absolute_time_t start;
+    absolute_time_t delta;
+} reader;
+
+reader rdr = {
+    .card = 0,
+    .bits = 0,
+    .timer = -1,
+    .busy = false,
+    .start = 0,
+};
+
 void rxi() {
     const uint sm = 0;
-    static uint32_t card = 0;
-    static uint32_t bits = 0;
-    static absolute_time_t start;
 
-    absolute_time_t now = get_absolute_time();
-    uint32_t delta = absolute_time_diff_us(start, now) / 1000;
-
-    if (bits == 0 || delta > READ_TIMEOUT) {
-        start = now;
-        bits = 0;
+    if (rdr.bits == 0) {
+        rdr.start = get_absolute_time();
+        rdr.bits = 0;
+        rdr.busy = true;
+        rdr.timer = add_alarm_in_ms(READ_TIMEOUT, callback, NULL, true);
     }
 
     uint32_t value = reader_program_get(PIO_IN, sm);
 
     switch (value) {
     case 1:
-        card <<= 1;
-        card |= 0x00000001;
-        bits++;
+        rdr.card <<= 1;
+        rdr.card |= 0x00000001;
+        rdr.bits++;
         break;
 
     case 2:
-        card <<= 1;
-        bits++;
+        rdr.card <<= 1;
+        rdr.bits++;
         break;
     }
 
-    if (bits >= 26) {
-        uint32_t v = card;
+    if (rdr.bits >= 26) {
+        if (rdr.timer != -1) {
+            cancel_alarm(rdr.timer);
+        }
+
+        uint32_t v = rdr.card;
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }
 
-        card = 0;
-        bits = 0;
+        rdr.card = 0;
+        rdr.bits = 0;
+        rdr.busy = false;
+        rdr.timer = -1;
     }
 }
 
@@ -125,46 +148,27 @@ int main() {
 
     stdio_init_all();
 
-    // ... initialise GPIO
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-
-    gpio_init(READER_LED);
-    gpio_set_dir(READER_LED, GPIO_OUT);
-    gpio_pull_up(READER_LED);
-    gpio_put(READER_LED, 1);
-
-    gpio_init(DEBUG_LED);
-    gpio_set_dir(DEBUG_LED, GPIO_OUT);
-    gpio_put(DEBUG_LED, 0);
+    setup_gpio();
+    setup_uart();
 
     // ... initialise FIFO
     queue_init(&queue, sizeof(uint32_t), 32);
 
-    // ... initialise UARTs
-    uart_init(UART0, 2400);
-    gpio_set_function(UART0_TX, GPIO_FUNC_UART);
-    gpio_set_function(UART0_RX, GPIO_FUNC_UART);
-    uart_set_baudrate(UART0, BAUD_RATE);
-    uart_set_hw_flow(UART0, false, false);
-    uart_set_format(UART0, DATA_BITS, STOP_BITS, PARITY);
-    uart_set_fifo_enabled(UART0, false);
-    irq_set_exclusive_handler(UART0_IRQ, on_uart0_rx);
-    irq_set_enabled(UART0_IRQ, true);
-    uart_set_irq_enables(UART0, true, false);
+    // ... initialise timers
+    alarm_pool_init_default();
 
     // ... initialise PIOs
     PIO pio = PIO_IN;
     uint sm = 0;
     uint offset = pio_add_program(pio, &reader_program);
 
-    reader_program_init(pio, sm, offset, DEBUG_LED, D0, D1);
+    reader_program_init(pio, sm, offset, D0, D1);
 
     irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
     irq_set_enabled(PIO0_IRQ_0, true);
     pio_set_irq0_source_enabled(pio, pis_sm0_rx_fifo_not_empty, true);
-    // pio0->inte0 |= PIO_IRQ0_INTE_SM0_RXNEMPTY_BITS;
 
+    // ... start message
     { // 125MHz
         uint32_t hz = clock_get_hz(clk_sys);
         char s[64];
@@ -208,6 +212,48 @@ int main() {
     // ... cleanup
 
     queue_free(&queue);
+}
+
+void setup_gpio() {
+    gpio_init(LED_PIN);
+    gpio_set_dir(LED_PIN, GPIO_OUT);
+
+    gpio_init(READER_LED);
+    gpio_set_dir(READER_LED, GPIO_OUT);
+    gpio_pull_up(READER_LED);
+    gpio_put(READER_LED, 1);
+
+    gpio_init(DEBUG_LED);
+    gpio_set_dir(DEBUG_LED, GPIO_OUT);
+    gpio_put(DEBUG_LED, 0);
+}
+
+void setup_uart() {
+    uart_init(UART0, 2400);
+    gpio_set_function(UART0_TX, GPIO_FUNC_UART);
+    gpio_set_function(UART0_RX, GPIO_FUNC_UART);
+    uart_set_baudrate(UART0, BAUD_RATE);
+    uart_set_hw_flow(UART0, false, false);
+    uart_set_format(UART0, DATA_BITS, STOP_BITS, PARITY);
+    uart_set_fifo_enabled(UART0, false);
+    irq_set_exclusive_handler(UART0_IRQ, on_uart0_rx);
+    irq_set_enabled(UART0_IRQ, true);
+    uart_set_irq_enables(UART0, true, false);
+}
+
+int64_t callback(alarm_id_t id, void *data) {
+    if (rdr.busy) {
+        gpio_put(DEBUG_LED, 1);
+        rdr.bits = 0;
+        rdr.card = 0;
+        rdr.busy = false;
+
+        return 100 * 1000;
+    } else {
+        gpio_put(DEBUG_LED, 0);
+
+        return 0;
+    }
 }
 
 int count(uint32_t v) {

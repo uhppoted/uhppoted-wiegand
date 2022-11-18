@@ -3,16 +3,16 @@
 1. [x] Reset bit decoder on timeout
 2. [x] Join FIFOs
 3. [x] Debounce properly
-4. [ ] Signal read timeout
-5. [ ] Move LED from PIO to main loop
-       - green for ok
-       - red for bad
+4. [x] Signal read timeout
+5. [ ] Status LEDs
+       - [ ] orange for timeout
+       - [ ] green for ok
+       - [ ] red for bad
        - route ok/bad to HID
 6. [ ] Replace sleep with queue wait/interrupt
        - (?) blink in timer interrupt or something
 7. [ ] Alternative implementations
        - Use two SMs and WAIT pin
-       - Accumulate 26 bits in ISR
 8. [ ] SPI: query last read + delta
 
 ## NOTES

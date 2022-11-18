@@ -1,6 +1,6 @@
 .program reader
 
-loop:                 ; wait for D0/D1
+loop:                 ; wait for D0 || D1
     in null, 32       ; 
     in pins, 2        ;
     set y, 3
@@ -8,9 +8,9 @@ loop:                 ; wait for D0/D1
     jmp x != y rx     ;
     jmp loop          ;
 
-rx: push block        ; push D0/D1 to FIFO
+rx: push block        ; push D0 and D1 to FIFO
 
-    set y,31          ; debounce
+    set y,31          ; debounce/noise-gate
 lp: nop [31]          ;
     jmp y-- lp        ;
 
@@ -23,10 +23,9 @@ loop1:                ; wait for !D0 && !D1
 
 
 % c-sdk {
-static inline void reader_program_init(PIO pio, uint sm, uint offset, uint led, uint d0, uint d1) {
+static inline void reader_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
     pio_sm_set_pindirs_with_mask(pio, sm, 0x00004000, 0x00034000);
 
-    pio_gpio_init(pio, led);
     pio_gpio_init(pio, d0);
     pio_gpio_init(pio, d1);
 
@@ -35,12 +34,11 @@ static inline void reader_program_init(PIO pio, uint sm, uint offset, uint led, 
 
     pio_sm_config c = reader_program_get_default_config(offset);
     
-    sm_config_set_set_pins(&c, led, 1);
     sm_config_set_in_pins(&c, d0);
     sm_config_set_in_shift(&c,false,false,32);
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
 
-    sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms debounce delay
+    sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms noise gate delay
 
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
