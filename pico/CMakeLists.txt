@@ -11,13 +11,13 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 add_executable(wiegand
-  wiegand.c
-  reader.c
+  src/wiegand.c
+  src/reader.c
 )
 
 pico_generate_pio_header(
         wiegand
-        ${CMAKE_CURRENT_LIST_DIR}/IN.pio
+        ${CMAKE_CURRENT_LIST_DIR}/src/IN.pio
 )
 
 pico_enable_stdio_usb (wiegand 0)

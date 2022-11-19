@@ -1,8 +1,8 @@
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
-#include "reader.h"
-#include "wiegand.h"
+#include "../include/reader.h"
+#include "../include/wiegand.h"
 #include <IN.pio.h>
 
 typedef struct reader {

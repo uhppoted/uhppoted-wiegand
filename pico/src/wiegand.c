@@ -8,8 +8,8 @@
 
 #include <stdio.h>
 
-#include "reader.h"
-#include "wiegand.h"
+#include "../include/reader.h"
+#include "../include/wiegand.h"
 #include <IN.pio.h>
 
 #define VERSION "v0.0.0"

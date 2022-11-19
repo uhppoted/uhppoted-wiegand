@@ -1,16 +1,16 @@
 # TODO
 
-1. [x] Reset bit decoder on timeout
-2. [x] Join FIFOs
-3. [x] Debounce properly
-4. [x] Signal read timeout
-5. [x] Status LEDs
-6. [x] Replace sleep with queue wait/interrupt
-7. [x] Move reader to its own file
-8. [ ] Restructure folders to use src and include
-9. [ ] Alternative implementations
-       - Use two SMs and WAIT pin
-10.[ ] SPI: query last read + delta
+1.  [x] Reset bit decoder on timeout
+2.  [x] Join FIFOs
+3.  [x] Debounce properly
+4.  [x] Signal read timeout
+5.  [x] Status LEDs
+6.  [x] Replace sleep with queue wait/interrupt
+7.  [x] Move reader to its own file
+8.  [x] Restructure folders to use src and include
+9.  [ ] SPI: query last read + delta
+10. [ ] Alternative implementations
+        - Use two SMs and WAIT pin
 
 ## NOTES
 
