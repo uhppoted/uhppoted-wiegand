@@ -12,6 +12,7 @@ pico_sdk_init()
 
 add_executable(wiegand
   wiegand.c
+  reader.c
 )
 
 pico_generate_pio_header(
