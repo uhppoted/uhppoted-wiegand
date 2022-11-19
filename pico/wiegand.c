@@ -42,6 +42,8 @@ int count(uint32_t);
 void blink(LED *);
 int64_t off(alarm_id_t, void *);
 int64_t timeout(alarm_id_t, void *);
+bool watchdog(repeating_timer_t *);
+bool syscheck(repeating_timer_t *);
 
 const uint GPIO_0 = 0;   // Pico 1
 const uint GPIO_1 = 1;   // Pico 2
@@ -76,8 +78,11 @@ const uint D0 = GPIO_16;
 const uint D1 = GPIO_17;
 
 const uint32_t READ_TIMEOUT = 100;
+const uint32_t MSG = 0xf0000000;
+const uint32_t MSG_WATCHDOG = 0x00000000;
+const uint32_t MSG_SYSCHECK = 0x10000000;
+const uint32_t MSG_CARD_READ = 0x20000000;
 
-bool on = false;
 queue_t queue;
 
 // UART
@@ -87,18 +92,21 @@ void on_uart0_rx() {
         switch (ch) {
         case 'o':
         case 'O':
-            on = true;
             gpio_put(READER_LED, 0);
             break;
 
         case 'x':
         case 'X':
-            on = false;
             gpio_put(READER_LED, 1);
             break;
         }
     }
 }
+
+const LED SYS_LED = {
+    .pin = LED_PIN,
+    .timer = -1,
+};
 
 const LED TIMEOUT_LED = {
     .pin = YELLOW_LED,
@@ -153,7 +161,7 @@ void rxi() {
             cancel_alarm(rdr.timer);
         }
 
-        uint32_t v = rdr.card;
+        uint32_t v = MSG_CARD_READ | (rdr.card & 0x0fffffff);
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }
@@ -165,6 +173,9 @@ void rxi() {
 }
 
 int main() {
+    static repeating_timer_t watchdog_rt;
+    static repeating_timer_t syscheck_rt;
+
     bi_decl(bi_program_description("Pico-Wiegand interface"));
     bi_decl(bi_program_version_string(VERSION));
     bi_decl(bi_1pin_with_name(LED_PIN, "on-board LED"));
@@ -200,14 +211,22 @@ int main() {
         puts(s);
     }
 
+    add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
+    add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
+
+    uint32_t v;
     while (1) {
-        gpio_put(LED_PIN, 0);
-        sleep_ms(250);
+        queue_remove_blocking(&queue, &v);
 
-        gpio_put(LED_PIN, 1);
+        if ((v & MSG) == MSG_WATCHDOG) {
+            blink((LED *)&SYS_LED);
+        }
 
-        uint32_t v;
-        while (queue_try_remove(&queue, &v)) {
+        if ((v & MSG) == MSG_SYSCHECK) {
+            puts("SYS   OK");
+        }
+
+        if ((v & MSG) == MSG_CARD_READ) {
             int even = count(v & 0x03ffe000) % 2;
             int odd = count(v & 0x00001fff) % 2;
             uint32_t card = (v >> 1) & 0x00ffffff;
@@ -217,22 +236,14 @@ int main() {
             char s[64];
             if (even != 0 || odd != 1) {
                 blink((LED *)&BAD_LED);
-                snprintf(s, sizeof(s), "%d%05d INVALID", facility_code, card_number);
+                snprintf(s, sizeof(s), "CARD  %d%05d INVALID", facility_code, card_number);
             } else {
                 blink((LED *)&GOOD_LED);
-                snprintf(s, sizeof(s), "CARD %d%05d OK", facility_code, card_number);
+                snprintf(s, sizeof(s), "CARD  %d%05d OK", facility_code, card_number);
             }
 
             puts(s);
         }
-
-        if (on) {
-            puts("Pico/Wiegand ON");
-        } else {
-            puts("Pico/Wiegand OFF");
-        }
-
-        sleep_ms(1000);
     }
 
     // ... cleanup
@@ -275,6 +286,26 @@ void setup_uart() {
     uart_set_irq_enables(UART0, true, false);
 }
 
+bool watchdog(repeating_timer_t *rt) {
+    uint32_t v = MSG_WATCHDOG | 0x0000000;
+
+    if (!queue_is_full(&queue)) {
+        queue_try_add(&queue, &v);
+    }
+
+    return true;
+}
+
+bool syscheck(repeating_timer_t *rt) {
+    uint32_t v = MSG_SYSCHECK | 0x0000000;
+
+    if (!queue_is_full(&queue)) {
+        queue_try_add(&queue, &v);
+    }
+
+    return true;
+}
+
 int64_t timeout(alarm_id_t id, void *data) {
     reader *r = (reader *)data;
     r->bits = 0;
@@ -291,7 +322,7 @@ void blink(LED *led) {
 
     gpio_put(led->pin, 1);
 
-    led->timer = add_alarm_in_ms(500, off, (void *)led, true);
+    led->timer = add_alarm_in_ms(250, off, (void *)led, true);
 }
 
 int64_t off(alarm_id_t id, void *data) {

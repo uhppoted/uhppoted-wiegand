@@ -5,11 +5,11 @@
 3. [x] Debounce properly
 4. [x] Signal read timeout
 5. [x] Status LEDs
-6. [ ] Replace sleep with queue wait/interrupt
-       - (?) blink in timer interrupt or something
-7. [ ] Alternative implementations
+6. [x] Replace sleep with queue wait/interrupt
+7. [ ] Move reader to its own file
+8. [ ] Alternative implementations
        - Use two SMs and WAIT pin
-8. [ ] SPI: query last read + delta
+9. [ ] SPI: query last read + delta
 
 ## NOTES
 
