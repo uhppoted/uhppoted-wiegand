@@ -4,11 +4,7 @@
 2. [x] Join FIFOs
 3. [x] Debounce properly
 4. [x] Signal read timeout
-5. [ ] Status LEDs
-       - [ ] orange for timeout
-       - [ ] green for ok
-       - [ ] red for bad
-       - route ok/bad to HID
+5. [x] Status LEDs
 6. [ ] Replace sleep with queue wait/interrupt
        - (?) blink in timer interrupt or something
 7. [ ] Alternative implementations
@@ -27,3 +23,4 @@
    - configured at 152.588 (~1.25s)
    - maximum div for reliable reads is 192 (~1.6ms)
 
+4. https://github.com/teslamotors/liblithium

@@ -22,10 +22,26 @@
 #define PIO_IN pio0
 #define PIO_OUT pio1
 
+typedef struct reader {
+    uint32_t card;
+    uint32_t bits;
+    int32_t timer;
+    absolute_time_t start;
+    absolute_time_t delta;
+} reader;
+
+typedef struct LED {
+    uint pin;
+    int32_t timer;
+} LED;
+
 void setup_gpio(void);
 void setup_uart(void);
-int64_t callback(alarm_id_t, void *);
 int count(uint32_t);
+
+void blink(LED *);
+int64_t off(alarm_id_t, void *);
+int64_t timeout(alarm_id_t, void *);
 
 const uint GPIO_0 = 0;   // Pico 1
 const uint GPIO_1 = 1;   // Pico 2
@@ -36,6 +52,8 @@ const uint GPIO_5 = 5;   // Pico 7
 const uint GPIO_6 = 6;   // Pico 9
 const uint GPIO_7 = 7;   // Pico 10
 const uint GPIO_8 = 8;   // Pico 11
+const uint GPIO_12 = 12; // Pico 16
+const uint GPIO_13 = 13; // Pico 17
 const uint GPIO_14 = 14; // Pico 19
 const uint GPIO_15 = 15; // Pico 20
 const uint GPIO_16 = 16; // Pico 21
@@ -51,9 +69,12 @@ const uint UART1_RX = GPIO_21; // Pico 27
 
 const uint LED_PIN = GPIO_25;
 const uint READER_LED = GPIO_15;
-const uint DEBUG_LED = GPIO_14;
+const uint YELLOW_LED = GPIO_14;
+const uint ORANGE_LED = GPIO_13;
+const uint BLUE_LED = GPIO_12;
 const uint D0 = GPIO_16;
 const uint D1 = GPIO_17;
+
 const uint32_t READ_TIMEOUT = 100;
 
 bool on = false;
@@ -79,33 +100,37 @@ void on_uart0_rx() {
     }
 }
 
-// READER
-
-typedef struct reader {
-    uint32_t card;
-    uint32_t bits;
-    int32_t timer;
-    bool busy;
-    absolute_time_t start;
-    absolute_time_t delta;
-} reader;
-
-reader rdr = {
-    .card = 0,
-    .bits = 0,
+const LED TIMEOUT_LED = {
+    .pin = YELLOW_LED,
     .timer = -1,
-    .busy = false,
-    .start = 0,
 };
+
+const LED BAD_LED = {
+    .pin = ORANGE_LED,
+    .timer = -1,
+};
+
+const LED GOOD_LED = {
+    .pin = BLUE_LED,
+    .timer = -1,
+};
+
+// READER
 
 void rxi() {
     const uint sm = 0;
 
+    static reader rdr = {
+        .card = 0,
+        .bits = 0,
+        .timer = -1,
+        .start = 0,
+    };
+
     if (rdr.bits == 0) {
         rdr.start = get_absolute_time();
         rdr.bits = 0;
-        rdr.busy = true;
-        rdr.timer = add_alarm_in_ms(READ_TIMEOUT, callback, NULL, true);
+        rdr.timer = add_alarm_in_ms(READ_TIMEOUT, timeout, (reader *)&rdr, true);
     }
 
     uint32_t value = reader_program_get(PIO_IN, sm);
@@ -135,7 +160,6 @@ void rxi() {
 
         rdr.card = 0;
         rdr.bits = 0;
-        rdr.busy = false;
         rdr.timer = -1;
     }
 }
@@ -192,8 +216,10 @@ int main() {
 
             char s[64];
             if (even != 0 || odd != 1) {
+                blink((LED *)&BAD_LED);
                 snprintf(s, sizeof(s), "%d%05d INVALID", facility_code, card_number);
             } else {
+                blink((LED *)&GOOD_LED);
                 snprintf(s, sizeof(s), "CARD %d%05d OK", facility_code, card_number);
             }
 
@@ -223,9 +249,17 @@ void setup_gpio() {
     gpio_pull_up(READER_LED);
     gpio_put(READER_LED, 1);
 
-    gpio_init(DEBUG_LED);
-    gpio_set_dir(DEBUG_LED, GPIO_OUT);
-    gpio_put(DEBUG_LED, 0);
+    gpio_init(YELLOW_LED);
+    gpio_init(ORANGE_LED);
+    gpio_init(BLUE_LED);
+
+    gpio_set_dir(YELLOW_LED, GPIO_OUT);
+    gpio_set_dir(ORANGE_LED, GPIO_OUT);
+    gpio_set_dir(BLUE_LED, GPIO_OUT);
+
+    gpio_put(YELLOW_LED, 0);
+    gpio_put(ORANGE_LED, 0);
+    gpio_put(BLUE_LED, 0);
 }
 
 void setup_uart() {
@@ -241,19 +275,32 @@ void setup_uart() {
     uart_set_irq_enables(UART0, true, false);
 }
 
-int64_t callback(alarm_id_t id, void *data) {
-    if (rdr.busy) {
-        gpio_put(DEBUG_LED, 1);
-        rdr.bits = 0;
-        rdr.card = 0;
-        rdr.busy = false;
+int64_t timeout(alarm_id_t id, void *data) {
+    reader *r = (reader *)data;
+    r->bits = 0;
+    r->card = 0;
 
-        return 100 * 1000;
-    } else {
-        gpio_put(DEBUG_LED, 0);
+    blink((LED *)&TIMEOUT_LED);
+    cancel_alarm(id);
+}
 
-        return 0;
+void blink(LED *led) {
+    if (led->timer != -1) {
+        cancel_alarm(led->timer);
     }
+
+    gpio_put(led->pin, 1);
+
+    led->timer = add_alarm_in_ms(500, off, (void *)led, true);
+}
+
+int64_t off(alarm_id_t id, void *data) {
+    const LED *led = data;
+
+    gpio_put(led->pin, 0);
+    cancel_alarm(id);
+
+    return 0;
 }
 
 int count(uint32_t v) {
