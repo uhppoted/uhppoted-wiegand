@@ -8,7 +8,9 @@
 6.  [x] Replace sleep with queue wait/interrupt
 7.  [x] Move reader to its own file
 8.  [x] Restructure folders to use src and include
-9.  [ ] SPI: query last read + delta
+9.  [ ] SPI
+        - [ ] last card + timestamp
+        - [ ] set time
 10. [ ] Alternative implementations
         - Use two SMs and WAIT pin
 

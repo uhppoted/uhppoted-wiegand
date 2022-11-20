@@ -69,22 +69,46 @@ const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_CARD_READ = 0x20000000;
+const uint32_t MSG_LED = 0x30000000;
+const uint32_t MSG_QUERY = 0xf0000000;
 
 queue_t queue;
 
+struct last_card {
+    uint32_t facility_code;
+    uint32_t card_number;
+    bool ok;
+};
+
 // UART
 void on_uart0_rx() {
+    uint32_t msg;
+
     while (uart_is_readable(UART0)) {
         uint8_t ch = uart_getc(UART0);
         switch (ch) {
         case 'o':
         case 'O':
-            gpio_put(READER_LED, 0);
+            msg = MSG_LED | 0x0000000;
+            if (!queue_is_full(&queue)) {
+                queue_try_add(&queue, &msg);
+            }
             break;
 
         case 'x':
         case 'X':
-            gpio_put(READER_LED, 1);
+            msg = MSG_LED | 0x0000001;
+            if (!queue_is_full(&queue)) {
+                queue_try_add(&queue, &msg);
+            }
+            break;
+
+        case 'q':
+        case 'Q':
+            msg = MSG_QUERY | 0x0000000;
+            if (!queue_is_full(&queue)) {
+                queue_try_add(&queue, &msg);
+            }
             break;
         }
     }
@@ -144,6 +168,12 @@ int main() {
     add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
     add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
 
+    struct last_card last_card = {
+        .facility_code = 0,
+        .card_number = 0,
+        .ok = false,
+    };
+
     uint32_t v;
     while (1) {
         queue_remove_blocking(&queue, &v);
@@ -163,6 +193,10 @@ int main() {
             uint32_t facility_code = (card >> 16) & 0x000000ff;
             uint32_t card_number = card & 0x0000ffff;
 
+            last_card.facility_code = facility_code;
+            last_card.card_number = card_number;
+            last_card.ok = even == 0 && odd == 1;
+
             char s[64];
             if (even != 0 || odd != 1) {
                 blink((LED *)&BAD_LED);
@@ -170,6 +204,24 @@ int main() {
             } else {
                 blink((LED *)&GOOD_LED);
                 snprintf(s, sizeof(s), "CARD  %d%05d OK", facility_code, card_number);
+            }
+
+            puts(s);
+        }
+
+        if ((v & MSG) == MSG_LED) {
+            gpio_put(READER_LED, v & 0x0000000f);
+        }
+
+        if ((v & MSG) == MSG_QUERY) {
+            char s[64];
+
+            if (last_card.card_number == 0) {
+                snprintf(s, sizeof(s), "CARD  ---");
+            } else if (last_card.ok) {
+                snprintf(s, sizeof(s), "CARD  %d%05d OK", last_card.facility_code, last_card.card_number);
+            } else {
+                snprintf(s, sizeof(s), "CARD  %d%05d INVALID", last_card.facility_code, last_card.card_number);
             }
 
             puts(s);
