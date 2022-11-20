@@ -1,9 +1,11 @@
 #include "hardware/clocks.h"
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
+#include "hardware/rtc.h"
 #include "pico/binary_info.h"
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
+#include "pico/util/datetime.h"
 #include "pico/util/queue.h"
 
 #include <stdio.h>
@@ -24,9 +26,17 @@
 #define PIO_IN pio0
 #define PIO_OUT pio1
 
+typedef struct last_card {
+    datetime_t timestamp;
+    uint32_t facility_code;
+    uint32_t card_number;
+    bool ok;
+} last_card;
+
 void setup_gpio(void);
 void setup_uart(void);
 int count(uint32_t);
+void format(const last_card *, char *, int);
 
 int64_t off(alarm_id_t, void *);
 int64_t timeout(alarm_id_t, void *);
@@ -73,12 +83,6 @@ const uint32_t MSG_LED = 0x30000000;
 const uint32_t MSG_QUERY = 0xf0000000;
 
 queue_t queue;
-
-struct last_card {
-    uint32_t facility_code;
-    uint32_t card_number;
-    bool ok;
-};
 
 // UART
 void on_uart0_rx() {
@@ -144,14 +148,25 @@ int main() {
     bi_decl(bi_1pin_with_name(READER_LED, "reader LED"));
 
     stdio_init_all();
-
     setup_gpio();
-    setup_uart();
 
-    // ... initialise FIFO
+    // ... initialise RTC
+    datetime_t today = {
+        .year = 2022,
+        .month = 11,
+        .day = 20,
+        .dotw = 0, // Sunday
+        .hour = 13,
+        .min = 30,
+        .sec = 00};
+
+    rtc_init();
+    rtc_set_datetime(&today);
+    sleep_us(64); // Ref.
+
+    // ... initialise FIFO, UART and timers
     queue_init(&queue, sizeof(uint32_t), 32);
-
-    // ... initialise timers
+    setup_uart();
     alarm_pool_init_default();
 
     // ... initialise reader
@@ -174,8 +189,10 @@ int main() {
         .ok = false,
     };
 
-    uint32_t v;
-    while (1) {
+    rtc_get_datetime(&last_card.timestamp);
+
+    while (true) {
+        uint32_t v;
         queue_remove_blocking(&queue, &v);
 
         if ((v & MSG) == MSG_WATCHDOG) {
@@ -190,23 +207,16 @@ int main() {
             int even = count(v & 0x03ffe000) % 2;
             int odd = count(v & 0x00001fff) % 2;
             uint32_t card = (v >> 1) & 0x00ffffff;
-            uint32_t facility_code = (card >> 16) & 0x000000ff;
-            uint32_t card_number = card & 0x0000ffff;
+            char s[64];
 
-            last_card.facility_code = facility_code;
-            last_card.card_number = card_number;
+            last_card.facility_code = (card >> 16) & 0x000000ff;
+            last_card.card_number = card & 0x0000ffff;
             last_card.ok = even == 0 && odd == 1;
 
-            char s[64];
-            if (even != 0 || odd != 1) {
-                blink((LED *)&BAD_LED);
-                snprintf(s, sizeof(s), "CARD  %d%05d INVALID", facility_code, card_number);
-            } else {
-                blink((LED *)&GOOD_LED);
-                snprintf(s, sizeof(s), "CARD  %d%05d OK", facility_code, card_number);
-            }
-
+            rtc_get_datetime(&last_card.timestamp);
+            format(&last_card, s, sizeof(s));
             puts(s);
+            blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
         }
 
         if ((v & MSG) == MSG_LED) {
@@ -215,15 +225,7 @@ int main() {
 
         if ((v & MSG) == MSG_QUERY) {
             char s[64];
-
-            if (last_card.card_number == 0) {
-                snprintf(s, sizeof(s), "CARD  ---");
-            } else if (last_card.ok) {
-                snprintf(s, sizeof(s), "CARD  %d%05d OK", last_card.facility_code, last_card.card_number);
-            } else {
-                snprintf(s, sizeof(s), "CARD  %d%05d INVALID", last_card.facility_code, last_card.card_number);
-            }
-
+            format(&last_card, s, sizeof(s));
             puts(s);
         }
     }
@@ -316,4 +318,21 @@ int count(uint32_t v) {
     }
 
     return N;
+}
+
+void format(const last_card *card, char *s, int N) {
+    if (card->card_number == 0) {
+        snprintf(s, N, "CARD  ---");
+    } else {
+        snprintf(s, N, "CARD  %04d-%02d-%02d %02d:%02d:%02d  %d%05d %s",
+                 card->timestamp.year,
+                 card->timestamp.month,
+                 card->timestamp.day,
+                 card->timestamp.hour,
+                 card->timestamp.min,
+                 card->timestamp.sec,
+                 card->facility_code,
+                 card->card_number,
+                 card->ok ? "OK" : "INVALID");
+    }
 }
