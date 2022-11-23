@@ -35,7 +35,7 @@ typedef struct last_card {
 
 void setup_gpio(void);
 void setup_uart(void);
-int count(uint32_t);
+int bits(uint32_t);
 void format(const last_card *, char *, int);
 
 int64_t off(alarm_id_t, void *);
@@ -204,8 +204,8 @@ int main() {
         }
 
         if ((v & MSG) == MSG_CARD_READ) {
-            int even = count(v & 0x03ffe000) % 2;
-            int odd = count(v & 0x00001fff) % 2;
+            int even = bits(v & 0x03ffe000) % 2;
+            int odd = bits(v & 0x00001fff) % 2;
             uint32_t card = (v >> 1) & 0x00ffffff;
             char s[64];
 
@@ -309,15 +309,14 @@ int64_t off(alarm_id_t id, void *data) {
     return 0;
 }
 
-int count(uint32_t v) {
-    int N = 0;
+// Ref. https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+// Ref. https://stackoverflow.com/questions/109023/count-the-number-of-set-bits-in-a-32-bit-integer
+int bits(uint32_t v) {
+    v = v - ((v >> 1) & 0x55555555);
+    v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
+    v = (v + (v >> 4)) & 0x0f0f0f0f;
 
-    while (v != 0) {
-        N++;
-        v &= v - 1;
-    }
-
-    return N;
+    return (v * 0x01010101) >> 24;
 }
 
 void format(const last_card *card, char *s, int N) {
