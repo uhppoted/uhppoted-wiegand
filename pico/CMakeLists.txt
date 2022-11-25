@@ -7,11 +7,14 @@ project(wiegand C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
+add_compile_definitions(SYSDATE=$(SYSDATE))
+add_compile_definitions(SYSTIME=$(SYSTIME))
 
 pico_sdk_init()
 
 add_executable(wiegand
   src/wiegand.c
+  src/sys.c
   src/reader.c
 )
 

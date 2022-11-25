@@ -1,4 +1,3 @@
-#include "hardware/clocks.h"
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "hardware/rtc.h"
@@ -6,9 +5,9 @@
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
 #include "pico/util/datetime.h"
-#include "pico/util/queue.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "../include/reader.h"
 #include "../include/wiegand.h"
@@ -80,40 +79,78 @@ const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_CARD_READ = 0x20000000;
 const uint32_t MSG_LED = 0x30000000;
+const uint32_t MSG_SET_TIME = 0xe0000000;
 const uint32_t MSG_QUERY = 0xf0000000;
 
 queue_t queue;
+char cmd[64];
 
 // UART
 void on_uart0_rx() {
+    static bool readline = false;
+    static char buffer[64];
+    static int ix = 0;
     uint32_t msg;
 
     while (uart_is_readable(UART0)) {
         uint8_t ch = uart_getc(UART0);
-        switch (ch) {
-        case 'o':
-        case 'O':
-            msg = MSG_LED | 0x0000000;
-            if (!queue_is_full(&queue)) {
-                queue_try_add(&queue, &msg);
-            }
-            break;
 
-        case 'x':
-        case 'X':
-            msg = MSG_LED | 0x0000001;
-            if (!queue_is_full(&queue)) {
-                queue_try_add(&queue, &msg);
-            }
-            break;
+        if (readline) {
+            if (ch == '\n' || ch == '\r') {
+                snprintf(cmd, sizeof(cmd), "%s", buffer);
+                msg = MSG_SET_TIME | 0x0000000;
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
 
-        case 'q':
-        case 'Q':
-            msg = MSG_QUERY | 0x0000000;
-            if (!queue_is_full(&queue)) {
-                queue_try_add(&queue, &msg);
+                memset(buffer, 0, sizeof(buffer));
+                readline = false;
+                ix = 0;
+
+            } else if (ix < sizeof(buffer)) {
+                buffer[ix++] = ch;
             }
-            break;
+
+            if (ix >= sizeof(buffer)) {
+                memset(buffer, 0, sizeof(buffer));
+                readline = false;
+                ix = 0;
+            }
+        } else {
+            switch (ch) {
+                // ... reader LED off
+            case 'o':
+            case 'O':
+                msg = MSG_LED | 0x0000000;
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
+                break;
+
+                // ... reader LED on
+            case 'x':
+            case 'X':
+                msg = MSG_LED | 0x0000001;
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
+                break;
+
+                // ... query
+            case 'q':
+            case 'Q':
+                msg = MSG_QUERY | 0x0000000;
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
+                break;
+
+                // ... set date/time
+            case 't':
+            case 'T':
+                readline = true;
+                break;
+            }
         }
     }
 }
@@ -151,18 +188,8 @@ int main() {
     setup_gpio();
 
     // ... initialise RTC
-    datetime_t today = {
-        .year = 2022,
-        .month = 11,
-        .day = 20,
-        .dotw = 0, // Sunday
-        .hour = 13,
-        .min = 30,
-        .sec = 00};
-
     rtc_init();
-    rtc_set_datetime(&today);
-    sleep_us(64); // Ref.
+    sleep_us(64);
 
     // ... initialise FIFO, UART and timers
     queue_init(&queue, sizeof(uint32_t), 32);
@@ -172,16 +199,14 @@ int main() {
     // ... initialise reader
     reader_initialise();
 
-    // ... start message
-    { // 125MHz
-        uint32_t hz = clock_get_hz(clk_sys);
-        char s[64];
-        snprintf(s, sizeof(s), "CLOCK %d", hz);
-        puts(s);
-    }
+    // ... setup sys stuff
 
     add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
     add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
+
+    char dt[64];
+    snprintf(dt, sizeof(dt), "%s %s", SYSDATE, SYSTIME);
+    sys_settime(dt);
 
     struct last_card last_card = {
         .facility_code = 0,
@@ -200,7 +225,7 @@ int main() {
         }
 
         if ((v & MSG) == MSG_SYSCHECK) {
-            puts("SYS   OK");
+            sys_ok();
         }
 
         if ((v & MSG) == MSG_CARD_READ) {
@@ -221,6 +246,11 @@ int main() {
 
         if ((v & MSG) == MSG_LED) {
             gpio_put(READER_LED, v & 0x0000000f);
+        }
+
+        if ((v & MSG) == MSG_SET_TIME) {
+            // sys_settime(cmd);
+            // sys_settime("2022-11-24 21:31:14");
         }
 
         if ((v & MSG) == MSG_QUERY) {

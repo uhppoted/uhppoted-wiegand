@@ -13,6 +13,9 @@
 11. [ ] SPI
         - [x] last card + timestamp
         - [ ] set time
+        - [ ] CLI
+        - [ ] malloc/free cmd
+12. [ ] Mode reader/emulator/unknown
 
 ## NOTES
 
