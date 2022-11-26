@@ -14,10 +14,13 @@
         - [x] last card + timestamp
         - [x] set time
         - [x] CLI
-        - [ ] malloc/free cmd
         - [ ] timeout on cmd
+        - [x] ignore empty cmd
+        - [ ] malloc/free cmd
         - [ ] echo 
-12. [ ] Mode reader/emulator/unknown
+12. [ ] Move card stuff to reader.c
+13. [ ] Mode reader/emulator/unknown
+14. [ ] README
 
 ## NOTES
 
@@ -31,3 +34,6 @@
    - maximum div for reliable reads is 192 (~1.6ms)
 
 3. https://github.com/teslamotors/liblithium
+4. https://www.mouser.ca/ProductDetail/Microchip-Technology-Atmel/ATECC608A-MAHDA-T?qs=wd5RIQLrsJiNcP5AuKx6KQ%3D%3D
+   - https://www.sparkfun.com/products/18077
+   - https://www.mikroe.com/secure-4-click

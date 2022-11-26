@@ -87,29 +87,31 @@ card last_card = {
 void on_uart0_rx() {
     static char buffer[64];
     static int ix = 0;
-    uint32_t msg;
 
     while (uart_is_readable(UART0)) {
         uint8_t ch = uart_getc(UART0);
 
         if (ch == '\n' || ch == '\r') {
-            snprintf(cmd, sizeof(cmd), "%s", buffer);
-            msg = MSG_CMD | 0x0000000;
-            if (!queue_is_full(&queue)) {
-                queue_try_add(&queue, &msg);
+            if (ix > 0) {
+                uint32_t msg = MSG_CMD | 0x0000000;
+                snprintf(cmd, sizeof(cmd), "%s", buffer);
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
             }
 
             memset(buffer, 0, sizeof(buffer));
             ix = 0;
 
-        } else if (ix < sizeof(buffer)) {
+        } else if (ix < sizeof(buffer) - 1) {
             buffer[ix++] = ch;
+            buffer[ix] = 0;
         }
 
-        if (ix >= sizeof(buffer)) {
-            memset(buffer, 0, sizeof(buffer));
-            ix = 0;
-        }
+        // if (ix >= sizeof(buffer)) {
+        //     memset(buffer, 0, sizeof(buffer));
+        //     ix = 0;
+        // }
     }
 }
 
