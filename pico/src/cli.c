@@ -8,6 +8,7 @@
 #include "../include/wiegand.h"
 
 void query();
+void help();
 
 void exec(char *cmd) {
     int N = strlen(cmd);
@@ -33,6 +34,10 @@ void exec(char *cmd) {
         case 'T':
             sys_settime(&cmd[1]);
             break;
+
+        case '?':
+            help();
+            break;
         }
     }
 }
@@ -41,4 +46,7 @@ void query() {
     char s[64];
     cardf(&last_card, s, sizeof(s));
     puts(s);
+}
+
+void help() {
 }

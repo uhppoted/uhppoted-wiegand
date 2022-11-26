@@ -87,6 +87,17 @@ card last_card = {
 void on_uart0_rx() {
     static char buffer[64];
     static int ix = 0;
+    static absolute_time_t t = 0;
+
+    absolute_time_t now = get_absolute_time();
+    int64_t dt = absolute_time_diff_us(t, now);
+
+    if (t == 0 || dt > 10 * 1000 * 1000) {
+        memset(buffer, 0, sizeof(buffer));
+        ix = 0;
+    }
+
+    t = now;
 
     while (uart_is_readable(UART0)) {
         uint8_t ch = uart_getc(UART0);

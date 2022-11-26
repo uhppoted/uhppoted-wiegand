@@ -14,7 +14,7 @@
         - [x] last card + timestamp
         - [x] set time
         - [x] CLI
-        - [ ] timeout on cmd
+        - [x] Timeout on cmd
         - [x] ignore empty cmd
         - [ ] malloc/free cmd
         - [ ] echo 
