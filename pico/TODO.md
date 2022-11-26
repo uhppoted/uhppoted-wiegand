@@ -10,17 +10,17 @@
 8.  [x] Restructure folders to use src and include
 9.  [x] https://stackoverflow.com/questions/109023/count-the-number-of-set-bits-in-a-32-bit-integer
 10. [x] ~~Alternative implementations using two SMs and WAIT pin~~
-11. [ ] SPI
+11. [ ] CLI
         - [x] last card + timestamp
         - [x] set time
         - [x] CLI
         - [x] Timeout on cmd
         - [x] ignore empty cmd
         - [ ] malloc/free cmd
-        - [ ] echo 
+        - (?) echo (to bottom of screen)
 12. [ ] Move card stuff to reader.c
 13. [ ] Mode reader/emulator/unknown
-14. [ ] README
+14. [x] README
 
 ## NOTES
 

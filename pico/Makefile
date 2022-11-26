@@ -13,8 +13,6 @@ format: src/*.c include/*.h
 	clang-format -i include/*.h
 
 build: format
-	echo $(SYSDATE)
-	echo $(SYSTIME)
 	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=\\\"$(SYSDATE)\\\" SYSTIME=\\\"$(SYSTIME)\\\"
 
 install: build
