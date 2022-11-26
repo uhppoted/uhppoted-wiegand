@@ -10,8 +10,16 @@ typedef struct LED {
     int32_t timer;
 } LED;
 
+typedef struct card {
+    datetime_t timestamp;
+    uint32_t facility_code;
+    uint32_t card_number;
+    bool ok;
+} card;
+
 extern const uint D0;
 extern const uint D1;
+extern const uint READER_LED;
 
 extern const uint32_t MSG;
 extern const uint32_t MSG_WATCHDOG;
@@ -20,11 +28,8 @@ extern const uint32_t MSG_CARD_READ;
 
 extern queue_t queue;
 extern const LED TIMEOUT_LED;
-
-extern void sys_start();
-extern void sys_ok();
-extern void sys_settime(char *);
+extern card last_card;
 
 extern void blink(LED *);
-
+void cardf(const card *, char *, int);
 extern int timef(const datetime_t *, char *, int);

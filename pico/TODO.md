@@ -12,9 +12,11 @@
 10. [x] ~~Alternative implementations using two SMs and WAIT pin~~
 11. [ ] SPI
         - [x] last card + timestamp
-        - [ ] set time
-        - [ ] CLI
+        - [x] set time
+        - [x] CLI
         - [ ] malloc/free cmd
+        - [ ] timeout on cmd
+        - [ ] echo 
 12. [ ] Mode reader/emulator/unknown
 
 ## NOTES

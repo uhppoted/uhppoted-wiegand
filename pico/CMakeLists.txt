@@ -15,6 +15,7 @@ pico_sdk_init()
 add_executable(wiegand
   src/wiegand.c
   src/sys.c
+  src/cli.c
   src/reader.c
 )
 

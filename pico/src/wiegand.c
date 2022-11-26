@@ -9,7 +9,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../include/cli.h"
 #include "../include/reader.h"
+#include "../include/sys.h"
 #include "../include/wiegand.h"
 #include <IN.pio.h>
 
@@ -25,17 +27,9 @@
 #define PIO_IN pio0
 #define PIO_OUT pio1
 
-typedef struct last_card {
-    datetime_t timestamp;
-    uint32_t facility_code;
-    uint32_t card_number;
-    bool ok;
-} last_card;
-
 void setup_gpio(void);
 void setup_uart(void);
 int bits(uint32_t);
-void format(const last_card *, char *, int);
 
 int64_t off(alarm_id_t, void *);
 int64_t timeout(alarm_id_t, void *);
@@ -78,16 +72,19 @@ const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_CARD_READ = 0x20000000;
-const uint32_t MSG_LED = 0x30000000;
-const uint32_t MSG_SET_TIME = 0xe0000000;
-const uint32_t MSG_QUERY = 0xf0000000;
+const uint32_t MSG_CMD = 0xe0000000;
 
 queue_t queue;
 char cmd[64];
 
+card last_card = {
+    .facility_code = 0,
+    .card_number = 0,
+    .ok = false,
+};
+
 // UART
 void on_uart0_rx() {
-    static bool readline = false;
     static char buffer[64];
     static int ix = 0;
     uint32_t msg;
@@ -95,62 +92,23 @@ void on_uart0_rx() {
     while (uart_is_readable(UART0)) {
         uint8_t ch = uart_getc(UART0);
 
-        if (readline) {
-            if (ch == '\n' || ch == '\r') {
-                snprintf(cmd, sizeof(cmd), "%s", buffer);
-                msg = MSG_SET_TIME | 0x0000000;
-                if (!queue_is_full(&queue)) {
-                    queue_try_add(&queue, &msg);
-                }
-
-                memset(buffer, 0, sizeof(buffer));
-                readline = false;
-                ix = 0;
-
-            } else if (ix < sizeof(buffer)) {
-                buffer[ix++] = ch;
+        if (ch == '\n' || ch == '\r') {
+            snprintf(cmd, sizeof(cmd), "%s", buffer);
+            msg = MSG_CMD | 0x0000000;
+            if (!queue_is_full(&queue)) {
+                queue_try_add(&queue, &msg);
             }
 
-            if (ix >= sizeof(buffer)) {
-                memset(buffer, 0, sizeof(buffer));
-                readline = false;
-                ix = 0;
-            }
-        } else {
-            switch (ch) {
-                // ... reader LED off
-            case 'o':
-            case 'O':
-                msg = MSG_LED | 0x0000000;
-                if (!queue_is_full(&queue)) {
-                    queue_try_add(&queue, &msg);
-                }
-                break;
+            memset(buffer, 0, sizeof(buffer));
+            ix = 0;
 
-                // ... reader LED on
-            case 'x':
-            case 'X':
-                msg = MSG_LED | 0x0000001;
-                if (!queue_is_full(&queue)) {
-                    queue_try_add(&queue, &msg);
-                }
-                break;
+        } else if (ix < sizeof(buffer)) {
+            buffer[ix++] = ch;
+        }
 
-                // ... query
-            case 'q':
-            case 'Q':
-                msg = MSG_QUERY | 0x0000000;
-                if (!queue_is_full(&queue)) {
-                    queue_try_add(&queue, &msg);
-                }
-                break;
-
-                // ... set date/time
-            case 't':
-            case 'T':
-                readline = true;
-                break;
-            }
+        if (ix >= sizeof(buffer)) {
+            memset(buffer, 0, sizeof(buffer));
+            ix = 0;
         }
     }
 }
@@ -208,12 +166,6 @@ int main() {
     snprintf(dt, sizeof(dt), "%s %s", SYSDATE, SYSTIME);
     sys_settime(dt);
 
-    struct last_card last_card = {
-        .facility_code = 0,
-        .card_number = 0,
-        .ok = false,
-    };
-
     rtc_get_datetime(&last_card.timestamp);
 
     while (true) {
@@ -228,6 +180,10 @@ int main() {
             sys_ok();
         }
 
+        if ((v & MSG) == MSG_CMD) {
+            exec(cmd);
+        }
+
         if ((v & MSG) == MSG_CARD_READ) {
             int even = bits(v & 0x03ffe000) % 2;
             int odd = bits(v & 0x00001fff) % 2;
@@ -239,24 +195,9 @@ int main() {
             last_card.ok = even == 0 && odd == 1;
 
             rtc_get_datetime(&last_card.timestamp);
-            format(&last_card, s, sizeof(s));
+            cardf(&last_card, s, sizeof(s));
             puts(s);
             blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
-        }
-
-        if ((v & MSG) == MSG_LED) {
-            gpio_put(READER_LED, v & 0x0000000f);
-        }
-
-        if ((v & MSG) == MSG_SET_TIME) {
-            // sys_settime(cmd);
-            // sys_settime("2022-11-24 21:31:14");
-        }
-
-        if ((v & MSG) == MSG_QUERY) {
-            char s[64];
-            format(&last_card, s, sizeof(s));
-            puts(s);
         }
     }
 
@@ -349,19 +290,19 @@ int bits(uint32_t v) {
     return (v * 0x01010101) >> 24;
 }
 
-void format(const last_card *card, char *s, int N) {
-    if (card->card_number == 0) {
+void cardf(const card *c, char *s, int N) {
+    if (c->card_number == 0) {
         snprintf(s, N, "CARD  ---");
     } else {
         snprintf(s, N, "CARD  %04d-%02d-%02d %02d:%02d:%02d  %d%05d %s",
-                 card->timestamp.year,
-                 card->timestamp.month,
-                 card->timestamp.day,
-                 card->timestamp.hour,
-                 card->timestamp.min,
-                 card->timestamp.sec,
-                 card->facility_code,
-                 card->card_number,
-                 card->ok ? "OK" : "INVALID");
+                 c->timestamp.year,
+                 c->timestamp.month,
+                 c->timestamp.day,
+                 c->timestamp.hour,
+                 c->timestamp.min,
+                 c->timestamp.sec,
+                 c->facility_code,
+                 c->card_number,
+                 c->ok ? "OK" : "INVALID");
     }
 }
