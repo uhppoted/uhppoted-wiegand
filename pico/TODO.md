@@ -11,7 +11,7 @@
 9.  [x] https://stackoverflow.com/questions/109023/count-the-number-of-set-bits-in-a-32-bit-integer
 10. [x] ~~Alternative implementations using two SMs and WAIT pin~~
 11. [x] CLI
-12. [ ] Move card stuff to reader.c
+12. [x] Move remaining card stuff to reader.c
 13. [ ] Mode reader/emulator/unknown
 14. [x] README
 

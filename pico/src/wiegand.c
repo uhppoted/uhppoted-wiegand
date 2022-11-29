@@ -30,7 +30,6 @@
 
 void setup_gpio(void);
 void setup_uart(void);
-int bits(uint32_t);
 
 int64_t off(alarm_id_t, void *);
 int64_t timeout(alarm_id_t, void *);
@@ -169,13 +168,15 @@ int main() {
     reader_initialise();
 
     // ... setup sys stuff
-
     add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
     add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
 
-    char dt[64];
-    snprintf(dt, sizeof(dt), "%s %s", SYSDATE, SYSTIME);
-    sys_settime(dt);
+    char *dt = calloc(32, 1);
+    if (dt != NULL) {
+        snprintf(dt, 32, "%s %s", SYSDATE, SYSTIME);
+        sys_settime(dt);
+        free(dt);
+    }
 
     rtc_get_datetime(&last_card.timestamp);
 
@@ -198,16 +199,9 @@ int main() {
         }
 
         if ((v & MSG) == MSG_CARD_READ) {
-            int even = bits(v & 0x03ffe000) % 2;
-            int odd = bits(v & 0x00001fff) % 2;
-            uint32_t card = (v >> 1) & 0x00ffffff;
             char s[64];
 
-            last_card.facility_code = (card >> 16) & 0x000000ff;
-            last_card.card_number = card & 0x0000ffff;
-            last_card.ok = even == 0 && odd == 1;
-
-            rtc_get_datetime(&last_card.timestamp);
+            on_card_read(v & 0x0f000000);
             cardf(&last_card, s, sizeof(s));
             puts(s);
             blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);

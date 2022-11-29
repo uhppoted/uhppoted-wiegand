@@ -1,3 +1,4 @@
+#include "hardware/rtc.h"
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
@@ -83,4 +84,17 @@ int64_t timeout(alarm_id_t id, void *data) {
 
     blink((LED *)&TIMEOUT_LED);
     cancel_alarm(id);
+}
+
+void on_card_read(uint32_t v) {
+    int even = bits(v & 0x03ffe000) % 2;
+    int odd = bits(v & 0x00001fff) % 2;
+    uint32_t card = (v >> 1) & 0x00ffffff;
+    char s[64];
+
+    last_card.facility_code = (card >> 16) & 0x000000ff;
+    last_card.card_number = card & 0x0000ffff;
+    last_card.ok = even == 0 && odd == 1;
+
+    rtc_get_datetime(&last_card.timestamp);
 }
