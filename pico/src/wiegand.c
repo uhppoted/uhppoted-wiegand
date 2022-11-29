@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "hardware/gpio.h"
 #include "hardware/pio.h"
 #include "hardware/rtc.h"
@@ -5,9 +9,6 @@
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
 #include "pico/util/datetime.h"
-
-#include <stdio.h>
-#include <string.h>
 
 #include "../include/cli.h"
 #include "../include/reader.h"
@@ -75,7 +76,6 @@ const uint32_t MSG_CARD_READ = 0x20000000;
 const uint32_t MSG_CMD = 0xe0000000;
 
 queue_t queue;
-char cmd[64];
 
 card last_card = {
     .facility_code = 0,
@@ -104,10 +104,13 @@ void on_uart0_rx() {
 
         if (ch == '\n' || ch == '\r') {
             if (ix > 0) {
-                uint32_t msg = MSG_CMD | 0x0000000;
-                snprintf(cmd, sizeof(cmd), "%s", buffer);
-                if (!queue_is_full(&queue)) {
-                    queue_try_add(&queue, &msg);
+                char *cmd = calloc(64, 1);
+                if (cmd != NULL) {
+                    snprintf(cmd, 64, "%s", buffer);
+                    uint32_t msg = MSG_CMD | ((uint32_t)cmd & 0x0fffffff); // SRAM_BASE is 0x20000000
+                    if (!queue_is_full(&queue)) {
+                        queue_try_add(&queue, &msg);
+                    }
                 }
             }
 
@@ -118,11 +121,6 @@ void on_uart0_rx() {
             buffer[ix++] = ch;
             buffer[ix] = 0;
         }
-
-        // if (ix >= sizeof(buffer)) {
-        //     memset(buffer, 0, sizeof(buffer));
-        //     ix = 0;
-        // }
     }
 }
 
@@ -194,7 +192,9 @@ int main() {
         }
 
         if ((v & MSG) == MSG_CMD) {
+            char *cmd = (char *)(SRAM_BASE | (v & 0x0fffffff));
             exec(cmd);
+            free(cmd);
         }
 
         if ((v & MSG) == MSG_CARD_READ) {

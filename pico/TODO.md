@@ -10,17 +10,12 @@
 8.  [x] Restructure folders to use src and include
 9.  [x] https://stackoverflow.com/questions/109023/count-the-number-of-set-bits-in-a-32-bit-integer
 10. [x] ~~Alternative implementations using two SMs and WAIT pin~~
-11. [ ] CLI
-        - [x] last card + timestamp
-        - [x] set time
-        - [x] CLI
-        - [x] Timeout on cmd
-        - [x] ignore empty cmd
-        - [ ] malloc/free cmd
-        - (?) echo (to bottom of screen)
+11. [x] CLI
 12. [ ] Move card stuff to reader.c
 13. [ ] Mode reader/emulator/unknown
 14. [x] README
+
+15. [ ] Echo cmd to bottom of terminal
 
 ## NOTES
 
@@ -37,3 +32,6 @@
 4. https://www.mouser.ca/ProductDetail/Microchip-Technology-Atmel/ATECC608A-MAHDA-T?qs=wd5RIQLrsJiNcP5AuKx6KQ%3D%3D
    - https://www.sparkfun.com/products/18077
    - https://www.mikroe.com/secure-4-click
+5. Lua
+   - https://github.com/kevinboone/luapico
+   - https://sillycross.github.io/2022/11/22/2022-11-22/
