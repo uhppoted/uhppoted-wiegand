@@ -5,6 +5,11 @@
 
 #include "../include/wiegand.h"
 
+const char *MODES[] = {
+    "UNKNOWN",
+    "READER",
+    "EMULATOR"};
+
 void sys_start() {
     char s[64];
     datetime_t now;
@@ -26,7 +31,7 @@ void sys_ok() {
 
     int N = timef(&now, s, sizeof(s));
 
-    snprintf(&s[N], sizeof(s) - N, "  %s", "SYS OK");
+    snprintf(&s[N], sizeof(s) - N, "  %s %s", "SYS OK", MODES[mode]);
     puts(s);
 }
 

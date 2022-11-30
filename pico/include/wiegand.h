@@ -5,6 +5,10 @@
 #define PIO_IN pio0
 #define PIO_OUT pio1
 
+enum MODE { UNKNOWN = 0,
+            READER,
+            EMULATOR };
+
 typedef struct LED {
     uint pin;
     int32_t timer;
@@ -16,6 +20,10 @@ typedef struct card {
     uint32_t card_number;
     bool ok;
 } card;
+
+extern enum MODE mode;
+extern const uint MODE_READER;
+extern const uint MODE_EMULATOR;
 
 extern const uint D0;
 extern const uint D1;

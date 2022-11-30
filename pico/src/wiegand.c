@@ -67,6 +67,8 @@ const uint ORANGE_LED = GPIO_13;
 const uint BLUE_LED = GPIO_12;
 const uint D0 = GPIO_16;
 const uint D1 = GPIO_17;
+const uint MODE_READER = GPIO_2;
+const uint MODE_EMULATOR = GPIO_3;
 
 const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
@@ -74,6 +76,7 @@ const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_CARD_READ = 0x20000000;
 const uint32_t MSG_CMD = 0xe0000000;
 
+enum MODE mode = UNKNOWN;
 queue_t queue;
 
 card last_card = {
@@ -164,7 +167,16 @@ int main() {
     setup_uart();
     alarm_pool_init_default();
 
-    // ... initialise reader
+    // ... initialise reader/emulator
+
+    if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
+        mode = READER;
+    } else if (gpio_get(MODE_READER) && !gpio_get(MODE_EMULATOR)) {
+        mode = EMULATOR;
+    } else {
+        mode = UNKNOWN;
+    }
+
     reader_initialise();
 
     // ... setup sys stuff
@@ -179,6 +191,7 @@ int main() {
     }
 
     rtc_get_datetime(&last_card.timestamp);
+    sys_ok();
 
     while (true) {
         uint32_t v;
@@ -233,6 +246,14 @@ void setup_gpio() {
     gpio_put(YELLOW_LED, 0);
     gpio_put(ORANGE_LED, 0);
     gpio_put(BLUE_LED, 0);
+
+    gpio_init(MODE_READER);
+    gpio_set_dir(MODE_READER, GPIO_IN);
+    gpio_pull_up(MODE_READER);
+
+    gpio_init(MODE_EMULATOR);
+    gpio_set_dir(MODE_EMULATOR, GPIO_IN);
+    gpio_pull_up(MODE_EMULATOR);
 }
 
 void setup_uart() {

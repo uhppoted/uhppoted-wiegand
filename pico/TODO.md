@@ -12,8 +12,8 @@
 10. [x] ~~Alternative implementations using two SMs and WAIT pin~~
 11. [x] CLI
 12. [x] Move remaining card stuff to reader.c
-13. [ ] Mode reader/emulator/unknown
-14. [x] README
+12. [x] README
+14. [x] Mode reader/emulator/unknown
 
 15. [ ] Echo cmd to bottom of terminal
 

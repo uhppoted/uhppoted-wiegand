@@ -26,3 +26,5 @@
    0 0000 0000 0000 1111 1111 1111 1
    0000 0000 0000 0000 0001 1111 1111 1111
    0    0    0    0    1    f    f    f
+
+3. https://www.raspberrypi.com/news/how-to-add-ethernet-to-raspberry-pi-pico/
