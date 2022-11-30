@@ -74,7 +74,8 @@ const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_CARD_READ = 0x20000000;
-const uint32_t MSG_CMD = 0xe0000000;
+const uint32_t MSG_ECHO = 0xe0000000;
+const uint32_t MSG_CMD = 0xf0000000;
 
 enum MODE mode = UNKNOWN;
 queue_t queue;
@@ -122,6 +123,10 @@ void on_uart0_rx() {
         } else if (ix < sizeof(buffer) - 1) {
             buffer[ix++] = ch;
             buffer[ix] = 0;
+            uint32_t msg = MSG_ECHO | ((uint32_t)buffer & 0x0fffffff); // SRAM_BASE is 0x20000000
+            if (!queue_is_full(&queue)) {
+                queue_try_add(&queue, &msg);
+            }
         }
     }
 }
@@ -192,6 +197,7 @@ int main() {
 
     rtc_get_datetime(&last_card.timestamp);
     sys_ok();
+    VT100();
 
     while (true) {
         uint32_t v;
@@ -203,6 +209,11 @@ int main() {
 
         if ((v & MSG) == MSG_SYSCHECK) {
             sys_ok();
+        }
+
+        if ((v & MSG) == MSG_ECHO) {
+            const char *cmd = (const char *)(SRAM_BASE | (v & 0x0fffffff));
+            echo(cmd);
         }
 
         if ((v & MSG) == MSG_CMD) {

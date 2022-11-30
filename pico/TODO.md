@@ -10,12 +10,14 @@
 8.  [x] Restructure folders to use src and include
 9.  [x] https://stackoverflow.com/questions/109023/count-the-number-of-set-bits-in-a-32-bit-integer
 10. [x] ~~Alternative implementations using two SMs and WAIT pin~~
-11. [x] CLI
-12. [x] Move remaining card stuff to reader.c
+11. [x] Move remaining card stuff to reader.c
 12. [x] README
-14. [x] Mode reader/emulator/unknown
-
-15. [ ] Echo cmd to bottom of terminal
+13. [x] Mode reader/emulator/unknown
+14. [x] CLI
+        - [x] Echo cmd to bottom of terminal
+        - [x] Clear EOL on exec
+        - [ ] Backspace
+        - [ ] Clear EOL on timeout
 
 ## NOTES
 

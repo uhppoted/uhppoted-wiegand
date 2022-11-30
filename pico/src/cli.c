@@ -8,8 +8,35 @@
 #include "../include/sys.h"
 #include "../include/wiegand.h"
 
+const char ESC = 27;
+const uint8_t WINDOW_HEIGHT = 48;
+const uint8_t WINDOW_CMDLINE = WINDOW_HEIGHT + 2;
+
 void query();
 void help();
+void clear_cmd();
+
+// Sets scrolling area to 0;48 and displays >> at command line
+void VT100() {
+    char s[24];
+    snprintf(s, sizeof(s), "\033[0;%dr\0337\033[%d;0H>> \033[0K\0338", WINDOW_HEIGHT, WINDOW_CMDLINE);
+    fputs(s, stdout);
+    fflush(stdout);
+}
+
+void echo(const char *cmd) {
+    char s[64];
+    snprintf(s, sizeof(s), "\0337\033[%d;0H>> %s\0338", WINDOW_CMDLINE, cmd);
+    fputs(s, stdout);
+    fflush(stdout);
+}
+
+void clear_cmd() {
+    char s[24];
+    snprintf(s, sizeof(s), "\0337\033[%d;0H>> \033[0K\0338", WINDOW_CMDLINE);
+    fputs(s, stdout);
+    fflush(stdout);
+}
 
 void exec(char *cmd) {
     int N = strlen(cmd);
@@ -41,6 +68,8 @@ void exec(char *cmd) {
             break;
         }
     }
+
+    clear_cmd();
 }
 
 void query() {
