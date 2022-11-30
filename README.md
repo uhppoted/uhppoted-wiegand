@@ -1,6 +1,6 @@
 # uhppoted-wiegand
 
-`uhppoted-wiegand` implements a Raspberry Pi Pico reader/emulator for a Wiegand-26 interface.
+`uhppoted-wiegand` implements a _Raspberry Pi Pico_ reader/emulator for a Wiegand-26 interface.
 
 The project is **mostly** a just-for-fun exploration of the capabilities of the RP2040 PIO but could also 
 be useful as a basis for:
@@ -19,7 +19,7 @@ The project includes:
 
 The RP2040 PIO is an intriguing peripheral and this project was an excuse to explore its capabilities and
 limitations. Wiegand-26 is particularly simple protocol and does not even begin to push the boundaries of
-the PIO. And maybe the code and associated information will be useful for other things...
+the PIO but maybe the code and associated information will be useful for other things...
 
 ## Status
 
@@ -34,12 +34,12 @@ _-- IN DEVELOPMENT --_
 Required tools:
 - [Raspberry Pi Pico C/C++ SDK](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf)
 - Compatible C/C++ compiler
-- make
+- _make_
 - [PicoProbe](https://github.com/raspberrypi/picoprobe) (optional but recommended)
 - [OpenOCD](https://github.com/raspberrypi/openocd.git) (optional but recommended)
 - [PicoTool](https://github.com/raspberrypi/picotool) (optional but recommended)
 
-To build using the included Makefile:
+To build using the included _Makefile_:
 ```
 git clone https://github.com/uhppoted/uhppoted-wiegand.git
 cd uhppoted-wiegand/pico
@@ -47,12 +47,12 @@ make clean
 make build
 ```
 
-The `build` target produces both an UF2 and an ELF binary for installation on Pico using either:
+The `build` target produces both a UF2 and an ELF binary for installation on a _Raspberry Pi Pico_ using either:
 - USB (using _BOOTSEL_)
 - _PicoProbe_ + _OpenOCD_
 - _PicoTool_
 
-- The `make install` command installs the binary using PicoTool
+- The `make install` command installs the binary using _PicoTool_
 - The `make run` command installs the binary using _PicoProbe_ and _OpenOCD_
 
 #### Dependencies
