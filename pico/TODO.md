@@ -16,6 +16,7 @@
 14. [x] CLI
         - [x] Echo cmd to bottom of terminal
         - [x] Clear EOL on exec
+        - [x] Queried terminal window size on start
         - [ ] Backspace
         - [ ] Clear EOL on timeout
 

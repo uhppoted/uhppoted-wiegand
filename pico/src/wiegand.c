@@ -92,10 +92,11 @@ void on_uart0_rx() {
     static int ix = 0;
     static absolute_time_t t = 0;
 
+    // ... clear command buffer on idle for 30s
     absolute_time_t now = get_absolute_time();
     int64_t dt = absolute_time_diff_us(t, now);
 
-    if (t == 0 || dt > 10 * 1000 * 1000) {
+    if (t == 0 || dt > 30 * 1000 * 1000) {
         memset(buffer, 0, sizeof(buffer));
         ix = 0;
     }
@@ -105,6 +106,7 @@ void on_uart0_rx() {
     while (uart_is_readable(UART0)) {
         uint8_t ch = uart_getc(UART0);
 
+        // CRLF ?
         if (ch == '\n' || ch == '\r') {
             if (ix > 0) {
                 char *cmd = calloc(64, 1);
@@ -119,13 +121,39 @@ void on_uart0_rx() {
 
             memset(buffer, 0, sizeof(buffer));
             ix = 0;
+            continue;
+        }
 
-        } else if (ix < sizeof(buffer) - 1) {
+        // VT100 escape code?
+        if (buffer[0] == 27 && ch == 'R' && (ix < sizeof(buffer) - 1)) { // VT100 cursor position report
             buffer[ix++] = ch;
             buffer[ix] = 0;
-            uint32_t msg = MSG_ECHO | ((uint32_t)buffer & 0x0fffffff); // SRAM_BASE is 0x20000000
-            if (!queue_is_full(&queue)) {
-                queue_try_add(&queue, &msg);
+
+            char *cmd = calloc(64, 1);
+            if (cmd != NULL) {
+                snprintf(cmd, 64, "%s", buffer);
+                uint32_t msg = MSG_CMD | ((uint32_t)cmd & 0x0fffffff); // SRAM_BASE is 0x20000000
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
+            }
+
+            memset(buffer, 0, sizeof(buffer));
+            ix = 0;
+            continue;
+        }
+
+        // Add character to buffer
+        if (ix < sizeof(buffer) - 1) {
+            buffer[ix++] = ch;
+            buffer[ix] = 0;
+
+            // ... echo if normal commnad and not a VT100 code
+            if (buffer[0] != 27) {
+                uint32_t msg = MSG_ECHO | ((uint32_t)buffer & 0x0fffffff); // SRAM_BASE is 0x20000000
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
             }
         }
     }
