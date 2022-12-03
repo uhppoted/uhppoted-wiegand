@@ -34,8 +34,8 @@ extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_SYSCHECK;
 extern const uint32_t MSG_CARD_READ;
 
-extern queue_t queue;
 extern const LED TIMEOUT_LED;
+extern queue_t queue;
 extern card last_card;
 
 extern void blink(LED *);

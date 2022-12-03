@@ -18,8 +18,8 @@
         - [x] Clear EOL on exec
         - [x] Queried terminal window size on start
         - [x] Backspace
+        - [x] Move decoding out of interrupt handler
         - [ ] Clear EOL on timeout
-        - [ ] Move decoding out of interrupt handler
 
 ## NOTES
 
