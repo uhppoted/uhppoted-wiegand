@@ -17,8 +17,9 @@
         - [x] Echo cmd to bottom of terminal
         - [x] Clear EOL on exec
         - [x] Queried terminal window size on start
-        - [ ] Backspace
+        - [x] Backspace
         - [ ] Clear EOL on timeout
+        - [ ] Move decoding out of interrupt handler
 
 ## NOTES
 

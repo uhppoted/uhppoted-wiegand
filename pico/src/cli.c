@@ -32,7 +32,7 @@ void VT100() {
  */
 void echo(const char *cmd) {
     char s[64];
-    snprintf(s, sizeof(s), "\0337\033[%d;0H>> %s\0338", height, cmd);
+    snprintf(s, sizeof(s), "\0337\033[%d;0H>> %s\033[0K\0338", height, cmd);
     fputs(s, stdout);
     fflush(stdout);
 }

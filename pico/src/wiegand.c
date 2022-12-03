@@ -143,6 +143,18 @@ void on_uart0_rx() {
             continue;
         }
 
+        // backspace?
+        if (ch == 8) {
+            if (ix > 0) {
+                buffer[--ix] = 0;
+                uint32_t msg = MSG_ECHO | ((uint32_t)buffer & 0x0fffffff); // SRAM_BASE is 0x20000000
+                if (!queue_is_full(&queue)) {
+                    queue_try_add(&queue, &msg);
+                }
+            }
+            continue;
+        }
+
         // Add character to buffer
         if (ix < sizeof(buffer) - 1) {
             buffer[ix++] = ch;
