@@ -55,7 +55,7 @@ void rx(char *received) {
     static CLI cli = {
         .ix = 0,
         .timer = -1,
-        .buffer = {},
+        .buffer = {0},
     };
 
     cancel_alarm(cli.timer);
