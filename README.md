@@ -13,7 +13,6 @@ The project includes:
 - _basic_ serial port command interface
 - _(in progress) PIO based Wiegand-26 emulator_
 - _(in progress) KiCad schematic for breadboard prototypes_
-- _(in progress) KiCad schematic and PCB layout for manufacturable prototypes_
 
 ## Raison d'être
 

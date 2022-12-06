@@ -8,9 +8,17 @@
 #include "../include/sys.h"
 #include "../include/wiegand.h"
 
+typedef struct CLI {
+    int ix;
+    int32_t timer;
+    char buffer[64];
+} CLI;
+
 const char ESC = 27;
 uint8_t height = 25;
+const uint32_t CLI_TIMEOUT = 10000;
 
+int64_t cli_timeout(alarm_id_t, void *);
 void echo(const char *);
 void clearline();
 
@@ -44,20 +52,13 @@ void clearline() {
  *
  */
 void rx(char *received) {
-    static char buffer[64];
-    static int ix = 0;
-    // static absolute_time_t t = 0;
-    //
-    // // ... clear command buffer on idle for 30s
-    // absolute_time_t now = get_absolute_time();
-    // int64_t dt = absolute_time_diff_us(t, now);
-    //
-    // if (t == 0 || dt > 30 * 1000 * 1000) {
-    //     memset(buffer, 0, sizeof(buffer));
-    //     ix = 0;
-    // }
-    //
-    // t = now;
+    static CLI cli = {
+        .ix = 0,
+        .timer = -1,
+        .buffer = {},
+    };
+
+    cancel_alarm(cli.timer);
 
     int N = strlen(received);
     for (int i = 0; i < N; i++) {
@@ -65,46 +66,67 @@ void rx(char *received) {
 
         // CRLF ?
         if (ch == '\n' || ch == '\r') {
-            if (ix > 0) {
-                exec(buffer);
+            if (cli.ix > 0) {
+                exec(cli.buffer);
             }
 
-            memset(buffer, 0, sizeof(buffer));
-            ix = 0;
+            memset(cli.buffer, 0, sizeof(cli.buffer));
+            cli.ix = 0;
             continue;
         }
 
         // VT100 escape code?
-        if (buffer[0] == 27 && ch == 'R' && (ix < sizeof(buffer) - 1)) { // VT100 cursor position report
-            buffer[ix++] = ch;
-            buffer[ix] = 0;
+        if (cli.buffer[0] == 27 && ch == 'R' && (cli.ix < sizeof(cli.buffer) - 1)) { // VT100 cursor position report
+            cli.buffer[cli.ix++] = ch;
+            cli.buffer[cli.ix] = 0;
 
-            cpr(&buffer[1]);
-            memset(buffer, 0, sizeof(buffer));
-            ix = 0;
+            cpr(&cli.buffer[1]);
+            memset(cli.buffer, 0, sizeof(cli.buffer));
+            cli.ix = 0;
             continue;
         }
 
         // backspace?
         if (ch == 8) {
-            if (ix > 0) {
-                buffer[--ix] = 0;
-                echo(buffer);
+            if (cli.ix > 0) {
+                cli.buffer[--cli.ix] = 0;
+                echo(cli.buffer);
             }
+
+            if (cli.ix > 0) {
+                cli.timer = add_alarm_in_ms(CLI_TIMEOUT, cli_timeout, (CLI *)&cli, true);
+            }
+
             continue;
         }
 
         // Add character to buffer
-        if (ix < sizeof(buffer) - 1) {
-            buffer[ix++] = ch;
-            buffer[ix] = 0;
+        if (cli.ix < sizeof(cli.buffer) - 1) {
+            cli.buffer[cli.ix++] = ch;
+            cli.buffer[cli.ix] = 0;
 
             // ... echo if normal commnad and not a VT100 code
-            if (buffer[0] != 27) {
-                echo(buffer);
+            if (cli.buffer[0] != 27) {
+                echo(cli.buffer);
             }
+
+            cli.timer = add_alarm_in_ms(CLI_TIMEOUT, cli_timeout, (CLI *)&cli, true);
+            continue;
         }
     }
+}
+
+/* Timeout handler. Clears the current command and command line.
+ *
+ */
+int64_t cli_timeout(alarm_id_t id, void *data) {
+    cancel_alarm(id);
+
+    CLI *cli = (CLI *)data;
+    memset(cli->buffer, 0, sizeof(cli->buffer));
+    cli->ix = 0;
+
+    clearline();
 }
 
 /* Saves the cursor position, displays the current command buffer and then restores

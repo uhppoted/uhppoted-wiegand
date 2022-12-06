@@ -19,7 +19,7 @@
         - [x] Queried terminal window size on start
         - [x] Backspace
         - [x] Move decoding out of interrupt handler
-        - [ ] Clear EOL on timeout
+        - [x] Clear EOL on timeout
 
 ## NOTES
 

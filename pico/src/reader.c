@@ -14,7 +14,7 @@ typedef struct reader {
     absolute_time_t delta;
 } reader;
 
-int64_t timeout(alarm_id_t, void *);
+int64_t read_timeout(alarm_id_t, void *);
 
 const uint32_t READ_TIMEOUT = 100;
 
@@ -43,7 +43,7 @@ void rxi() {
     if (rdr.bits == 0) {
         rdr.start = get_absolute_time();
         rdr.bits = 0;
-        rdr.timer = add_alarm_in_ms(READ_TIMEOUT, timeout, (reader *)&rdr, true);
+        rdr.timer = add_alarm_in_ms(READ_TIMEOUT, read_timeout, (reader *)&rdr, true);
     }
 
     uint32_t value = reader_program_get(PIO_IN, sm);
@@ -77,13 +77,14 @@ void rxi() {
     }
 }
 
-int64_t timeout(alarm_id_t id, void *data) {
+int64_t read_timeout(alarm_id_t id, void *data) {
+    cancel_alarm(id);
+
     reader *r = (reader *)data;
     r->bits = 0;
     r->card = 0;
 
     blink((LED *)&TIMEOUT_LED);
-    cancel_alarm(id);
 }
 
 void on_card_read(uint32_t v) {
