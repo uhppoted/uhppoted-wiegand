@@ -14,12 +14,8 @@
 12. [x] README
 13. [x] Mode reader/emulator/unknown
 14. [x] CLI
-        - [x] Echo cmd to bottom of terminal
-        - [x] Clear EOL on exec
-        - [x] Queried terminal window size on start
-        - [x] Backspace
-        - [x] Move decoding out of interrupt handler
-        - [x] Clear EOL on timeout
+15. [ ] Emulator
+        - [ ] CLI WRITE command
 
 ## NOTES
 
