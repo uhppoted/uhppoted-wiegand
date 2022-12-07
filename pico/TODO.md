@@ -15,7 +15,10 @@
 13. [x] Mode reader/emulator/unknown
 14. [x] CLI
 15. [ ] Emulator
-        - [ ] CLI WRITE command
+        - [x] CLI WRITE command
+        - [ ] Error if not emulator mode
+        - [ ] emulator::write
+        - [ ] QUERY - show R/W
 
 ## NOTES
 

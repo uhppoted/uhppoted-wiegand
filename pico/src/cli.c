@@ -25,6 +25,7 @@ void clearline();
 void exec(char *);
 void cpr(char *);
 void query();
+void write(char *);
 void help();
 
 /* Clears screen and requests terminal window size
@@ -168,6 +169,11 @@ void exec(char *cmd) {
             sys_settime(&cmd[1]);
             break;
 
+        case 'w':
+        case 'W':
+            write(&cmd[1]);
+            break;
+
         case '?':
             help();
             break;
@@ -203,6 +209,27 @@ void query() {
     char s[64];
     cardf(&last_card, s, sizeof(s));
     puts(s);
+}
+
+/* Write card command.
+ *  Extract the facility code and card number pushes it to the emulator queue.
+ *
+ */
+void write(char *cmd) {
+    uint32_t facility_code = 0;
+    uint32_t card = 0;
+    int rc = sscanf(cmd, "%02u%06u", &facility_code, &card);
+
+    if (rc > 0) {
+        uint32_t v = ((facility_code & 0x000000ff) << 16) | (card & 0x0000ffff);
+        int even = bits(v & 0x00fff000);
+        int odd = bits(v & 0x00000fff);
+        uint32_t w = (v << 1) | (((even % 2) & 0x00000001) << 25) | (((odd + 1) % 2) & 0x00000001);
+
+        char s[64];
+        snprintf(s, sizeof(s), "W %02u%06u  %06x E:%d  O:%d  %08x", facility_code, card, v, even, odd, w);
+        puts(s);
+    }
 }
 
 /* Should probably display the commands?
