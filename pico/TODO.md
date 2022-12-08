@@ -16,8 +16,9 @@
 14. [x] CLI
 15. [ ] Emulator
         - [x] CLI WRITE command
-        - [ ] Error if not emulator mode
-        - [ ] emulator::write
+        - [x] writer_write
+        - [ ] WRITE.pio
+        - [ ] Ignore if not emulator mode
         - [ ] QUERY - show R/W
 
 ## NOTES

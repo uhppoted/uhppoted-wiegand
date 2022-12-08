@@ -17,11 +17,17 @@ add_executable(wiegand
   src/sys.c
   src/cli.c
   src/reader.c
+  src/writer.c
 )
 
 pico_generate_pio_header(
-        wiegand
-        ${CMAKE_CURRENT_LIST_DIR}/src/IN.pio
+    wiegand
+    ${CMAKE_CURRENT_LIST_DIR}/src/READ.pio
+)
+
+pico_generate_pio_header(
+    wiegand
+    ${CMAKE_CURRENT_LIST_DIR}/src/WRITE.pio
 )
 
 pico_enable_stdio_usb (wiegand 0)

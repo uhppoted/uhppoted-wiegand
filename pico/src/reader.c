@@ -4,7 +4,7 @@
 
 #include "../include/reader.h"
 #include "../include/wiegand.h"
-#include <IN.pio.h>
+#include <READ.pio.h>
 
 typedef struct reader {
     uint32_t card;

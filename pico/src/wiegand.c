@@ -14,7 +14,8 @@
 #include "../include/reader.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
-#include <IN.pio.h>
+#include <READ.pio.h>
+#include <WRITE.pio.h>
 
 #define VERSION "v0.0.0"
 

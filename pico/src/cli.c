@@ -7,6 +7,7 @@
 #include "../include/cli.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
+#include "../include/writer.h"
 
 typedef struct CLI {
     int ix;
@@ -202,7 +203,7 @@ void cpr(char *cmd) {
     }
 }
 
-/* Displays the last read card, if any.
+/* Displays the last read/write card, if any.
  *
  */
 void query() {
@@ -221,14 +222,7 @@ void write(char *cmd) {
     int rc = sscanf(cmd, "%02u%06u", &facility_code, &card);
 
     if (rc > 0) {
-        uint32_t v = ((facility_code & 0x000000ff) << 16) | (card & 0x0000ffff);
-        int even = bits(v & 0x00fff000);
-        int odd = bits(v & 0x00000fff);
-        uint32_t w = (v << 1) | (((even % 2) & 0x00000001) << 25) | (((odd + 1) % 2) & 0x00000001);
-
-        char s[64];
-        snprintf(s, sizeof(s), "W %02u%06u  %06x E:%d  O:%d  %08x", facility_code, card, v, even, odd, w);
-        puts(s);
+        writer_write(facility_code, card);
     }
 }
 
