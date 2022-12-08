@@ -14,6 +14,8 @@
 #include "../include/reader.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
+#include "../include/writer.h"
+
 #include <READ.pio.h>
 #include <WRITE.pio.h>
 
@@ -52,6 +54,8 @@ const uint GPIO_14 = 14; // Pico 19
 const uint GPIO_15 = 15; // Pico 20
 const uint GPIO_16 = 16; // Pico 21
 const uint GPIO_17 = 17; // Pico 22
+const uint GPIO_18 = 18; // Pico 24
+const uint GPIO_19 = 19; // Pico 25
 const uint GPIO_20 = 20; // Pico 26
 const uint GPIO_21 = 21; // Pico 27
 const uint GPIO_25 = 25; // Pico LED
@@ -68,6 +72,8 @@ const uint ORANGE_LED = GPIO_13;
 const uint BLUE_LED = GPIO_12;
 const uint D0 = GPIO_16;
 const uint D1 = GPIO_17;
+const uint wD0 = GPIO_18;
+const uint wD1 = GPIO_19;
 const uint MODE_READER = GPIO_2;
 const uint MODE_EMULATOR = GPIO_3;
 
@@ -162,6 +168,7 @@ int main() {
     }
 
     reader_initialise();
+    writer_initialise();
 
     // ... setup sys stuff
     add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);

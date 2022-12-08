@@ -5,6 +5,21 @@
 typedef struct writer {
 } writer;
 
+/* Initialises the OUT PIO.
+ *
+ */
+void writer_initialise() {
+    PIO pio = PIO_OUT;
+    uint sm = 0;
+    uint offset = pio_add_program(pio, &writer_program);
+
+    writer_program_init(pio, sm, offset, wD0, wD1);
+
+    // irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
+    // irq_set_enabled(PIO0_IRQ_0, true);
+    // pio_set_irq0_source_enabled(pio, pis_sm0_rx_fifo_not_empty, true);
+}
+
 /* Write card command.
  *  Reformats the facility code and card number as Wiegand-26 and
  *  pushes it to the PIO out queue.
@@ -16,5 +31,5 @@ void writer_write(uint32_t facility_code, uint32_t card) {
     int odd = 1 + bits(v & 0x00000fff);
     uint32_t w = (v << 1) | (((even % 2) & 0x00000001) << 25) | ((odd % 2) & 0x00000001);
 
-    writer_program_put(PIO_OUT, w);
+    writer_program_put(PIO_OUT, 0, w);
 }

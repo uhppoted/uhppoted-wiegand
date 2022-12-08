@@ -17,7 +17,8 @@
 15. [ ] Emulator
         - [x] CLI WRITE command
         - [x] writer_write
-        - [ ] WRITE.pio
+        - [x] WRITE.pio
+        - [ ] PIO/shift-and-set
         - [ ] Ignore if not emulator mode
         - [ ] QUERY - show R/W
 

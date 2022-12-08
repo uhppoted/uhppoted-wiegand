@@ -1,18 +1,24 @@
 .program writer
 
-loop:                 ; 
-    pull block        ; wait for card
-    set pins, 1       ;
+.wrap_target
+    set pins, 3   ; D1 off,D0 off
+    pull block    ;
 
-    pull block        ;
-    set pins, 2       ;
+    set pins, 2   ; D1 off, D0 on
+    pull block    ;
 
-    jmp loop          ;   
+    set pins, 1   ; D1 on,D0 off
+    pull block    ;
+
+    set pins, 0   ; D1 on,D1 on
+    pull block    ;
+.wrap             ; loop
 
 
 % c-sdk {
 static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
-//    pio_sm_set_pindirs_with_mask(pio, sm, 0x00004000, 0x00034000);
+    uint32_t mask = (0x00000001 << d0) | (0x00000001 << d1);
+    uint32_t dirs = (0x00000001 << d0) | (0x00000001 << d1);
 
     pio_gpio_init(pio, d0);
     pio_gpio_init(pio, d1);
@@ -20,23 +26,25 @@ static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, u
     gpio_pull_up(d0);
     gpio_pull_up(d1);
 
-    pio_sm_config c = writer_program_get_default_config(offset);
+    pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
     
-//    sm_config_set_set_pins(&c, d0);
-//   sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+    pio_sm_config c = writer_program_get_default_config(offset);
 
-    sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms noise gate delay
+    sm_config_set_set_pins(&c, d0, 2);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+//  sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms noise gate delay
 
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
 }
 
-static inline uint32_t writer_program_put(PIO pio, uint sm) {
-//    io_rw_32 *fifo = (io_rw_32 *)&pio->rxf[sm];
-//
-//    if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
-//        return *fifo;
-//    }
+static inline uint32_t writer_program_put(PIO pio, uint sm, uint32_t card) {
+    io_rw_32 *fifo = (io_rw_32 *)&pio->txf[sm];
+
+    if (!pio_sm_is_tx_fifo_full(pio, sm)) {
+        *fifo = card;
+        return 0;
+    }
 
     return -1;
 }

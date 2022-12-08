@@ -27,6 +27,8 @@ extern const uint MODE_EMULATOR;
 
 extern const uint D0;
 extern const uint D1;
+extern const uint wD0;
+extern const uint wD1;
 extern const uint READER_LED;
 
 extern const uint32_t MSG;
