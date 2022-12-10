@@ -18,9 +18,12 @@
         - [x] CLI WRITE command
         - [x] writer_write
         - [x] WRITE.pio
-        - [ ] PIO/shift-and-set
+        - [x] PIO/shift-and-set
+        - [ ] Set bit delay to 1ms (x2)
         - [ ] Ignore if not emulator mode
         - [ ] QUERY - show R/W
+        - [ ] PIO/EXEC
+        - [ ] NB: gate D0/D1 in hardware on start (startup glitch)
 
 ## NOTES
 

@@ -1,24 +1,29 @@
 .program writer
 
-.wrap_target
+    pull block
+    out y, 32
     set pins, 3   ; D1 off,D0 off
-    pull block    ;
 
-    set pins, 2   ; D1 off, D0 on
-    pull block    ;
+.wrap_target
+    out pins, 2   ; set D0 and D1
+    mov x, y      ; delay
+lp1:              ;
+    jmp x-- lp1   ; 
 
-    set pins, 1   ; D1 on,D0 off
-    pull block    ;
-
-    set pins, 0   ; D1 on,D1 on
-    pull block    ;
+    set pins, 3   ; Turn LED off
+    mov x, y      ; delay
+lp2:              ; 
+    jmp x-- lp2   ;
 .wrap             ; loop
 
 
 % c-sdk {
+
 static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
     uint32_t mask = (0x00000001 << d0) | (0x00000001 << d1);
     uint32_t dirs = (0x00000001 << d0) | (0x00000001 << d1);
+    uint32_t off  = (0x00000001 << d0) | (0x00000001 << d1);
+    uint freq = 1;
 
     pio_gpio_init(pio, d0);
     pio_gpio_init(pio, d1);
@@ -26,27 +31,42 @@ static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, u
     gpio_pull_up(d0);
     gpio_pull_up(d1);
 
+    pio_sm_set_pins_with_mask(pio,sm,off,mask);
     pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
     
     pio_sm_config c = writer_program_get_default_config(offset);
 
     sm_config_set_set_pins(&c, d0, 2);
+    sm_config_set_out_pins(&c, d0, 2);    
+    sm_config_set_out_shift(&c, false, true, 32);
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
 //  sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms noise gate delay
 
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
+    
+    pio->txf[sm] = 125000000 / (2 * freq);
 }
 
 static inline uint32_t writer_program_put(PIO pio, uint sm, uint32_t card) {
-    io_rw_32 *fifo = (io_rw_32 *)&pio->txf[sm];
+    const uint64_t ZERO =   ((uint64_t) 0x02) << 62;
+    const uint64_t ONE  =   ((uint64_t) 0x01) << 62;
+    const uint64_t MASK = ~(((uint64_t) 0x03) << 62); 
 
-    if (!pio_sm_is_tx_fifo_full(pio, sm)) {
-        *fifo = card;
-        return 0;
+    uint64_t word = 0xffffffffffffffff;
+
+    for (int i=0; i<26; i++) {
+        word >>= 2;
+        word &= MASK; 
+        word |= (card & 0x01) == 0x01 ? ONE : ZERO;
+
+        card >>= 1;
     }
 
-    return -1;
+    pio_sm_put_blocking(pio,sm,(uint32_t) (word >> 32));
+    pio_sm_put_blocking(pio,sm,(uint32_t) (word >> 0));
+
+    return 0;
 }
 
 %}  

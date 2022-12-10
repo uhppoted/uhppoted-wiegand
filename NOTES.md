@@ -35,3 +35,4 @@
 18. http://uggettif.blogspot.com/2014/01/access-control-with-arduino-mega.html
 19. https://github.com/ugge75/Wiegand-Protocol-Library-for-Arduino-MEGA-2560
 20. https://www.getkisi.com/guides/osdp
+21. https://hackaday.io/project/188560-what-is-poe-my-tough-poe-development-process

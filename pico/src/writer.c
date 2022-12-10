@@ -14,10 +14,6 @@ void writer_initialise() {
     uint offset = pio_add_program(pio, &writer_program);
 
     writer_program_init(pio, sm, offset, wD0, wD1);
-
-    // irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
-    // irq_set_enabled(PIO0_IRQ_0, true);
-    // pio_set_irq0_source_enabled(pio, pis_sm0_rx_fifo_not_empty, true);
 }
 
 /* Write card command.
