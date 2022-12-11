@@ -18,7 +18,7 @@ typedef struct reader {
 
 int64_t read_timeout(alarm_id_t, void *);
 
-const uint32_t READ_TIMEOUT = 32768; // 100;
+const uint32_t READ_TIMEOUT = 100;
 
 void reader_initialise() {
     PIO pio = PIO_IN;
@@ -65,7 +65,7 @@ void rxi() {
 
     if (rdr.bits >= 26) {
         absolute_time_t now = get_absolute_time();
-        int64_t dt = absolute_time_diff_us(rdr.start, now) / 1000;
+        int64_t dt = absolute_time_diff_us(rdr.start, now) / 1;
 
         if (rdr.timer != -1) {
             cancel_alarm(rdr.timer);
@@ -76,10 +76,10 @@ void rxi() {
             queue_try_add(&queue, &v);
         }
 
-        uint32_t debug = MSG_DEBUG | ((uint32_t)dt & 0x0fffffff);
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &debug);
-        }
+        // uint32_t debug = MSG_DEBUG | ((uint32_t)dt & 0x0fffffff);
+        // if (!queue_is_full(&queue)) {
+        //     queue_try_add(&queue, &debug);
+        // }
 
         rdr.card = 0;
         rdr.bits = 0;

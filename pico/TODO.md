@@ -20,7 +20,7 @@
         - [x] WRITE.pio
         - [x] PIO/shift-and-set
         - [x] Card readback
-        - [ ] Set bit delay to 1ms (x2)
+        - [x] Set bit delay to 1ms (x2)
         - [ ] Ignore if not emulator mode
         - [ ] QUERY - show R/W
         - [ ] startup glitch

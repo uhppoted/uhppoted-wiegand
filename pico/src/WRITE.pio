@@ -1,19 +1,22 @@
 .program writer
 
-    pull block
-    out y, 32
     set pins, 3   ; D1 off,D0 off
 
 .wrap_target
     out pins, 2   ; set D0 and D1
-    mov x, y      ; delay
-lp1:              ;
-    jmp x-- lp1   ; 
 
-    set pins, 3   ; Turn LED off
-    mov x, y      ; delay
-lp2:              ; 
-    jmp x-- lp2   ;
+    set y,31      ; delay
+lp1: 
+    nop [31]      ;
+    jmp y-- lp1   ;
+
+    set pins, 3   ; reset D0 and D1
+
+    set y,31      ; delay
+lp2: 
+    nop [31]      ;
+    jmp y-- lp2   ;
+
 .wrap             ; loop
 
 
@@ -39,12 +42,10 @@ static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, u
     sm_config_set_out_pins(&c, d0, 2);    
     sm_config_set_out_shift(&c, false, true, 32);
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
-//  sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms noise gate delay
+    sm_config_set_clkdiv(&c, 124.0593);  // ~2x1ms per bit
 
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
-    
-    pio->txf[sm] = 125000000 / 942;
 }
 
 static inline uint32_t writer_program_put(PIO pio, uint sm, uint32_t card) {
