@@ -10,8 +10,8 @@ be useful as a basis for:
 
 The project includes:
 - PIO based Wiegand-26 reader
+- PIO based Wiegand-26 emulator
 - _basic_ serial port command interface
-- _(in progress) PIO based Wiegand-26 emulator_
 - _(in progress) KiCad schematic for breadboard prototypes_
 
 ## Raison d'être

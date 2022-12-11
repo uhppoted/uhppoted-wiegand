@@ -1,7 +1,5 @@
 .program writer
 
-    set pins, 3   ; D1 off,D0 off
-
 .wrap_target
     out pins, 2   ; set D0 and D1
 
