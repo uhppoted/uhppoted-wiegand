@@ -19,11 +19,11 @@
         - [x] writer_write
         - [x] WRITE.pio
         - [x] PIO/shift-and-set
+        - [x] Card readback
         - [ ] Set bit delay to 1ms (x2)
         - [ ] Ignore if not emulator mode
         - [ ] QUERY - show R/W
-        - [ ] PIO/EXEC
-        - [ ] NB: gate D0/D1 in hardware on start (startup glitch)
+        - [ ] startup glitch
 
 ## NOTES
 

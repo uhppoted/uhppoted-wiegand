@@ -31,7 +31,7 @@ void sys_ok() {
 
     int N = timef(&now, s, sizeof(s));
 
-    snprintf(&s[N], sizeof(s) - N, "  %s %s", "SYS OK", MODES[mode]);
+    snprintf(&s[N], sizeof(s) - N, "  %-4s %-8s %s", "SYS", MODES[mode], "OK");
     puts(s);
 }
 

@@ -206,7 +206,8 @@ int main() {
         if ((v & MSG) == MSG_CARD_READ) {
             char s[64];
 
-            on_card_read(v & 0x0f000000);
+            on_card_read(v & 0x0fffffff);
+
             cardf(&last_card, s, sizeof(s));
             puts(s);
             blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
@@ -314,7 +315,7 @@ void cardf(const card *c, char *s, int N) {
     if (c->card_number == 0) {
         snprintf(s, N, "CARD  ---");
     } else {
-        snprintf(s, N, "CARD  %04d-%02d-%02d %02d:%02d:%02d  %d%05d %s",
+        snprintf(s, N, "%04d-%02d-%02d %02d:%02d:%02d  CARD %02d%06d %s",
                  c->timestamp.year,
                  c->timestamp.month,
                  c->timestamp.day,

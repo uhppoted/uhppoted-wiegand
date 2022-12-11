@@ -16,7 +16,7 @@ typedef struct reader {
 
 int64_t read_timeout(alarm_id_t, void *);
 
-const uint32_t READ_TIMEOUT = 100;
+const uint32_t READ_TIMEOUT = 32768; // 100;
 
 void reader_initialise() {
     PIO pio = PIO_IN;
@@ -88,14 +88,13 @@ int64_t read_timeout(alarm_id_t id, void *data) {
 }
 
 void on_card_read(uint32_t v) {
-    int even = bits(v & 0x03ffe000) % 2;
-    int odd = bits(v & 0x00001fff) % 2;
+    int even = bits(v & 0x03ffe000);
+    int odd = bits(v & 0x00001fff);
     uint32_t card = (v >> 1) & 0x00ffffff;
-    char s[64];
 
     last_card.facility_code = (card >> 16) & 0x000000ff;
     last_card.card_number = card & 0x0000ffff;
-    last_card.ok = even == 0 && odd == 1;
+    last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
 
     rtc_get_datetime(&last_card.timestamp);
 }
