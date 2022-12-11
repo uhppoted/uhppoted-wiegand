@@ -23,7 +23,6 @@ static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, u
     uint32_t mask = (0x00000001 << d0) | (0x00000001 << d1);
     uint32_t dirs = (0x00000001 << d0) | (0x00000001 << d1);
     uint32_t off  = (0x00000001 << d0) | (0x00000001 << d1);
-    uint freq = 1;
 
     pio_gpio_init(pio, d0);
     pio_gpio_init(pio, d1);
@@ -45,7 +44,7 @@ static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, u
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
     
-    pio->txf[sm] = 125000000 / (2 * freq);
+    pio->txf[sm] = 125000000 / 942;
 }
 
 static inline uint32_t writer_program_put(PIO pio, uint sm, uint32_t card) {

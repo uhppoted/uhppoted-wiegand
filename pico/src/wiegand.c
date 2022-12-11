@@ -82,6 +82,7 @@ const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_CARD_READ = 0x30000000;
+const uint32_t MSG_DEBUG = 0xf0000000;
 
 enum MODE mode = UNKNOWN;
 queue_t queue;
@@ -211,6 +212,12 @@ int main() {
             cardf(&last_card, s, sizeof(s));
             puts(s);
             blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
+        }
+
+        if ((v & MSG) == MSG_DEBUG) {
+            char s[64];
+            snprintf(s, sizeof(s), "%d", v & 0x0fffffff);
+            puts(s);
         }
     }
 

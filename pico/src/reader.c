@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "hardware/rtc.h"
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
@@ -62,6 +64,9 @@ void rxi() {
     }
 
     if (rdr.bits >= 26) {
+        absolute_time_t now = get_absolute_time();
+        int64_t dt = absolute_time_diff_us(rdr.start, now) / 1000;
+
         if (rdr.timer != -1) {
             cancel_alarm(rdr.timer);
         }
@@ -69,6 +74,11 @@ void rxi() {
         uint32_t v = MSG_CARD_READ | (rdr.card & 0x0fffffff);
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
+        }
+
+        uint32_t debug = MSG_DEBUG | ((uint32_t)dt & 0x0fffffff);
+        if (!queue_is_full(&queue)) {
+            queue_try_add(&queue, &debug);
         }
 
         rdr.card = 0;
