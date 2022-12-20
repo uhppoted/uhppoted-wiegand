@@ -319,10 +319,22 @@ int bits(uint32_t v) {
 }
 
 void cardf(const card *c, char *s, int N) {
+    const char *FMT = "%04d-%02d-%02d %02d:%02d:%02d  CARD %d%05d %s";
+    const char *FMT1 = "%04d-%02d-%02d %02d:%02d:%02d  CARD %d%05d  %s";
+    const char *FMT0 = "%04d-%02d-%02d %02d:%02d:%02d  CARD %d%05d   %s";
+
     if (c->card_number == 0) {
         snprintf(s, N, "CARD  ---");
     } else {
-        snprintf(s, N, "%04d-%02d-%02d %02d:%02d:%02d  CARD %02d%06d %s",
+        const char *fmt = FMT;
+
+        if (c->facility_code < 10) {
+            fmt = FMT0;
+        } else if (c->facility_code < 100) {
+            fmt = FMT1;
+        }
+
+        snprintf(s, N, fmt,
                  c->timestamp.year,
                  c->timestamp.month,
                  c->timestamp.day,

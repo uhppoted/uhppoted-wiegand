@@ -21,6 +21,10 @@
    - CD4050
    - Needs to be bidirectional though
 
+7. Relay driver
+   - https://kevinboone.me/pi-button-pipe.html
+   - https://kevinboone.me/pi_relay.html
+
 7.  https://forum.arduino.cc/t/wiegand-reader-led-xpr/649694
 8.  https://electronics.stackexchange.com/questions/422329/cheap-12v-to-5v-dc-dc-converter-for-pcb
 9.  https://www.ti.com/lit/ds/symlink/lm2596.pdf
@@ -36,3 +40,6 @@
 19. https://github.com/ugge75/Wiegand-Protocol-Library-for-Arduino-MEGA-2560
 20. https://www.getkisi.com/guides/osdp
 21. https://hackaday.io/project/188560-what-is-poe-my-tough-poe-development-process
+22. https://www.microchip.com/en-us/product/RN171
+23. https://docs.rs/embedded-tls/latest/embedded_tls/index.html
+24. https://imihajlov.tk/blog/posts/eth-to-spi/q

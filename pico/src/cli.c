@@ -219,11 +219,30 @@ void query() {
 void write(char *cmd) {
     uint32_t facility_code = 0;
     uint32_t card = 0;
-    int rc = sscanf(cmd, "%02u%06u", &facility_code, &card);
+    int N = strlen(cmd);
+    int rc;
 
-    if (rc > 0) {
-        writer_write(facility_code, card);
+    if (N < 5) {
+        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
+            return;
+        }
+    } else {
+        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
+            return;
+        }
+
+        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
+            return;
+        } else if (N > 8) {
+            return;
+        }
     }
+
+    writer_write(facility_code, card);
 }
 
 /* Should probably display the commands?
