@@ -18,7 +18,7 @@ The project includes:
 
 The RP2040 PIO is an intriguing peripheral and this project was an excuse to explore its capabilities and
 limitations. Wiegand-26 is particularly simple protocol and does not even begin to push the boundaries of
-the PIO but maybe the code and associated information will be useful for other things...
+the PIO but maybe the code and associated information will be useful for other things.
 
 ## Status
 
@@ -68,13 +68,17 @@ single letter mnemonics and need to be terminated by a carriage return and/or li
 
 The supported command set comprises:
 
-| *Command*              | *Description*                         |
-| ---------------------- | ------------------------------------- |
-| O                      | Turns on the reader LED               |
-| X                      | Turns off the reader LED              |
-| Q                      | Retrieves the last read card (if any) |
-| Tyyyy-mm-dd HH:mm:ss   | Sets the Pico date and time           |
+| *Command*              | *Description*                           |
+| ---------------------- | --------------------------------------- |
+| O                      | Turns on the reader LED                 |
+| X                      | Turns off the reader LED                |
+| Q                      | Retrieves the last read card (if any)   |
+| Tyyyy-mm-dd HH:mm:ss   | Sets the Pico date and time             |
+| Wnnnnnnnnn             | Writes a card number out as Wiegand-26  |
 
+Notes:
+1. The default facility code for _emulator_ mode is a build time constant (`FACILITY_CODE` in the _Makefile_) and will
+be used if the _W_ command card number is 5 digits or less.
 
 ## References and Related Projects
 
