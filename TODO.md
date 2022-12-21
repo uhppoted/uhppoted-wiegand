@@ -22,34 +22,30 @@
         - [x] Card readback
         - [x] Set bit delay to 1ms (x2)
         - [x] Not formatting card number correctly to actual controller
-```
-405419896  ... 2022-12-20 12:27:44 0          0 00 00 | 206924 1   false 3 1     10058399   2022-12-20 12:27:44 6
-405419896  ... 2022-12-20 12:29:16 0          0 00 00 | 206925 1   false 4 1     1058399    2022-12-20 12:29:16 6
-
-reader:
->> DEBUG: 13223999 00c9c83f
-
-emulator:
->> DEBUG: 34981951 0215c83f
-```
-
-        - [ ] Ignore if not emulator mode
-        - [ ] QUERY - show R/W
+        - [x] Ignore if not emulator mode
+        - [ ] Set default facility code at compile time
+        - [ ] LED input
         - [ ] startup glitch
+        - [ ] 'beep' on read
 
 16. [ ] Prototype schematic
+        - [ ] Cleanup breadboard
         - LEDs
         - Move all the Wiegand I/O to one side
         - Relay driver
         - Door input
         - Door relay
         - (?) Fritzing
+        - (?) Photo
 
 17. [ ] Schematic
+        - RW/WR jumpers
+        - Mode jumpers
         - Relay driver
         - Door input
         - Door relay
         - LEDs
+        - Reset button
         - (?) Long line drivers
         - (?) PiZero header
 

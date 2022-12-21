@@ -172,7 +172,9 @@ void exec(char *cmd) {
 
         case 'w':
         case 'W':
-            write(&cmd[1]);
+            if (mode == EMULATOR) {
+                write(&cmd[1]);
+            }
             break;
 
         case '?':
