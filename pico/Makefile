@@ -1,7 +1,8 @@
 SDK=$(HOME)/Development/tools/pico/pico-sdk
 PORT=/dev/tty.usbmodem14201
-SYSDATE := $(shell date '+%Y-%m-%d')
-SYSTIME := $(shell date '+%H:%M:%S')
+SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
+SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
+FACILITY_CODE = 49
 
 clean:
 	rm -rf build
@@ -13,7 +14,7 @@ format: src/*.c include/*.h
 	clang-format -i include/*.h
 
 build: format
-	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=\\\"$(SYSDATE)\\\" SYSTIME=\\\"$(SYSTIME)\\\"
+	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
 
 install: build
 	picotool load build/wiegand.uf2

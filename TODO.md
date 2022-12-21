@@ -23,7 +23,7 @@
         - [x] Set bit delay to 1ms (x2)
         - [x] Not formatting card number correctly to actual controller
         - [x] Ignore if not emulator mode
-        - [ ] Set default facility code at compile time
+        - [x] Set default facility code at build time
         - [ ] LED input
         - [ ] startup glitch
         - [ ] 'beep' on read

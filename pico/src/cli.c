@@ -219,7 +219,7 @@ void query() {
  *
  */
 void write(char *cmd) {
-    uint32_t facility_code = 0;
+    uint32_t facility_code = FACILITY_CODE;
     uint32_t card = 0;
     int N = strlen(cmd);
     int rc;

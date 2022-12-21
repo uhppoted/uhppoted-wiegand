@@ -7,8 +7,10 @@ project(wiegand C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
+
 add_compile_definitions(SYSDATE=$(SYSDATE))
 add_compile_definitions(SYSTIME=$(SYSTIME))
+add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
 
 pico_sdk_init()
 
