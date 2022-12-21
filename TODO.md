@@ -29,12 +29,13 @@
         - [ ] 'beep' on read
 
 16. [ ] Prototype schematic
-        - [ ] Cleanup breadboard
+        - [x] Cleanup breadboard
         - LEDs
         - Move all the Wiegand I/O to one side
         - Relay driver
         - Door input
         - Door relay
+        - Buzzer
         - (?) Fritzing
         - (?) Photo
 
@@ -44,6 +45,7 @@
         - Relay driver
         - Door input
         - Door relay
+        - Buzzer
         - LEDs
         - Reset button
         - (?) Long line drivers
