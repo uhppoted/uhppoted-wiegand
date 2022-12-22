@@ -25,7 +25,7 @@ void reader_initialise() {
     uint sm = 0;
     uint offset = pio_add_program(pio, &reader_program);
 
-    reader_program_init(pio, sm, offset, D0, D1);
+    reader_program_init(pio, sm, offset, READER_D0, READER_D1);
 
     irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
     irq_set_enabled(PIO0_IRQ_0, true);
@@ -33,6 +33,7 @@ void reader_initialise() {
 }
 
 void rxi() {
+    PIO pio = PIO_IN;
     const uint sm = 0;
 
     static reader rdr = {
@@ -48,7 +49,7 @@ void rxi() {
         rdr.timer = add_alarm_in_ms(READ_TIMEOUT, read_timeout, (reader *)&rdr, true);
     }
 
-    uint32_t value = reader_program_get(PIO_IN, sm);
+    uint32_t value = reader_program_get(pio, sm);
 
     switch (value) {
     case 1:
@@ -75,11 +76,6 @@ void rxi() {
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }
-
-        // uint32_t debug = MSG_DEBUG | ((uint32_t)dt & 0x0fffffff);
-        // if (!queue_is_full(&queue)) {
-        //     queue_try_add(&queue, &debug);
-        // }
 
         rdr.card = 0;
         rdr.bits = 0;

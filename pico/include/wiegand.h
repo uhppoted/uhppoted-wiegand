@@ -22,19 +22,21 @@ typedef struct card {
 } card;
 
 extern enum MODE mode;
+
 extern const uint MODE_READER;
 extern const uint MODE_EMULATOR;
-
-extern const uint D0;
-extern const uint D1;
-extern const uint wD0;
-extern const uint wD1;
+extern const uint READER_D0;
+extern const uint READER_D1;
 extern const uint READER_LED;
+extern const uint WRITER_D0;
+extern const uint WRITER_D1;
+extern const uint WRITER_LED;
 
 extern const uint32_t MSG;
 extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_SYSCHECK;
 extern const uint32_t MSG_CARD_READ;
+extern const uint32_t MSG_LED;
 extern const uint32_t MSG_DEBUG;
 
 extern const LED TIMEOUT_LED;

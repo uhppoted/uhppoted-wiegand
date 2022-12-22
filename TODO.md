@@ -15,6 +15,7 @@
 13. [x] Mode reader/emulator/unknown
 14. [x] CLI
 15. [ ] Emulator
+        - [ ] Move to PIO0
         - [x] CLI WRITE command
         - [x] writer_write
         - [x] WRITE.pio
@@ -25,8 +26,19 @@
         - [x] Ignore if not emulator mode
         - [x] Set default facility code at build time
         - [ ] LED input
+              - ON/OFF access granted
+              - ON/OFF/ON/OFF/ON/OFF access denied
+              - timing of pulses?
+              - [ ] local LED
         - [ ] startup glitch
         - [ ] 'beep' on read
+        - [ ] Move mode pins down to make space for UART1 on GPIO 4/5
+        - [ ] Initialise output pins on mode (extra protection in case jumpers aren't set correctly)
+        - [ ] PIO for reader LED
+              - ON/OFF access granted
+              - ON/OFF/ON/OFF/ON/OFF access denied
+              - timing of pulses?
+              - [ ] local LED
 
 16. [ ] Prototype schematic
         - [x] Cleanup breadboard

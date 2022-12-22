@@ -1,7 +1,8 @@
+#include <stdio.h>
+
 #include "hardware/clocks.h"
 #include "hardware/rtc.h"
 #include "pico/util/datetime.h"
-#include <stdio.h>
 
 #include "../include/wiegand.h"
 

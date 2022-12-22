@@ -152,12 +152,16 @@ void exec(char *cmd) {
         switch (cmd[0]) {
         case 'o':
         case 'O':
-            gpio_put(READER_LED, 0);
+            if (mode == READER) {
+                gpio_put(READER_LED, 0);
+            }
             break;
 
         case 'x':
         case 'X':
-            gpio_put(READER_LED, 1);
+            if (mode == READER) {
+                gpio_put(READER_LED, 1);
+            }
             break;
 
         case 'q':

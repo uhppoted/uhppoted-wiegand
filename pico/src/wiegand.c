@@ -11,13 +11,11 @@
 #include "pico/util/datetime.h"
 
 #include "../include/cli.h"
+#include "../include/led.h"
 #include "../include/reader.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
 #include "../include/writer.h"
-
-#include <READ.pio.h>
-#include <WRITE.pio.h>
 
 #define VERSION "v0.0.0"
 
@@ -60,28 +58,31 @@ const uint GPIO_20 = 20; // Pico 26
 const uint GPIO_21 = 21; // Pico 27
 const uint GPIO_25 = 25; // Pico LED
 
-const uint UART0_TX = GPIO_0;  // Pico 1
-const uint UART0_RX = GPIO_1;  // Pico 2
-const uint UART1_TX = GPIO_20; // Pico 26
-const uint UART1_RX = GPIO_21; // Pico 27
+const uint UART0_TX = GPIO_0; // Pico 1
+const uint UART0_RX = GPIO_1; // Pico 2
+// const uint UART1_TX = GPIO_4; // Pico 6
+// const uint UART1_RX = GPIO_5; // Pico 7
 
 const uint LED_PIN = GPIO_25;
-const uint READER_LED = GPIO_15;
 const uint YELLOW_LED = GPIO_14;
 const uint ORANGE_LED = GPIO_13;
 const uint BLUE_LED = GPIO_12;
-const uint D0 = GPIO_16;
-const uint D1 = GPIO_17;
-const uint wD0 = GPIO_18;
-const uint wD1 = GPIO_19;
+
 const uint MODE_READER = GPIO_2;
 const uint MODE_EMULATOR = GPIO_3;
+const uint READER_D0 = GPIO_16;
+const uint READER_D1 = GPIO_17;
+const uint READER_LED = GPIO_15;
+const uint WRITER_D0 = GPIO_18;
+const uint WRITER_D1 = GPIO_19;
+const uint WRITER_LED = GPIO_21;
 
 const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_CARD_READ = 0x30000000;
+const uint32_t MSG_LED = 0x40000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
 
 enum MODE mode = UNKNOWN;
@@ -144,7 +145,14 @@ int main() {
     bi_decl(bi_program_description("Pico-Wiegand interface"));
     bi_decl(bi_program_version_string(VERSION));
     bi_decl(bi_1pin_with_name(LED_PIN, "on-board LED"));
-    bi_decl(bi_1pin_with_name(READER_LED, "reader LED"));
+
+    bi_decl(bi_1pin_with_name(READER_D0, "reader D0"));
+    bi_decl(bi_1pin_with_name(READER_D1, "reader D1"));
+    bi_decl(bi_1pin_with_name(READER_LED, "reader LED (out)"));
+
+    bi_decl(bi_1pin_with_name(WRITER_D0, "writer D0"));
+    bi_decl(bi_1pin_with_name(WRITER_D1, "writer D1"));
+    bi_decl(bi_1pin_with_name(WRITER_LED, "writer LED (in)"));
 
     stdio_init_all();
     setup_gpio();
@@ -170,6 +178,7 @@ int main() {
 
     reader_initialise();
     writer_initialise();
+    led_initialise();
 
     // ... setup sys stuff
     add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
@@ -214,9 +223,13 @@ int main() {
             blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
         }
 
+        if ((v & MSG) == MSG_LED) {
+            led_event(v & 0x0fffffff);
+        }
+
         if ((v & MSG) == MSG_DEBUG) {
             char s[64];
-            snprintf(s, sizeof(s), "%d", v & 0x0fffffff);
+            snprintf(s, sizeof(s), "DEBUG %d", v & 0x0fffffff);
             puts(s);
         }
     }
@@ -229,11 +242,6 @@ int main() {
 void setup_gpio() {
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
-
-    gpio_init(READER_LED);
-    gpio_set_dir(READER_LED, GPIO_OUT);
-    gpio_pull_up(READER_LED);
-    gpio_put(READER_LED, 1);
 
     gpio_init(YELLOW_LED);
     gpio_init(ORANGE_LED);
@@ -254,6 +262,16 @@ void setup_gpio() {
     gpio_init(MODE_EMULATOR);
     gpio_set_dir(MODE_EMULATOR, GPIO_IN);
     gpio_pull_up(MODE_EMULATOR);
+
+    gpio_init(READER_LED);
+    gpio_set_dir(READER_LED, GPIO_OUT);
+    gpio_pull_up(READER_LED);
+    gpio_put(READER_LED, 1);
+
+    // NOTE: initialised by LED PIO
+    // gpio_init(WRITER_LED);
+    // gpio_set_dir(WRITER_LED, GPIO_IN);
+    // gpio_pull_up(WRITER_LED);
 }
 
 void setup_uart() {

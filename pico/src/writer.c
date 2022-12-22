@@ -13,7 +13,7 @@ void writer_initialise() {
     uint sm = 0;
     uint offset = pio_add_program(pio, &writer_program);
 
-    writer_program_init(pio, sm, offset, wD0, wD1);
+    writer_program_init(pio, sm, offset, WRITER_D0, WRITER_D1);
 }
 
 /* Write card command.
