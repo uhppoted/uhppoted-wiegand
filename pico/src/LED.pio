@@ -1,7 +1,7 @@
 .program led
 
 .wrap_target
-    wait 0 gpio 21    ; wait for LED low
+    wait 0 pin 0      ; wait for LED low
     set x, 21         ; 'ON'
     mov isr,x         ;
     push block        ; push 'ON' to to FIFO
@@ -11,7 +11,7 @@ lp1:                  ;
     nop [31]          ;
     jmp y-- lp1       ;
 
-    wait 1 gpio 21    ; wait for LED high
+    wait 1 pin 0      ; wait for LED high
     set x, 10         ; 'OFF'
     mov isr,x         ;
     push block        ; push 'OFF' to to FIFO
