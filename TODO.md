@@ -25,7 +25,7 @@
         - [x] Not formatting card number correctly to actual controller
         - [x] Ignore if not emulator mode
         - [x] Set default facility code at build time
-        - [ ] LED input
+        - [ ] PIO for reader LED
               - ON/OFF access granted
               - ON/OFF/ON/OFF/ON/OFF access denied
               - timing of pulses?
@@ -33,12 +33,7 @@
         - [ ] startup glitch
         - [ ] 'beep' on read
         - [ ] Move mode pins down to make space for UART1 on GPIO 4/5
-        - [ ] Initialise output pins on mode (extra protection in case jumpers aren't set correctly)
-        - [ ] PIO for reader LED
-              - ON/OFF access granted
-              - ON/OFF/ON/OFF/ON/OFF access denied
-              - timing of pulses?
-              - [ ] local LED
+        - [x] Check mode before initialising output pins on mode (in case I/O jumpers aren't set correctly)
 
 16. [ ] Prototype schematic
         - [x] Cleanup breadboard

@@ -65,18 +65,18 @@ const uint UART0_RX = GPIO_1; // Pico 2
 // const uint UART1_RX = GPIO_5; // Pico 7
 
 const uint LED_PIN = GPIO_25;
+const uint GREEN_LED = GPIO_15;
 const uint YELLOW_LED = GPIO_14;
 const uint ORANGE_LED = GPIO_13;
 const uint BLUE_LED = GPIO_12;
-const uint GREEN_LED = GPIO_11;
 
 const uint MODE_READER = GPIO_2;
 const uint MODE_EMULATOR = GPIO_3;
 const uint READER_D0 = GPIO_16;
 const uint READER_D1 = GPIO_17;
-const uint READER_LED = GPIO_15;
 const uint WRITER_D0 = GPIO_18;
 const uint WRITER_D1 = GPIO_19;
+const uint READER_LED = GPIO_20;
 const uint WRITER_LED = GPIO_21;
 
 const uint32_t MSG = 0xf0000000;
