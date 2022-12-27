@@ -29,7 +29,7 @@
               - ON/OFF access granted
               - ON/OFF/ON/OFF/ON/OFF access denied
               - timing of pulses?
-              - [ ] local LED
+              - [x] local LED
         - [ ] startup glitch
         - [ ] 'beep' on read
         - [ ] Move mode pins down to make space for UART1 on GPIO 4/5

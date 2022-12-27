@@ -56,6 +56,20 @@ void led_event(uint32_t v) {
 
     int N = timef(&now, s, sizeof(s));
 
-    snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", v == 21 ? "ON" : (v == 10 ? "OFF" : "???"));
+    switch (v) {
+    case 21:
+        gpio_put(GREEN_LED, 1);
+        snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "ON");
+        break;
+
+    case 10:
+        gpio_put(GREEN_LED, 0);
+        snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "OFF");
+        break;
+
+    default:
+        snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "???");
+    }
+
     puts(s);
 }

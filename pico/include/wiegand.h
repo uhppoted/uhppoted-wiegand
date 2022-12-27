@@ -40,6 +40,7 @@ extern const uint32_t MSG_LED;
 extern const uint32_t MSG_DEBUG;
 
 extern const LED TIMEOUT_LED;
+extern const uint GREEN_LED;
 extern enum MODE mode;
 extern queue_t queue;
 extern card last_card;

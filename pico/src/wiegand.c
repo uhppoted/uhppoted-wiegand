@@ -46,6 +46,7 @@ const uint GPIO_5 = 5;   // Pico 7
 const uint GPIO_6 = 6;   // Pico 9
 const uint GPIO_7 = 7;   // Pico 10
 const uint GPIO_8 = 8;   // Pico 11
+const uint GPIO_11 = 11; // Pico 15
 const uint GPIO_12 = 12; // Pico 16
 const uint GPIO_13 = 13; // Pico 17
 const uint GPIO_14 = 14; // Pico 19
@@ -67,6 +68,7 @@ const uint LED_PIN = GPIO_25;
 const uint YELLOW_LED = GPIO_14;
 const uint ORANGE_LED = GPIO_13;
 const uint BLUE_LED = GPIO_12;
+const uint GREEN_LED = GPIO_11;
 
 const uint MODE_READER = GPIO_2;
 const uint MODE_EMULATOR = GPIO_3;
@@ -246,14 +248,17 @@ void setup_gpio() {
     gpio_init(YELLOW_LED);
     gpio_init(ORANGE_LED);
     gpio_init(BLUE_LED);
+    gpio_init(GREEN_LED);
 
     gpio_set_dir(YELLOW_LED, GPIO_OUT);
     gpio_set_dir(ORANGE_LED, GPIO_OUT);
     gpio_set_dir(BLUE_LED, GPIO_OUT);
+    gpio_set_dir(GREEN_LED, GPIO_OUT);
 
     gpio_put(YELLOW_LED, 0);
     gpio_put(ORANGE_LED, 0);
     gpio_put(BLUE_LED, 0);
+    gpio_put(GREEN_LED, 0);
 
     gpio_init(MODE_READER);
     gpio_set_dir(MODE_READER, GPIO_IN);
@@ -263,10 +268,12 @@ void setup_gpio() {
     gpio_set_dir(MODE_EMULATOR, GPIO_IN);
     gpio_pull_up(MODE_EMULATOR);
 
-    gpio_init(READER_LED);
-    gpio_set_dir(READER_LED, GPIO_OUT);
-    gpio_pull_up(READER_LED);
-    gpio_put(READER_LED, 1);
+    if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
+        gpio_init(READER_LED);
+        gpio_set_dir(READER_LED, GPIO_OUT);
+        gpio_pull_up(READER_LED);
+        gpio_put(READER_LED, 1);
+    }
 
     // NOTE: initialised by LED PIO
     // gpio_init(WRITER_LED);
