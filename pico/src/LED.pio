@@ -1,5 +1,4 @@
 .program led
-
 .wrap_target
     wait 0 pin 0      ; wait for LED low
     set x, 21         ; 'ON'
@@ -21,7 +20,6 @@ lp2:                  ;
     nop [31]          ;
     jmp y-- lp2       ;
 .wrap                 ; loop
-
 
 % c-sdk {
 

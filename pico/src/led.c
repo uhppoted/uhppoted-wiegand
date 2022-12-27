@@ -4,6 +4,7 @@
 
 #include "../include/led.h"
 #include "../include/wiegand.h"
+#include <BLINK.pio.h>
 #include <LED.pio.h>
 
 void ledi() {
@@ -41,6 +42,12 @@ void led_initialise() {
     irq_set_exclusive_handler(PIO1_IRQ_0, ledi);
     irq_set_enabled(PIO1_IRQ_0, true);
     pio_set_irq0_source_enabled(PIO_OUT, pis_sm1_rx_fifo_not_empty, true);
+
+    pio = PIO_OUT;
+    sm = 2;
+    offset = pio_add_program(pio, &blink_program);
+
+    blink_program_init(pio, sm, offset, GREEN_LED);
 }
 
 /* Handler for an LED event.
@@ -58,12 +65,13 @@ void led_event(uint32_t v) {
 
     switch (v) {
     case 21:
-        gpio_put(GREEN_LED, 1);
+        blink_program_blink(PIO_OUT, 2);
+        //    gpio_put(GREEN_LED, 1);
         snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "ON");
         break;
 
     case 10:
-        gpio_put(GREEN_LED, 0);
+        //  gpio_put(GREEN_LED, 0);
         snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "OFF");
         break;
 

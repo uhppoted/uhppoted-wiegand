@@ -1,0 +1,49 @@
+.program blink
+
+.wrap_target
+    pull block        ; wait for 'blink' command
+    out y, 32         ;
+    set pins, 1       ; turn 'green' LED on
+
+    mov x,y           ; delay
+lp1:                  ;
+    jmp x-- lp1       ; 
+    mov x, y          ;
+
+    set pins, 0       ; turn 'green' LED off
+    mov x,y           ; delay
+lp2:                  ;
+    jmp x-- lp2       ; delay
+    mov x, y          ;
+.wrap
+
+% c-sdk {
+
+static inline void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    uint32_t mask = (0x00000001 << pin);
+    uint32_t dirs = (0x00000001 << pin);
+
+    pio_gpio_init(pio, pin);
+    gpio_pull_up(pin);
+
+    pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
+
+    pio_sm_config c = blink_program_get_default_config(offset);
+
+    sm_config_set_set_pins(&c, pin, 1);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    sm_config_set_clkdiv(&c, 5*152.588);  // 4 * ~1.25ms loop
+
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+
+static inline uint32_t blink_program_blink(PIO pio, uint sm) {
+    uint32_t word = 50000;
+
+    pio_sm_put_blocking(pio,sm,word);
+
+    return 0;
+}
+
+%}  
