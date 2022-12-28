@@ -32,7 +32,7 @@ void ledi() {
 /* Initialises the PIO.
  *
  */
-void led_initialise() {
+void led_initialise(enum MODE mode) {
     PIO pio = PIO_OUT;
     uint sm = 1;
     uint offset = pio_add_program(pio, &led_program);
@@ -43,11 +43,13 @@ void led_initialise() {
     irq_set_enabled(PIO1_IRQ_0, true);
     pio_set_irq0_source_enabled(PIO_OUT, pis_sm1_rx_fifo_not_empty, true);
 
-    pio = PIO_OUT;
-    sm = 2;
-    offset = pio_add_program(pio, &blink_program);
+    if (mode == READER) {
+        pio = PIO_OUT;
+        sm = 2;
+        offset = pio_add_program(pio, &blink_program);
 
-    blink_program_init(pio, sm, offset, GREEN_LED);
+        blink_program_init(pio, sm, offset, READER_LED);
+    }
 }
 
 /* Handler for an LED event.
@@ -65,13 +67,12 @@ void led_event(uint32_t v) {
 
     switch (v) {
     case 21:
-        blink_program_blink(PIO_OUT, 2);
-        //    gpio_put(GREEN_LED, 1);
+        gpio_put(GREEN_LED, 0);
         snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "ON");
         break;
 
     case 10:
-        //  gpio_put(GREEN_LED, 0);
+        gpio_put(GREEN_LED, 1);
         snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "OFF");
         break;
 
@@ -80,4 +81,14 @@ void led_event(uint32_t v) {
     }
 
     puts(s);
+}
+
+/* Handler for an LED blink.
+ *
+ */
+void led_blink(uint8_t count) {
+    sleep_ms(1000);
+    while (count-- > 0) {
+        blink_program_blink(PIO_OUT, 2);
+    }
 }

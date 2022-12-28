@@ -180,7 +180,7 @@ int main() {
 
     reader_initialise();
     writer_initialise();
-    led_initialise();
+    led_initialise(mode);
 
     // ... setup sys stuff
     add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
@@ -258,7 +258,7 @@ void setup_gpio() {
     gpio_put(YELLOW_LED, 0);
     gpio_put(ORANGE_LED, 0);
     gpio_put(BLUE_LED, 0);
-    gpio_put(GREEN_LED, 0);
+    gpio_put(GREEN_LED, 1);
 
     gpio_init(MODE_READER);
     gpio_set_dir(MODE_READER, GPIO_IN);
@@ -267,18 +267,6 @@ void setup_gpio() {
     gpio_init(MODE_EMULATOR);
     gpio_set_dir(MODE_EMULATOR, GPIO_IN);
     gpio_pull_up(MODE_EMULATOR);
-
-    if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
-        gpio_init(READER_LED);
-        gpio_set_dir(READER_LED, GPIO_OUT);
-        gpio_pull_up(READER_LED);
-        gpio_put(READER_LED, 1);
-    }
-
-    // NOTE: initialised by LED PIO
-    // gpio_init(WRITER_LED);
-    // gpio_set_dir(WRITER_LED, GPIO_IN);
-    // gpio_pull_up(WRITER_LED);
 }
 
 void setup_uart() {
@@ -368,6 +356,6 @@ void cardf(const card *c, char *s, int N) {
                  c->timestamp.sec,
                  c->facility_code,
                  c->card_number,
-                 c->ok ? "OK" : "INVALID");
+                 !c->ok ? "INVALID" : (c->granted ? "GRANTED" : "DENIED"));
     }
 }

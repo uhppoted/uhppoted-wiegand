@@ -4,6 +4,7 @@
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
+#include "../include/led.h"
 #include "../include/reader.h"
 #include "../include/wiegand.h"
 #include <READ.pio.h>
@@ -94,6 +95,9 @@ int64_t read_timeout(alarm_id_t id, void *data) {
 }
 
 void on_card_read(uint32_t v) {
+    static uint32_t cards[] = {10058399};
+    static int N = sizeof(cards) / sizeof(uint32_t);
+
     int even = bits(v & 0x03ffe000);
     int odd = bits(v & 0x00001fff);
     uint32_t card = (v >> 1) & 0x00ffffff;
@@ -101,6 +105,25 @@ void on_card_read(uint32_t v) {
     last_card.facility_code = (card >> 16) & 0x000000ff;
     last_card.card_number = card & 0x0000ffff;
     last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
+    last_card.granted = false;
 
     rtc_get_datetime(&last_card.timestamp);
+
+    if (last_card.ok) {
+        for (int i = 0; i < N; i++) {
+            const uint32_t c = cards[i];
+            const uint32_t u = (c / 100000 << 16) | (c % 100000);
+
+            if (card == u) {
+                last_card.granted = true;
+                break;
+            }
+        }
+    }
+
+    if (last_card.granted) {
+        led_blink(1);
+    } else {
+        led_blink(3);
+    }
 }

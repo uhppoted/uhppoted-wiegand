@@ -19,6 +19,7 @@ typedef struct card {
     uint32_t facility_code;
     uint32_t card_number;
     bool ok;
+    bool granted;
 } card;
 
 extern enum MODE mode;

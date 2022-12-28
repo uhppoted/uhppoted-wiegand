@@ -3,14 +3,14 @@
 .wrap_target
     pull block        ; wait for 'blink' command
     out y, 32         ;
-    set pins, 1       ; turn 'green' LED on
+    set pins, 0       ; turn 'reader' LED on
 
     mov x,y           ; delay
 lp1:                  ;
     jmp x-- lp1       ; 
     mov x, y          ;
 
-    set pins, 0       ; turn 'green' LED off
+    set pins, 1       ; turn 'reader' LED off
     mov x,y           ; delay
 lp2:                  ;
     jmp x-- lp2       ; delay
@@ -20,13 +20,16 @@ lp2:                  ;
 % c-sdk {
 
 static inline void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    gpio_pull_up(pin);
+    gpio_put(pin,1);
+
     uint32_t mask = (0x00000001 << pin);
     uint32_t dirs = (0x00000001 << pin);
+    uint32_t off = (0x00000001 << pin);
 
     pio_gpio_init(pio, pin);
-    gpio_pull_up(pin);
-
     pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
+    pio_sm_set_pins_with_mask(pio, sm, off, mask);
 
     pio_sm_config c = blink_program_get_default_config(offset);
 
@@ -39,7 +42,7 @@ static inline void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
 }
 
 static inline uint32_t blink_program_blink(PIO pio, uint sm) {
-    uint32_t word = 50000;
+    uint32_t word = 75000;
 
     pio_sm_put_blocking(pio,sm,word);
 

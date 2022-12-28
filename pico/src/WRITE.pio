@@ -21,6 +21,9 @@ lp2:
 % c-sdk {
 
 static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
+    gpio_pull_up(d0);
+    gpio_pull_up(d1);
+
     uint32_t mask = (0x00000001 << d0) | (0x00000001 << d1);
     uint32_t dirs = (0x00000001 << d0) | (0x00000001 << d1);
     uint32_t off  = (0x00000001 << d0) | (0x00000001 << d1);
@@ -28,11 +31,8 @@ static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, u
     pio_gpio_init(pio, d0);
     pio_gpio_init(pio, d1);
 
-    gpio_pull_up(d0);
-    gpio_pull_up(d1);
-
-    pio_sm_set_pins_with_mask(pio,sm,off,mask);
     pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
+    pio_sm_set_pins_with_mask(pio,sm,off,mask);
     
     pio_sm_config c = writer_program_get_default_config(offset);
 

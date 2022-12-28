@@ -1,62 +1,45 @@
 # TODO
 
-1.  [x] Reset bit decoder on timeout
-2.  [x] Join FIFOs
-3.  [x] Debounce properly
-4.  [x] Signal read timeout
-5.  [x] Status LEDs
-6.  [x] Replace sleep with queue wait/interrupt
-7.  [x] Move reader to its own file
-8.  [x] Restructure folders to use src and include
-9.  [x] https://stackoverflow.com/questions/109023/count-the-number-of-set-bits-in-a-32-bit-integer
-10. [x] ~~Alternative implementations using two SMs and WAIT pin~~
-11. [x] Move remaining card stuff to reader.c
-12. [x] README
-13. [x] Mode reader/emulator/unknown
-14. [x] CLI
-15. [ ] Emulator
-        - [ ] Move to PIO0
-        - [x] CLI WRITE command
-        - [x] writer_write
-        - [x] WRITE.pio
-        - [x] PIO/shift-and-set
-        - [x] Card readback
-        - [x] Set bit delay to 1ms (x2)
-        - [x] Not formatting card number correctly to actual controller
-        - [x] Ignore if not emulator mode
-        - [x] Set default facility code at build time
-        - [ ] PIO for reader LED
-              - ON/OFF access granted
-              - ON/OFF/ON/OFF/ON/OFF access denied
-              - timing of pulses?
-              - [x] local LED
-        - [ ] startup glitch
-        - [ ] 'beep' on read
-        - [ ] Move mode pins down to make space for UART1 on GPIO 4/5
-        - [x] Check mode before initialising output pins on mode (in case I/O jumpers aren't set correctly)
+## Emulator
+- [ ] Split programs between PIOs
+- [ ] PIO for reader LED
+      - [x] ON/OFF access granted
+      - [x] ON/OFF/ON/OFF/ON/OFF access denied
+      - [x] local LED
+      - [ ] Move LED blink sleep to alarm handler
+      - [ ] CLI grant/deny
+      - [ ] Check timing of pulses
+      - [ ] `pio_can_add_program` for blink
+            - Use other PIO?
+            - Fallback to alarm handler or something
+- [ ] startup message
+      - delay any other messages until after startup
+- [ ] startup glitch
+- [ ] 'beep' on read
+- [ ] Move mode pins down to make space for UART1 on GPIO 4/5
 
-16. [ ] Prototype schematic
-        - [x] Cleanup breadboard
-        - LEDs
-        - Move all the Wiegand I/O to one side
-        - Relay driver
-        - Door input
-        - Door relay
-        - Buzzer
-        - (?) Fritzing
-        - (?) Photo
+## Prototype schematic
+- [x] Cleanup breadboard
+- LEDs
+- Move all the Wiegand I/O to one side
+- Relay driver
+- Door input
+- Door relay
+- Buzzer
+- (?) Fritzing
+- (?) Photo
 
-17. [ ] Schematic
-        - RW/WR jumpers
-        - Mode jumpers
-        - Relay driver
-        - Door input
-        - Door relay
-        - Buzzer
-        - LEDs
-        - Reset button
-        - (?) Long line drivers
-        - (?) PiZero header
+## Schematic
+- RW/WR jumpers
+- Mode jumpers
+- Relay driver
+- Door input
+- Door relay
+- Buzzer
+- LEDs
+- Reset button
+- (?) Long line drivers
+- (?) PiZero header
 
 ## NOTES
 
