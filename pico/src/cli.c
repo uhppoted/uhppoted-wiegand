@@ -4,6 +4,7 @@
 
 #include "hardware/gpio.h"
 
+#include "../include/acl.h"
 #include "../include/cli.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
@@ -27,6 +28,8 @@ void exec(char *);
 void cpr(char *);
 void query();
 void write(char *);
+void grant(char *);
+void revoke(char *);
 void help();
 
 /* Clears screen and requests terminal window size
@@ -181,6 +184,16 @@ void exec(char *cmd) {
             }
             break;
 
+        case 'g':
+        case 'G':
+            grant(&cmd[1]);
+            break;
+
+        case 'r':
+        case 'R':
+            revoke(&cmd[1]);
+            break;
+
         case '?':
             help();
             break;
@@ -249,6 +262,70 @@ void write(char *cmd) {
     }
 
     writer_write(facility_code, card);
+}
+
+/* Adds a card number to the ACL.
+ *
+ */
+void grant(char *cmd) {
+    uint32_t facility_code = FACILITY_CODE;
+    uint32_t card = 0;
+    int N = strlen(cmd);
+    int rc;
+
+    if (N < 5) {
+        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
+            return;
+        }
+    } else {
+        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
+            return;
+        }
+
+        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
+            return;
+        } else if (N > 8) {
+            return;
+        }
+    }
+
+    acl_grant(facility_code, card);
+}
+
+/* Removes a card number from the ACL.
+ *
+ */
+void revoke(char *cmd) {
+    uint32_t facility_code = FACILITY_CODE;
+    uint32_t card = 0;
+    int N = strlen(cmd);
+    int rc;
+
+    if (N < 5) {
+        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
+            return;
+        }
+    } else {
+        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
+            return;
+        }
+
+        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
+            return;
+        } else if (N > 8) {
+            return;
+        }
+    }
+
+    acl_revoke(facility_code, card);
 }
 
 /* Should probably display the commands?

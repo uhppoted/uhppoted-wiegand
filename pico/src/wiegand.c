@@ -10,6 +10,7 @@
 #include "pico/stdlib.h"
 #include "pico/util/datetime.h"
 
+#include "../include/acl.h"
 #include "../include/cli.h"
 #include "../include/led.h"
 #include "../include/reader.h"
@@ -178,6 +179,7 @@ int main() {
         mode = UNKNOWN;
     }
 
+    acl_initialise();
     reader_initialise();
     writer_initialise();
     led_initialise(mode);

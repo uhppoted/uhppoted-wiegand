@@ -4,6 +4,7 @@
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
+#include "../include/acl.h"
 #include "../include/led.h"
 #include "../include/reader.h"
 #include "../include/wiegand.h"
@@ -110,15 +111,7 @@ void on_card_read(uint32_t v) {
     rtc_get_datetime(&last_card.timestamp);
 
     if (last_card.ok) {
-        for (int i = 0; i < N; i++) {
-            const uint32_t c = cards[i];
-            const uint32_t u = (c / 100000 << 16) | (c % 100000);
-
-            if (card == u) {
-                last_card.granted = true;
-                break;
-            }
-        }
+        last_card.granted = acl_allowed(last_card.facility_code, last_card.card_number);
     }
 
     if (last_card.granted) {

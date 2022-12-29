@@ -1,17 +1,19 @@
 # TODO
 
 ## Emulator
-- [ ] Split programs between PIOs
 - [ ] READER PIO losing synch
+- [ ] Split programs between PIOs
 - [ ] PIO for reader LED
       - [x] Move LED blink sleep to alarm handler
       - [ ] CLI grant/deny
-      - [ ] Check timing of pulses
+            - Commonalise write/grant/revoke
+            - 'GRANTED/REVOKED' confirmation message
       - [ ] `pio_can_add_program` for blink
             - Use other PIO?
             - Fallback to alarm handler or something
 - [ ] startup message
       - delay any other messages until after startup
+      - maybe only initialise PIOs after delay
 - [ ] startup glitch
 - [ ] 'beep' on read
 - [ ] Move mode pins down to make space for UART1 on GPIO 4/5

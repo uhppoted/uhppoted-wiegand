@@ -21,6 +21,7 @@ add_executable(wiegand
   src/reader.c
   src/writer.c
   src/led.c
+  src/acl.c
 )
 
 pico_generate_pio_header(
