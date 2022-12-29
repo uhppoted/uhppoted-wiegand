@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "hardware/rtc.h"
 
@@ -7,6 +8,20 @@
 #include <BLINK.pio.h>
 #include <LED.pio.h>
 
+const uint32_t BLINK_DELAY = 1000;
+
+/* struct for communicating between led_blinks API function and blinki
+ * alarm handler. Allocated and initialiesd in led_blinks and free'd
+ * in blinki.
+ */
+typedef struct blinks {
+    uint32_t count;
+} blinks;
+
+/* Interrupt handler for emulator LED input. Queue an LED ON/OFF message
+ * to the message handler.
+ *
+ */
 void ledi() {
     PIO pio = PIO_OUT;
     const uint sm = 1;
@@ -29,7 +44,25 @@ void ledi() {
     }
 }
 
-/* Initialises the PIO.
+/* Alarm handler for 'end of blink start delay'. Queues up 'count'
+ * reader LED blinks to the BLINK FIFO..
+ *
+ */
+int64_t blinki(alarm_id_t id, void *data) {
+    uint32_t count = ((blinks *)data)->count;
+
+    free(data);
+
+    while (count-- > 0) {
+        blink_program_blink(PIO_OUT, 2);
+    }
+
+    return 0;
+}
+
+/* Initialises the PIO for the emulator LED input and the reader LED
+ * output. The PIO is only initialised with the reader LED output
+ * program if the mode is 'READER'.
  *
  */
 void led_initialise(enum MODE mode) {
@@ -85,10 +118,14 @@ void led_event(uint32_t v) {
 
 /* Handler for an LED blink.
  *
+ * NOTE: because the PIO FIFO is only 8 deep, the maximum number of blinks
+ *       is 8. Could probably get complicated about this but no reason to
+ *       at the moment.
  */
 void led_blink(uint8_t count) {
-    sleep_ms(1000);
-    while (count-- > 0) {
-        blink_program_blink(PIO_OUT, 2);
-    }
+    struct blinks *b = malloc(sizeof(struct blinks));
+
+    b->count = count > 8 ? 8 : count;
+
+    add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);
 }

@@ -2,11 +2,9 @@
 
 ## Emulator
 - [ ] Split programs between PIOs
+- [ ] READER PIO losing synch
 - [ ] PIO for reader LED
-      - [x] ON/OFF access granted
-      - [x] ON/OFF/ON/OFF/ON/OFF access denied
-      - [x] local LED
-      - [ ] Move LED blink sleep to alarm handler
+      - [x] Move LED blink sleep to alarm handler
       - [ ] CLI grant/deny
       - [ ] Check timing of pulses
       - [ ] `pio_can_add_program` for blink
@@ -19,14 +17,13 @@
 - [ ] Move mode pins down to make space for UART1 on GPIO 4/5
 
 ## Prototype schematic
-- [x] Cleanup breadboard
+- [x] Move all the Wiegand I/O to one side
+- [ ] Fritzing
 - LEDs
-- Move all the Wiegand I/O to one side
 - Relay driver
 - Door input
 - Door relay
 - Buzzer
-- (?) Fritzing
 - (?) Photo
 
 ## Schematic
