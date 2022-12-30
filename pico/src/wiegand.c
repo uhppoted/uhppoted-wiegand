@@ -334,30 +334,20 @@ int bits(uint32_t v) {
 }
 
 void cardf(const card *c, char *s, int N) {
-    const char *FMT = "%04d-%02d-%02d %02d:%02d:%02d  CARD %d%05d %s";
-    const char *FMT1 = "%04d-%02d-%02d %02d:%02d:%02d  CARD %d%05d  %s";
-    const char *FMT0 = "%04d-%02d-%02d %02d:%02d:%02d  CARD %d%05d   %s";
-
     if (c->card_number == 0) {
         snprintf(s, N, "CARD  ---");
     } else {
-        const char *fmt = FMT;
+        char n[16];
 
-        if (c->facility_code < 10) {
-            fmt = FMT0;
-        } else if (c->facility_code < 100) {
-            fmt = FMT1;
-        }
-
-        snprintf(s, N, fmt,
+        snprintf(n, sizeof(n), "%u%05u", c->facility_code, c->card_number);
+        snprintf(s, N, "%04d-%02d-%02d %02d:%02d:%02d  CARD %-8s %s",
                  c->timestamp.year,
                  c->timestamp.month,
                  c->timestamp.day,
                  c->timestamp.hour,
                  c->timestamp.min,
                  c->timestamp.sec,
-                 c->facility_code,
-                 c->card_number,
-                 !c->ok ? "INVALID" : (c->granted ? "GRANTED" : "DENIED"));
+                 n,
+                 !c->ok ? "INVALID" : (c->granted ? "ACCESS GRANTED" : "ACCESS DENIED"));
     }
 }

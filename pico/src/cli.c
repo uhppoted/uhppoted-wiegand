@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "hardware/gpio.h"
+#include "hardware/rtc.h"
 
 #include "../include/acl.h"
 #include "../include/cli.h"
@@ -16,6 +17,8 @@ typedef struct CLI {
     char buffer[64];
 } CLI;
 
+typedef void (*handler)(uint32_t, uint32_t);
+
 const char ESC = 27;
 uint8_t height = 25;
 const uint32_t CLI_TIMEOUT = 10000;
@@ -27,10 +30,12 @@ void clearline();
 void exec(char *);
 void cpr(char *);
 void query();
-void write(char *);
-void grant(char *);
-void revoke(char *);
 void help();
+
+void on_card_command(char *cmd, handler fn);
+void write(uint32_t, uint32_t);
+void grant(uint32_t, uint32_t);
+void revoke(uint32_t, uint32_t);
 
 /* Clears screen and requests terminal window size
  *
@@ -179,19 +184,17 @@ void exec(char *cmd) {
 
         case 'w':
         case 'W':
-            if (mode == EMULATOR) {
-                write(&cmd[1]);
-            }
+            on_card_command(&cmd[1], write);
             break;
 
         case 'g':
         case 'G':
-            grant(&cmd[1]);
+            on_card_command(&cmd[1], grant);
             break;
 
         case 'r':
         case 'R':
-            revoke(&cmd[1]);
+            on_card_command(&cmd[1], revoke);
             break;
 
         case '?':
@@ -235,101 +238,91 @@ void query() {
  *  Extract the facility code and card number pushes it to the emulator queue.
  *
  */
-void write(char *cmd) {
-    uint32_t facility_code = FACILITY_CODE;
-    uint32_t card = 0;
-    int N = strlen(cmd);
-    int rc;
-
-    if (N < 5) {
-        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
-            return;
-        }
-    } else {
-        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
-            return;
-        }
-
-        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
-            return;
-        } else if (N > 8) {
-            return;
-        }
+void write(uint32_t facility_code, uint32_t card) {
+    if (mode == EMULATOR) {
+        writer_write(facility_code, card);
     }
-
-    writer_write(facility_code, card);
 }
 
 /* Adds a card number to the ACL.
  *
  */
-void grant(char *cmd) {
-    uint32_t facility_code = FACILITY_CODE;
-    uint32_t card = 0;
-    int N = strlen(cmd);
-    int rc;
+void grant(uint32_t facility_code, uint32_t card) {
+    char s[64];
+    char c[16];
+    datetime_t now;
 
-    if (N < 5) {
-        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
-            return;
-        }
+    rtc_get_datetime(&now);
+    snprintf(c, sizeof(c), "%u%05u", facility_code, card);
+
+    int N = timef(&now, s, sizeof(s));
+
+    if (acl_grant(facility_code, card)) {
+        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "GRANTED");
     } else {
-        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
-            return;
-        }
-
-        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
-            return;
-        } else if (N > 8) {
-            return;
-        }
+        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "ERROR");
     }
 
-    acl_grant(facility_code, card);
+    puts(s);
 }
 
 /* Removes a card number from the ACL.
  *
  */
-void revoke(char *cmd) {
-    uint32_t facility_code = FACILITY_CODE;
-    uint32_t card = 0;
-    int N = strlen(cmd);
-    int rc;
+void revoke(uint32_t facility_code, uint32_t card) {
+    char s[64];
+    char c[16];
+    datetime_t now;
 
-    if (N < 5) {
-        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
-            return;
-        }
+    rtc_get_datetime(&now);
+    snprintf(c, sizeof(c), "%u%05u", facility_code, card);
+
+    int N = timef(&now, s, sizeof(s));
+
+    if (acl_revoke(facility_code, card)) {
+        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "REVOKED");
     } else {
-        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
-            return;
-        }
-
-        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
-            return;
-        } else if (N > 8) {
-            return;
-        }
+        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "ERROR");
     }
 
-    acl_revoke(facility_code, card);
+    puts(s);
 }
 
 /* Should probably display the commands?
  *
  */
 void help() {
+}
+
+/* Card command handler.
+ *  Extract the facility code and card number and invokes the handler function.
+ *
+ */
+void on_card_command(char *cmd, handler fn) {
+    uint32_t facility_code = FACILITY_CODE;
+    uint32_t card = 0;
+    int N = strlen(cmd);
+    int rc;
+
+    if (N < 5) {
+        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
+            return;
+        }
+    } else {
+        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
+            return;
+        }
+
+        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
+            return;
+        } else if (N > 8) {
+            return;
+        }
+    }
+
+    fn(facility_code, card);
 }

@@ -1,13 +1,11 @@
 # TODO
 
 ## Emulator
-- [ ] READER PIO losing synch
+- [ ] Statically allocate PIOs and SMs
+- [ ] READER PIO losing synch (or something)
 - [ ] Split programs between PIOs
 - [ ] PIO for reader LED
-      - [x] Move LED blink sleep to alarm handler
-      - [ ] CLI grant/deny
-            - Commonalise write/grant/revoke
-            - 'GRANTED/REVOKED' confirmation message
+      - [x] CLI grant/deny
       - [ ] `pio_can_add_program` for blink
             - Use other PIO?
             - Fallback to alarm handler or something
@@ -19,7 +17,6 @@
 - [ ] Move mode pins down to make space for UART1 on GPIO 4/5
 
 ## Prototype schematic
-- [x] Move all the Wiegand I/O to one side
 - [ ] Fritzing
 - LEDs
 - Relay driver
