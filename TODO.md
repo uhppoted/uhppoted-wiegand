@@ -4,13 +4,14 @@
 - [x] PIO for reader LED
       - [x] CLI grant/deny
 - [x] Statically allocate PIOs and SMs
+- [x] Move mode pins down to make space for UART1 on GPIO 4/5
 - [ ] READER PIO losing synch (or something)
 - [ ] startup message
       - delay any other messages until after startup
       - maybe only initialise PIOs after delay
+      - (?) UART queue
 - [ ] startup glitch
 - [ ] 'beep' on read
-- [ ] Move mode pins down to make space for UART1 on GPIO 4/5
 
 ## Breadboard schematic
 - [ ] Fritzing

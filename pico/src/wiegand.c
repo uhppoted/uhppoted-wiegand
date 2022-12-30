@@ -26,7 +26,7 @@
 #define STOP_BITS 1
 #define PARITY UART_PARITY_NONE
 
-// Allocate PIOs and SMs
+// PIOs
 const PIO PIO_READER = pio0;
 const PIO PIO_EMULATOR = pio1;
 const PIO PIO_LED = pio1;
@@ -40,16 +40,7 @@ const uint SM_BLINK = 1;
 const enum pio_interrupt_source IRQ_READER = pis_sm0_rx_fifo_not_empty;
 const enum pio_interrupt_source IRQ_LED = pis_sm1_rx_fifo_not_empty;
 
-// FUNCTION PROTOTYPES
-
-void setup_gpio(void);
-void setup_uart(void);
-
-int64_t off(alarm_id_t, void *);
-int64_t timeout(alarm_id_t, void *);
-bool watchdog(repeating_timer_t *);
-bool syscheck(repeating_timer_t *);
-
+// GPIO
 const uint GPIO_0 = 0;   // Pico 1
 const uint GPIO_1 = 1;   // Pico 2
 const uint GPIO_2 = 2;   // Pico 4
@@ -59,6 +50,8 @@ const uint GPIO_5 = 5;   // Pico 7
 const uint GPIO_6 = 6;   // Pico 9
 const uint GPIO_7 = 7;   // Pico 10
 const uint GPIO_8 = 8;   // Pico 11
+const uint GPIO_9 = 9;   // Pico 12
+const uint GPIO_10 = 10; // Pico 14
 const uint GPIO_11 = 11; // Pico 15
 const uint GPIO_12 = 12; // Pico 16
 const uint GPIO_13 = 13; // Pico 17
@@ -74,17 +67,20 @@ const uint GPIO_25 = 25; // Pico LED
 
 const uint UART0_TX = GPIO_0; // Pico 1
 const uint UART0_RX = GPIO_1; // Pico 2
-// const uint UART1_TX = GPIO_4; // Pico 6
-// const uint UART1_RX = GPIO_5; // Pico 7
+const uint UART1_TX = GPIO_4; // Pico 6
+const uint UART1_RX = GPIO_5; // Pico 7
+
+const uint MODE_READER = GPIO_6;
+const uint MODE_EMULATOR = GPIO_7;
 
 const uint LED_PIN = GPIO_25;
-const uint GREEN_LED = GPIO_15;
-const uint YELLOW_LED = GPIO_14;
-const uint ORANGE_LED = GPIO_13;
+const uint BUZZER = GPIO_10;
+const uint RED_LED = GPIO_11;
 const uint BLUE_LED = GPIO_12;
+const uint ORANGE_LED = GPIO_13;
+const uint YELLOW_LED = GPIO_14;
+const uint GREEN_LED = GPIO_15;
 
-const uint MODE_READER = GPIO_2;
-const uint MODE_EMULATOR = GPIO_3;
 const uint READER_D0 = GPIO_16;
 const uint READER_D1 = GPIO_17;
 const uint WRITER_D0 = GPIO_18;
@@ -100,6 +96,17 @@ const uint32_t MSG_CARD_READ = 0x30000000;
 const uint32_t MSG_LED = 0x40000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
 
+// FUNCTION PROTOTYPES
+
+void setup_gpio(void);
+void setup_uart(void);
+
+int64_t off(alarm_id_t, void *);
+int64_t timeout(alarm_id_t, void *);
+bool watchdog(repeating_timer_t *);
+bool syscheck(repeating_timer_t *);
+
+// GLOBALS
 enum MODE mode = UNKNOWN;
 queue_t queue;
 
