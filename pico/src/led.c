@@ -23,10 +23,7 @@ typedef struct blinks {
  *
  */
 void ledi() {
-    PIO pio = PIO_OUT;
-    const uint sm = 1;
-
-    uint32_t value = led_program_get(pio, sm);
+    uint32_t value = led_program_get(PIO_LED, SM_LED);
     uint32_t msg = MSG_LED | (value & 0x0fffffff);
 
     switch (value) {
@@ -54,7 +51,7 @@ int64_t blinki(alarm_id_t id, void *data) {
     free(data);
 
     while (count-- > 0) {
-        blink_program_blink(PIO_OUT, 2);
+        blink_program_blink(PIO_BLINK, SM_BLINK);
     }
 
     return 0;
@@ -66,22 +63,18 @@ int64_t blinki(alarm_id_t id, void *data) {
  *
  */
 void led_initialise(enum MODE mode) {
-    PIO pio = PIO_OUT;
-    uint sm = 1;
-    uint offset = pio_add_program(pio, &led_program);
+    uint offset = pio_add_program(PIO_LED, &led_program);
 
-    led_program_init(pio, sm, offset, WRITER_LED);
+    led_program_init(PIO_LED, SM_LED, offset, WRITER_LED);
 
     irq_set_exclusive_handler(PIO1_IRQ_0, ledi);
     irq_set_enabled(PIO1_IRQ_0, true);
-    pio_set_irq0_source_enabled(PIO_OUT, pis_sm1_rx_fifo_not_empty, true);
+    pio_set_irq0_source_enabled(PIO_LED, IRQ_LED, true);
 
     if (mode == READER) {
-        pio = PIO_OUT;
-        sm = 2;
-        offset = pio_add_program(pio, &blink_program);
+        offset = pio_add_program(PIO_BLINK, &blink_program);
 
-        blink_program_init(pio, sm, offset, READER_LED);
+        blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);
     }
 }
 

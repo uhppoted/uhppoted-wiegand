@@ -9,11 +9,9 @@ typedef struct writer {
  *
  */
 void writer_initialise() {
-    PIO pio = PIO_OUT;
-    uint sm = 0;
-    uint offset = pio_add_program(pio, &writer_program);
+    uint offset = pio_add_program(PIO_EMULATOR, &writer_program);
 
-    writer_program_init(pio, sm, offset, WRITER_D0, WRITER_D1);
+    writer_program_init(PIO_EMULATOR, SM_EMULATOR, offset, WRITER_D0, WRITER_D1);
 }
 
 /* Write card command.
@@ -27,7 +25,7 @@ bool writer_write(uint32_t facility_code, uint32_t card) {
     int odd = 1 + bits(v & 0x00000fff);
     uint32_t w = (v << 1) | (((even % 2) & 0x00000001) << 25) | ((odd % 2) & 0x00000001);
 
-    writer_program_put(PIO_OUT, 0, w);
+    writer_program_put(PIO_EMULATOR, SM_EMULATOR, w);
 
     return true;
 }

@@ -23,21 +23,16 @@ int64_t read_timeout(alarm_id_t, void *);
 const uint32_t READ_TIMEOUT = 100;
 
 void reader_initialise() {
-    PIO pio = PIO_IN;
-    uint sm = 0;
-    uint offset = pio_add_program(pio, &reader_program);
+    uint offset = pio_add_program(PIO_READER, &reader_program);
 
-    reader_program_init(pio, sm, offset, READER_D0, READER_D1);
+    reader_program_init(PIO_READER, SM_READER, offset, READER_D0, READER_D1);
 
     irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
     irq_set_enabled(PIO0_IRQ_0, true);
-    pio_set_irq0_source_enabled(pio, pis_sm0_rx_fifo_not_empty, true);
+    pio_set_irq0_source_enabled(PIO_READER, IRQ_READER, true);
 }
 
 void rxi() {
-    PIO pio = PIO_IN;
-    const uint sm = 0;
-
     static reader rdr = {
         .card = 0,
         .bits = 0,
@@ -51,7 +46,7 @@ void rxi() {
         rdr.timer = add_alarm_in_ms(READ_TIMEOUT, read_timeout, (reader *)&rdr, true);
     }
 
-    uint32_t value = reader_program_get(pio, sm);
+    uint32_t value = reader_program_get(PIO_READER, SM_READER);
 
     switch (value) {
     case 1:

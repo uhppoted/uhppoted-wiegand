@@ -1,9 +1,21 @@
 #pragma once
 
+#include "hardware/pio.h"
+
 #include "pico/util/queue.h"
 
-#define PIO_IN pio0
-#define PIO_OUT pio1
+extern const PIO PIO_READER;
+extern const PIO PIO_EMULATOR;
+extern const PIO PIO_LED;
+extern const PIO PIO_BLINK;
+
+extern const uint SM_READER;
+extern const uint SM_EMULATOR;
+extern const uint SM_LED;
+extern const uint SM_BLINK;
+
+extern const enum pio_interrupt_source IRQ_READER;
+extern const enum pio_interrupt_source IRQ_LED;
 
 enum MODE { UNKNOWN = 0,
             READER,

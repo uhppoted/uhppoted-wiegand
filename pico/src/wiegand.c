@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "hardware/gpio.h"
-#include "hardware/pio.h"
 #include "hardware/rtc.h"
 #include "pico/binary_info.h"
 #include "pico/multicore.h"
@@ -27,8 +26,21 @@
 #define STOP_BITS 1
 #define PARITY UART_PARITY_NONE
 
-#define PIO_IN pio0
-#define PIO_OUT pio1
+// Allocate PIOs and SMs
+const PIO PIO_READER = pio0;
+const PIO PIO_EMULATOR = pio1;
+const PIO PIO_LED = pio1;
+const PIO PIO_BLINK = pio0;
+
+const uint SM_READER = 0;
+const uint SM_EMULATOR = 0;
+const uint SM_LED = 1;
+const uint SM_BLINK = 1;
+
+const enum pio_interrupt_source IRQ_READER = pis_sm0_rx_fifo_not_empty;
+const enum pio_interrupt_source IRQ_LED = pis_sm1_rx_fifo_not_empty;
+
+// FUNCTION PROTOTYPES
 
 void setup_gpio(void);
 void setup_uart(void);

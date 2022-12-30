@@ -1,14 +1,10 @@
 # TODO
 
 ## Emulator
-- [ ] Statically allocate PIOs and SMs
-- [ ] READER PIO losing synch (or something)
-- [ ] Split programs between PIOs
-- [ ] PIO for reader LED
+- [x] PIO for reader LED
       - [x] CLI grant/deny
-      - [ ] `pio_can_add_program` for blink
-            - Use other PIO?
-            - Fallback to alarm handler or something
+- [x] Statically allocate PIOs and SMs
+- [ ] READER PIO losing synch (or something)
 - [ ] startup message
       - delay any other messages until after startup
       - maybe only initialise PIOs after delay
@@ -16,7 +12,7 @@
 - [ ] 'beep' on read
 - [ ] Move mode pins down to make space for UART1 on GPIO 4/5
 
-## Prototype schematic
+## Breadboard schematic
 - [ ] Fritzing
 - LEDs
 - Relay driver
@@ -26,7 +22,7 @@
 - (?) Photo
 
 ## Schematic
-- RW/WR jumpers
+- RD/WR jumpers
 - Mode jumpers
 - Relay driver
 - Door input
