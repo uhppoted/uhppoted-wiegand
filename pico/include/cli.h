@@ -2,3 +2,4 @@
 
 extern void VT100();
 extern void rx(char *);
+extern void tx(char *);

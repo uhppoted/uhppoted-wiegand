@@ -129,6 +129,16 @@ void rx(char *received) {
     }
 }
 
+/* Adds a message to the queue.
+ *
+ */
+void tx(char *message) {
+    uint32_t msg = MSG_TX | ((uint32_t)message & 0x0fffffff); // SRAM_BASE is 0x20000000
+    if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+        free(message);
+    }
+}
+
 /* Timeout handler. Clears the current command and command line.
  *
  */

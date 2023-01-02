@@ -50,6 +50,7 @@ extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_SYSCHECK;
 extern const uint32_t MSG_CARD_READ;
 extern const uint32_t MSG_LED;
+extern const uint32_t MSG_TX;
 extern const uint32_t MSG_DEBUG;
 
 extern const LED TIMEOUT_LED;

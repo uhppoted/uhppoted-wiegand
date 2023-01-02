@@ -2,10 +2,11 @@
 
 ## Emulator
 - [x] READER PIO losing synch (or something)
-- [ ] startup message
-      - delay any other messages until after startup
-      - maybe only initialise PIOs after delay
-      - (?) UART queue
+- [ ] Startup sequence
+      - [x] UART TX queue
+      - Wait for CLI to initialise/timeout
+      - Then dequeue messages
+      - Maybe only initialise PIOs after delay
 - [ ] startup glitch
 - [ ] 'beep' on read
 

@@ -3,6 +3,7 @@
 
 #include "hardware/rtc.h"
 
+#include "../include/cli.h"
 #include "../include/led.h"
 #include "../include/wiegand.h"
 #include <BLINK.pio.h>
@@ -84,29 +85,38 @@ void led_initialise(enum MODE mode) {
  * 10: OFF
  */
 void led_event(uint32_t v) {
-    char s[64];
-    datetime_t now;
-
-    rtc_get_datetime(&now);
-
-    int N = timef(&now, s, sizeof(s));
-
     switch (v) {
     case 21:
         gpio_put(GREEN_LED, 0);
-        snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "ON");
         break;
 
     case 10:
         gpio_put(GREEN_LED, 1);
-        snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "OFF");
         break;
-
-    default:
-        snprintf(&s[N], sizeof(s) - N, "  %-4s %s", "LED", "???");
     }
 
-    puts(s);
+    char *s;
+    datetime_t now;
+    if ((s = calloc(64, 1)) != NULL) {
+        rtc_get_datetime(&now);
+
+        int N = timef(&now, s, 64);
+
+        switch (v) {
+        case 21:
+            snprintf(&s[N], 64 - N, "  %-4s %s", "LED", "ON");
+            break;
+
+        case 10:
+            snprintf(&s[N], 64 - N, "  %-4s %s", "LED", "OFF");
+            break;
+
+        default:
+            snprintf(&s[N], 64 - N, "  %-4s %s", "LED", "???");
+        }
+
+        tx(s);
+    }
 }
 
 /* Handler for an LED blink.

@@ -92,8 +92,9 @@ const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
-const uint32_t MSG_CARD_READ = 0x30000000;
-const uint32_t MSG_LED = 0x40000000;
+const uint32_t MSG_TX = 0x30000000;
+const uint32_t MSG_CARD_READ = 0x40000000;
+const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
 
 // FUNCTION PROTOTYPES
@@ -189,7 +190,6 @@ int main() {
     alarm_pool_init_default();
 
     // ... initialise reader/emulator
-
     if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
         mode = READER;
     } else if (gpio_get(MODE_READER) && !gpio_get(MODE_EMULATOR)) {
@@ -233,6 +233,12 @@ int main() {
         if ((v & MSG) == MSG_RX) {
             char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
             rx(b);
+            free(b);
+        }
+
+        if ((v & MSG) == MSG_TX) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            puts(b);
             free(b);
         }
 
