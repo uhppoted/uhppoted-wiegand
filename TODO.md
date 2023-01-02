@@ -1,11 +1,7 @@
 # TODO
 
 ## Emulator
-- [x] PIO for reader LED
-      - [x] CLI grant/deny
-- [x] Statically allocate PIOs and SMs
-- [x] Move mode pins down to make space for UART1 on GPIO 4/5
-- [ ] READER PIO losing synch (or something)
+- [x] READER PIO losing synch (or something)
 - [ ] startup message
       - delay any other messages until after startup
       - maybe only initialise PIOs after delay
@@ -20,6 +16,7 @@
 - Door input
 - Door relay
 - Buzzer
+- (?) SD card
 - (?) Photo
 
 ## Schematic
@@ -33,6 +30,7 @@
 - Reset button
 - (?) Long line drivers
 - (?) PiZero header
+- (?) SD card
 
 ## NOTES
 

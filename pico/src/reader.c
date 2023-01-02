@@ -36,11 +36,19 @@ void rxi() {
     static reader rdr = {
         .card = 0,
         .bits = 0,
-        .timer = -1,
+        .timer = 0,
         .start = 0,
     };
 
-    if (rdr.bits == 0) {
+    // ... reset reader after 250ms (add_alarm_in_ms is not guaranteed to succeed)
+    absolute_time_t now = get_absolute_time();
+    int64_t dt = absolute_time_diff_us(rdr.start, now) / 1;
+
+    if (rdr.bits == 0 || dt > 250 * 1000) {
+        if (rdr.timer > 0) {
+            cancel_alarm(rdr.timer);
+        }
+
         rdr.start = get_absolute_time();
         rdr.bits = 0;
         rdr.timer = add_alarm_in_ms(READ_TIMEOUT, read_timeout, (reader *)&rdr, true);
@@ -62,11 +70,9 @@ void rxi() {
     }
 
     if (rdr.bits >= 26) {
-        absolute_time_t now = get_absolute_time();
-        int64_t dt = absolute_time_diff_us(rdr.start, now) / 1;
-
-        if (rdr.timer != -1) {
+        if (rdr.timer > 0) {
             cancel_alarm(rdr.timer);
+            rdr.timer = 0;
         }
 
         uint32_t v = MSG_CARD_READ | (rdr.card & 0x0fffffff);
@@ -81,11 +87,10 @@ void rxi() {
 }
 
 int64_t read_timeout(alarm_id_t id, void *data) {
-    cancel_alarm(id);
-
     reader *r = (reader *)data;
     r->bits = 0;
     r->card = 0;
+    r->timer = 0;
 
     blink((LED *)&TIMEOUT_LED);
 }

@@ -324,7 +324,7 @@ bool syscheck(repeating_timer_t *rt) {
 }
 
 void blink(LED *led) {
-    if (led->timer != -1) {
+    if (led->timer > 0) {
         cancel_alarm(led->timer);
     }
 
@@ -337,7 +337,6 @@ int64_t off(alarm_id_t id, void *data) {
     const LED *led = data;
 
     gpio_put(led->pin, 0);
-    cancel_alarm(id);
 
     return 0;
 }

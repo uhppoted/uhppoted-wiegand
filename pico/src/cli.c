@@ -68,7 +68,10 @@ void rx(char *received) {
         .buffer = {0},
     };
 
-    cancel_alarm(cli.timer);
+    if (cli.timer > 0) {
+        cancel_alarm(cli.timer);
+        cli.timer = 0;
+    }
 
     int N = strlen(received);
     for (int i = 0; i < N; i++) {
@@ -130,11 +133,10 @@ void rx(char *received) {
  *
  */
 int64_t cli_timeout(alarm_id_t id, void *data) {
-    cancel_alarm(id);
-
     CLI *cli = (CLI *)data;
     memset(cli->buffer, 0, sizeof(cli->buffer));
     cli->ix = 0;
+    cli->timer = 0;
 
     clearline();
 }
