@@ -95,13 +95,16 @@ const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
 const uint32_t MSG_CARD_READ = 0x40000000;
 const uint32_t MSG_LED = 0x50000000;
+const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
 
 // FUNCTION PROTOTYPES
 
 void setup_gpio(void);
 void setup_uart(void);
+void sysinit();
 
+int64_t startup(alarm_id_t, void *);
 int64_t off(alarm_id_t, void *);
 int64_t timeout(alarm_id_t, void *);
 bool watchdog(repeating_timer_t *);
@@ -162,9 +165,6 @@ const LED GOOD_LED = {
 };
 
 int main() {
-    static repeating_timer_t watchdog_rt;
-    static repeating_timer_t syscheck_rt;
-
     bi_decl(bi_program_description("Pico-Wiegand interface"));
     bi_decl(bi_program_version_string(VERSION));
     bi_decl(bi_1pin_with_name(LED_PIN, "on-board LED"));
@@ -190,44 +190,22 @@ int main() {
     alarm_pool_init_default();
 
     // ... initialise reader/emulator
-    if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
-        mode = READER;
-    } else if (gpio_get(MODE_READER) && !gpio_get(MODE_EMULATOR)) {
-        mode = EMULATOR;
-    } else {
-        mode = UNKNOWN;
-    }
-
-    acl_initialise();
-    reader_initialise();
-    writer_initialise();
-    led_initialise(mode);
-
-    // ... setup sys stuff
-    add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
-    add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
-
-    char *dt = calloc(32, 1);
-    if (dt != NULL) {
-        snprintf(dt, 32, "%s %s", SYSDATE, SYSTIME);
-        sys_settime(dt);
-        free(dt);
-    }
-
-    rtc_get_datetime(&last_card.timestamp);
-    sys_ok();
-    VT100();
+    add_alarm_in_ms(100, startup, NULL, true);
 
     while (true) {
         uint32_t v;
         queue_remove_blocking(&queue, &v);
 
-        if ((v & MSG) == MSG_WATCHDOG) {
-            blink((LED *)&SYS_LED);
+        if ((v & MSG) == MSG_SYSINIT) {
+            sysinit();
         }
 
         if ((v & MSG) == MSG_SYSCHECK) {
             sys_ok();
+        }
+
+        if ((v & MSG) == MSG_WATCHDOG) {
+            blink((LED *)&SYS_LED);
         }
 
         if ((v & MSG) == MSG_RX) {
@@ -309,6 +287,36 @@ void setup_uart() {
     uart_set_irq_enables(UART0, true, false);
 }
 
+void sysinit() {
+    static repeating_timer_t watchdog_rt;
+    static repeating_timer_t syscheck_rt;
+
+    if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
+        mode = READER;
+    } else if (gpio_get(MODE_READER) && !gpio_get(MODE_EMULATOR)) {
+        mode = EMULATOR;
+    } else {
+        mode = UNKNOWN;
+    }
+
+    acl_initialise();
+    reader_initialise();
+    writer_initialise();
+    led_initialise(mode);
+
+    // ... setup sys stuff
+    add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
+    add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
+
+    char dt[32];
+    snprintf(dt, sizeof(dt), "%s %s", SYSDATE, SYSTIME);
+    sys_settime(dt);
+
+    rtc_get_datetime(&last_card.timestamp);
+    sys_ok();
+    VT100();
+}
+
 bool watchdog(repeating_timer_t *rt) {
     uint32_t v = MSG_WATCHDOG | 0x0000000;
 
@@ -337,6 +345,16 @@ void blink(LED *led) {
     gpio_put(led->pin, 1);
 
     led->timer = add_alarm_in_ms(250, off, (void *)led, true);
+}
+
+int64_t startup(alarm_id_t id, void *data) {
+    uint32_t v = MSG_SYSINIT | 0x0000000;
+
+    if (!queue_is_full(&queue)) {
+        queue_try_add(&queue, &v);
+    }
+
+    return 0;
 }
 
 int64_t off(alarm_id_t id, void *data) {

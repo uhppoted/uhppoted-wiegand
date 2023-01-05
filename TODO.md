@@ -5,8 +5,10 @@
 - [ ] Startup sequence
       - [x] UART TX queue
       - Wait for CLI to initialise/timeout
+        - Hmm - figure out weirdness around cursor position and set-time
       - Then dequeue messages
       - Maybe only initialise PIOs after delay
+- [ ] CLI list cards
 - [ ] startup glitch
 - [ ] 'beep' on read
 

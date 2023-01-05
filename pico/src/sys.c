@@ -71,15 +71,16 @@ void sys_settime(char *t) {
     }
 
     bool ok = rtc_set_datetime(&NOW);
+    sleep_us(64);
+
     datetime_t now;
     char s[64];
 
-    sleep_us(64);
     rtc_get_datetime(&now);
 
     int N = timef(&now, s, sizeof(s));
 
-    snprintf(&s[N], sizeof(s) - N, "  SET TIME %s", ok ? "OK" : "ERROR");
+    snprintf(&s[N], sizeof(s) - N, "  SYS  SET TIME %s", ok ? "OK" : "ERROR");
     puts(s);
 }
 
