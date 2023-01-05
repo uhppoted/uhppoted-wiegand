@@ -37,12 +37,22 @@ void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
 
-/* Clears screen and requests terminal window size
+/* Clears the screen
  *
  */
-void VT100() {
+void clear_screen() {
     char s[24];
-    snprintf(s, sizeof(s), "\033[2J\033[999;999H\033[6n\033[H");
+    snprintf(s, sizeof(s), "\033[2J");
+    fputs(s, stdout);
+    fflush(stdout);
+}
+
+/* Requests terminal window size - the scroll area is set from the response.
+ *
+ */
+void set_scroll_area() {
+    char s[24];
+    snprintf(s, sizeof(s), "\0337\033[999;999H\033[6n\0338");
     fputs(s, stdout);
     fflush(stdout);
 }
@@ -231,7 +241,7 @@ void cpr(char *cmd) {
         height = rows - 1;
 
         char s[24];
-        snprintf(s, sizeof(s), "\033[0;%dr", height - 2);
+        snprintf(s, sizeof(s), "\0337\033[0;%dr\0338", height - 2);
         fputs(s, stdout);
         fflush(stdout);
     }

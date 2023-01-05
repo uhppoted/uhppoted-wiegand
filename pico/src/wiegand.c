@@ -190,7 +190,8 @@ int main() {
     alarm_pool_init_default();
 
     // ... initialise reader/emulator
-    add_alarm_in_ms(100, startup, NULL, true);
+    add_alarm_in_ms(250, startup, NULL, true);
+    clear_screen();
 
     while (true) {
         uint32_t v;
@@ -288,33 +289,40 @@ void setup_uart() {
 }
 
 void sysinit() {
+    static bool initialised = false;
     static repeating_timer_t watchdog_rt;
     static repeating_timer_t syscheck_rt;
 
-    if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
-        mode = READER;
-    } else if (gpio_get(MODE_READER) && !gpio_get(MODE_EMULATOR)) {
-        mode = EMULATOR;
-    } else {
-        mode = UNKNOWN;
+    if (!initialised) {
+        puts("                     SYS  STARTUP");
+
+        if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
+            mode = READER;
+        } else if (gpio_get(MODE_READER) && !gpio_get(MODE_EMULATOR)) {
+            mode = EMULATOR;
+        } else {
+            mode = UNKNOWN;
+        }
+
+        acl_initialise();
+        reader_initialise();
+        writer_initialise();
+        led_initialise(mode);
+
+        // ... setup sys stuff
+        add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
+        add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
+
+        char dt[32];
+        snprintf(dt, sizeof(dt), "%s %s", SYSDATE, SYSTIME);
+        sys_settime(dt);
+
+        rtc_get_datetime(&last_card.timestamp);
+        sys_ok();
+        set_scroll_area();
+
+        initialised = true;
     }
-
-    acl_initialise();
-    reader_initialise();
-    writer_initialise();
-    led_initialise(mode);
-
-    // ... setup sys stuff
-    add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
-    add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
-
-    char dt[32];
-    snprintf(dt, sizeof(dt), "%s %s", SYSDATE, SYSTIME);
-    sys_settime(dt);
-
-    rtc_get_datetime(&last_card.timestamp);
-    sys_ok();
-    VT100();
 }
 
 bool watchdog(repeating_timer_t *rt) {
