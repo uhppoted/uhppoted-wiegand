@@ -88,34 +88,16 @@ void led_event(uint32_t v) {
     switch (v) {
     case 21:
         gpio_put(GREEN_LED, 0);
+        tx("LED  ON");
         break;
 
     case 10:
         gpio_put(GREEN_LED, 1);
+        tx("LED  OFF");
         break;
-    }
 
-    char *s;
-    datetime_t now;
-    if ((s = calloc(64, 1)) != NULL) {
-        rtc_get_datetime(&now);
-
-        int N = timef(&now, s, 64);
-
-        switch (v) {
-        case 21:
-            snprintf(&s[N], 64 - N, "  %-4s %s", "LED", "ON");
-            break;
-
-        case 10:
-            snprintf(&s[N], 64 - N, "  %-4s %s", "LED", "OFF");
-            break;
-
-        default:
-            snprintf(&s[N], 64 - N, "  %-4s %s", "LED", "???");
-        }
-
-        tx(s);
+    default:
+        tx("LED  ???");
     }
 }
 

@@ -3,10 +3,9 @@
 ## Emulator
 - [x] READER PIO losing synch (or something)
 - [x] Startup sequence
-      - [x] UART TX queue
-      - [x] Startup delay
-      - [x] Figure out CLI initialiation weirdness
-- [ ] CLI list cards
+- [ ] Reader glitch
+- [x] CLI list cards
+- [ ] CLI help
 - [ ] startup glitch
 - [ ] 'beep' on read
 

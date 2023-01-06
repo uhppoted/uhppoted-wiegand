@@ -75,6 +75,8 @@ The supported command set comprises:
 | Q                      | Retrieves the last read card (if any)   |
 | Tyyyy-mm-dd HH:mm:ss   | Sets the Pico date and time             |
 | Wnnnnnnnnn             | Writes a card number out as Wiegand-26  |
+| Gnnnnnnnnn             | Grants a card access                    |
+| Rnnnnnnnnn             | Revokes a card access                   |
 
 Notes:
 1. The default facility code for _emulator_ mode is a build time constant (`FACILITY_CODE` in the _Makefile_) and will

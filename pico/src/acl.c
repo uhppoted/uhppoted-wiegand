@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "../include/acl.h"
 #include "../include/wiegand.h"
 
@@ -72,4 +74,29 @@ bool acl_allowed(uint32_t facility_code, uint32_t card) {
     }
 
     return false;
+}
+
+/* Returns a list of valid cards
+ *
+ */
+int acl_list(uint32_t *list[]) {
+    static int N = sizeof(ACL) / sizeof(uint32_t);
+
+    int count = 0;
+    for (int i = 0; i < N; i++) {
+        if (ACL[i] != 0xffffffff) {
+            count++;
+        }
+    }
+
+    if ((*list = calloc(count, sizeof(uint32_t))) != NULL) {
+        int ix = 0;
+        for (int i = 0; i < N; i++) {
+            if (ACL[i] != 0xffffffff) {
+                (*list)[ix++] = ACL[i];
+            }
+        }
+    }
+
+    return count;
 }

@@ -36,6 +36,7 @@ void on_card_command(char *cmd, handler fn);
 void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
+void list();
 
 /* Clears the screen
  *
@@ -143,9 +144,23 @@ void rx(char *received) {
  *
  */
 void tx(char *message) {
-    uint32_t msg = MSG_TX | ((uint32_t)message & 0x0fffffff); // SRAM_BASE is 0x20000000
-    if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
-        free(message);
+    char *s;
+
+    if ((s = calloc(64, 1)) != NULL) {
+        datetime_t now;
+        int N;
+        uint32_t msg;
+
+        rtc_get_datetime(&now);
+
+        N = timef(&now, s, 64);
+
+        snprintf(&s[N], 64 - N, "  %s", message);
+
+        msg = MSG_TX | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
+        if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+            free(message);
+        }
     }
 }
 
@@ -219,6 +234,11 @@ void exec(char *cmd) {
             on_card_command(&cmd[1], revoke);
             break;
 
+        case 'l':
+        case 'L':
+            list();
+            break;
+
         case '?':
             help();
             break;
@@ -272,20 +292,16 @@ void write(uint32_t facility_code, uint32_t card) {
 void grant(uint32_t facility_code, uint32_t card) {
     char s[64];
     char c[16];
-    datetime_t now;
 
-    rtc_get_datetime(&now);
     snprintf(c, sizeof(c), "%u%05u", facility_code, card);
 
-    int N = timef(&now, s, sizeof(s));
-
     if (acl_grant(facility_code, card)) {
-        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "GRANTED");
+        snprintf(s, sizeof(s), "CARD %-8s %s", c, "GRANTED");
     } else {
-        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "ERROR");
+        snprintf(s, sizeof(s), "CARD %-8s %s", c, "ERROR");
     }
 
-    puts(s);
+    tx(s);
 }
 
 /* Removes a card number from the ACL.
@@ -294,20 +310,36 @@ void grant(uint32_t facility_code, uint32_t card) {
 void revoke(uint32_t facility_code, uint32_t card) {
     char s[64];
     char c[16];
-    datetime_t now;
 
-    rtc_get_datetime(&now);
     snprintf(c, sizeof(c), "%u%05u", facility_code, card);
 
-    int N = timef(&now, s, sizeof(s));
-
     if (acl_revoke(facility_code, card)) {
-        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "REVOKED");
+        snprintf(s, sizeof(s), "CARD %-8s %s", c, "REVOKED");
     } else {
-        snprintf(&s[N], sizeof(s) - N, "  CARD %-8s %s", c, "ERROR");
+        snprintf(s, sizeof(s), "CARD %-8s %s", c, "ERROR");
     }
 
-    puts(s);
+    tx(s);
+}
+
+/* Lists the ACL cards.
+ *
+ */
+void list() {
+    uint32_t *cards;
+    int N = acl_list(&cards);
+
+    if (N == 0) {
+        tx("ACL  NO CARDS");
+    } else {
+        for (int i = 0; i < N; i++) {
+            char s[32];
+            snprintf(s, sizeof(s), "ACL  %u", cards[i]);
+            tx(s);
+        }
+    }
+
+    free(cards);
 }
 
 /* Should probably display the commands?
