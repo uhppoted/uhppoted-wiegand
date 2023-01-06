@@ -3,11 +3,11 @@
 ## Emulator
 - [x] READER PIO losing synch (or something)
 - [x] Startup sequence
-- [ ] Reader glitch
 - [x] CLI list cards
-- [ ] CLI help
-- [ ] startup glitch
+- [x] CLI help
+- [ ] Reader glitch
 - [ ] 'beep' on read
+- [ ] Emulator startup glitch
 
 ## Breadboard schematic
 - [ ] Fritzing

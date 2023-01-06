@@ -144,18 +144,19 @@ void rx(char *received) {
  *
  */
 void tx(char *message) {
+    static int size = 128;
     char *s;
 
-    if ((s = calloc(64, 1)) != NULL) {
+    if ((s = calloc(size, 1)) != NULL) {
         datetime_t now;
         int N;
         uint32_t msg;
 
         rtc_get_datetime(&now);
 
-        N = timef(&now, s, 64);
+        N = timef(&now, s, size);
 
-        snprintf(&s[N], 64 - N, "  %s", message);
+        snprintf(&s[N], size - N, "  %s", message);
 
         msg = MSG_TX | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
         if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
@@ -346,6 +347,18 @@ void list() {
  *
  */
 void help() {
+    tx("-----");
+    tx("Commands:");
+    tx("T        Set date/time (YYYY-MM-DD HH:mm:ss)");
+    tx("Gnnnnnn  Add card to access control list");
+    tx("Rnnnnnn  Remove card from access control list");
+    tx("Lnnnnnn  List cards in access control list");
+    tx("Q        Display last card read/write");
+    tx("Wnnnnnn  (emulator) Write card to Wiegand-26 interface");
+    tx("O        (reader)   LED on");
+    tx("X        (reader)   LED off");
+    tx("?        Display list of commands");
+    tx("-----");
 }
 
 /* Card command handler.
