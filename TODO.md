@@ -2,8 +2,9 @@
 
 ## Reader/Writer
 - [x] Reader glitch
-- [ ] Emulator startup glitch
 - [ ] 'beep' on read
+      - (?) maybe/optionally use PWM rather than PIO
+- (?) Emulator startup glitch
 
 ## Breadboard schematic
 - [ ] Fritzing

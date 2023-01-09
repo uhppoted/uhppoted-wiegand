@@ -10,6 +10,7 @@
 #include "pico/util/datetime.h"
 
 #include "../include/acl.h"
+#include "../include/buzzer.h"
 #include "../include/cli.h"
 #include "../include/led.h"
 #include "../include/reader.h"
@@ -28,14 +29,16 @@
 
 // PIOs
 const PIO PIO_READER = pio0;
+const PIO PIO_BLINK = pio0;
 const PIO PIO_EMULATOR = pio1;
 const PIO PIO_LED = pio1;
-const PIO PIO_BLINK = pio0;
+const PIO PIO_BUZZER = pio1;
 
 const uint SM_READER = 0;
+const uint SM_BLINK = 1;
 const uint SM_EMULATOR = 0;
 const uint SM_LED = 1;
-const uint SM_BLINK = 1;
+const uint SM_BUZZER = 2;
 
 const enum pio_interrupt_source IRQ_READER = pis_sm0_rx_fifo_not_empty;
 const enum pio_interrupt_source IRQ_LED = pis_sm1_rx_fifo_not_empty;
@@ -313,6 +316,7 @@ void sysinit() {
         reader_initialise();
         writer_initialise();
         led_initialise(mode);
+        buzzer_initialise(mode);
 
         // ... setup sys stuff
         add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);

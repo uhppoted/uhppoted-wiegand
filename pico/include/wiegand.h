@@ -8,11 +8,13 @@ extern const PIO PIO_READER;
 extern const PIO PIO_EMULATOR;
 extern const PIO PIO_LED;
 extern const PIO PIO_BLINK;
+extern const PIO PIO_BUZZER;
 
 extern const uint SM_READER;
 extern const uint SM_EMULATOR;
 extern const uint SM_LED;
 extern const uint SM_BLINK;
+extern const uint SM_BUZZER;
 
 extern const enum pio_interrupt_source IRQ_READER;
 extern const enum pio_interrupt_source IRQ_LED;
@@ -55,6 +57,7 @@ extern const uint32_t MSG_RXI;
 extern const uint32_t MSG_DEBUG;
 
 extern const LED TIMEOUT_LED;
+extern const uint BUZZER;
 extern const uint GREEN_LED;
 extern enum MODE mode;
 extern queue_t queue;

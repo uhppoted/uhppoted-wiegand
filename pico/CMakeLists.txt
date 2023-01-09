@@ -21,6 +21,7 @@ add_executable(wiegand
   src/reader.c
   src/writer.c
   src/led.c
+  src/buzzer.c
   src/acl.c
 )
 
@@ -42,6 +43,11 @@ pico_generate_pio_header(
 pico_generate_pio_header(
     wiegand
     ${CMAKE_CURRENT_LIST_DIR}/src/BLINK.pio
+)
+
+pico_generate_pio_header(
+    wiegand
+    ${CMAKE_CURRENT_LIST_DIR}/src/BUZZER.pio
 )
 
 pico_enable_stdio_usb (wiegand 0)

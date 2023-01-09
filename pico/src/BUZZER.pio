@@ -1,0 +1,52 @@
+.program buzzer
+
+.wrap_target
+    pull block        ; wait for 'beep' command
+    out y, 32         ;
+    set pins, 0       ; turn 'buzzer' on
+
+    mov x,y           ; delay
+lp1:                  ;
+    jmp x-- lp1       ; 
+    mov x, y          ;
+
+    set pins, 1       ; turn 'buzzer' off
+    mov x,y           ; delay
+lp2:                  ;
+    jmp x-- lp2       ; delay
+    mov x, y          ;
+.wrap
+
+% c-sdk {
+
+static inline void buzzer_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    gpio_pull_up(pin);
+    gpio_put(pin,1);
+
+    uint32_t mask = (0x00000001 << pin);
+    uint32_t dirs = (0x00000001 << pin);
+    uint32_t off = (0x00000001 << pin);
+
+    pio_gpio_init(pio, pin);
+    pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
+    pio_sm_set_pins_with_mask(pio, sm, off, mask);
+
+    pio_sm_config c = buzzer_program_get_default_config(offset);
+
+    sm_config_set_set_pins(&c, pin, 1);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    sm_config_set_clkdiv(&c, 5*152.588);  // 4 * ~1.25ms loop
+
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+
+static inline uint32_t buzzer_program_beep(PIO pio, uint sm) {
+    uint32_t word = 75000;
+
+    pio_sm_put_blocking(pio,sm,word);
+
+    return 0;
+}
+
+%}  

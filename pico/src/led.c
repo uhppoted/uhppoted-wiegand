@@ -12,7 +12,7 @@
 const uint32_t BLINK_DELAY = 1000;
 
 /* struct for communicating between led_blinks API function and blinki
- * alarm handler. Allocated and initialiesd in led_blinks and free'd
+ * alarm handler. Allocated and initialised in led_blinks and free'd
  * in blinki.
  */
 typedef struct blinks {
