@@ -95,6 +95,7 @@ const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
 const uint32_t MSG_CARD_READ = 0x40000000;
 const uint32_t MSG_LED = 0x50000000;
+const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
 
@@ -185,7 +186,7 @@ int main() {
     sleep_us(64);
 
     // ... initialise FIFO, UART and timers
-    queue_init(&queue, sizeof(uint32_t), 32);
+    queue_init(&queue, sizeof(uint32_t), 64);
     setup_uart();
     alarm_pool_init_default();
 
@@ -219,6 +220,10 @@ int main() {
             char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
             puts(b);
             free(b);
+        }
+
+        if ((v & MSG) == MSG_RXI) {
+            on_card_rxi(v & 0x0fffffff);
         }
 
         if ((v & MSG) == MSG_CARD_READ) {

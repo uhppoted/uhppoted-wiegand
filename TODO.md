@@ -1,13 +1,9 @@
 # TODO
 
-## Emulator
-- [x] READER PIO losing synch (or something)
-- [x] Startup sequence
-- [x] CLI list cards
-- [x] CLI help
-- [ ] Reader glitch
-- [ ] 'beep' on read
+## Reader/Writer
+- [x] Reader glitch
 - [ ] Emulator startup glitch
+- [ ] 'beep' on read
 
 ## Breadboard schematic
 - [ ] Fritzing
