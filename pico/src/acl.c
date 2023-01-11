@@ -11,7 +11,7 @@ uint32_t ACL[32] = {};
 void acl_initialise() {
     static int N = sizeof(ACL) / sizeof(uint32_t);
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < 32; i++) {
         ACL[i] = 0xffffffff;
     }
 }

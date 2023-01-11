@@ -274,7 +274,7 @@ void cpr(char *cmd) {
 void query() {
     char s[64];
     cardf(&last_card, s, sizeof(s));
-    puts(s);
+    tx(s);
 }
 
 /* Write card command.

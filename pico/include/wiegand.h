@@ -38,8 +38,6 @@ typedef struct card {
 
 extern enum MODE mode;
 
-extern const uint MODE_READER;
-extern const uint MODE_EMULATOR;
 extern const uint READER_D0;
 extern const uint READER_D1;
 extern const uint READER_LED;

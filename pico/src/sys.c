@@ -4,36 +4,28 @@
 #include "hardware/rtc.h"
 #include "pico/util/datetime.h"
 
+#include "../include/cli.h"
 #include "../include/wiegand.h"
 
 const char *MODES[] = {
     "UNKNOWN",
     "READER",
-    "EMULATOR"};
+    "EMULATOR",
+};
 
 void sys_start() {
     char s[64];
-    datetime_t now;
-
-    rtc_get_datetime(&now);
-
-    int N = timef(&now, s, sizeof(s));
     uint32_t hz = clock_get_hz(clk_sys);
 
-    snprintf(&s[N], sizeof(s) - N, "  %s %d", "CLOCK", hz);
-    puts(s);
+    snprintf(s, sizeof(s), "%s %d", "CLOCK", hz);
+    tx(s);
 }
 
 void sys_ok() {
     char s[64];
-    datetime_t now;
 
-    rtc_get_datetime(&now);
-
-    int N = timef(&now, s, sizeof(s));
-
-    snprintf(&s[N], sizeof(s) - N, "  %-4s %-8s %s", "SYS", MODES[mode], "OK");
-    puts(s);
+    snprintf(s, sizeof(s), "%-4s %-8s %s", "SYS", MODES[mode], "OK");
+    tx(s);
 }
 
 // NTS: seems like this needs to be a 'long lived struct' for RTC
@@ -73,15 +65,9 @@ void sys_settime(char *t) {
     bool ok = rtc_set_datetime(&NOW);
     sleep_us(64);
 
-    datetime_t now;
     char s[64];
-
-    rtc_get_datetime(&now);
-
-    int N = timef(&now, s, sizeof(s));
-
-    snprintf(&s[N], sizeof(s) - N, "  SYS  SET TIME %s", ok ? "OK" : "ERROR");
-    puts(s);
+    snprintf(s, sizeof(s), "SYS  SET TIME %s", ok ? "OK" : "ERROR");
+    tx(s);
 }
 
 int timef(const datetime_t *timestamp, char *s, int N) {
