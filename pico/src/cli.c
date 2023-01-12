@@ -154,7 +154,7 @@ void tx(char *message) {
 
         rtc_get_datetime(&now);
 
-        N = timef(&now, s, size);
+        N = timef(now, s, size);
 
         snprintf(&s[N], size - N, "  %s", message);
 
@@ -274,7 +274,7 @@ void cpr(char *cmd) {
 void query() {
     char s[64];
     cardf(&last_card, s, sizeof(s));
-    tx(s);
+    puts(s);
 }
 
 /* Write card command.

@@ -68,5 +68,5 @@ extern card last_card;
 
 extern void blink(LED *);
 extern void cardf(const card *, char *, int);
-extern int timef(const datetime_t *, char *, int);
+extern int timef(const datetime_t, char *, int);
 extern int bits(uint32_t);

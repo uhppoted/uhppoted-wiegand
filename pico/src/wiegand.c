@@ -234,7 +234,7 @@ int main() {
 
             on_card_read(v & 0x0fffffff);
             cardf(&last_card, s, sizeof(s));
-            tx(s);
+            puts(s);
             blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
         }
 
@@ -392,12 +392,16 @@ int bits(uint32_t v) {
 }
 
 void cardf(const card *c, char *s, int N) {
-    if (c->card_number == 0) {
-        snprintf(s, N, "CARD  ---");
-    } else {
-        char n[16];
-        char g[16];
+    char t[24];
+    char n[16];
+    char g[16];
 
+    timef(c->timestamp, t, sizeof(t));
+
+    if (c->card_number == 0) {
+        snprintf(n, sizeof(n), "---");
+        snprintf(g, sizeof(g), "");
+    } else {
         snprintf(n, sizeof(n), "%u%05u", c->facility_code, c->card_number);
 
         if (!c->ok) {
@@ -416,15 +420,49 @@ void cardf(const card *c, char *s, int N) {
                 snprintf(g, sizeof(g), "-");
             }
         }
-
-        snprintf(s, N, "%04d-%02d-%02d %02d:%02d:%02d  CARD %-8s %s",
-                 c->timestamp.year,
-                 c->timestamp.month,
-                 c->timestamp.day,
-                 c->timestamp.hour,
-                 c->timestamp.min,
-                 c->timestamp.sec,
-                 n,
-                 g);
     }
+
+    snprintf(s, N, "%-19s  CARD %-8s %s", t, n, g);
+}
+
+int timef(const datetime_t timestamp, char *s, int N) {
+    if (is_valid(timestamp)) {
+        snprintf(s, N, "%04d-%02d-%02d %02d:%02d:%02d",
+                 timestamp.year,
+                 timestamp.month,
+                 timestamp.day,
+                 timestamp.hour,
+                 timestamp.min,
+                 timestamp.sec);
+    } else {
+        snprintf(s, N, "---- -- -- --:--:--");
+    }
+}
+
+bool is_valid(const datetime_t t) {
+    if (t.year < 2000) {
+        return false;
+    }
+
+    if (t.month < 1 || t.month > 12) {
+        return false;
+    }
+
+    if (t.day < 1 || t.day > 31) {
+        return false;
+    }
+
+    if (t.hour < 0 || t.hour > 23) {
+        return false;
+    }
+
+    if (t.min < 0 || t.min > 59) {
+        return false;
+    }
+
+    if (t.sec < 0 || t.sec > 59) {
+        return false;
+    }
+
+    return true;
 }

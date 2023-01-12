@@ -69,13 +69,3 @@ void sys_settime(char *t) {
     snprintf(s, sizeof(s), "SYS  SET TIME %s", ok ? "OK" : "ERROR");
     tx(s);
 }
-
-int timef(const datetime_t *timestamp, char *s, int N) {
-    return snprintf(s, N, "%04d-%02d-%02d %02d:%02d:%02d",
-                    timestamp->year,
-                    timestamp->month,
-                    timestamp->day,
-                    timestamp->hour,
-                    timestamp->min,
-                    timestamp->sec);
-}
