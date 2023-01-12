@@ -23,6 +23,11 @@ enum MODE { UNKNOWN = 0,
             READER,
             EMULATOR };
 
+enum ACCESS { // UNKNOWN = 0,
+    GRANTED = 1,
+    DENIED = 2
+};
+
 typedef struct LED {
     uint pin;
     int32_t timer;
@@ -33,7 +38,7 @@ typedef struct card {
     uint32_t facility_code;
     uint32_t card_number;
     bool ok;
-    bool granted;
+    enum ACCESS granted;
 } card;
 
 extern enum MODE mode;

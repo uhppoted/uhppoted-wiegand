@@ -1,12 +1,12 @@
 # TODO
 
 ## Reader/Writer
-- [ ] Emulator mode freezes when mode != READER and 2+ writes
-- [ ] last-card.granted => UNKNOWN, DENIED, GRANTED
-- [ ] Need watchdog reset
+- [x] Emulator mode freezes when mode != READER and 2+ writes
+- [x] last-card.granted => UNKNOWN, DENIED, GRANTED
+- [ ] Handle formatting for weird times (e.g. -65) if systime not initialised
+- [ ] Watchdog reset
 - [ ] 'beep' on read
       - (?) maybe/optionally use PWM rather than PIO
-- [ ] Handle formatting for weird times (e.g. -65) if systime not initialised
 - (?) Emulator startup glitch
 
 ## Breadboard schematic

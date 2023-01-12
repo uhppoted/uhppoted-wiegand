@@ -106,17 +106,21 @@ void on_card_read(uint32_t v) {
     last_card.facility_code = (card >> 16) & 0x000000ff;
     last_card.card_number = card & 0x0000ffff;
     last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
-    last_card.granted = false;
+    last_card.granted = UNKNOWN;
 
     rtc_get_datetime(&last_card.timestamp);
 
     if (last_card.ok && mode == READER) {
-        last_card.granted = acl_allowed(last_card.facility_code, last_card.card_number);
+        if (acl_allowed(last_card.facility_code, last_card.card_number)) {
+            last_card.granted = GRANTED;
+        } else {
+            last_card.granted = DENIED;
+        }
     }
 
-    if (last_card.granted) {
+    if (last_card.granted == GRANTED) {
         led_blink(1);
-    } else {
+    } else if (last_card.granted == DENIED) {
         led_blink(3);
     }
 }

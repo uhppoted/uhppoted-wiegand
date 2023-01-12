@@ -396,8 +396,27 @@ void cardf(const card *c, char *s, int N) {
         snprintf(s, N, "CARD  ---");
     } else {
         char n[16];
+        char g[16];
 
         snprintf(n, sizeof(n), "%u%05u", c->facility_code, c->card_number);
+
+        if (!c->ok) {
+            snprintf(g, sizeof(g), "INVALID");
+        } else {
+            switch (c->granted) {
+            case GRANTED:
+                snprintf(g, sizeof(g), "ACCESS GRANTED");
+                break;
+
+            case DENIED:
+                snprintf(g, sizeof(g), "ACCESS DENIED");
+                break;
+
+            default:
+                snprintf(g, sizeof(g), "-");
+            }
+        }
+
         snprintf(s, N, "%04d-%02d-%02d %02d:%02d:%02d  CARD %-8s %s",
                  c->timestamp.year,
                  c->timestamp.month,
@@ -406,6 +425,6 @@ void cardf(const card *c, char *s, int N) {
                  c->timestamp.min,
                  c->timestamp.sec,
                  n,
-                 !c->ok ? "INVALID" : (c->granted ? "ACCESS GRANTED" : "ACCESS DENIED"));
+                 g);
     }
 }
