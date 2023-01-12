@@ -110,7 +110,7 @@ void on_card_read(uint32_t v) {
 
     rtc_get_datetime(&last_card.timestamp);
 
-    if (last_card.ok) {
+    if (last_card.ok && mode == READER) {
         last_card.granted = acl_allowed(last_card.facility_code, last_card.card_number);
     }
 

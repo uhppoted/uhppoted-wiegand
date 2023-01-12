@@ -233,9 +233,8 @@ int main() {
             char s[64];
 
             on_card_read(v & 0x0fffffff);
-
             cardf(&last_card, s, sizeof(s));
-            puts(s);
+            tx(s);
             blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
         }
 

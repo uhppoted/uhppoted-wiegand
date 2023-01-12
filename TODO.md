@@ -1,13 +1,9 @@
 # TODO
 
 ## Reader/Writer
-- [ ] Emulator mode freezes when:
-      - mode != READER
-      - 2+ writes
-      - something to do with UART ?
-
+- [ ] Emulator mode freezes when mode != READER and 2+ writes
+- [ ] last-card.granted => UNKNOWN, DENIED, GRANTED
 - [ ] Need watchdog reset
-- [x] Reader glitch
 - [ ] 'beep' on read
       - (?) maybe/optionally use PWM rather than PIO
 - [ ] Handle formatting for weird times (e.g. -65) if systime not initialised
