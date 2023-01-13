@@ -5,7 +5,7 @@
 #include "../include/wiegand.h"
 #include <BUZZER.pio.h>
 
-const uint32_t BUZZER_DELAY = 1000;
+const uint32_t BUZZER_DELAY = 100;
 
 /* struct for communicating between led_blinks API function and blinki
  * alarm handler. Allocated and initialiesd in led_blinks and free'd
@@ -24,9 +24,9 @@ int64_t buzzeri(alarm_id_t id, void *data) {
 
     free(data);
 
-    // while (count-- > 0) {
-    //     buzzer_program_beep(PIO_BUZZER, SM_BUZZER);
-    // }
+    while (count-- > 0) {
+        buzzer_program_beep(PIO_BUZZER, SM_BUZZER);
+    }
 
     return 0;
 }

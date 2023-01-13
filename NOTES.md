@@ -29,10 +29,10 @@
    - https://www.digikey.com/en/maker/projects/raspberry-pi-pico-rp2040-sd-card-example-with-micropython-and-cc/e472c7f578734bfd96d437e68e670050
 
 9.  https://forum.arduino.cc/t/wiegand-reader-led-xpr/649694
-10.  https://electronics.stackexchange.com/questions/422329/cheap-12v-to-5v-dc-dc-converter-for-pcb
-11.  https://www.ti.com/lit/ds/symlink/lm2596.pdf
-12.  https://github.com/esprfid/esp-rfid
-13.  https://www.tindie.com/products/nardev/esp-rfid-relay-board-12v-for-esp8266-board/
+10. https://electronics.stackexchange.com/questions/422329/cheap-12v-to-5v-dc-dc-converter-for-pcb
+11. https://www.ti.com/lit/ds/symlink/lm2596.pdf
+12. https://github.com/esprfid/esp-rfid
+13. https://www.tindie.com/products/nardev/esp-rfid-relay-board-12v-for-esp8266-board/
 14. https://github.com/rfidtool/ESP-RFID-Tool
 15. https://github.com/jvondrus/Wiegand26
 16. https://github.com/SterlingPeet/Wiegand

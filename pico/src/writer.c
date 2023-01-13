@@ -1,4 +1,5 @@
 #include "../include/writer.h"
+#include "../include/buzzer.h"
 #include "../include/wiegand.h"
 #include <WRITE.pio.h>
 
@@ -26,6 +27,7 @@ bool writer_write(uint32_t facility_code, uint32_t card) {
     uint32_t w = (v << 1) | (((even % 2) & 0x00000001) << 25) | ((odd % 2) & 0x00000001);
 
     writer_program_put(PIO_EMULATOR, SM_EMULATOR, w);
+    buzzer_beep(1);
 
     return true;
 }

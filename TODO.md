@@ -1,13 +1,14 @@
 # TODO
 
 ## Reader/Writer
-- [x] Emulator mode freezes when mode != READER and 2+ writes
-- [x] last-card.granted => UNKNOWN, DENIED, GRANTED
-- [x] Handle formatting for weird times (e.g. -65 if systime not initialised)
+- [x] 'beep' on write
+- [ ] Rename READER/EMULATOR
+      - (?) CONTROLLER/READER maybe
 - [ ] Watchdog reset
-- [ ] 'beep' on read
-      - (?) maybe/optionally use PWM rather than PIO
-- (?) Emulator startup glitch
+- [ ] Buzzer
+- [ ] Relay
+- [ ] Button
+- [ ] SD card
 
 ## Breadboard schematic
 - [ ] Fritzing
