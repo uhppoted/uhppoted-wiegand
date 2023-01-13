@@ -12,11 +12,11 @@
 #include "../include/acl.h"
 #include "../include/buzzer.h"
 #include "../include/cli.h"
+#include "../include/controller.h"
+#include "../include/emulator.h"
 #include "../include/led.h"
-#include "../include/reader.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
-#include "../include/writer.h"
 
 #define VERSION "v0.0.0"
 
@@ -30,18 +30,21 @@
 // PIOs
 const PIO PIO_READER = pio0;
 const PIO PIO_BLINK = pio0;
-const PIO PIO_EMULATOR = pio1;
+const PIO PIO_WRITER = pio1;
 const PIO PIO_LED = pio1;
 const PIO PIO_BUZZER = pio1;
 
 const uint SM_READER = 0;
 const uint SM_BLINK = 1;
-const uint SM_EMULATOR = 0;
+const uint SM_WRITER = 0;
 const uint SM_LED = 1;
 const uint SM_BUZZER = 2;
 
 const enum pio_interrupt_source IRQ_READER = pis_sm0_rx_fifo_not_empty;
 const enum pio_interrupt_source IRQ_LED = pis_sm1_rx_fifo_not_empty;
+
+const uint PIO_READER_IRQ = PIO0_IRQ_0;
+const uint PIO_LED_IRQ = PIO1_IRQ_0;
 
 // GPIO
 const uint GPIO_0 = 0;   // Pico 1
@@ -73,7 +76,7 @@ const uint UART0_RX = GPIO_1; // Pico 2
 const uint UART1_TX = GPIO_4; // Pico 6
 const uint UART1_RX = GPIO_5; // Pico 7
 
-const uint MODE_READER = GPIO_6;
+const uint MODE_CONTROLLER = GPIO_6;
 const uint MODE_EMULATOR = GPIO_7;
 
 const uint LED_PIN = GPIO_25;
@@ -273,9 +276,9 @@ void setup_gpio() {
     gpio_put(BLUE_LED, 0);
     gpio_put(GREEN_LED, 1);
 
-    gpio_init(MODE_READER);
-    gpio_set_dir(MODE_READER, GPIO_IN);
-    gpio_pull_up(MODE_READER);
+    gpio_init(MODE_CONTROLLER);
+    gpio_set_dir(MODE_CONTROLLER, GPIO_IN);
+    gpio_pull_up(MODE_CONTROLLER);
 
     gpio_init(MODE_EMULATOR);
     gpio_set_dir(MODE_EMULATOR, GPIO_IN);
@@ -303,17 +306,17 @@ void sysinit() {
     if (!initialised) {
         puts("                     SYS  STARTUP");
 
-        if (!gpio_get(MODE_READER) && gpio_get(MODE_EMULATOR)) {
-            mode = READER;
-        } else if (gpio_get(MODE_READER) && !gpio_get(MODE_EMULATOR)) {
+        if (!gpio_get(MODE_CONTROLLER) && gpio_get(MODE_EMULATOR)) {
+            mode = CONTROLLER;
+        } else if (gpio_get(MODE_CONTROLLER) && !gpio_get(MODE_EMULATOR)) {
             mode = EMULATOR;
         } else {
             mode = UNKNOWN;
         }
 
         acl_initialise();
-        reader_initialise();
-        writer_initialise();
+        controller_initialise();
+        emulator_initialise();
         led_initialise(mode);
         buzzer_initialise(mode);
 

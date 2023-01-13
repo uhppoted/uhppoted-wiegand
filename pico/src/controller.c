@@ -6,8 +6,8 @@
 
 #include "../include/acl.h"
 #include "../include/cli.h"
+#include "../include/controller.h"
 #include "../include/led.h"
-#include "../include/reader.h"
 #include "../include/wiegand.h"
 #include <READ.pio.h>
 
@@ -46,13 +46,13 @@ void rxi() {
     }
 }
 
-void reader_initialise() {
+void controller_initialise() {
     uint offset = pio_add_program(PIO_READER, &reader_program);
 
     reader_program_init(PIO_READER, SM_READER, offset, READER_D0, READER_D1);
 
-    irq_set_exclusive_handler(PIO0_IRQ_0, rxi);
-    irq_set_enabled(PIO0_IRQ_0, true);
+    irq_set_exclusive_handler(PIO_READER_IRQ, rxi);
+    irq_set_enabled(PIO_READER_IRQ, true);
     pio_set_irq0_source_enabled(PIO_READER, IRQ_READER, true);
 }
 
@@ -110,7 +110,7 @@ void on_card_read(uint32_t v) {
 
     rtc_get_datetime(&last_card.timestamp);
 
-    if (last_card.ok && mode == READER) {
+    if (last_card.ok && mode == CONTROLLER) {
         if (acl_allowed(last_card.facility_code, last_card.card_number)) {
             last_card.granted = GRANTED;
         } else {

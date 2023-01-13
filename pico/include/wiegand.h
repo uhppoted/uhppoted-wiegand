@@ -5,22 +5,25 @@
 #include "pico/util/queue.h"
 
 extern const PIO PIO_READER;
-extern const PIO PIO_EMULATOR;
+extern const PIO PIO_WRITER;
 extern const PIO PIO_LED;
 extern const PIO PIO_BLINK;
 extern const PIO PIO_BUZZER;
 
 extern const uint SM_READER;
-extern const uint SM_EMULATOR;
+extern const uint SM_WRITER;
 extern const uint SM_LED;
 extern const uint SM_BLINK;
 extern const uint SM_BUZZER;
+
+extern const uint PIO_READER_IRQ;
+extern const uint PIO_LED_IRQ;
 
 extern const enum pio_interrupt_source IRQ_READER;
 extern const enum pio_interrupt_source IRQ_LED;
 
 enum MODE { UNKNOWN = 0,
-            READER,
+            CONTROLLER,
             EMULATOR };
 
 enum ACCESS { // UNKNOWN = 0,

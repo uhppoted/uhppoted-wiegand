@@ -26,8 +26,6 @@ _-- IN DEVELOPMENT --_
 
 ## Releases
 
-## Installation
-
 ### Building from source
 
 Required tools:
@@ -77,6 +75,7 @@ The supported command set comprises:
 | Wnnnnnnnnn             | Writes a card number out as Wiegand-26  |
 | Gnnnnnnnnn             | Grants a card access                    |
 | Rnnnnnnnnn             | Revokes a card access                   |
+| L                      | Lists cards in the access control list  |
 
 Notes:
 1. The default facility code for _emulator_ mode is a build time constant (`FACILITY_CODE` in the _Makefile_) and will

@@ -7,9 +7,9 @@
 
 #include "../include/acl.h"
 #include "../include/cli.h"
+#include "../include/emulator.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
-#include "../include/writer.h"
 
 typedef struct CLI {
     int ix;
@@ -198,14 +198,14 @@ void exec(char *cmd) {
         switch (cmd[0]) {
         case 'o':
         case 'O':
-            if (mode == READER) {
+            if (mode == CONTROLLER) {
                 gpio_put(READER_LED, 0);
             }
             break;
 
         case 'x':
         case 'X':
-            if (mode == READER) {
+            if (mode == CONTROLLER) {
                 gpio_put(READER_LED, 1);
             }
             break;
@@ -283,7 +283,7 @@ void query() {
  */
 void write(uint32_t facility_code, uint32_t card) {
     if (mode == EMULATOR) {
-        writer_write(facility_code, card);
+        emulator_write(facility_code, card);
     }
 }
 

@@ -2,23 +2,23 @@
 
 ## Reader/Writer
 - [x] 'beep' on write
-- [ ] Rename READER/EMULATOR
-      - (?) CONTROLLER/READER maybe
+- [x] Rename READER/EMULATOR
 - [ ] Watchdog reset
 - [ ] Buzzer
 - [ ] Relay
 - [ ] Button
 - [ ] SD card
+- [ ] PicoW
 
 ## Breadboard schematic
 - [ ] Fritzing
+- [ ] Photo
 - LEDs
 - Relay driver
 - Door input
 - Door relay
 - Buzzer
-- (?) SD card
-- (?) Photo
+- SD card
 
 ## Schematic
 - RD/WR jumpers
@@ -27,11 +27,13 @@
 - Door input
 - Door relay
 - Buzzer
-- LEDs
+  - through-hole so that it can be routed to enclosue
+- LEDs 
+  - through-hole so that they can be routed to enclosue
 - Reset button
+- SD card
 - (?) Long line drivers
 - (?) PiZero header
-- (?) SD card
 
 ## NOTES
 

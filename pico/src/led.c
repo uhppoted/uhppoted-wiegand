@@ -68,11 +68,11 @@ void led_initialise(enum MODE mode) {
 
     led_program_init(PIO_LED, SM_LED, offset, WRITER_LED);
 
-    irq_set_exclusive_handler(PIO1_IRQ_0, ledi);
-    irq_set_enabled(PIO1_IRQ_0, true);
+    irq_set_exclusive_handler(PIO_LED_IRQ, ledi);
+    irq_set_enabled(PIO_LED_IRQ, true);
     pio_set_irq0_source_enabled(PIO_LED, IRQ_LED, true);
 
-    if (mode == READER) {
+    if (mode == CONTROLLER) {
         offset = pio_add_program(PIO_BLINK, &blink_program);
 
         blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);
