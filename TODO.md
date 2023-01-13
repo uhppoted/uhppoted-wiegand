@@ -3,7 +3,7 @@
 ## Reader/Writer
 - [x] 'beep' on write
 - [x] Rename READER/EMULATOR
-- [ ] Watchdog reset
+- [x] Enable watchdog
 - [ ] Buzzer
 - [ ] Relay
 - [ ] Button

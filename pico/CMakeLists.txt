@@ -60,4 +60,5 @@ target_link_libraries(
     pico_multicore
     hardware_pio
     hardware_rtc
+    hardware_watchdog
 )

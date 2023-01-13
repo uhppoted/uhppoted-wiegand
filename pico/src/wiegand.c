@@ -4,6 +4,8 @@
 
 #include "hardware/gpio.h"
 #include "hardware/rtc.h"
+#include "hardware/watchdog.h"
+
 #include "pico/binary_info.h"
 #include "pico/multicore.h"
 #include "pico/stdlib.h"
@@ -186,6 +188,7 @@ int main() {
 
     stdio_init_all();
     setup_gpio();
+    watchdog_enable(5000, true);
 
     // ... initialise RTC
     rtc_init();
@@ -213,6 +216,7 @@ int main() {
         }
 
         if ((v & MSG) == MSG_WATCHDOG) {
+            watchdog_update();
             blink((LED *)&SYS_LED);
         }
 
@@ -321,7 +325,7 @@ void sysinit() {
         buzzer_initialise(mode);
 
         // ... setup sys stuff
-        add_repeating_timer_ms(2500, watchdog, NULL, &watchdog_rt);
+        add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
         add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
 
         char dt[32];
