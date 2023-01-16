@@ -8,9 +8,10 @@
 - [ ] Relay
 - [ ] Button
 - [ ] SD card
-- [ ] PicoW
+- [ ] PicoW+TCP/IP
 
-## Breadboard schematic
+## Breadboard 
+- [ ] KiCard schematic
 - [ ] Fritzing
 - [ ] Photo
 - LEDs
