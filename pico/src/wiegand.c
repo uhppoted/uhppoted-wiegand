@@ -17,6 +17,7 @@
 #include "../include/controller.h"
 #include "../include/emulator.h"
 #include "../include/led.h"
+#include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
 
@@ -323,6 +324,7 @@ void sysinit() {
         emulator_initialise();
         led_initialise(mode);
         buzzer_initialise(mode);
+        sdcard_initialise(mode);
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);

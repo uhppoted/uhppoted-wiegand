@@ -23,7 +23,10 @@ add_executable(wiegand
   src/led.c
   src/buzzer.c
   src/acl.c
+  src/sdcard.c
 )
+
+add_subdirectory(lib/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
 
 pico_generate_pio_header(
     wiegand
@@ -61,4 +64,5 @@ target_link_libraries(
     hardware_pio
     hardware_rtc
     hardware_watchdog
+    FatFs_SPI
 )
