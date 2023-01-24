@@ -86,8 +86,8 @@ const uint LED_PIN = GPIO_25;
 const uint BUZZER = GPIO_10;
 const uint RED_LED = GPIO_11;
 const uint BLUE_LED = GPIO_12;
-const uint ORANGE_LED = GPIO_13;
-const uint YELLOW_LED = GPIO_14;
+const uint YELLOW_LED = GPIO_13;
+const uint ORANGE_LED = GPIO_14;
 const uint GREEN_LED = GPIO_15;
 
 const uint READER_D0 = GPIO_16;
@@ -164,7 +164,7 @@ const LED TIMEOUT_LED = {
     .timer = -1,
 };
 
-const LED BAD_LED = {
+const LED BAD_CARD = {
     .pin = ORANGE_LED,
     .timer = -1,
 };
@@ -243,7 +243,7 @@ int main() {
             on_card_read(v & 0x0fffffff);
             cardf(&last_card, s, sizeof(s));
             puts(s);
-            blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_LED);
+            blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_CARD);
         }
 
         if ((v & MSG) == MSG_LED) {
@@ -266,20 +266,26 @@ void setup_gpio() {
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
 
+    gpio_init(RED_LED);
     gpio_init(YELLOW_LED);
-    gpio_init(ORANGE_LED);
     gpio_init(BLUE_LED);
+    gpio_init(ORANGE_LED);
     gpio_init(GREEN_LED);
 
+    gpio_set_dir(RED_LED, GPIO_OUT);
     gpio_set_dir(YELLOW_LED, GPIO_OUT);
-    gpio_set_dir(ORANGE_LED, GPIO_OUT);
     gpio_set_dir(BLUE_LED, GPIO_OUT);
+    gpio_set_dir(ORANGE_LED, GPIO_OUT);
     gpio_set_dir(GREEN_LED, GPIO_OUT);
 
+    gpio_pull_up(ORANGE_LED);
+    gpio_pull_up(GREEN_LED);
+
+    gpio_put(RED_LED, 0);
     gpio_put(YELLOW_LED, 0);
-    gpio_put(ORANGE_LED, 0);
     gpio_put(BLUE_LED, 0);
-    gpio_put(GREEN_LED, 1);
+    gpio_put(ORANGE_LED, 1);
+    gpio_put(GREEN_LED, 0);
 
     gpio_init(MODE_CONTROLLER);
     gpio_set_dir(MODE_CONTROLLER, GPIO_IN);
