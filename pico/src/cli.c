@@ -8,6 +8,7 @@
 #include "../include/acl.h"
 #include "../include/cli.h"
 #include "../include/emulator.h"
+#include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
 
@@ -37,6 +38,10 @@ void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
 void list();
+
+void format();
+void mount();
+void unmount();
 
 /* Clears the screen
  *
@@ -240,6 +245,21 @@ void exec(char *cmd) {
             list();
             break;
 
+        case 'f':
+        case 'F':
+            format();
+            break;
+
+        case 'm':
+        case 'M':
+            mount();
+            break;
+
+        case 'u':
+        case 'U':
+            unmount();
+            break;
+
         case '?':
             help();
             break;
@@ -343,6 +363,61 @@ void list() {
     free(cards);
 }
 
+/* Formats the SD card.
+ *
+ */
+void format() {
+    bool detected = gpio_get(SD_DET) == 1;
+    int formatted = sdcard_format();
+    char s[32];
+
+    if (!detected) {
+        snprintf(s, sizeof(s), "DISK NO SDCARD");
+    } else if (formatted != 0) {
+        snprintf(s, sizeof(s), "DISK NOT FORMATTED (%d)", formatted);
+    } else {
+        snprintf(s, sizeof(s), "DISK FORMATTED");
+    }
+
+    tx(s);
+}
+
+/* Mounts the SD card.
+ *
+ */
+void mount() {
+    bool detected = gpio_get(SD_DET) == 1;
+    int mounted = sdcard_mount();
+    char s[32];
+
+    if (!detected) {
+        snprintf(s, sizeof(s), "DISK NO SDCARD");
+    } else if (mounted != 0) {
+        snprintf(s, sizeof(s), "DISK NOT MOUNTED (%d)", mounted);
+    } else {
+        snprintf(s, sizeof(s), "DISK MOUNTED");
+    }
+
+    tx(s);
+}
+
+/* Unmounts the SD card.
+ *
+ */
+void unmount() {
+    int unmounted = sdcard_unmount();
+    int detected = gpio_get(SD_DET);
+    char s[32];
+
+    if (!detected) {
+        snprintf(s, sizeof(s), "DISK NO SDCARD");
+    } else {
+        snprintf(s, sizeof(s), "DISK NOT MOUNTED");
+    }
+
+    tx(s);
+}
+
 /* Should probably display the commands?
  *
  */
@@ -357,6 +432,8 @@ void help() {
     tx("Wnnnnnn  (emulator) Write card to Wiegand-26 interface");
     tx("O        (reader)   LED on");
     tx("X        (reader)   LED off");
+    tx("M        Mount SD card");
+    tx("U        Unmount SD card");
     tx("?        Display list of commands");
     tx("-----");
 }

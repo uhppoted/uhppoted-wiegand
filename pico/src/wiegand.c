@@ -79,8 +79,14 @@ const uint UART0_RX = GPIO_1; // Pico 2
 const uint UART1_TX = GPIO_4; // Pico 6
 const uint UART1_RX = GPIO_5; // Pico 7
 
-const uint MODE_CONTROLLER = GPIO_6;
-const uint MODE_EMULATOR = GPIO_7;
+const uint SD_CLK = GPIO_2;
+const uint SD_SI = GPIO_3;
+const uint SD_SO = GPIO_4;
+const uint SD_CS = GPIO_5;
+const uint SD_DET = GPIO_6;
+
+const uint MODE_CONTROLLER = GPIO_7;
+const uint MODE_EMULATOR = GPIO_8;
 
 const uint LED_PIN = GPIO_25;
 const uint BUZZER = GPIO_10;
@@ -294,6 +300,10 @@ void setup_gpio() {
     gpio_init(MODE_EMULATOR);
     gpio_set_dir(MODE_EMULATOR, GPIO_IN);
     gpio_pull_up(MODE_EMULATOR);
+
+    gpio_init(SD_DET);
+    gpio_set_dir(SD_DET, GPIO_IN);
+    gpio_pull_down(SD_DET);
 }
 
 void setup_uart() {
@@ -324,6 +334,9 @@ void sysinit() {
         } else {
             mode = UNKNOWN;
         }
+
+        // FIXME
+        mode = EMULATOR;
 
         acl_initialise();
         controller_initialise();

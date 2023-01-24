@@ -53,6 +53,16 @@ extern const uint WRITER_D0;
 extern const uint WRITER_D1;
 extern const uint WRITER_LED;
 
+extern const uint ORANGE_LED;
+extern const uint GREEN_LED;
+extern const uint BUZZER;
+
+extern const uint SD_CS;
+extern const uint SD_SI;
+extern const uint SD_SO;
+extern const uint SD_CLK;
+extern const uint SD_DET;
+
 extern const uint32_t MSG;
 extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_SYSCHECK;
@@ -63,8 +73,6 @@ extern const uint32_t MSG_RXI;
 extern const uint32_t MSG_DEBUG;
 
 extern const LED TIMEOUT_LED;
-extern const uint BUZZER;
-extern const uint GREEN_LED;
 extern enum MODE mode;
 extern queue_t queue;
 extern card last_card;
