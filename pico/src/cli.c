@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "f_util.h"
 #include "hardware/gpio.h"
 #include "hardware/rtc.h"
 
@@ -39,9 +40,10 @@ void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
 void list();
 
-void format();
 void mount();
 void unmount();
+void format();
+void ls();
 
 /* Clears the screen
  *
@@ -260,6 +262,11 @@ void exec(char *cmd) {
             unmount();
             break;
 
+        case 'd':
+        case 'D':
+            ls();
+            break;
+
         case '?':
             help();
             break;
@@ -369,12 +376,14 @@ void list() {
 void format() {
     bool detected = gpio_get(SD_DET) == 1;
     int formatted = sdcard_format();
-    char s[32];
+    char s[64];
 
     if (!detected) {
-        snprintf(s, sizeof(s), "DISK NO SDCARD");
-    } else if (formatted != 0) {
-        snprintf(s, sizeof(s), "DISK NOT FORMATTED (%d)", formatted);
+        tx("DISK NO SDCARD");
+    }
+
+    if (formatted != 0) {
+        snprintf(s, sizeof(s), "DISK FORMAT ERROR (%d) %s", formatted, FRESULT_str(formatted));
     } else {
         snprintf(s, sizeof(s), "DISK FORMATTED");
     }
@@ -388,12 +397,14 @@ void format() {
 void mount() {
     bool detected = gpio_get(SD_DET) == 1;
     int mounted = sdcard_mount();
-    char s[32];
+    char s[64];
 
     if (!detected) {
-        snprintf(s, sizeof(s), "DISK NO SDCARD");
-    } else if (mounted != 0) {
-        snprintf(s, sizeof(s), "DISK NOT MOUNTED (%d)", mounted);
+        tx("DISK NO SDCARD");
+    }
+
+    if (mounted != 0) {
+        snprintf(s, sizeof(s), "DISK MOUNT ERROR (%d) %s", mounted, FRESULT_str(mounted));
     } else {
         snprintf(s, sizeof(s), "DISK MOUNTED");
     }
@@ -410,9 +421,34 @@ void unmount() {
     char s[32];
 
     if (!detected) {
-        snprintf(s, sizeof(s), "DISK NO SDCARD");
+        tx("DISK NO SDCARD");
+    }
+
+    if (unmounted != 0) {
+        snprintf(s, sizeof(s), "DISK UNMOUNT ERROR (%d) %s", unmounted, FRESULT_str(unmounted));
     } else {
-        snprintf(s, sizeof(s), "DISK NOT MOUNTED");
+        snprintf(s, sizeof(s), "DISK UNMOUNTED");
+    }
+
+    tx(s);
+}
+
+/* Lists the contents of the SD card
+ *
+ */
+void ls() {
+    int rc = sdcard_ls();
+    int detected = gpio_get(SD_DET);
+    char s[32];
+
+    if (!detected) {
+        tx("DISK NO SDCARD");
+    }
+
+    if (rc != 0) {
+        snprintf(s, sizeof(s), "DISK LS ERROR (%d) %s", rc, FRESULT_str(rc));
+    } else {
+        snprintf(s, sizeof(s), "DISK LS OK");
     }
 
     tx(s);
