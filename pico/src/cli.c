@@ -43,7 +43,8 @@ void list();
 void mount();
 void unmount();
 void format();
-void ls();
+void read_acl();
+void write_acl();
 
 /* Clears the screen
  *
@@ -247,24 +248,34 @@ void exec(char *cmd) {
             list();
             break;
 
-        case 'f':
-        case 'F':
-            format();
-            break;
-
-        case 'm':
-        case 'M':
-            mount();
-            break;
-
-        case 'u':
-        case 'U':
-            unmount();
-            break;
-
         case 'd':
         case 'D':
-            ls();
+            switch (cmd[1]) {
+            case 'm':
+            case 'M':
+                mount();
+                break;
+
+            case 'u':
+            case 'U':
+                unmount();
+                break;
+
+            case 'f':
+            case 'F':
+                format();
+                break;
+
+            case 'r':
+            case 'R':
+                read_acl();
+                break;
+
+            case 'w':
+            case 'W':
+                write_acl();
+                break;
+            }
             break;
 
         case '?':
@@ -433,11 +444,11 @@ void unmount() {
     tx(s);
 }
 
-/* Lists the contents of the SD card
+/* Loads an ACL from the SD card
  *
  */
-void ls() {
-    int rc = sdcard_ls();
+void read_acl() {
+    int rc = sdcard_read_acl();
     int detected = gpio_get(SD_DET);
     char s[32];
 
@@ -446,9 +457,30 @@ void ls() {
     }
 
     if (rc != 0) {
-        snprintf(s, sizeof(s), "DISK LS ERROR (%d) %s", rc, FRESULT_str(rc));
+        snprintf(s, sizeof(s), "DISK READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
     } else {
-        snprintf(s, sizeof(s), "DISK LS OK");
+        snprintf(s, sizeof(s), "DISK READ ACL OK");
+    }
+
+    tx(s);
+}
+
+/* Writes the ACL to the SD card
+ *
+ */
+void write_acl() {
+    int rc = sdcard_write_acl();
+    int detected = gpio_get(SD_DET);
+    char s[32];
+
+    if (!detected) {
+        tx("DISK NO SDCARD");
+    }
+
+    if (rc != 0) {
+        snprintf(s, sizeof(s), "DISK WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+    } else {
+        snprintf(s, sizeof(s), "DISK WRITE ACL OK");
     }
 
     tx(s);

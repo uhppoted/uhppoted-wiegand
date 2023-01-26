@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "hw_config.h"
-// #include "ff.h"
+#include "ff.h"
+
 #include "diskio.h"
+#include "hw_config.h"
 
 #include "../include/cli.h"
 #include "../include/sdcard.h"
@@ -41,17 +42,7 @@ static sd_card_t sd_cards[] = {
         .card_detect_gpio = DET,
         .card_detected_true = 1,
         .m_Status = STA_NOINIT,
-    },
-    {
-        .pcName = "1:",
-        .spi = &spis[0],
-        .ss_gpio = CS,
-        .use_card_detect = true,
-        .card_detect_gpio = DET,
-        .card_detected_true = 1,
-        .m_Status = STA_NOINIT,
-    },
-};
+    }};
 
 void spi0_dma_isr() {
     spi_irq_handler(&spis[0]);
@@ -86,14 +77,14 @@ spi_t *spi_get_by_num(size_t num) {
  */
 void sdcard_initialise(enum MODE mode) {
     if (sd_init_driver()) {
-        sd_card_t *sdcard = sd_get_by_num(0);
-
-        if (sdcard->use_card_detect) {
-            gpio_set_irq_enabled_with_callback(
-                sdcard->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &card_detect_callback);
-        }
+        // sd_card_t *sdcard = sd_get_by_num(0);
+        //
+        // if (sdcard->use_card_detect) {
+        //     gpio_set_irq_enabled_with_callback(
+        //         sdcard->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &card_detect_callback);
+        // }
     } else {
-        tx("SDCARD ERROR");
+        tx("DISK INIT ERROR");
     }
 }
 
@@ -130,8 +121,7 @@ int sdcard_format() {
 /* Lists files on the SD card.
  *
  */
-
-int sdcard_ls() {
+int sdcard_write_acl() {
     FIL file;
     FRESULT fr;
 
@@ -141,6 +131,20 @@ int sdcard_ls() {
 
     if (f_printf(&file, "yo, dawg... \n") < 0) {
         printf("f_printf failed\n");
+    }
+
+    return f_close(&file);
+}
+
+/* Reads the ACL file from the SD card.
+ *
+ */
+int sdcard_read_acl() {
+    FIL file;
+    FRESULT fr;
+
+    if ((fr = f_open(&file, "ACL", FA_READ | FA_OPEN_EXISTING)) != FR_OK) {
+        return fr;
     }
 
     return f_close(&file);

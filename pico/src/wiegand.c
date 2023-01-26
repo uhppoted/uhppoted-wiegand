@@ -299,9 +299,9 @@ void setup_gpio() {
     gpio_set_dir(MODE_EMULATOR, GPIO_IN);
     gpio_pull_up(MODE_EMULATOR);
 
-    gpio_init(SD_DET);
-    gpio_set_dir(SD_DET, GPIO_IN);
-    gpio_pull_down(SD_DET);
+    // gpio_init(SD_DET);
+    // gpio_set_dir(SD_DET, GPIO_IN);
+    // gpio_pull_down(SD_DET);
 }
 
 void setup_uart() {
@@ -333,15 +333,12 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
-        // FIXME
-        mode = EMULATOR;
-
+        sdcard_initialise(mode);
         acl_initialise();
         controller_initialise();
         emulator_initialise();
         led_initialise(mode);
         buzzer_initialise(mode);
-        sdcard_initialise(mode);
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
