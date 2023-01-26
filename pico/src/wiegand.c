@@ -299,9 +299,9 @@ void setup_gpio() {
     gpio_set_dir(MODE_EMULATOR, GPIO_IN);
     gpio_pull_up(MODE_EMULATOR);
 
-    // gpio_init(SD_DET);
-    // gpio_set_dir(SD_DET, GPIO_IN);
-    // gpio_pull_down(SD_DET);
+    gpio_init(SD_DET);
+    gpio_set_dir(SD_DET, GPIO_IN);
+    gpio_pull_down(SD_DET);
 }
 
 void setup_uart() {
