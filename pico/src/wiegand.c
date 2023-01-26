@@ -90,8 +90,7 @@ const uint MODE_EMULATOR = GPIO_8;
 
 const uint LED_PIN = GPIO_25;
 const uint BUZZER = GPIO_10;
-const uint RED_LED = GPIO_11;
-const uint BLUE_LED = GPIO_12;
+const uint RED_LED = GPIO_12;
 const uint YELLOW_LED = GPIO_13;
 const uint ORANGE_LED = GPIO_14;
 const uint GREEN_LED = GPIO_15;
@@ -176,7 +175,7 @@ const LED BAD_CARD = {
 };
 
 const LED GOOD_LED = {
-    .pin = BLUE_LED,
+    .pin = RED_LED,
     .timer = -1,
 };
 
@@ -274,22 +273,21 @@ void setup_gpio() {
 
     gpio_init(RED_LED);
     gpio_init(YELLOW_LED);
-    gpio_init(BLUE_LED);
     gpio_init(ORANGE_LED);
     gpio_init(GREEN_LED);
 
     gpio_set_dir(RED_LED, GPIO_OUT);
     gpio_set_dir(YELLOW_LED, GPIO_OUT);
-    gpio_set_dir(BLUE_LED, GPIO_OUT);
     gpio_set_dir(ORANGE_LED, GPIO_OUT);
     gpio_set_dir(GREEN_LED, GPIO_OUT);
 
+    gpio_pull_up(RED_LED);
+    gpio_pull_up(YELLOW_LED);
     gpio_pull_up(ORANGE_LED);
     gpio_pull_up(GREEN_LED);
 
-    gpio_put(RED_LED, 0);
-    gpio_put(YELLOW_LED, 0);
-    gpio_put(BLUE_LED, 0);
+    gpio_put(RED_LED, 1);
+    gpio_put(YELLOW_LED, 1);
     gpio_put(ORANGE_LED, 1);
     gpio_put(GREEN_LED, 0);
 
@@ -386,7 +384,7 @@ void blink(LED *led) {
         cancel_alarm(led->timer);
     }
 
-    gpio_put(led->pin, 1);
+    gpio_put(led->pin, 0);
 
     led->timer = add_alarm_in_ms(250, off, (void *)led, true);
 }
@@ -404,7 +402,7 @@ int64_t startup(alarm_id_t id, void *data) {
 int64_t off(alarm_id_t id, void *data) {
     const LED *led = data;
 
-    gpio_put(led->pin, 0);
+    gpio_put(led->pin, 1);
 
     return 0;
 }

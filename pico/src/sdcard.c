@@ -92,10 +92,8 @@ void sdcard_initialise(enum MODE mode) {
             gpio_set_irq_enabled_with_callback(
                 sdcard->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &card_detect_callback);
         }
-
-        tx("woot");
     } else {
-        tx("OOOOPS");
+        tx("SDCARD ERROR");
     }
 }
 
@@ -134,21 +132,18 @@ int sdcard_format() {
  */
 
 int sdcard_ls() {
-    FIL fil;
+    FIL file;
     FRESULT fr;
 
-    fr = f_open(&fil, "qwerty.txt", FA_WRITE | FA_CREATE_ALWAYS);
-    if (FR_OK != fr) {
+    if ((fr = f_open(&file, "qwerty.txt", FA_WRITE | FA_CREATE_ALWAYS)) != FR_OK) {
         return fr;
     }
 
-    if (f_printf(&fil, "yo, dawg... \n") < 0) {
+    if (f_printf(&file, "yo, dawg... \n") < 0) {
         printf("f_printf failed\n");
     }
 
-    fr = f_close(&fil);
-
-    return fr;
+    return f_close(&file);
 }
 
 // int sdcard_ls() {
