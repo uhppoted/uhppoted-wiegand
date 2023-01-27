@@ -89,8 +89,8 @@ const uint MODE_CONTROLLER = GPIO_7;
 const uint MODE_EMULATOR = GPIO_8;
 
 const uint LED_PIN = GPIO_25;
-const uint BUZZER = GPIO_10;
-const uint RED_LED = GPIO_12;
+const uint RED_LED = GPIO_11;
+const uint BUZZER = GPIO_12;
 const uint YELLOW_LED = GPIO_13;
 const uint ORANGE_LED = GPIO_14;
 const uint GREEN_LED = GPIO_15;
