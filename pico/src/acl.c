@@ -8,11 +8,15 @@ uint32_t ACL[32] = {};
 /* Initialises the ACL.
  *
  */
-void acl_initialise() {
-    static int N = sizeof(ACL) / sizeof(uint32_t);
+void acl_initialise(uint32_t cards[], int N) {
+    static int size = sizeof(ACL) / sizeof(uint32_t);
 
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < size; i++) {
         ACL[i] = 0xffffffff;
+    }
+
+    for (int i = 0; i < N && i < size; i++) {
+        ACL[i] = cards[i];
     }
 }
 

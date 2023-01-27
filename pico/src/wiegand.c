@@ -334,11 +334,11 @@ void sysinit() {
         }
 
         sdcard_initialise(mode);
-        acl_initialise();
         controller_initialise();
         emulator_initialise();
         led_initialise(mode);
         buzzer_initialise(mode);
+        acl_initialise((uint32_t[]){}, 0);
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
@@ -352,6 +352,14 @@ void sysinit() {
         sys_ok();
         set_scroll_area();
 
+        // ... load ACL from SD card
+        uint32_t cards[16];
+        int N = 16;
+        if (sdcard_read_acl(cards, &N) == 0) {
+            acl_initialise(cards, N);
+        }
+
+        // ... 'k, done
         initialised = true;
     }
 }

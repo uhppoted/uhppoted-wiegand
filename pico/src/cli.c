@@ -448,7 +448,9 @@ void unmount() {
  *
  */
 void read_acl() {
-    int rc = sdcard_read_acl();
+    uint32_t cards[16];
+    int N = 16;
+    int rc = sdcard_read_acl(cards, &N);
     int detected = gpio_get(SD_DET);
     char s[32];
 
@@ -459,7 +461,9 @@ void read_acl() {
     if (rc != 0) {
         snprintf(s, sizeof(s), "DISK READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
     } else {
-        snprintf(s, sizeof(s), "DISK READ ACL OK");
+        snprintf(s, sizeof(s), "DISK READ ACL OK (%d)", N);
+
+        acl_initialise(cards, N);
     }
 
     tx(s);

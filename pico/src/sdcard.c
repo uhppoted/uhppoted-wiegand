@@ -1,7 +1,9 @@
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "f_util.h"
 #include "ff.h"
 
 #include "diskio.h"
@@ -77,6 +79,14 @@ spi_t *spi_get_by_num(size_t num) {
  */
 void sdcard_initialise(enum MODE mode) {
     if (sd_init_driver()) {
+        int rc;
+        char s[64];
+
+        if ((rc = sdcard_mount()) != 0) {
+            snprintf(s, sizeof(s), "DISK MOUNT ERROR (%d) %s", rc, FRESULT_str(rc));
+            tx(s);
+        }
+
         // sd_card_t *sdcard = sd_get_by_num(0);
         //
         // if (sdcard->use_card_detect) {
@@ -139,13 +149,25 @@ int sdcard_write_acl() {
 /* Reads the ACL file from the SD card.
  *
  */
-int sdcard_read_acl() {
+int sdcard_read_acl(uint32_t cards[], int *N) {
     FIL file;
     FRESULT fr;
 
     if ((fr = f_open(&file, "ACL", FA_READ | FA_OPEN_EXISTING)) != FR_OK) {
         return fr;
     }
+
+    char buffer[256];
+    int count = 0;
+    uint32_t card;
+    while (f_gets(buffer, sizeof(buffer), &file) && count < *N) {
+        buffer[strcspn(buffer, "\n")] = 0;
+        if ((card = strtol(buffer, NULL, 10)) != 0) {
+            cards[count++] = card;
+        }
+    }
+
+    *N = count;
 
     return f_close(&file);
 }
