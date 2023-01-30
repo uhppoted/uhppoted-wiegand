@@ -4,22 +4,25 @@
 - [x] 'beep' on write
 - [x] Rename READER/EMULATOR
 - [x] Enable watchdog
+- [x] SD card
+- [ ] Reboot
 - [ ] Buzzer
 - [ ] Relay
 - [ ] Button
-- [ ] SD card
 - [ ] PicoW+TCP/IP
 
 ## Breadboard 
-- [ ] KiCard schematic
+- [x] LEDs
+- [x] SD card
 - [ ] Fritzing
 - [ ] Photo
-- LEDs
+- [ ] KiCard schematic
 - Relay driver
 - Door input
 - Door relay
+- Pushbutton input
 - Buzzer
-- SD card
+- Pushbutton
 
 ## Schematic
 - RD/WR jumpers

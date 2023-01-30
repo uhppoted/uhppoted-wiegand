@@ -36,6 +36,14 @@ typedef struct LED {
     int32_t timer;
 } LED;
 
+typedef struct CARD {
+    uint32_t card_number;
+    datetime_t start;
+    datetime_t end;
+    bool allowed;
+    const char *name;
+} CARD;
+
 typedef struct card {
     datetime_t timestamp;
     uint32_t facility_code;

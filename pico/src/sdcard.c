@@ -128,50 +128,6 @@ int sdcard_format() {
     return fr == FR_OK ? 0 : fr;
 }
 
-/* Lists files on the SD card.
- *
- */
-int sdcard_write_acl() {
-    FIL file;
-    FRESULT fr;
-
-    if ((fr = f_open(&file, "qwerty.txt", FA_WRITE | FA_CREATE_ALWAYS)) != FR_OK) {
-        return fr;
-    }
-
-    if (f_printf(&file, "yo, dawg... \n") < 0) {
-        printf("f_printf failed\n");
-    }
-
-    return f_close(&file);
-}
-
-/* Reads the ACL file from the SD card.
- *
- */
-int sdcard_read_acl(uint32_t cards[], int *N) {
-    FIL file;
-    FRESULT fr;
-
-    if ((fr = f_open(&file, "ACL", FA_READ | FA_OPEN_EXISTING)) != FR_OK) {
-        return fr;
-    }
-
-    char buffer[256];
-    int count = 0;
-    uint32_t card;
-    while (f_gets(buffer, sizeof(buffer), &file) && count < *N) {
-        buffer[strcspn(buffer, "\n")] = 0;
-        if ((card = strtol(buffer, NULL, 10)) != 0) {
-            cards[count++] = card;
-        }
-    }
-
-    *N = count;
-
-    return f_close(&file);
-}
-
 // int sdcard_ls() {
 //     // char cwdbuf[FF_LFN_BUF] = {0};
 //     char const *p_dir = "/";
@@ -215,7 +171,80 @@ int sdcard_read_acl(uint32_t cards[], int *N) {
 //     f_closedir(&dj);
 //
 //     return count;
-// }
+// }s
+
+/* Reads the ACL file from the SD card.
+ *
+ */
+int sdcard_read_acl(uint32_t cards[], int *N) {
+    FIL file;
+    FRESULT fr;
+
+    if ((fr = f_open(&file, "ACL", FA_READ | FA_OPEN_EXISTING)) != FR_OK) {
+        return fr;
+    }
+
+    char buffer[256];
+    int count = 0;
+    uint32_t card;
+    while (f_gets(buffer, sizeof(buffer), &file) && count < *N) {
+        buffer[strcspn(buffer, "\n")] = 0;
+        if ((card = strtol(buffer, NULL, 10)) != 0) {
+            cards[count++] = card;
+        }
+    }
+
+    *N = count;
+
+    return f_close(&file);
+}
+
+/* Writes a list of cards to the SD card ACL file.
+ *
+ */
+int sdcard_write_acl(CARD cards[], int N) {
+    FIL file;
+    FRESULT fr;
+
+    if ((fr = f_open(&file, "ACL.tmp", FA_WRITE | FA_CREATE_ALWAYS)) != FR_OK) {
+        return fr;
+    }
+
+    for (int i = 0; i < N; i++) {
+        CARD card = cards[i];
+        char record[64];
+
+        snprintf(record,
+                 sizeof(record),
+                 "%-8u %04d-%02d-%02d %04d-%02d-%02d %c %s",
+                 card.card_number,
+                 card.start.year,
+                 card.start.month,
+                 card.start.day,
+                 card.end.year,
+                 card.end.month,
+                 card.end.day,
+                 card.allowed ? 'Y' : 'N',
+                 card.name);
+        if ((fr = f_printf(&file, "%s\n", record)) < 0) {
+            f_close(&file);
+            return fr;
+        }
+    }
+
+    if ((fr = f_close(&file)) != FR_OK) {
+        return fr;
+    }
+
+    // ... rename ACL.tmp to ACL file
+    f_unlink("ACL.bak");
+
+    if ((fr = f_rename("ACL", "ACL.bak")) != FR_OK) {
+        return fr;
+    }
+
+    return f_rename("ACL.tmp", "ACL");
+}
 
 static void card_detect_callback(uint gpio, uint32_t events) {
     static bool busy;

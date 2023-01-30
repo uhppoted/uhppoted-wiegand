@@ -341,6 +341,7 @@ void grant(uint32_t facility_code, uint32_t card) {
     }
 
     tx(s);
+    write_acl();
 }
 
 /* Removes a card number from the ACL.
@@ -359,6 +360,7 @@ void revoke(uint32_t facility_code, uint32_t card) {
     }
 
     tx(s);
+    write_acl();
 }
 
 /* Lists the ACL cards.
@@ -473,11 +475,46 @@ void read_acl() {
  *
  */
 void write_acl() {
-    int rc = sdcard_write_acl();
-    int detected = gpio_get(SD_DET);
+    uint32_t *cards;
+    int N = acl_list(&cards);
     char s[32];
+    CARD acl[N];
 
-    if (!detected) {
+    datetime_t now;
+    datetime_t start;
+    datetime_t end;
+
+    rtc_get_datetime(&now);
+
+    start.year = now.year;
+    start.month = 1;
+    start.day = 1;
+    start.dotw = 0;
+    start.hour = 0;
+    start.min = 0;
+    start.sec = 0;
+
+    end.year = now.year + 1;
+    end.month = 12;
+    end.day = 31;
+    end.dotw = 0;
+    end.hour = 23;
+    end.min = 59;
+    end.sec = 59;
+
+    for (int i = 0; i < N; i++) {
+        acl[i].card_number = cards[i];
+        acl[i].start = start;
+        acl[i].end = end;
+        acl[i].allowed = true;
+        acl[i].name = "----";
+    }
+
+    free(cards);
+
+    int rc = sdcard_write_acl(acl, N);
+
+    if (!gpio_get(SD_DET)) {
         tx("DISK NO SDCARD");
     }
 
@@ -500,8 +537,8 @@ void help() {
     tx("Gnnnnnn  Add card to access control list");
     tx("Rnnnnnn  Remove card from access control list");
     tx("Lnnnnnn  List cards in access control list");
-    tx("Q        Display last card read/write");
     tx("Wnnnnnn  (emulator) Write card to Wiegand-26 interface");
+    tx("Q        Display last card read/write");
     tx("O        (reader)   LED on");
     tx("X        (reader)   LED off");
     tx("M        Mount SD card");
