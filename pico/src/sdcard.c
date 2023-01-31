@@ -87,12 +87,15 @@ void sdcard_initialise(enum MODE mode) {
             tx(s);
         }
 
-        // sd_card_t *sdcard = sd_get_by_num(0);
-        //
-        // if (sdcard->use_card_detect) {
-        //     gpio_set_irq_enabled_with_callback(
-        //         sdcard->card_detect_gpio, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &card_detect_callback);
-        // }
+        sd_card_t *sdcard = sd_get_by_num(0);
+
+        if (sdcard->use_card_detect) {
+            gpio_set_irq_enabled_with_callback(
+                sdcard->card_detect_gpio,
+                GPIO_IRQ_EDGE_FALL,
+                true,
+                &card_detect_callback);
+        }
     } else {
         tx("DISK INIT ERROR");
     }
@@ -113,9 +116,15 @@ int sdcard_mount() {
  */
 int sdcard_unmount() {
     sd_card_t *sdcard = sd_get_by_num(0);
-    FRESULT fr = f_unmount(sdcard->pcName);
+    FRESULT fr;
 
-    return fr == FR_OK ? 0 : fr;
+    if ((fr = f_unmount(sdcard->pcName)) != FR_OK) {
+        return fr;
+    } else {
+        sdcard->mounted = false;
+        sdcard->m_Status |= STA_NOINIT;
+        return 0;
+    }
 }
 
 /* Format SD card.
@@ -127,51 +136,6 @@ int sdcard_format() {
 
     return fr == FR_OK ? 0 : fr;
 }
-
-// int sdcard_ls() {
-//     // char cwdbuf[FF_LFN_BUF] = {0};
-//     char const *p_dir = "/";
-//
-//     DIR dj;
-//     FILINFO fno;
-//
-//     memset(&dj, 0, sizeof dj);
-//     memset(&fno, 0, sizeof fno);
-//
-//     FRESULT fr = f_findfirst(&dj, &fno, p_dir, "*");
-//     if (FR_OK != fr) {
-//         return fr;
-//     }
-//
-//     int count = 0;
-//     while (fr == FR_OK && fno.fname[0]) {
-//         // const char *pcWritableFile = "writable file",
-//         //            *pcReadOnlyFile = "read only file",
-//         //            *pcDirectory = "directory";
-//         // const char *pcAttrib;
-//         // /* Point pcAttrib to a string that describes the file. */
-//         // if (fno.fattrib & AM_DIR) {
-//         //     pcAttrib = pcDirectory;
-//         // } else if (fno.fattrib & AM_RDO) {
-//         //     pcAttrib = pcReadOnlyFile;
-//         // } else {
-//         //     pcAttrib = pcWritableFile;
-//         // }
-//         // /* Create a string that includes the file name, the file size and the
-//         //  attributes string. */
-//
-//         // char s[64];
-//         // snprintf(s, sizeof(s), "%s [%s] [size=%llu]\n", fno.fname, pcAttrib, fno.fsize);
-//         // tx(s);
-//
-//         count++;
-//         fr = f_findnext(&dj, &fno); /* Search for next item */
-//     }
-//
-//     f_closedir(&dj);
-//
-//     return count;
-// }s
 
 /* Reads the ACL file from the SD card.
  *
@@ -249,23 +213,21 @@ int sdcard_write_acl(CARD cards[], int N) {
 static void card_detect_callback(uint gpio, uint32_t events) {
     static bool busy;
 
-    if (!busy) {
+    if (!busy && !gpio_get(SD_DET)) {
         busy = true;
 
-        for (size_t i = 0; i < sd_get_num(); ++i) {
-            sd_card_t *sdcard = sd_get_by_num(i);
+        sd_card_t *sdcard = sd_get_by_num(0);
 
-            if (sdcard->card_detect_gpio == gpio) {
-                if (sdcard->mounted) {
-                    FRESULT fr = f_unmount(sdcard->pcName);
-                    if (FR_OK == fr) {
-                        sdcard->mounted = false;
-                    }
+        if (sdcard->card_detect_gpio == gpio) {
+            if (sdcard->mounted) {
+                FRESULT fr = f_unmount(sdcard->pcName);
+                if (FR_OK == fr) {
+                    sdcard->mounted = false;
                 }
-
-                sdcard->m_Status |= STA_NOINIT; // in case medium is removed
-                sd_card_detect(sdcard);
             }
+
+            sdcard->m_Status |= STA_NOINIT; // in case medium is removed
+            sd_card_detect(sdcard);
         }
 
         busy = false;

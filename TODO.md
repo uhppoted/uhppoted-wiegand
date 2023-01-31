@@ -10,11 +10,17 @@
 - [ ] Relay
 - [ ] Button
 - [ ] PicoW+TCP/IP
+- (?) Authorisation
+- [ ] tweetnacl
+      - [ ] TCP/IP
+      - (?) ACL
+      - (?) Auth
 
 ## Breadboard 
 - [x] LEDs
 - [x] SD card
 - [ ] Fritzing
+      - [ ] BC-108 driver for relays
 - [ ] Photo
 - [ ] KiCard schematic
 - Relay driver
