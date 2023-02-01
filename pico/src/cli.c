@@ -9,6 +9,7 @@
 #include "../include/acl.h"
 #include "../include/cli.h"
 #include "../include/emulator.h"
+#include "../include/led.h"
 #include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
@@ -204,18 +205,9 @@ void exec(char *cmd) {
 
     if (N > 0) {
         switch (cmd[0]) {
-        case 'o':
-        case 'O':
-            if (mode == CONTROLLER) {
-                gpio_put(READER_LED, 0);
-            }
-            break;
-
         case 'x':
         case 'X':
-            if (mode == CONTROLLER) {
-                gpio_put(READER_LED, 1);
-            }
+            led_blink(5);
             break;
 
         case 'q':
@@ -539,8 +531,7 @@ void help() {
     tx("Lnnnnnn  List cards in access control list");
     tx("Wnnnnnn  (emulator) Write card to Wiegand-26 interface");
     tx("Q        Display last card read/write");
-    tx("O        (reader)   LED on");
-    tx("X        (reader)   LED off");
+    tx("X        Blinks reader LED 5 times");
     tx("M        Mount SD card");
     tx("U        Unmount SD card");
     tx("?        Display list of commands");
