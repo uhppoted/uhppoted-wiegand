@@ -6,6 +6,7 @@
 - [x] Enable watchdog
 - [x] SD card
 - [ ] Reboot
+- [ ] hwconfig.c
 - [ ] Buzzer
 - [ ] Relay
 - [ ] Button
@@ -20,7 +21,7 @@
 - [x] LEDs
 - [x] SD card
 - [ ] Fritzing
-      - [ ] BC-108 driver for relays
+      - [ ] BC-108/ULN2003 driver for relays
 - [ ] Photo
 - [ ] KiCard schematic
 - Relay driver

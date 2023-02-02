@@ -1,6 +1,5 @@
 #include "../include/emulator.h"
 #include "../include/buzzer.h"
-#include "../include/wiegand.h"
 #include <WRITE.pio.h>
 
 typedef struct writer {
@@ -9,7 +8,7 @@ typedef struct writer {
 /* Initialises the WRITER PIO.
  *
  */
-void emulator_initialise() {
+void emulator_initialise(enum MODE mode) {
     uint offset = pio_add_program(PIO_WRITER, &writer_program);
 
     writer_program_init(PIO_WRITER, SM_WRITER, offset, WRITER_D0, WRITER_D1);

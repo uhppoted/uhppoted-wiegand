@@ -95,12 +95,12 @@ const uint YELLOW_LED = GPIO_13;
 const uint ORANGE_LED = GPIO_14;
 const uint GREEN_LED = GPIO_15;
 
-const uint READER_D0 = GPIO_16;
-const uint READER_D1 = GPIO_17;
-const uint WRITER_D0 = GPIO_18;
-const uint WRITER_D1 = GPIO_19;
-const uint READER_LED = GPIO_20;
 const uint WRITER_LED = GPIO_21;
+const uint READER_LED = GPIO_20;
+const uint WRITER_D1 = GPIO_19;
+const uint WRITER_D0 = GPIO_18;
+const uint READER_D1 = GPIO_17;
+const uint READER_D0 = GPIO_16;
 
 const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
@@ -334,8 +334,8 @@ void sysinit() {
         }
 
         sdcard_initialise(mode);
-        controller_initialise();
-        emulator_initialise();
+        controller_initialise(mode);
+        emulator_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         acl_initialise((uint32_t[]){}, 0);

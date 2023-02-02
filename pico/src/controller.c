@@ -8,7 +8,6 @@
 #include "../include/cli.h"
 #include "../include/controller.h"
 #include "../include/led.h"
-#include "../include/wiegand.h"
 #include <READ.pio.h>
 
 typedef struct reader {
@@ -46,7 +45,7 @@ void rxi() {
     }
 }
 
-void controller_initialise() {
+void controller_initialise(enum MODE mode) {
     uint offset = pio_add_program(PIO_READER, &reader_program);
 
     reader_program_init(PIO_READER, SM_READER, offset, READER_D0, READER_D1);
