@@ -360,6 +360,8 @@ void sysinit() {
         }
 
         // ... 'k, done
+        buzzer_beep(1);
+
         initialised = true;
     }
 }

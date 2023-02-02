@@ -61,7 +61,9 @@ extern const uint WRITER_D0;
 extern const uint WRITER_D1;
 extern const uint WRITER_LED;
 
+extern const uint RED_LED;
 extern const uint ORANGE_LED;
+extern const uint YELLOW_LED;
 extern const uint GREEN_LED;
 extern const uint BUZZER;
 

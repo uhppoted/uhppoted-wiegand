@@ -33,6 +33,7 @@ void clearline();
 void exec(char *);
 void cpr(char *);
 void query();
+void reboot();
 void help();
 
 void on_card_command(char *cmd, handler fn);
@@ -238,6 +239,11 @@ void exec(char *cmd) {
         case 'l':
         case 'L':
             list();
+            break;
+
+        case 'z':
+        case 'Z':
+            reboot();
             break;
 
         case 'd':
@@ -519,7 +525,28 @@ void write_acl() {
     tx(s);
 }
 
-/* Should probably display the commands?
+/* Goes into a tight loop until the watchdog resets the processor.
+ *
+ */
+void reboot() {
+    while (true) {
+        buzzer_beep(1);
+
+        gpio_put(RED_LED, 0);
+        gpio_put(YELLOW_LED, 0);
+        gpio_put(ORANGE_LED, 0);
+        gpio_put(GREEN_LED, 0);
+        sleep_ms(750);
+
+        gpio_put(RED_LED, 1);
+        gpio_put(YELLOW_LED, 1);
+        gpio_put(ORANGE_LED, 1);
+        gpio_put(GREEN_LED, 1);
+        sleep_ms(750);
+    }
+}
+
+/* Displays a list of the supported commands.
  *
  */
 void help() {
@@ -534,6 +561,7 @@ void help() {
     tx("X        Blinks reader LED 5 times");
     tx("M        Mount SD card");
     tx("U        Unmount SD card");
+    tx("Z        reboot");
     tx("?        Display list of commands");
     tx("-----");
 }
