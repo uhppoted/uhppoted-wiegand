@@ -7,6 +7,7 @@
 #include "hardware/rtc.h"
 
 #include "../include/acl.h"
+#include "../include/buzzer.h"
 #include "../include/cli.h"
 #include "../include/emulator.h"
 #include "../include/led.h"

@@ -5,7 +5,7 @@
 - [x] Rename READER/EMULATOR
 - [x] Enable watchdog
 - [x] SD card
-- [xs] Reboot
+- [x] Reboot
 - [ ] hwconfig.c
 - [ ] Buzzer
 - [ ] Relay
