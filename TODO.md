@@ -7,8 +7,9 @@
 - [x] SD card
 - [x] Reboot
 - [ ] hwconfig.c
-- [ ] Buzzer
+      - [ ] LED timer pins
 - [ ] Relay
+- [ ] Buzzer
 - [ ] Button
 - [ ] PicoW+TCP/IP
 - (?) Authorisation
