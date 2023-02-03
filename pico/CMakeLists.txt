@@ -24,6 +24,7 @@ add_executable(wiegand
   src/buzzer.c
   src/acl.c
   src/sdcard.c
+  src/hwconfig.c
 )
 
 add_subdirectory(lib/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)

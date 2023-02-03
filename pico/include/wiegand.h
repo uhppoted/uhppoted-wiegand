@@ -4,6 +4,9 @@
 
 #include "pico/util/queue.h"
 
+extern const uint UART0_RX;
+extern const uint UART0_TX;
+
 extern const PIO PIO_READER;
 extern const PIO PIO_WRITER;
 extern const PIO PIO_LED;
@@ -54,6 +57,9 @@ typedef struct card {
 
 extern enum MODE mode;
 
+extern const uint MODE_CONTROLLER;
+extern const uint MODE_EMULATOR;
+
 extern const uint READER_D0;
 extern const uint READER_D1;
 extern const uint READER_LED;
@@ -61,6 +67,7 @@ extern const uint WRITER_D0;
 extern const uint WRITER_D1;
 extern const uint WRITER_LED;
 
+extern const uint ONBOARD_LED;
 extern const uint RED_LED;
 extern const uint ORANGE_LED;
 extern const uint YELLOW_LED;
