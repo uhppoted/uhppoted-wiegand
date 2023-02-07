@@ -28,23 +28,23 @@ _How many times must a man shuffle his
 Breadboard layout around?  
 And how many wires must be trim'd and cut  
 Before it's all tidy 'n neat?  
-And how many times will the LEDs be  
+Oh, how many times will the LEDs be  
 Completely the wrong way around?  
 The answer, my friend  
 Is blowing in the wind...  
 The answer is blowin' in the wind!_
 
-_And how many years must a bug exist  
+_Oh, how many years can a bug lurk and hide  
 Before it comes to the fore?  
 And how many years can some people exist  
 Happily ignorant of circuitry  
-And how many times must a man type ===  
+Oh, how many times must a man type ===  
 Before val is really truthy?  
 The answer, my friend  
 Is blowing in the wind...  
 The answer is blowin' in the wind!_
 
-_Oh, and how many times must a man hook up  
+_Oh how many times can a man hook up  
 VSS straight to the GND?  
 And recalculate the series resistance  
 So that the relays don't fry?  
