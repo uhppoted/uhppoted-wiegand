@@ -28,8 +28,8 @@ _How many times must a man shuffle his
 Breadboard layout around?  
 And how many wires must be trim'd and cut  
 Before it's all tidy 'n neat?  
-And how many times will the LEDs be
-Completely the wrong way around?
+And how many times will the LEDs be  
+Completely the wrong way around?  
 The answer, my friend  
 Is blowing in the wind...  
 The answer is blowin' in the wind!_
