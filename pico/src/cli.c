@@ -370,11 +370,11 @@ void list() {
     int N = acl_list(&cards);
 
     if (N == 0) {
-        tx("ACL  NO CARDS");
+        tx("ACL   NO CARDS");
     } else {
         for (int i = 0; i < N; i++) {
             char s[32];
-            snprintf(s, sizeof(s), "ACL  %u", cards[i]);
+            snprintf(s, sizeof(s), "ACL   %u", cards[i]);
             tx(s);
         }
     }
@@ -391,13 +391,13 @@ void format() {
     char s[64];
 
     if (!detected) {
-        tx("DISK NO SDCARD");
+        tx("DISK  NO SDCARD");
     }
 
     if (formatted != 0) {
-        snprintf(s, sizeof(s), "DISK FORMAT ERROR (%d) %s", formatted, FRESULT_str(formatted));
+        snprintf(s, sizeof(s), "DISK  FORMAT ERROR (%d) %s", formatted, FRESULT_str(formatted));
     } else {
-        snprintf(s, sizeof(s), "DISK FORMATTED");
+        snprintf(s, sizeof(s), "DISK  FORMATTED");
     }
 
     tx(s);
@@ -412,13 +412,13 @@ void mount() {
     char s[64];
 
     if (!detected) {
-        tx("DISK NO SDCARD");
+        tx("DISK  NO SDCARD");
     }
 
     if (mounted != 0) {
-        snprintf(s, sizeof(s), "DISK MOUNT ERROR (%d) %s", mounted, FRESULT_str(mounted));
+        snprintf(s, sizeof(s), "DISK  MOUNT ERROR (%d) %s", mounted, FRESULT_str(mounted));
     } else {
-        snprintf(s, sizeof(s), "DISK MOUNTED");
+        snprintf(s, sizeof(s), "DISK  MOUNTED");
     }
 
     tx(s);
@@ -518,9 +518,9 @@ void write_acl() {
     }
 
     if (rc != 0) {
-        snprintf(s, sizeof(s), "DISK WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+        snprintf(s, sizeof(s), "DISK  WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
     } else {
-        snprintf(s, sizeof(s), "DISK WRITE ACL OK");
+        snprintf(s, sizeof(s), "DISK  WRITE ACL OK");
     }
 
     tx(s);

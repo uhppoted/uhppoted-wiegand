@@ -88,16 +88,16 @@ void led_event(uint32_t v) {
     switch (v) {
     case 21:
         gpio_put(GREEN_LED, 0);
-        tx("LED  ON");
+        tx("LED   ON");
         break;
 
     case 10:
         gpio_put(GREEN_LED, 1);
-        tx("LED  OFF");
+        tx("LED   OFF");
         break;
 
     default:
-        tx("LED  ???");
+        tx("LED   ???");
     }
 }
 

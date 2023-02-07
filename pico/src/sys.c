@@ -17,14 +17,14 @@ void sys_start() {
     char s[64];
     uint32_t hz = clock_get_hz(clk_sys);
 
-    snprintf(s, sizeof(s), "%s %d", "CLOCK", hz);
+    snprintf(s, sizeof(s), "%5s %d", "CLOCK", hz);
     tx(s);
 }
 
 void sys_ok() {
     char s[64];
 
-    snprintf(s, sizeof(s), "%-4s %-8s %s", "SYS", MODES[mode], "OK");
+    snprintf(s, sizeof(s), "%-5s %-8s %s", "SYS", MODES[mode], "OK");
     tx(s);
 }
 
@@ -66,6 +66,6 @@ void sys_settime(char *t) {
     sleep_us(64);
 
     char s[64];
-    snprintf(s, sizeof(s), "SYS  SET TIME %s", ok ? "OK" : "ERROR");
+    snprintf(s, sizeof(s), "SYS   SET TIME %s", ok ? "OK" : "ERROR");
     tx(s);
 }

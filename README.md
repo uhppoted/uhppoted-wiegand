@@ -44,14 +44,14 @@ The answer, my friend
 Is blowing in the wind...  
 The answer is blowin' in the wind!_
 
-_Oh how many times can a man hook up  
+_And how many times can a man hook up  
 VSS straight to the GND?  
 And recalculate the series resistance  
 So that the relays don't fry?  
-And how many times must a man palm his face  
+Oh, how many times must a man palm his face  
 And ask "Oh god, f&@*&%@ why???"  
-The answer, my friend, is blowin' in the 'ther,  
-The answer is blowin' in the ether._
+The answer, my friend, is blowin' in the wind,  
+The answer is blowin' in the wind._
 
 ## Releases
 

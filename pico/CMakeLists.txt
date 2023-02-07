@@ -22,6 +22,7 @@ add_executable(wiegand
   src/emulator.c
   src/led.c
   src/buzzer.c
+  src/relay.c
   src/acl.c
   src/sdcard.c
   src/hwconfig.c

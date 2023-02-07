@@ -45,6 +45,8 @@ const uint GPIO_19 = 19; // Pico 25
 const uint GPIO_20 = 20; // Pico 26
 const uint GPIO_21 = 21; // Pico 27
 // const uint GPIO_25 = 25; // Pico LED
+const uint GPIO_27 = 27; // Pico 32
+const uint GPIO_28 = 28; // Pico 34
 
 const uint UART0_TX = GPIO_0; // Pico 1
 const uint UART0_RX = GPIO_1; // Pico 2
@@ -73,3 +75,6 @@ const uint WRITER_D1 = GPIO_19;
 const uint WRITER_D0 = GPIO_18;
 const uint READER_D1 = GPIO_17;
 const uint READER_D0 = GPIO_16;
+
+const uint RELAY_NO = GPIO_28;
+const uint RELAY_NC = GPIO_27;

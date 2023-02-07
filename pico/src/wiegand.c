@@ -17,6 +17,7 @@
 #include "../include/controller.h"
 #include "../include/emulator.h"
 #include "../include/led.h"
+#include "../include/relay.h"
 #include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
@@ -48,6 +49,7 @@ const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
 const uint32_t MSG_CARD_READ = 0x40000000;
 const uint32_t MSG_LED = 0x50000000;
+const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -194,6 +196,10 @@ int main() {
             led_event(v & 0x0fffffff);
         }
 
+        if ((v & MSG) == MSG_RELAY) {
+            relay_event(v & 0x0fffffff);
+        }
+
         if ((v & MSG) == MSG_DEBUG) {
             char s[64];
             snprintf(s, sizeof(s), "DEBUG %d", v & 0x0fffffff);
@@ -211,24 +217,32 @@ void setup_gpio() {
     gpio_set_dir(ONBOARD_LED, GPIO_OUT);
 
     gpio_init(RED_LED);
-    gpio_init(YELLOW_LED);
-    gpio_init(ORANGE_LED);
-    gpio_init(GREEN_LED);
-
     gpio_set_dir(RED_LED, GPIO_OUT);
-    gpio_set_dir(YELLOW_LED, GPIO_OUT);
-    gpio_set_dir(ORANGE_LED, GPIO_OUT);
-    gpio_set_dir(GREEN_LED, GPIO_OUT);
-
     gpio_pull_up(RED_LED);
-    gpio_pull_up(YELLOW_LED);
-    gpio_pull_up(ORANGE_LED);
-    gpio_pull_up(GREEN_LED);
-
     gpio_put(RED_LED, 1);
+
+    gpio_init(YELLOW_LED);
+    gpio_set_dir(YELLOW_LED, GPIO_OUT);
+    gpio_pull_up(YELLOW_LED);
     gpio_put(YELLOW_LED, 1);
+
+    gpio_init(ORANGE_LED);
+    gpio_set_dir(ORANGE_LED, GPIO_OUT);
+    gpio_pull_up(ORANGE_LED);
     gpio_put(ORANGE_LED, 1);
+
+    gpio_init(GREEN_LED);
+    gpio_set_dir(GREEN_LED, GPIO_OUT);
+    gpio_pull_up(GREEN_LED);
     gpio_put(GREEN_LED, 0);
+
+    gpio_init(RELAY_NO);
+    gpio_set_dir(RELAY_NO, GPIO_IN);
+    gpio_pull_up(RELAY_NO);
+
+    gpio_init(RELAY_NC);
+    gpio_set_dir(RELAY_NC, GPIO_IN);
+    gpio_pull_up(RELAY_NC);
 
     gpio_init(MODE_CONTROLLER);
     gpio_set_dir(MODE_CONTROLLER, GPIO_IN);
@@ -262,7 +276,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     SYS  STARTUP");
+        puts("                     SYS   STARTUP");
 
         if (!gpio_get(MODE_CONTROLLER) && gpio_get(MODE_EMULATOR)) {
             mode = CONTROLLER;
@@ -277,6 +291,11 @@ void sysinit() {
         emulator_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
+
+        if (!relay_initialise(mode)) {
+            tx("failed to initialise relay monitor");
+        }
+
         acl_initialise((uint32_t[]){}, 0);
 
         // ... setup sys stuff

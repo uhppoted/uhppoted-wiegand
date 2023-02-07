@@ -83,7 +83,7 @@ void sdcard_initialise(enum MODE mode) {
         char s[64];
 
         if ((rc = sdcard_mount()) != 0) {
-            snprintf(s, sizeof(s), "DISK MOUNT ERROR (%d) %s", rc, FRESULT_str(rc));
+            snprintf(s, sizeof(s), "DISK  MOUNT ERROR (%d) %s", rc, FRESULT_str(rc));
             tx(s);
         }
 
@@ -97,7 +97,7 @@ void sdcard_initialise(enum MODE mode) {
                 &card_detect_callback);
         }
     } else {
-        tx("DISK INIT ERROR");
+        tx("DISK  INIT ERROR");
     }
 }
 

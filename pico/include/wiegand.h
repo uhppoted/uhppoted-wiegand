@@ -66,6 +66,8 @@ extern const uint READER_LED;
 extern const uint WRITER_D0;
 extern const uint WRITER_D1;
 extern const uint WRITER_LED;
+extern const uint RELAY_NO;
+extern const uint RELAY_NC;
 
 extern const uint ONBOARD_LED;
 extern const uint RED_LED;
@@ -85,6 +87,7 @@ extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_SYSCHECK;
 extern const uint32_t MSG_CARD_READ;
 extern const uint32_t MSG_LED;
+extern const uint32_t MSG_RELAY;
 extern const uint32_t MSG_TX;
 extern const uint32_t MSG_RXI;
 extern const uint32_t MSG_DEBUG;
