@@ -81,6 +81,41 @@ Notes:
 1. The default facility code for _emulator_ mode is a build time constant (`FACILITY_CODE` in the _Makefile_) and will
 be used if the _W_ command card number is 5 digits or less.
 
+
+#### Fritzing's Lament
+
+_\<sigh\> ..._
+
+_How many times must a man shuffle his  
+Breadboard layout around?  
+And how many wires must be trim'd and cut  
+Before it's all tidy 'n neat?  
+And how many times will the LEDs be
+Completely the wrong way around?
+The answer, my friend  
+Is blowing in the wind...  
+The answer is blowin' in the wind!_
+
+_And how many years must a bug exist  
+Before it comes to the fore?  
+And how many years can some people exist  
+Happily ignorant of circuitry  
+And how many times must a man type ===  
+Before val is really truthy?  
+The answer, my friend  
+Is blowing in the wind...  
+The answer is blowin' in the wind!_
+
+_Oh, and how many times must a man hook up  
+VSS straight to the GND?  
+And recalculate the series resistance  
+So that the relays don't fry?  
+And how many times must a man palm his face  
+And ask "Oh god, f&@*&%@ why???"  
+The answer, my friend, is blowin' in the 'ther,  
+The answer is blowin' in the ether._
+
+
 ## References and Related Projects
 
 1. [Getting started with the Raspberry Pi Pico](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf)
