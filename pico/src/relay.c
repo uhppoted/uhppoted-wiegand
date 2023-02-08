@@ -3,6 +3,15 @@
 #include "../include/cli.h"
 #include "../include/relay.h"
 
+enum RELAY_STATE {
+    // UNKNOWN = 0,
+    TRANSITION = 1,
+    NORMALLY_OPEN = 2,
+    NORMALLY_CLOSED = 3,
+    RELAY_ERROR = 4,
+    FAILED = 5
+};
+
 bool relay_monitor(repeating_timer_t *);
 
 /* Initialises the monitor for relay normally open ('NO') and normally
@@ -15,102 +24,97 @@ bool relay_initialise(enum MODE mode) {
     return add_repeating_timer_ms(1, relay_monitor, NULL, &relay_rt);
 }
 
-static float vopen = 0.5;
-static float vclosed = 0.5;
-static bool normally_open = false;
-static bool normally_closed = false;
+float lpf(bool b, float v) {
+    return v += b ? 0.01 * (1.0 - v) : 0.01 * (0.0 - v);
+}
 
 bool relay_monitor(repeating_timer_t *rt) {
-    static bool initialised = false;
+    static enum RELAY_STATE state = -1;
+    static float vfailed = 0.5;
+    static float vunknown = 0.5;
+    static float verror = 0.5;
+    static float vopen = 0.5;
+    static float vclosed = 0.5;
+    static bool normally_open = false;
+    static bool normally_closed = false;
 
-    vopen += (gpio_get(RELAY_NO) == 0) ? 0.01 * (1.0 - vopen) : 0.01 * (0.0 - vopen);
-    vclosed += (gpio_get(RELAY_NC) == 0) ? 0.01 * (1.0 - vclosed) : 0.01 * (0.0 - vclosed);
+    enum RELAY_STATE current = 0xff;
+    bool no = gpio_get(RELAY_NO) == 0;
+    bool nc = gpio_get(RELAY_NC) == 0;
 
-    bool NO = normally_open;
-    bool NC = normally_closed;
+    verror = lpf(no && nc, verror);
+    vopen = lpf(no && !nc, vopen);
+    vclosed = lpf(!no && nc, vclosed);
+    vunknown = lpf(!no && !nc, vunknown);
+    vfailed = lpf(verror < 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown < 0.9, vfailed);
 
-    if (vopen > 0.9) {
-        NO = true;
-    } else if (vopen < 0.1) {
-        NO = false;
+    if (verror > 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown < 0.9) {
+        current = RELAY_ERROR;
+    } else if (verror < 0.9 && vopen > 0.9 && vclosed < 0.9 && vunknown < 0.9) {
+        current = NORMALLY_OPEN;
+    } else if (verror < 0.9 && vopen < 0.9 && vclosed > 0.9 && vunknown < 0.9) {
+        current = NORMALLY_CLOSED;
+    } else if (verror < 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown > 0.9) {
+        current = UNKNOWN;
+    } else if (vfailed > 0.9) {
+        current = FAILED;
     }
 
-    if (vclosed > 0.9) {
-        NC = true;
-    } else if (vclosed < 0.1) {
-        NC = false;
-    }
+    if (current != 0xff && current != state) {
+        uint32_t msg = MSG_RELAY;
 
-    if (!initialised) {
-        if ((vopen < 0.1 || vopen > 0.9) && (vclosed < 0.1 || vclosed > 0.9)) {
-            initialised = true;
-            normally_open = NO;
-            normally_closed = NC;
-
-            uint32_t v = MSG_RELAY | (normally_open ? 0x01 : 0x00) | (normally_closed ? 0x02 : 0x00);
-            if (!queue_is_full(&queue)) {
-                queue_try_add(&queue, &v);
-            }
+        if (current == UNKNOWN) {
+            msg |= 0x0000;
+        } else if (current == NORMALLY_OPEN) {
+            msg |= 0x0001;
+        } else if (current == NORMALLY_CLOSED) {
+            msg |= 0x0002;
+        } else if (current == RELAY_ERROR) {
+            msg |= 0x0003;
+        } else if (current == FAILED) {
+            msg |= 0x0004;
+        } else {
+            msg |= 0xffff;
         }
-    } else if (normally_open != NO || normally_closed != NC) {
-        char s[64];
 
-        normally_open = NO;
-        normally_closed = NC;
-
-        uint32_t v = MSG_RELAY | (normally_open ? 0x01 : 0x00) | (normally_closed ? 0x02 : 0x00);
-
-        // snprintf(s, sizeof(s), ">>>> X [%02x]  %d::%.3f %d::%.3f", v, normally_open, vopen, normally_closed, vclosed);
-        // tx(s);
-
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &v);
+        if (!queue_is_full(&queue) && queue_try_add(&queue, &msg)) {
+            state = current;
         }
     }
 
     return true;
 }
 
-// 2023-02-07 14:33:03  >>>> X [60000000]  0::0.099 0::0.899
-// 2023-02-07 14:33:03  >>>> X [60000002]  0::0.097 1::0.901
-// 2023-02-07 14:33:03  >>>> Y [00]  0::0::0.095 1::0::0.903
-// 2023-02-07 14:33:03  RELAY ERROR (NONE)
-// 2023-02-07 14:33:03  >>>> Y [02]  0::0::0.090 1::1::0.909
-// 2023-02-07 14:33:03  RELAY NORMALLY CLOSED
-//
-// 2023-02-07 14:33:14  >>>> X [60000000]  0::0.894 0::0.099
-// 2023-02-07 14:33:14  >>>> Y [00]  0::0::0.898 0::0::0.095
-// 2023-02-07 14:33:14  RELAY ERROR (NONE)
-//
-// 2023-02-07 14:33:14  >>>> X [60000001]  1::0.901 0::0.092
-// 2023-02-07 14:33:14  >>>> Y [01]  1::1::0.911 0::0::0.083
-// 2023-02-07 14:33:14  RELAY NORMALLY OPEN
-
 /* Handler for a RELAY event.
  *
  */
 void relay_event(uint32_t v) {
-    bool no = (v & 0x01) == 0x01;
-    bool nc = (v & 0x02) == 0x02;
-    char s[64];
-
-    // snprintf(s, sizeof(s), ">>>> Y [%02x]  %d::%d::%.3f %d::%d::%.3f", v, normally_open, no, vopen, normally_closed, nc, vclosed);
-    // tx(s);
-
-    if (no && nc) {
-        tx("RELAY ERROR (NC + NO)");
-    } else if (no) {
+    if (v == 0x0000) {
+        tx("RELAY UNKNOWN");
+    } else if (v == 0x0001) {
         tx("RELAY NORMALLY OPEN");
-    } else if (nc) {
+    } else if (v == 0x0002) {
         tx("RELAY NORMALLY CLOSED");
+    } else if (v == 0x0003) {
+        tx("RELAY ERROR");
+    } else if (v == 0x0004) {
+        tx("RELAY FAILED");
     } else {
-        // FIXME tx("RELAY ERROR (NONE)");
+        tx("RELAY ????");
     }
 }
 
-void relay_debug() {
-    char s[64];
-
-    snprintf(s, sizeof(s), ">>>> ? %d::%.3f %d::%.3f", normally_open, vopen, normally_closed, vclosed);
-    tx(s);
-}
+// void relay_debug() {
+//     char s[64];
+//
+//     snprintf(s, sizeof(s), ">>>> unknown          %.3f", vunknown);
+//     tx(s);
+//     snprintf(s, sizeof(s), ">>>> normally open    %.3f", vopen);
+//     tx(s);
+//     snprintf(s, sizeof(s), ">>>> normally closed  %.3f", vclosed);
+//     tx(s);
+//     snprintf(s, sizeof(s), ">>>> error            %.3f", verror);
+//     tx(s);
+//     snprintf(s, sizeof(s), ">>>> failed           %.3f", vfailed);
+//     tx(s);
+// }

@@ -11,7 +11,6 @@
 #include "../include/cli.h"
 #include "../include/emulator.h"
 #include "../include/led.h"
-#include "../include/relay.h"
 #include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
@@ -552,7 +551,6 @@ void reboot() {
  *
  */
 void help() {
-    // relay_debug();
     tx("-----");
     tx("Commands:");
     tx("T        Set date/time (YYYY-MM-DD HH:mm:ss)");

@@ -413,7 +413,7 @@ void cardf(const card *c, char *s, int N) {
         }
     }
 
-    snprintf(s, N, "%-19s  CARD %-8s %s", t, n, g);
+    snprintf(s, N, "%-19s  CARD  %-8s %s", t, n, g);
 }
 
 int timef(const datetime_t timestamp, char *s, int N) {

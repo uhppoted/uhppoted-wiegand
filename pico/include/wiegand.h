@@ -29,7 +29,8 @@ enum MODE { UNKNOWN = 0,
             CONTROLLER,
             EMULATOR };
 
-enum ACCESS { // UNKNOWN = 0,
+enum ACCESS {
+    // UNKNOWN = 0,
     GRANTED = 1,
     DENIED = 2
 };

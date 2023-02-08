@@ -25,9 +25,9 @@ the PIO but maybe the code and associated information will be useful for other t
 _\<sigh\> ... Fritzing's Lament_: 
 
 _How many times must a man shuffle his  
-Breadboard layout around?  
+Breadboard layout again?  
 And how many wires must be trim'd and cut  
-Before it's all tidy 'n neat?  
+Before no connection is unsound?  
 Oh, how many times will the LEDs be  
 Completely the wrong way around?  
 The answer, my friend  
