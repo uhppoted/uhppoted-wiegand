@@ -2,13 +2,15 @@
 
 ## Reader/Writer
 - [x] 'beep' on write
-- [x] Rename READER/EMULATOR
-- [x] Enable watchdog
-- [x] SD card
-- [x] Reboot
 - [ ] hwconfig.c
       - [ ] LED timer pins
 - [ ] Relay
+      - [x] Inputs (from controller)
+      - [ ] Outputs (to door)
+            - https://raspberrypi.stackexchange.com/questions/118604/using-single-5v-relay-module-jqc-3ff-s-z-asking-for-help
+            - https://electronics.stackexchange.com/questions/505318/how-to-properly-use-a-relay-module-with-jd-vcc-from-arduino-raspberry/508672#508672
+            - https://leeselectronic.com/en/product/31300-1-relay-digital-module-5v.html
+            - https://leeselectronic.com/en/product/18405-relay-module-1-relay-spdt-12vdc-high-low-trigger.html
 - [ ] Buzzer
 - [ ] Button
 - [ ] PicoW+TCP/IP
@@ -19,15 +21,11 @@
       - (?) Auth
 
 ## Breadboard 
-- [x] LEDs
-- [x] SD card
 - [ ] Fritzing
-      - [ ] BC-108/ULN2003 driver for relays
+      - [ ] Door relay driver
 - [ ] Photo
 - [ ] KiCard schematic
-- Relay driver
 - Door input
-- Door relay
 - Pushbutton input
 - Buzzer
 - Pushbutton
