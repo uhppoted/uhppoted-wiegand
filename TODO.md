@@ -11,6 +11,10 @@
             - https://electronics.stackexchange.com/questions/505318/how-to-properly-use-a-relay-module-with-jd-vcc-from-arduino-raspberry/508672#508672
             - https://leeselectronic.com/en/product/31300-1-relay-digital-module-5v.html
             - https://leeselectronic.com/en/product/18405-relay-module-1-relay-spdt-12vdc-high-low-trigger.html
+            - https://electronics.stackexchange.com/questions/585207/uln2003-relay-driver
+            - https://electronics.stackexchange.com/questions/258081/uln2003-used-for-security-door-magnets
+            - https://www.ti.com/product/TPIC6595
+            - https://e2e.ti.com/support/power-management-group/power-management/f/power-management-forum/1133532/tpic6595-relay-back-emf
 - [ ] Buzzer
 - [ ] Button
 - [ ] PicoW+TCP/IP
@@ -36,6 +40,7 @@
 - Relay driver
 - Door input
 - Door relay
+  - https://www.ti.com/product/TPIC6595
 - Buzzer
   - through-hole so that it can be routed to enclosue
 - LEDs 
