@@ -24,6 +24,8 @@
 - [ ] Buzzer
 - [ ] Button
 - [ ] PicoW+TCP/IP
+      - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
+
 - (?) Authorisation
 - [ ] tweetnacl
       - [ ] TCP/IP
