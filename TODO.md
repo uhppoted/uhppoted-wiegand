@@ -33,10 +33,10 @@
       - (?) Auth
 
 ## Breadboard 
-- [ ] Fritzing
-      - [ ] Door relay driver
+- [x] Fritzing
+      - [x] Door relay driver
 - [ ] Photo
-- [ ] KiCard schematic
+- (?) KiCard schematic
 - Door input
 - Pushbutton input
 - Buzzer
@@ -45,10 +45,6 @@
 ## Schematic
 - RD/WR jumpers
 - Mode jumpers
-- Relay driver
-- Door input
-- Door relay
-  - https://www.ti.com/product/TPIC6595
 - Buzzer
   - through-hole so that it can be routed to enclosue
 - LEDs 
