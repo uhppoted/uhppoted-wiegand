@@ -24,13 +24,16 @@ loop1:                ; wait for !D0 && !D1
 
 % c-sdk {
 static inline void reader_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
-    pio_sm_set_pindirs_with_mask(pio, sm, 0x00004000, 0x00034000);
+    uint32_t mask = (0x00000001 << d0) | (0x00000001 << d1) ;
+    uint32_t dirs = (0x00000000 << d0) | (0x00000000 << d1) ;
 
     pio_gpio_init(pio, d0);
     pio_gpio_init(pio, d1);
 
     gpio_pull_up(d0);
     gpio_pull_up(d1);
+
+    pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
 
     pio_sm_config c = reader_program_get_default_config(offset);
     

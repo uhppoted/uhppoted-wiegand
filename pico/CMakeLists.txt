@@ -18,8 +18,8 @@ add_executable(wiegand
   src/wiegand.c
   src/sys.c
   src/cli.c
-  src/controller.c
-  src/emulator.c
+  src/reader.c
+  src/writer.c
   src/led.c
   src/buzzer.c
   src/relay.c

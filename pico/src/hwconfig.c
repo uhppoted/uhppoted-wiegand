@@ -44,7 +44,9 @@ const uint GPIO_18 = 18; // Pico 24
 const uint GPIO_19 = 19; // Pico 25
 const uint GPIO_20 = 20; // Pico 26
 const uint GPIO_21 = 21; // Pico 27
+const uint GPIO_22 = 22; // Pico 29
 // const uint GPIO_25 = 25; // Pico LED
+const uint GPIO_26 = 26; // Pico 31
 const uint GPIO_27 = 27; // Pico 32
 const uint GPIO_28 = 28; // Pico 34
 
@@ -69,12 +71,12 @@ const uint BUZZER = GPIO_12;
 // const uint ORANGE_LED = GPIO_14;
 const uint GREEN_LED = GPIO_15;
 
+const uint WRITER_D1 = GPIO_28;
+const uint READER_D1 = GPIO_27; // NTS: READER_D1 and READER_D0 must be adjacent for the PIO
+const uint READER_D0 = GPIO_26; //
+const uint WRITER_D0 = GPIO_22;
 const uint WRITER_LED = GPIO_21;
 const uint READER_LED = GPIO_20;
-const uint WRITER_D1 = GPIO_19;
-const uint WRITER_D0 = GPIO_18;
-const uint READER_D1 = GPIO_17;
-const uint READER_D0 = GPIO_16;
 
-const uint RELAY_NO = GPIO_28;
-const uint RELAY_NC = GPIO_27;
+// const uint RELAY_NO = GPIO_28;
+// const uint RELAY_NC = GPIO_27;

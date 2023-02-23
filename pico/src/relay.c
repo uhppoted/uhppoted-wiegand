@@ -39,8 +39,8 @@ bool relay_monitor(repeating_timer_t *rt) {
     static bool normally_closed = false;
 
     enum RELAY_STATE current = 0xff;
-    bool no = gpio_get(RELAY_NO) == 0;
-    bool nc = gpio_get(RELAY_NC) == 0;
+    bool no = false; // gpio_get(RELAY_NO) == 0;
+    bool nc = false; // gpio_get(RELAY_NC) == 0;
 
     verror = lpf(no && nc, verror);
     vopen = lpf(no && !nc, vopen);
