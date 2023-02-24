@@ -26,8 +26,9 @@ extern const enum pio_interrupt_source IRQ_READER;
 extern const enum pio_interrupt_source IRQ_LED;
 
 enum MODE { UNKNOWN = 0,
-            CONTROLLER,
-            EMULATOR };
+            READER,
+            WRITER
+};
 
 enum ACCESS {
     // UNKNOWN = 0,
@@ -58,8 +59,8 @@ typedef struct card {
 
 extern enum MODE mode;
 
-extern const uint MODE_CONTROLLER;
-extern const uint MODE_EMULATOR;
+extern const uint MODE_READER;
+extern const uint MODE_WRITER;
 
 extern const uint READER_D0;
 extern const uint READER_D1;

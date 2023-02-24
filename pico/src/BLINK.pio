@@ -44,7 +44,7 @@ static inline void blink_program_init(PIO pio, uint sm, uint offset, uint pin) {
 static inline uint32_t blink_program_blink(PIO pio, uint sm) {
     uint32_t word = 75000;
 
-    if (mode == CONTROLLER) {
+    if (mode == READER) {
         pio_sm_put(pio,sm,word);
     }
 

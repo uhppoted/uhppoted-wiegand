@@ -72,7 +72,7 @@ void led_initialise(enum MODE mode) {
     irq_set_enabled(PIO_LED_IRQ, true);
     pio_set_irq0_source_enabled(PIO_LED, IRQ_LED, true);
 
-    if (mode == CONTROLLER) {
+    if (mode == READER) {
         offset = pio_add_program(PIO_BLINK, &blink_program);
 
         blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);

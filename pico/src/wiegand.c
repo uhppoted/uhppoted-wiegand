@@ -244,13 +244,13 @@ void setup_gpio() {
     //    gpio_set_dir(RELAY_NC, GPIO_IN);
     //    gpio_pull_up(RELAY_NC);
 
-    gpio_init(MODE_CONTROLLER);
-    gpio_set_dir(MODE_CONTROLLER, GPIO_IN);
-    gpio_pull_up(MODE_CONTROLLER);
+    gpio_init(MODE_READER);
+    gpio_set_dir(MODE_READER, GPIO_IN);
+    gpio_pull_up(MODE_READER);
 
-    gpio_init(MODE_EMULATOR);
-    gpio_set_dir(MODE_EMULATOR, GPIO_IN);
-    gpio_pull_up(MODE_EMULATOR);
+    gpio_init(MODE_WRITER);
+    gpio_set_dir(MODE_WRITER, GPIO_IN);
+    gpio_pull_up(MODE_WRITER);
 
     gpio_init(SD_DET);
     gpio_set_dir(SD_DET, GPIO_IN);
@@ -278,15 +278,13 @@ void sysinit() {
     if (!initialised) {
         puts("                     SYS   STARTUP");
 
-        if (!gpio_get(MODE_CONTROLLER) && gpio_get(MODE_EMULATOR)) {
-            mode = CONTROLLER;
-        } else if (gpio_get(MODE_CONTROLLER) && !gpio_get(MODE_EMULATOR)) {
-            mode = EMULATOR;
+        if (!gpio_get(MODE_READER) && gpio_get(MODE_WRITER)) {
+            mode = READER;
+        } else if (gpio_get(MODE_READER) && !gpio_get(MODE_WRITER)) {
+            mode = WRITER;
         } else {
             mode = UNKNOWN;
         }
-
-        mode = EMULATOR;
 
         sdcard_initialise(mode);
         controller_initialise(mode);

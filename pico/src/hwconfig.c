@@ -61,8 +61,8 @@ const uint SD_SO = GPIO_4;
 const uint SD_CS = GPIO_5;
 const uint SD_DET = GPIO_6;
 
-const uint MODE_CONTROLLER = GPIO_7;
-const uint MODE_EMULATOR = GPIO_8;
+const uint MODE_READER = GPIO_7;
+const uint MODE_WRITER = GPIO_8;
 
 // const uint LED_PIN = GPIO_25;
 // const uint RED_LED = GPIO_11;
@@ -71,12 +71,12 @@ const uint BUZZER = GPIO_12;
 // const uint ORANGE_LED = GPIO_14;
 const uint GREEN_LED = GPIO_15;
 
-const uint WRITER_D1 = GPIO_28;
-const uint READER_D1 = GPIO_27; // NTS: READER_D1 and READER_D0 must be adjacent for the PIO
-const uint READER_D0 = GPIO_26; //
-const uint WRITER_D0 = GPIO_22;
-const uint WRITER_LED = GPIO_21;
-const uint READER_LED = GPIO_20;
+const uint WRITER_D1 = GPIO_28; // NTS: WRITER_D1 and WRITER_D0 must be adjacent for the PIO
+const uint WRITER_D0 = GPIO_27; //
+const uint WRITER_LED = GPIO_26;
+const uint READER_LED = GPIO_22;
+const uint READER_D1 = GPIO_21; // NTS: READER_D1 and READER_D0 must be adjacent for the PIO
+const uint READER_D0 = GPIO_20; //
 
 // const uint RELAY_NO = GPIO_28;
 // const uint RELAY_NC = GPIO_27;
