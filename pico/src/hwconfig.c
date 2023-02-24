@@ -78,5 +78,5 @@ const uint READER_LED = GPIO_22;
 const uint READER_D1 = GPIO_21; // NTS: READER_D1 and READER_D0 must be adjacent for the PIO
 const uint READER_D0 = GPIO_20; //
 
-// const uint RELAY_NO = GPIO_28;
-// const uint RELAY_NC = GPIO_27;
+const uint RELAY_NO = GPIO_17;
+const uint RELAY_NC = GPIO_16;

@@ -236,13 +236,13 @@ void setup_gpio() {
     gpio_pull_up(GREEN_LED);
     gpio_put(GREEN_LED, 0);
 
-    //    gpio_init(RELAY_NO);
-    //    gpio_set_dir(RELAY_NO, GPIO_IN);
-    //    gpio_pull_up(RELAY_NO);
+    gpio_init(RELAY_NO);
+    gpio_set_dir(RELAY_NO, GPIO_IN);
+    gpio_pull_up(RELAY_NO);
 
-    //    gpio_init(RELAY_NC);
-    //    gpio_set_dir(RELAY_NC, GPIO_IN);
-    //    gpio_pull_up(RELAY_NC);
+    gpio_init(RELAY_NC);
+    gpio_set_dir(RELAY_NC, GPIO_IN);
+    gpio_pull_up(RELAY_NC);
 
     gpio_init(MODE_READER);
     gpio_set_dir(MODE_READER, GPIO_IN);

@@ -68,8 +68,8 @@ extern const uint READER_LED;
 extern const uint WRITER_D0;
 extern const uint WRITER_D1;
 extern const uint WRITER_LED;
-// extern const uint RELAY_NO;
-// extern const uint RELAY_NC;
+extern const uint RELAY_NO;
+extern const uint RELAY_NC;
 
 extern const uint ONBOARD_LED;
 extern const uint RED_LED;
