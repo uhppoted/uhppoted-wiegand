@@ -71,11 +71,6 @@ extern const uint WRITER_LED;
 extern const uint RELAY_NO;
 extern const uint RELAY_NC;
 
-extern const uint ONBOARD_LED;
-extern const uint RED_LED;
-extern const uint ORANGE_LED;
-extern const uint YELLOW_LED;
-extern const uint GREEN_LED;
 extern const uint BUZZER;
 
 extern const uint SD_CS;
@@ -94,7 +89,7 @@ extern const uint32_t MSG_TX;
 extern const uint32_t MSG_RXI;
 extern const uint32_t MSG_DEBUG;
 
-extern const LED TIMEOUT_LED;
+// extern const LED TIMEOUT_LED;
 extern enum MODE mode;
 extern queue_t queue;
 extern card last_card;

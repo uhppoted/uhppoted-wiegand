@@ -33,10 +33,10 @@ const uint GPIO_7 = 7;   // Pico 10
 const uint GPIO_8 = 8;   // Pico 11
 const uint GPIO_9 = 9;   // Pico 12
 const uint GPIO_10 = 10; // Pico 14
-// const uint GPIO_11 = 11; // Pico 15
+const uint GPIO_11 = 11; // Pico 15
 const uint GPIO_12 = 12; // Pico 16
-// const uint GPIO_13 = 13; // Pico 17
-// const uint GPIO_14 = 14; // Pico 19
+const uint GPIO_13 = 13; // Pico 17
+const uint GPIO_14 = 14; // Pico 19
 const uint GPIO_15 = 15; // Pico 20
 const uint GPIO_16 = 16; // Pico 21
 const uint GPIO_17 = 17; // Pico 22
@@ -64,12 +64,6 @@ const uint SD_DET = GPIO_6;
 const uint MODE_READER = GPIO_7;
 const uint MODE_WRITER = GPIO_8;
 const uint BUZZER = GPIO_9;
-
-// const uint LED_PIN = GPIO_25;
-// const uint RED_LED = GPIO_11;
-// const uint YELLOW_LED = GPIO_13;
-// const uint ORANGE_LED = GPIO_14;
-const uint GREEN_LED = GPIO_15;
 
 const uint WRITER_D1 = GPIO_28; // NTS: WRITER_D1 and WRITER_D0 must be adjacent for the PIO
 const uint WRITER_D0 = GPIO_27; //

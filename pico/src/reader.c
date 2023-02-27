@@ -131,5 +131,5 @@ int64_t read_timeout(alarm_id_t id, void *data) {
     r->card = 0;
     r->timer = 0;
 
-    blink((LED *)&TIMEOUT_LED);
+    // blink((LED *)&TIMEOUT_LED);
 }

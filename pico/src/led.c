@@ -24,22 +24,22 @@ typedef struct blinks {
  *
  */
 void ledi() {
-    uint32_t value = led_program_get(PIO_LED, SM_LED);
-    uint32_t msg = MSG_LED | (value & 0x0fffffff);
-
-    switch (value) {
-    case 21:
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &msg);
-        }
-        break;
-
-    case 10:
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &msg);
-        }
-        break;
-    }
+    // uint32_t value = led_program_get(PIO_LED, SM_LED);
+    // uint32_t msg = MSG_LED | (value & 0x0fffffff);
+    //
+    // switch (value) {
+    // case 21:
+    //     if (!queue_is_full(&queue)) {
+    //         queue_try_add(&queue, &msg);
+    //     }
+    //     break;
+    //
+    // case 10:
+    //     if (!queue_is_full(&queue)) {
+    //         queue_try_add(&queue, &msg);
+    //     }
+    //     break;
+    // }
 }
 
 /* Alarm handler for 'end of blink start delay'. Queues up 'count'
@@ -47,13 +47,13 @@ void ledi() {
  *
  */
 int64_t blinki(alarm_id_t id, void *data) {
-    uint32_t count = ((blinks *)data)->count;
-
-    free(data);
-
-    while (count-- > 0) {
-        blink_program_blink(PIO_BLINK, SM_BLINK);
-    }
+    // uint32_t count = ((blinks *)data)->count;
+    //
+    // free(data);
+    //
+    // while (count-- > 0) {
+    //     blink_program_blink(PIO_BLINK, SM_BLINK);
+    // }
 
     return 0;
 }
@@ -64,19 +64,19 @@ int64_t blinki(alarm_id_t id, void *data) {
  *
  */
 void led_initialise(enum MODE mode) {
-    uint offset = pio_add_program(PIO_LED, &led_program);
-
-    led_program_init(PIO_LED, SM_LED, offset, WRITER_LED);
-
-    irq_set_exclusive_handler(PIO_LED_IRQ, ledi);
-    irq_set_enabled(PIO_LED_IRQ, true);
-    pio_set_irq0_source_enabled(PIO_LED, IRQ_LED, true);
-
-    if (mode == READER) {
-        offset = pio_add_program(PIO_BLINK, &blink_program);
-
-        blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);
-    }
+    // uint offset = pio_add_program(PIO_LED, &led_program);
+    //
+    // led_program_init(PIO_LED, SM_LED, offset, WRITER_LED);
+    //
+    // irq_set_exclusive_handler(PIO_LED_IRQ, ledi);
+    // irq_set_enabled(PIO_LED_IRQ, true);
+    // pio_set_irq0_source_enabled(PIO_LED, IRQ_LED, true);
+    //
+    // if (mode == READER) {
+    //     offset = pio_add_program(PIO_BLINK, &blink_program);
+    //
+    //     blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);
+    // }
 }
 
 /* Handler for an LED event.
@@ -85,20 +85,20 @@ void led_initialise(enum MODE mode) {
  * 10: OFF
  */
 void led_event(uint32_t v) {
-    switch (v) {
-    case 21:
-        gpio_put(GREEN_LED, 0);
-        tx("LED   ON");
-        break;
-
-    case 10:
-        gpio_put(GREEN_LED, 1);
-        tx("LED   OFF");
-        break;
-
-    default:
-        tx("LED   ???");
-    }
+    // switch (v) {
+    // case 21:
+    //     gpio_put(GREEN_LED, 0);
+    //     tx("LED   ON");
+    //     break;
+    //
+    // case 10:
+    //     gpio_put(GREEN_LED, 1);
+    //     tx("LED   OFF");
+    //     break;
+    //
+    // default:
+    //     tx("LED   ???");
+    // }
 }
 
 /* Handler for an LED blink.
@@ -108,9 +108,9 @@ void led_event(uint32_t v) {
  *       at the moment.
  */
 void led_blink(uint8_t count) {
-    struct blinks *b = malloc(sizeof(struct blinks));
-
-    b->count = count > 8 ? 8 : count;
-
-    add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);
+    // struct blinks *b = malloc(sizeof(struct blinks));
+    //
+    // b->count = count > 8 ? 8 : count;
+    //
+    // add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);
 }

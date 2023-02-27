@@ -31,16 +31,18 @@
 #define STOP_BITS 1
 #define PARITY UART_PARITY_NONE
 
+extern uint GPIO_10;
+extern uint GPIO_11;
+extern uint GPIO_12;
+extern uint GPIO_13;
+
 // GPIO
-const uint GPIO_11 = 11; // Pico 15
-const uint GPIO_13 = 13; // Pico 17
-const uint GPIO_14 = 14; // Pico 19
+// const uint GPIO_11 = 11; // Pico 15
+// const uint GPIO_13 = 13; // Pico 17
+// const uint GPIO_14 = 14; // Pico 19
 const uint GPIO_25 = 25; // Pico LED
 
 const uint ONBOARD_LED = GPIO_25;
-const uint RED_LED = GPIO_11;
-const uint YELLOW_LED = GPIO_13;
-const uint ORANGE_LED = GPIO_14;
 
 const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
@@ -81,20 +83,20 @@ const LED SYS_LED = {
     .timer = -1,
 };
 
-const LED TIMEOUT_LED = {
-    .pin = YELLOW_LED,
-    .timer = -1,
-};
+// const LED TIMEOUT_LED = {
+//     .pin = YELLOW_LED,
+//     .timer = -1,
+// };
 
-const LED BAD_CARD = {
-    .pin = ORANGE_LED,
-    .timer = -1,
-};
+// const LED BAD_CARD = {
+//     .pin = ORANGE_LED,
+//     .timer = -1,
+// };
 
-const LED GOOD_LED = {
-    .pin = RED_LED,
-    .timer = -1,
-};
+// const LED GOOD_LED = {
+//     .pin = RED_LED,
+//     .timer = -1,
+// };
 
 // UART
 void on_uart0_rx() {
@@ -189,7 +191,7 @@ int main() {
             on_card_read(v & 0x0fffffff);
             cardf(&last_card, s, sizeof(s));
             puts(s);
-            blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_CARD);
+            // blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_CARD);
         }
 
         if ((v & MSG) == MSG_LED) {
@@ -216,25 +218,40 @@ void setup_gpio() {
     gpio_init(ONBOARD_LED);
     gpio_set_dir(ONBOARD_LED, GPIO_OUT);
 
-    gpio_init(RED_LED);
-    gpio_set_dir(RED_LED, GPIO_OUT);
-    gpio_pull_up(RED_LED);
-    gpio_put(RED_LED, 1);
+    gpio_init(GPIO_10);
+    gpio_set_dir(GPIO_10, GPIO_OUT);
+    gpio_pull_up(GPIO_10);
+    gpio_put(GPIO_10, 0);
 
-    gpio_init(YELLOW_LED);
-    gpio_set_dir(YELLOW_LED, GPIO_OUT);
-    gpio_pull_up(YELLOW_LED);
-    gpio_put(YELLOW_LED, 1);
+    gpio_init(GPIO_11);
+    gpio_set_dir(GPIO_11, GPIO_OUT);
+    gpio_pull_up(GPIO_11);
+    gpio_put(GPIO_11, 0);
 
-    gpio_init(ORANGE_LED);
-    gpio_set_dir(ORANGE_LED, GPIO_OUT);
-    gpio_pull_up(ORANGE_LED);
-    gpio_put(ORANGE_LED, 1);
+    gpio_init(GPIO_12);
+    gpio_set_dir(GPIO_12, GPIO_OUT);
+    gpio_pull_up(GPIO_12);
+    gpio_put(GPIO_12, 0);
 
-    gpio_init(GREEN_LED);
-    gpio_set_dir(GREEN_LED, GPIO_OUT);
-    gpio_pull_up(GREEN_LED);
-    gpio_put(GREEN_LED, 0);
+    gpio_init(GPIO_13);
+    gpio_set_dir(GPIO_13, GPIO_OUT);
+    gpio_pull_up(GPIO_13);
+    gpio_put(GPIO_13, 0);
+
+    // gpio_init(YELLOW_LED);
+    // gpio_set_dir(YELLOW_LED, GPIO_OUT);
+    // gpio_pull_up(YELLOW_LED);
+    // gpio_put(YELLOW_LED, 1);
+
+    // gpio_init(ORANGE_LED);
+    // gpio_set_dir(ORANGE_LED, GPIO_OUT);
+    // gpio_pull_up(ORANGE_LED);
+    // gpio_put(ORANGE_LED, 1);
+
+    // gpio_init(GREEN_LED);
+    // gpio_set_dir(GREEN_LED, GPIO_OUT);
+    // gpio_pull_up(GREEN_LED);
+    // gpio_put(GREEN_LED, 0);
 
     gpio_init(RELAY_NO);
     gpio_set_dir(RELAY_NO, GPIO_IN);

@@ -15,6 +15,11 @@
 #include "../include/sys.h"
 #include "../include/wiegand.h"
 
+extern uint GPIO_10;
+extern uint GPIO_11;
+extern uint GPIO_12;
+extern uint GPIO_13;
+
 typedef struct CLI {
     int ix;
     int32_t timer;
@@ -533,16 +538,16 @@ void reboot() {
     while (true) {
         buzzer_beep(1);
 
-        gpio_put(RED_LED, 0);
-        gpio_put(YELLOW_LED, 0);
-        gpio_put(ORANGE_LED, 0);
-        gpio_put(GREEN_LED, 0);
+        // gpio_put(RED_LED, 0);
+        // gpio_put(YELLOW_LED, 0);
+        // gpio_put(ORANGE_LED, 0);
+        // gpio_put(GREEN_LED, 0);
         sleep_ms(750);
 
-        gpio_put(RED_LED, 1);
-        gpio_put(YELLOW_LED, 1);
-        gpio_put(ORANGE_LED, 1);
-        gpio_put(GREEN_LED, 1);
+        // gpio_put(RED_LED, 1);
+        // gpio_put(YELLOW_LED, 1);
+        // gpio_put(ORANGE_LED, 1);
+        // gpio_put(GREEN_LED, 1);
         sleep_ms(750);
     }
 }
@@ -551,6 +556,15 @@ void reboot() {
  *
  */
 void help() {
+    static int x = 0;
+
+    gpio_put(GPIO_13, (x & 0x01) == 0x01 ? 1 : 0);
+    gpio_put(GPIO_12, (x & 0x02) == 0x02 ? 1 : 0);
+    gpio_put(GPIO_11, (x & 0x04) == 0x04 ? 1 : 0);
+    gpio_put(GPIO_10, (x & 0x08) == 0x08 ? 1 : 0);
+
+    x++;
+
     tx("-----");
     tx("Commands:");
     tx("T        Set date/time (YYYY-MM-DD HH:mm:ss)");
