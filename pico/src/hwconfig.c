@@ -63,10 +63,10 @@ const uint SD_DET = GPIO_6;
 
 const uint MODE_READER = GPIO_7;
 const uint MODE_WRITER = GPIO_8;
+const uint BUZZER = GPIO_9;
 
 // const uint LED_PIN = GPIO_25;
 // const uint RED_LED = GPIO_11;
-const uint BUZZER = GPIO_12;
 // const uint YELLOW_LED = GPIO_13;
 // const uint ORANGE_LED = GPIO_14;
 const uint GREEN_LED = GPIO_15;
