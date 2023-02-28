@@ -25,6 +25,7 @@ add_executable(wiegand
   src/relay.c
   src/acl.c
   src/sdcard.c
+  src/TPIC6B595.c
   src/hwconfig.c
 )
 

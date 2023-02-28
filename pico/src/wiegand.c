@@ -11,6 +11,7 @@
 #include "pico/stdlib.h"
 #include "pico/util/datetime.h"
 
+#include "../include/TPIC6B595.h"
 #include "../include/acl.h"
 #include "../include/buzzer.h"
 #include "../include/cli.h"
@@ -31,17 +32,13 @@
 #define STOP_BITS 1
 #define PARITY UART_PARITY_NONE
 
-extern uint GPIO_10;
-extern uint GPIO_11;
-extern uint GPIO_12;
-extern uint GPIO_13;
+// extern uint GPIO_10;
+// extern uint GPIO_11;
+// extern uint GPIO_12;
+// extern uint GPIO_13;
 
 // GPIO
-// const uint GPIO_11 = 11; // Pico 15
-// const uint GPIO_13 = 13; // Pico 17
-// const uint GPIO_14 = 14; // Pico 19
 const uint GPIO_25 = 25; // Pico LED
-
 const uint ONBOARD_LED = GPIO_25;
 
 const uint32_t MSG = 0xf0000000;
@@ -218,25 +215,25 @@ void setup_gpio() {
     gpio_init(ONBOARD_LED);
     gpio_set_dir(ONBOARD_LED, GPIO_OUT);
 
-    gpio_init(GPIO_10);
-    gpio_set_dir(GPIO_10, GPIO_OUT);
-    gpio_pull_up(GPIO_10);
-    gpio_put(GPIO_10, 0);
+    // gpio_init(GPIO_10);
+    // gpio_set_dir(GPIO_10, GPIO_OUT);
+    // gpio_pull_up(GPIO_10);
+    // gpio_put(GPIO_10, 0);
 
-    gpio_init(GPIO_11);
-    gpio_set_dir(GPIO_11, GPIO_OUT);
-    gpio_pull_up(GPIO_11);
-    gpio_put(GPIO_11, 0);
+    // gpio_init(GPIO_11);
+    // gpio_set_dir(GPIO_11, GPIO_OUT);
+    // gpio_pull_up(GPIO_11);
+    // gpio_put(GPIO_11, 0);
 
-    gpio_init(GPIO_12);
-    gpio_set_dir(GPIO_12, GPIO_OUT);
-    gpio_pull_up(GPIO_12);
-    gpio_put(GPIO_12, 0);
+    // gpio_init(GPIO_12);
+    // gpio_set_dir(GPIO_12, GPIO_OUT);
+    // gpio_pull_up(GPIO_12);
+    // gpio_put(GPIO_12, 0);
 
-    gpio_init(GPIO_13);
-    gpio_set_dir(GPIO_13, GPIO_OUT);
-    gpio_pull_up(GPIO_13);
-    gpio_put(GPIO_13, 0);
+    // gpio_init(GPIO_13);
+    // gpio_set_dir(GPIO_13, GPIO_OUT);
+    // gpio_pull_up(GPIO_13);
+    // gpio_put(GPIO_13, 0);
 
     // gpio_init(YELLOW_LED);
     // gpio_set_dir(YELLOW_LED, GPIO_OUT);
@@ -308,6 +305,7 @@ void sysinit() {
         emulator_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
+        TPIC_initialise(mode);
 
         if (!relay_initialise(mode)) {
             tx("failed to initialise relay monitor");

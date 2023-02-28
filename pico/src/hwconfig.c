@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "hardware/pio.h"
+#include "hardware/spi.h"
 
 // PIOs
 const PIO PIO_READER = pio0;
@@ -60,6 +61,12 @@ const uint SD_SI = GPIO_3;
 const uint SD_SO = GPIO_4;
 const uint SD_CS = GPIO_5;
 const uint SD_DET = GPIO_6;
+
+const uint SPI_CLK = 10; // GPIO_10;
+const uint SPI_TX = 11;  // GPIO_11;
+const uint SPI_RX = 12;  // GPIO_12;
+const uint SPI_CS = 13;  // GPIO_13;
+const spi_inst_t *SPI = spi1;
 
 const uint MODE_READER = GPIO_7;
 const uint MODE_WRITER = GPIO_8;

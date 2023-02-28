@@ -6,6 +6,7 @@
 #include "hardware/gpio.h"
 #include "hardware/rtc.h"
 
+#include "../include/TPIC6B595.h"
 #include "../include/acl.h"
 #include "../include/buzzer.h"
 #include "../include/cli.h"
@@ -14,11 +15,6 @@
 #include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
-
-extern uint GPIO_10;
-extern uint GPIO_11;
-extern uint GPIO_12;
-extern uint GPIO_13;
 
 typedef struct CLI {
     int ix;
@@ -556,14 +552,11 @@ void reboot() {
  *
  */
 void help() {
-    static int x = 0;
+    static uint8_t x = 0;
 
-    gpio_put(GPIO_13, (x & 0x01) == 0x01 ? 1 : 0);
-    gpio_put(GPIO_12, (x & 0x02) == 0x02 ? 1 : 0);
-    gpio_put(GPIO_11, (x & 0x04) == 0x04 ? 1 : 0);
-    gpio_put(GPIO_10, (x & 0x08) == 0x08 ? 1 : 0);
+    TPIC_write(x);
 
-    x++;
+    x = x == 0 ? 0xff : 0x00;
 
     tx("-----");
     tx("Commands:");
