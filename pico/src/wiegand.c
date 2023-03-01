@@ -32,14 +32,9 @@
 #define STOP_BITS 1
 #define PARITY UART_PARITY_NONE
 
-// extern uint GPIO_10;
-// extern uint GPIO_11;
-// extern uint GPIO_12;
-// extern uint GPIO_13;
-
 // GPIO
-const uint GPIO_25 = 25; // Pico LED
-const uint ONBOARD_LED = GPIO_25;
+const uint GPIO_25 = 25;
+const uint ONBOARD_LED = GPIO_25; // Pico LED
 
 const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_WATCHDOG = 0x00000000;
@@ -214,41 +209,6 @@ int main() {
 void setup_gpio() {
     gpio_init(ONBOARD_LED);
     gpio_set_dir(ONBOARD_LED, GPIO_OUT);
-
-    // gpio_init(GPIO_10);
-    // gpio_set_dir(GPIO_10, GPIO_OUT);
-    // gpio_pull_up(GPIO_10);
-    // gpio_put(GPIO_10, 0);
-
-    // gpio_init(GPIO_11);
-    // gpio_set_dir(GPIO_11, GPIO_OUT);
-    // gpio_pull_up(GPIO_11);
-    // gpio_put(GPIO_11, 0);
-
-    // gpio_init(GPIO_12);
-    // gpio_set_dir(GPIO_12, GPIO_OUT);
-    // gpio_pull_up(GPIO_12);
-    // gpio_put(GPIO_12, 0);
-
-    // gpio_init(GPIO_13);
-    // gpio_set_dir(GPIO_13, GPIO_OUT);
-    // gpio_pull_up(GPIO_13);
-    // gpio_put(GPIO_13, 0);
-
-    // gpio_init(YELLOW_LED);
-    // gpio_set_dir(YELLOW_LED, GPIO_OUT);
-    // gpio_pull_up(YELLOW_LED);
-    // gpio_put(YELLOW_LED, 1);
-
-    // gpio_init(ORANGE_LED);
-    // gpio_set_dir(ORANGE_LED, GPIO_OUT);
-    // gpio_pull_up(ORANGE_LED);
-    // gpio_put(ORANGE_LED, 1);
-
-    // gpio_init(GREEN_LED);
-    // gpio_set_dir(GREEN_LED, GPIO_OUT);
-    // gpio_pull_up(GREEN_LED);
-    // gpio_put(GREEN_LED, 0);
 
     gpio_init(RELAY_NO);
     gpio_set_dir(RELAY_NO, GPIO_IN);

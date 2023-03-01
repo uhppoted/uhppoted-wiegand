@@ -534,16 +534,16 @@ void reboot() {
     while (true) {
         buzzer_beep(1);
 
-        // gpio_put(RED_LED, 0);
-        // gpio_put(YELLOW_LED, 0);
-        // gpio_put(ORANGE_LED, 0);
-        // gpio_put(GREEN_LED, 0);
+        TPIC_set(RED_LED, false);
+        TPIC_set(YELLOW_LED, false);
+        TPIC_set(ORANGE_LED, false);
+        TPIC_set(GREEN_LED, false);
         sleep_ms(750);
 
-        // gpio_put(RED_LED, 1);
-        // gpio_put(YELLOW_LED, 1);
-        // gpio_put(ORANGE_LED, 1);
-        // gpio_put(GREEN_LED, 1);
+        TPIC_set(RED_LED, true);
+        TPIC_set(YELLOW_LED, true);
+        TPIC_set(ORANGE_LED, true);
+        TPIC_set(GREEN_LED, true);
         sleep_ms(750);
     }
 }
@@ -552,11 +552,14 @@ void reboot() {
  *
  */
 void help() {
-    static uint8_t x = 0;
+    static uint8_t x = 0x00;
 
-    TPIC_write(x);
+    TPIC_set(RED_LED, (x & 0x01) == 0x01);
+    TPIC_set(ORANGE_LED, (x & 0x02) == 0x02);
+    TPIC_set(YELLOW_LED, (x & 0x04) == 0x04);
+    TPIC_set(GREEN_LED, (x & 0x08) == 0x08);
 
-    x = x == 0 ? 0xff : 0x00;
+    x++;
 
     tx("-----");
     tx("Commands:");
