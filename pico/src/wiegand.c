@@ -55,7 +55,6 @@ void setup_uart(void);
 void sysinit();
 
 int64_t startup(alarm_id_t, void *);
-int64_t off(alarm_id_t, void *);
 int64_t timeout(alarm_id_t, void *);
 bool watchdog(repeating_timer_t *);
 bool syscheck(repeating_timer_t *);
@@ -69,26 +68,6 @@ card last_card = {
     .card_number = 0,
     .ok = false,
 };
-
-const LED SYS_LED = {
-    .pin = ONBOARD_LED,
-    .timer = -1,
-};
-
-// const LED TIMEOUT_LED = {
-//     .pin = ORANGE_LED,
-//     .timer = -1,
-// };
-
-// const LED BAD_CARD = {
-//     .pin = RED_LED,
-//     .timer = -1,
-// };
-
-// const LED GOOD_LED = {
-//     .pin = GREEN_LED,
-//     .timer = -1,
-// };
 
 // UART
 void on_uart0_rx() {
@@ -158,7 +137,7 @@ int main() {
 
         if ((v & MSG) == MSG_WATCHDOG) {
             watchdog_update();
-            blink((LED *)&SYS_LED);
+            blink(SYS_LED);
         }
 
         if ((v & MSG) == MSG_RX) {
@@ -178,12 +157,7 @@ int main() {
         }
 
         if ((v & MSG) == MSG_CARD_READ) {
-            char s[64];
-
             on_card_read(v & 0x0fffffff);
-            cardf(&last_card, s, sizeof(s));
-            puts(s);
-            // blink(last_card.ok ? (LED *)&GOOD_LED : (LED *)&BAD_CARD);
         }
 
         if ((v & MSG) == MSG_LED) {
@@ -319,30 +293,12 @@ bool syscheck(repeating_timer_t *rt) {
     return true;
 }
 
-void blink(LED *led) {
-    if (led->timer > 0) {
-        cancel_alarm(led->timer);
-    }
-
-    gpio_put(led->pin, 0);
-
-    led->timer = add_alarm_in_ms(250, off, (void *)led, true);
-}
-
 int64_t startup(alarm_id_t id, void *data) {
     uint32_t v = MSG_SYSINIT | 0x0000000;
 
     if (!queue_is_full(&queue)) {
         queue_try_add(&queue, &v);
     }
-
-    return 0;
-}
-
-int64_t off(alarm_id_t id, void *data) {
-    const LED *led = data;
-
-    gpio_put(led->pin, 1);
 
     return 0;
 }

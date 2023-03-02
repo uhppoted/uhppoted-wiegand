@@ -13,6 +13,15 @@
 
 const uint32_t BLINK_DELAY = 1000;
 
+repeating_timer_t led_timer;
+
+struct {
+    int sys_led;
+    int good_card;
+    int bad_card;
+    int card_timeout;
+} LEDs = {0, 0, 0, 0};
+
 /* struct for communicating between led_blinks API function and blinki
  * alarm handler. Allocated and initialised in led_blinks and free'd
  * in blinki.
@@ -60,12 +69,53 @@ int64_t blinki(alarm_id_t id, void *data) {
     return 0;
 }
 
+/* Alarm handler for 'end of blink start delay'. Queues up 'count'
+ * reader LED blinks to the BLINK FIFO..
+ *
+ */
+bool callback(repeating_timer_t *rt) {
+    if (LEDs.sys_led > 0) {
+        LEDs.sys_led -= 10;
+        if (LEDs.sys_led <= 0) {
+            LEDs.sys_led = 0;
+            gpio_put(ONBOARD_LED, 0);
+        }
+    }
+
+    if (LEDs.good_card > 0) {
+        LEDs.good_card -= 10;
+        if (LEDs.good_card <= 0) {
+            LEDs.good_card = 0;
+            TPIC_set(YELLOW_LED, false);
+        }
+    }
+
+    if (LEDs.bad_card > 0) {
+        LEDs.bad_card -= 10;
+        if (LEDs.bad_card <= 0) {
+            LEDs.bad_card = 0;
+            TPIC_set(RED_LED, false);
+        }
+    }
+
+    if (LEDs.card_timeout > 0) {
+        LEDs.card_timeout -= 10;
+        if (LEDs.card_timeout <= 0) {
+            LEDs.card_timeout = 0;
+            TPIC_set(ORANGE_LED, false);
+        }
+    }
+
+    return true;
+}
+
 /* Initialises the PIO for the emulator LED input and the reader LED
  * output. The PIO is only initialised with the reader LED output
  * program if the mode is 'READER'.
  *
  */
 void led_initialise(enum MODE mode) {
+    // ... initialse PIO for reader/writer LED
     uint offset = pio_add_program(PIO_LED, &led_program);
 
     led_program_init(PIO_LED, SM_LED, offset, WRITER_LED);
@@ -79,6 +129,9 @@ void led_initialise(enum MODE mode) {
 
         blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);
     }
+
+    // ... create repeating timer to manage blinking LEDs
+    add_repeating_timer_ms(10, callback, NULL, &led_timer);
 }
 
 /* Handler for an LED event.
@@ -89,12 +142,12 @@ void led_initialise(enum MODE mode) {
 void led_event(uint32_t v) {
     switch (v) {
     case 21:
-        TPIC_set(YELLOW_LED, true);
+        TPIC_set(GREEN_LED, true);
         tx("LED   ON");
         break;
 
     case 10:
-        TPIC_set(YELLOW_LED, false);
+        TPIC_set(GREEN_LED, false);
         tx("LED   OFF");
         break;
 
@@ -103,7 +156,8 @@ void led_event(uint32_t v) {
     }
 }
 
-/* Handler for an LED blink.
+/* Blink the reader/writer LED after a delay. The reader/writer LED is managed
+ * by a PIO pin not by the TPIC6B595.
  *
  * NOTE: because the PIO FIFO is only 8 deep, the maximum number of blinks
  *       is 8. Could probably get complicated about this but no reason to
@@ -115,4 +169,31 @@ void led_blink(uint8_t count) {
     b->count = count > 8 ? 8 : count;
 
     add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);
+}
+
+/* 'blink' implementation for TPIC6B595 managed LEDs.
+ *
+ */
+void blink(enum LED led) {
+    switch (led) {
+    case SYS_LED:
+        LEDs.sys_led = 50;
+        gpio_put(ONBOARD_LED, 1);
+        break;
+
+    case GOOD_CARD:
+        LEDs.good_card = 500;
+        TPIC_set(YELLOW_LED, true);
+        break;
+
+    case BAD_CARD:
+        LEDs.bad_card = 500;
+        TPIC_set(RED_LED, true);
+        break;
+
+    case CARD_TIMEOUT:
+        LEDs.card_timeout = 500;
+        TPIC_set(ORANGE_LED, true);
+        break;
+    }
 }

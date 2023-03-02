@@ -122,6 +122,12 @@ void on_card_read(uint32_t v) {
     } else if (last_card.granted == DENIED) {
         led_blink(3);
     }
+
+    // ... display on console/LEDs
+    char s[64];
+    cardf(&last_card, s, sizeof(s));
+    puts(s);
+    blink(last_card.ok ? GOOD_CARD : BAD_CARD);
 }
 
 int64_t read_timeout(alarm_id_t id, void *data) {
@@ -131,5 +137,5 @@ int64_t read_timeout(alarm_id_t id, void *data) {
     r->card = 0;
     r->timer = 0;
 
-    // blink((LED *)&TIMEOUT_LED);
+    blink(CARD_TIMEOUT);
 }

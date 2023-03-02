@@ -6,6 +6,7 @@
 
 extern const uint UART0_RX;
 extern const uint UART0_TX;
+extern const uint ONBOARD_LED;
 
 extern const PIO PIO_READER;
 extern const PIO PIO_WRITER;
@@ -25,21 +26,16 @@ extern const uint PIO_LED_IRQ;
 extern const enum pio_interrupt_source IRQ_READER;
 extern const enum pio_interrupt_source IRQ_LED;
 
-enum MODE { UNKNOWN = 0,
-            READER,
-            WRITER
+enum MODE {
+    UNKNOWN = 0,
+    READER,
+    WRITER
 };
 
 enum ACCESS {
-    // UNKNOWN = 0,
     GRANTED = 1,
     DENIED = 2
 };
-
-typedef struct LED {
-    uint pin;
-    int32_t timer;
-} LED;
 
 typedef struct CARD {
     uint32_t card_number;
@@ -94,7 +90,6 @@ extern enum MODE mode;
 extern queue_t queue;
 extern card last_card;
 
-extern void blink(LED *);
 extern void cardf(const card *, char *, int);
 extern int timef(const datetime_t, char *, int);
 extern int bits(uint32_t);

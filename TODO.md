@@ -1,8 +1,7 @@
 # TODO
 
 ## Reader/Writer
-- [ ] TPIC6B595
-
+- [x] TPIC6B595
 - [ ] Relay
       - [ ] Outputs (to door)
             - https://www.ti.com/lit/an/slpa004a/slpa004a.pdf
