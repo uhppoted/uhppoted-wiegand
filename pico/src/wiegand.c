@@ -76,17 +76,17 @@ const LED SYS_LED = {
 };
 
 // const LED TIMEOUT_LED = {
-//     .pin = YELLOW_LED,
-//     .timer = -1,
-// };
-
-// const LED BAD_CARD = {
 //     .pin = ORANGE_LED,
 //     .timer = -1,
 // };
 
-// const LED GOOD_LED = {
+// const LED BAD_CARD = {
 //     .pin = RED_LED,
+//     .timer = -1,
+// };
+
+// const LED GOOD_LED = {
+//     .pin = GREEN_LED,
 //     .timer = -1,
 // };
 
