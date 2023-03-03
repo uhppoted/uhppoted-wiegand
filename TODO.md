@@ -4,8 +4,13 @@
 - [x] TPIC6B595
 - [ ] Relays
       - [x] Door open/close
-      - [ ] Door contact emulation
+            - [ ] _reader_ mode only
+      - [x] Door contact emulation
+            - [ ] _writer_ mode only
+            - [ ] Check with controller
       - [ ] Pushbutton emulation
+            - [ ] _writer_ mode only
+            - [ ] Check with controller
 
 - [ ] Buzzer
 - [ ] Button

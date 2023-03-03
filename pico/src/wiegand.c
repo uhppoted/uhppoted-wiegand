@@ -44,6 +44,7 @@ const uint32_t MSG_TX = 0x30000000;
 const uint32_t MSG_CARD_READ = 0x40000000;
 const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
+const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -166,6 +167,10 @@ int main() {
 
         if ((v & MSG) == MSG_RELAY) {
             relay_event(v & 0x0fffffff);
+        }
+
+        if ((v & MSG) == MSG_DOOR) {
+            door_event(v & 0x0fffffff);
         }
 
         if ((v & MSG) == MSG_DEBUG) {

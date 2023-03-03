@@ -14,6 +14,11 @@ enum RELAY_STATE {
     FAILED = 5
 };
 
+enum DOOR_CONTACT_STATE {
+    DOOR_OPEN = 1,
+    DOOR_CLOSED = 2
+};
+
 bool relay_monitor(repeating_timer_t *);
 int64_t relay_timeout(alarm_id_t, void *);
 
@@ -33,23 +38,30 @@ float lpf(bool b, float v) {
 
 bool relay_monitor(repeating_timer_t *rt) {
     static enum RELAY_STATE state = -1;
+    static enum DOOR_CONTACT_STATE state2 = -1;
+
     static float vfailed = 0.5;
     static float vunknown = 0.5;
     static float verror = 0.5;
     static float vopen = 0.5;
     static float vclosed = 0.5;
+    static float vdoor = 0.5;
     static bool normally_open = false;
     static bool normally_closed = false;
 
     enum RELAY_STATE current = 0xff;
+    enum DOOR_CONTACT_STATE current2 = 0xff;
+
     bool no = gpio_get(RELAY_NO) == 0;
     bool nc = gpio_get(RELAY_NC) == 0;
+    bool door = gpio_get(DOOR_SENSOR) == 0;
 
     verror = lpf(no && nc, verror);
     vopen = lpf(no && !nc, vopen);
     vclosed = lpf(!no && nc, vclosed);
     vunknown = lpf(!no && !nc, vunknown);
     vfailed = lpf(verror < 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown < 0.9, vfailed);
+    vdoor = lpf(door, vdoor);
 
     if (verror > 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown < 0.9) {
         current = RELAY_ERROR;
@@ -61,6 +73,12 @@ bool relay_monitor(repeating_timer_t *rt) {
         current = UNKNOWN;
     } else if (vfailed > 0.9) {
         current = FAILED;
+    }
+
+    if (vdoor > 0.9) {
+        current2 = DOOR_CLOSED;
+    } else if (vdoor < 0.1) {
+        current2 = DOOR_OPEN;
     }
 
     if (current != 0xff && current != state) {
@@ -82,6 +100,24 @@ bool relay_monitor(repeating_timer_t *rt) {
 
         if (!queue_is_full(&queue) && queue_try_add(&queue, &msg)) {
             state = current;
+        }
+    }
+
+    if (current2 != 0xff && current2 != state2) {
+        uint32_t msg = MSG_DOOR;
+
+        if (current2 == UNKNOWN) {
+            msg |= 0x0000;
+        } else if (current2 == DOOR_OPEN) {
+            msg |= 0x0001;
+        } else if (current2 == DOOR_CLOSED) {
+            msg |= 0x0002;
+        } else {
+            msg |= 0xffff;
+        }
+
+        if (!queue_is_full(&queue) && queue_try_add(&queue, &msg)) {
+            state2 = current2;
         }
     }
 
@@ -136,4 +172,19 @@ void relay_door_contact(bool closed) {
 int64_t relay_timeout(alarm_id_t id, void *data) {
     relay_close();
     return 0;
+}
+
+/* Handler for a DOOR event.
+ *
+ */
+void door_event(uint32_t v) {
+    if (v == 0x0000) {
+        tx("DOOR UNKNOWN");
+    } else if (v == 0x0001) {
+        tx("DOOR  OPEN");
+    } else if (v == 0x0002) {
+        tx("DOOR  CLOSED");
+    } else {
+        tx("DOOR ????");
+    }
 }
