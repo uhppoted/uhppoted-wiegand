@@ -123,6 +123,13 @@ void relay_close() {
     TPIC_set(DOOR_RELAY, false);
 }
 
+/* Sets/clears the DOOR CONTACT relay.
+ *
+ */
+void relay_door_contact(bool closed) {
+    TPIC_set(DOOR_CONTACT, closed);
+}
+
 /* Timeout handler. Clears the DOOR OPEN relay.
  *
  */

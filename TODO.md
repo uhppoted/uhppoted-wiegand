@@ -4,6 +4,8 @@
 - [x] TPIC6B595
 - [ ] Relays
       - [x] Door open/close
+      - [ ] Door contact emulation
+      - [ ] Pushbutton emulation
 
 - [ ] Buzzer
 - [ ] Button
