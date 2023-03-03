@@ -18,7 +18,7 @@
 #include "../include/controller.h"
 #include "../include/emulator.h"
 #include "../include/led.h"
-#include "../include/relay.h"
+#include "../include/relays.h"
 #include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"

@@ -187,6 +187,8 @@ int64_t cli_timeout(alarm_id_t id, void *data) {
     cli->timer = 0;
 
     clearline();
+
+    return 0;
 }
 
 /* Saves the cursor position, displays the current command buffer and then restores

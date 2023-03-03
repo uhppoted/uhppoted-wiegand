@@ -22,7 +22,7 @@ add_executable(wiegand
   src/writer.c
   src/led.c
   src/buzzer.c
-  src/relay.c
+  src/relays.c
   src/acl.c
   src/sdcard.c
   src/TPIC6B595.c

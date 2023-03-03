@@ -8,6 +8,8 @@
 #include "../include/cli.h"
 #include "../include/controller.h"
 #include "../include/led.h"
+#include "../include/relays.h"
+
 #include <READ.pio.h>
 
 typedef struct reader {
@@ -121,6 +123,10 @@ void on_card_read(uint32_t v) {
         led_blink(1);
     } else if (last_card.granted == DENIED) {
         led_blink(3);
+    }
+
+    if (last_card.granted == GRANTED) {
+        relay_open(5000);
     }
 
     // ... display on console/LEDs

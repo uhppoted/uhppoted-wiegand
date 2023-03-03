@@ -1,10 +1,12 @@
 #include <stdio.h>
 
+#include "hardware/rtc.h"
+
+#include "../include/TPIC6B595.h"
 #include "../include/cli.h"
-#include "../include/relay.h"
+#include "../include/relays.h"
 
 enum RELAY_STATE {
-    // UNKNOWN = 0,
     TRANSITION = 1,
     NORMALLY_OPEN = 2,
     NORMALLY_CLOSED = 3,
@@ -13,6 +15,7 @@ enum RELAY_STATE {
 };
 
 bool relay_monitor(repeating_timer_t *);
+int64_t relay_timeout(alarm_id_t, void *);
 
 /* Initialises the monitor for relay normally open ('NO') and normally
  * closed ('NC') inputs.
@@ -104,17 +107,26 @@ void relay_event(uint32_t v) {
     }
 }
 
-// void relay_debug() {
-//     char s[64];
-//
-//     snprintf(s, sizeof(s), ">>>> unknown          %.3f", vunknown);
-//     tx(s);
-//     snprintf(s, sizeof(s), ">>>> normally open    %.3f", vopen);
-//     tx(s);
-//     snprintf(s, sizeof(s), ">>>> normally closed  %.3f", vclosed);
-//     tx(s);
-//     snprintf(s, sizeof(s), ">>>> error            %.3f", verror);
-//     tx(s);
-//     snprintf(s, sizeof(s), ">>>> failed           %.3f", vfailed);
-//     tx(s);
-// }
+/* Sets the DOOR OPEN relay.
+ *
+ */
+void relay_open(uint32_t delay) {
+    if (add_alarm_in_ms(delay, relay_timeout, NULL, false) > 0) {
+        TPIC_set(DOOR_RELAY, true);
+    }
+}
+
+/* Clears the DOOR OPEN relay.
+ *
+ */
+void relay_close() {
+    TPIC_set(DOOR_RELAY, false);
+}
+
+/* Timeout handler. Clears the DOOR OPEN relay.
+ *
+ */
+int64_t relay_timeout(alarm_id_t id, void *data) {
+    relay_close();
+    return 0;
+}

@@ -2,9 +2,8 @@
 
 ## Reader/Writer
 - [x] TPIC6B595
-- [ ] Relay
-      - [ ] Outputs (to door)
-            - https://www.ti.com/lit/an/slpa004a/slpa004a.pdf
+- [ ] Relays
+      - [x] Door open/close
 
 - [ ] Buzzer
 - [ ] Button
@@ -63,6 +62,7 @@
    - https://sillycross.github.io/2022/11/22/2022-11-22/
 
 6. TPIC6B595
+   - https://www.ti.com/lit/an/slpa004a/slpa004a.pdf
    - https://docs.arduino.cc/tutorials/communication/guide-to-shift-out
    - https://www.appelsiini.net/2012/driving-595-shift-registers/#spcr
    - https://e2e.ti.com/support/power-management-group/power-management/f/power-management-forum/1133532/tpic6595-relay-back-emf
