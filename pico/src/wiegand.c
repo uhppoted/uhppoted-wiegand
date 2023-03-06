@@ -45,6 +45,7 @@ const uint32_t MSG_CARD_READ = 0x40000000;
 const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
+const uint32_t MSG_PUSHBUTTON = 0x80000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -173,6 +174,10 @@ int main() {
             door_event(v & 0x0fffffff);
         }
 
+        if ((v & MSG) == MSG_PUSHBUTTON) {
+            pushbutton_event(v & 0x0fffffff);
+        }
+
         if ((v & MSG) == MSG_DEBUG) {
             char s[64];
             snprintf(s, sizeof(s), "DEBUG %d", v & 0x0fffffff);
@@ -196,6 +201,14 @@ void setup_gpio() {
     gpio_init(RELAY_NC);
     gpio_set_dir(RELAY_NC, GPIO_IN);
     gpio_pull_up(RELAY_NC);
+
+    gpio_init(DOOR_SENSOR);
+    gpio_set_dir(DOOR_SENSOR, GPIO_IN);
+    gpio_pull_up(DOOR_SENSOR);
+
+    gpio_init(PUSH_BUTTON);
+    gpio_set_dir(PUSH_BUTTON, GPIO_IN);
+    gpio_pull_up(PUSH_BUTTON);
 
     gpio_init(MODE_READER);
     gpio_set_dir(MODE_READER, GPIO_IN);

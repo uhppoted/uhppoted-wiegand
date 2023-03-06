@@ -40,7 +40,8 @@ void reboot();
 void help();
 
 void on_card_command(char *cmd, handler fn);
-void on_door_contact(char cmd);
+void on_door(char cmd);
+void on_pushbutton(char cmd);
 void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
@@ -244,7 +245,12 @@ void exec(char *cmd) {
 
         case 'c':
         case 'C':
-            on_door_contact(cmd[1]);
+            on_door(cmd[1]);
+            break;
+
+        case 'p':
+        case 'P':
+            on_pushbutton(cmd[1]);
             break;
 
         case 'l':
@@ -581,6 +587,8 @@ void help() {
     tx("X        Blinks reader LED 5 times");
     tx("CO       Opens door contact relay");
     tx("CC       Closes door contact relay");
+    tx("PP       Press pushbutton");
+    tx("PR       Release pushbutton");
     tx("M        Mount SD card");
     tx("U        Unmount SD card");
     tx("Z        reboot");
@@ -621,16 +629,30 @@ void on_card_command(char *cmd, handler fn) {
     fn(facility_code, card);
 }
 
-/* Door contact command handler.
- *  Opens/closes the door contact relay (in reader mode only).
+/* Door contact emulation command handler.
+ *  Opens/closes the door contact emulation relay (in reader mode only).
  *
  */
-void on_door_contact(char cmd) {
+void on_door(char cmd) {
     if (cmd == 'O' || cmd == 'o') {
         relay_door_contact(false);
     }
 
     if (cmd == 'C' || cmd == 'c') {
         relay_door_contact(true);
+    }
+}
+
+/* Pushbutton emulation command handler.
+ *  Opens/closes the pushbutton emulation relay (in reader mode only).
+ *
+ */
+void on_pushbutton(char cmd) {
+    if (cmd == 'R' || cmd == 'r') {
+        relay_pushbutton(false);
+    }
+
+    if (cmd == 'P' || cmd == 'p') {
+        relay_pushbutton(true);
     }
 }

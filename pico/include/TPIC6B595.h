@@ -9,6 +9,7 @@ enum TPICIO {
     GREEN_LED,
     DOOR_RELAY,
     DOOR_CONTACT,
+    PUSHBUTTON
 };
 
 extern void TPIC_initialise(enum MODE);

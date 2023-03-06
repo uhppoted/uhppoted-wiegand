@@ -1,16 +1,19 @@
 # TODO
 
 ## Reader/Writer
-- [x] TPIC6B595
+
+- [ ] Split reader/writer into seperate builds
+
 - [ ] Relays
       - [x] Door open/close
             - [ ] _reader_ mode only
       - [x] Door contact emulation
             - [ ] _writer_ mode only
             - [ ] Check with controller
-      - [ ] Pushbutton emulation
+      - [x] Pushbutton emulation
             - [ ] _writer_ mode only
             - [ ] Check with controller
+      - [x] Update Fritzing for LittelFuse relays
 
 - [ ] Buzzer
 - [ ] Button

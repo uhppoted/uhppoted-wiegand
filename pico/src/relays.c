@@ -19,6 +19,11 @@ enum DOOR_CONTACT_STATE {
     DOOR_CLOSED = 2
 };
 
+enum PUSHBUTTON_STATE {
+    RELEASED = 1,
+    PRESSED = 2
+};
+
 bool relay_monitor(repeating_timer_t *);
 int64_t relay_timeout(alarm_id_t, void *);
 
@@ -37,24 +42,28 @@ float lpf(bool b, float v) {
 }
 
 bool relay_monitor(repeating_timer_t *rt) {
-    static enum RELAY_STATE state = -1;
+    static enum RELAY_STATE state1 = -1;
     static enum DOOR_CONTACT_STATE state2 = -1;
+    static enum PUSHBUTTON_STATE state3 = -1;
 
     static float vfailed = 0.5;
     static float vunknown = 0.5;
     static float verror = 0.5;
     static float vopen = 0.5;
     static float vclosed = 0.5;
-    static float vdoor = 0.5;
     static bool normally_open = false;
     static bool normally_closed = false;
+    static float vdoor = 0.5;
+    static float vbutton = 0.5;
 
-    enum RELAY_STATE current = 0xff;
+    enum RELAY_STATE current1 = 0xff;
     enum DOOR_CONTACT_STATE current2 = 0xff;
+    enum PUSHBUTTON_STATE current3 = 0xff;
 
     bool no = gpio_get(RELAY_NO) == 0;
     bool nc = gpio_get(RELAY_NC) == 0;
     bool door = gpio_get(DOOR_SENSOR) == 0;
+    bool button = gpio_get(PUSH_BUTTON) == 0;
 
     verror = lpf(no && nc, verror);
     vopen = lpf(no && !nc, vopen);
@@ -62,17 +71,18 @@ bool relay_monitor(repeating_timer_t *rt) {
     vunknown = lpf(!no && !nc, vunknown);
     vfailed = lpf(verror < 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown < 0.9, vfailed);
     vdoor = lpf(door, vdoor);
+    vbutton = lpf(button, vbutton);
 
     if (verror > 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown < 0.9) {
-        current = RELAY_ERROR;
+        current1 = RELAY_ERROR;
     } else if (verror < 0.9 && vopen > 0.9 && vclosed < 0.9 && vunknown < 0.9) {
-        current = NORMALLY_OPEN;
+        current1 = NORMALLY_OPEN;
     } else if (verror < 0.9 && vopen < 0.9 && vclosed > 0.9 && vunknown < 0.9) {
-        current = NORMALLY_CLOSED;
+        current1 = NORMALLY_CLOSED;
     } else if (verror < 0.9 && vopen < 0.9 && vclosed < 0.9 && vunknown > 0.9) {
-        current = UNKNOWN;
+        current1 = UNKNOWN;
     } else if (vfailed > 0.9) {
-        current = FAILED;
+        current1 = FAILED;
     }
 
     if (vdoor > 0.9) {
@@ -81,25 +91,31 @@ bool relay_monitor(repeating_timer_t *rt) {
         current2 = DOOR_OPEN;
     }
 
-    if (current != 0xff && current != state) {
+    if (vbutton > 0.9) {
+        current3 = PRESSED;
+    } else if (vdoor < 0.1) {
+        current3 = RELEASED;
+    }
+
+    if (current1 != 0xff && current1 != state1) {
         uint32_t msg = MSG_RELAY;
 
-        if (current == UNKNOWN) {
+        if (current1 == UNKNOWN) {
             msg |= 0x0000;
-        } else if (current == NORMALLY_OPEN) {
+        } else if (current1 == NORMALLY_OPEN) {
             msg |= 0x0001;
-        } else if (current == NORMALLY_CLOSED) {
+        } else if (current1 == NORMALLY_CLOSED) {
             msg |= 0x0002;
-        } else if (current == RELAY_ERROR) {
+        } else if (current1 == RELAY_ERROR) {
             msg |= 0x0003;
-        } else if (current == FAILED) {
+        } else if (current1 == FAILED) {
             msg |= 0x0004;
         } else {
             msg |= 0xffff;
         }
 
         if (!queue_is_full(&queue) && queue_try_add(&queue, &msg)) {
-            state = current;
+            state1 = current1;
         }
     }
 
@@ -118,6 +134,24 @@ bool relay_monitor(repeating_timer_t *rt) {
 
         if (!queue_is_full(&queue) && queue_try_add(&queue, &msg)) {
             state2 = current2;
+        }
+    }
+
+    if (current3 != 0xff && current3 != state3) {
+        uint32_t msg = MSG_PUSHBUTTON;
+
+        if (current3 == UNKNOWN) {
+            msg |= 0x0000;
+        } else if (current3 == PRESSED) {
+            msg |= 0x0001;
+        } else if (current3 == RELEASED) {
+            msg |= 0x0002;
+        } else {
+            msg |= 0xffff;
+        }
+
+        if (!queue_is_full(&queue) && queue_try_add(&queue, &msg)) {
+            state3 = current3;
         }
     }
 
@@ -159,11 +193,18 @@ void relay_close() {
     TPIC_set(DOOR_RELAY, false);
 }
 
-/* Sets/clears the DOOR CONTACT relay.
+/* Sets/clears the DOOR CONTACT emulation relay.
  *
  */
 void relay_door_contact(bool closed) {
     TPIC_set(DOOR_CONTACT, closed);
+}
+
+/* Sets/clears the PUSHBUTTON emulation relay.
+ *
+ */
+void relay_pushbutton(bool closed) {
+    TPIC_set(PUSHBUTTON, closed);
 }
 
 /* Timeout handler. Clears the DOOR OPEN relay.
@@ -174,17 +215,32 @@ int64_t relay_timeout(alarm_id_t id, void *data) {
     return 0;
 }
 
-/* Handler for a DOOR event.
+/* Handler for a DOOR CONTACT input event.
  *
  */
 void door_event(uint32_t v) {
     if (v == 0x0000) {
-        tx("DOOR UNKNOWN");
+        tx("DOOR  UNKNOWN");
     } else if (v == 0x0001) {
-        tx("DOOR  OPEN");
+        tx("DOOR   OPEN");
     } else if (v == 0x0002) {
-        tx("DOOR  CLOSED");
+        tx("DOOR   CLOSED");
     } else {
-        tx("DOOR ????");
+        tx("DOOR  ????");
+    }
+}
+
+/* Handler for a PUSHBUTTON input event.
+ *
+ */
+void pushbutton_event(uint32_t v) {
+    if (v == 0x0000) {
+        tx("BUTTON UNKNOWN");
+    } else if (v == 0x0001) {
+        tx("BUTTON PRESSED");
+    } else if (v == 0x0002) {
+        tx("BUTTON RELEASED");
+    } else {
+        tx("BUTTON ????");
     }
 }

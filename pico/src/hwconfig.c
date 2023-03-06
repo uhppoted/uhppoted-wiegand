@@ -81,5 +81,5 @@ const uint READER_D0 = GPIO_20; //
 
 const uint RELAY_NO = GPIO_17;
 const uint RELAY_NC = GPIO_16;
-const uint PUSHBUTTON = GPIO_15;
+const uint PUSH_BUTTON = GPIO_15;
 const uint DOOR_SENSOR = GPIO_14;

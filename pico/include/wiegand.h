@@ -28,8 +28,9 @@ extern const enum pio_interrupt_source IRQ_LED;
 
 enum MODE {
     UNKNOWN = 0,
-    READER,
-    WRITER
+    READER = 1,
+    WRITER = 2,
+    INDETERMINATE = 0xff
 };
 
 enum ACCESS {
@@ -66,7 +67,7 @@ extern const uint WRITER_D1;
 extern const uint WRITER_LED;
 extern const uint RELAY_NO;
 extern const uint RELAY_NC;
-extern const uint PUSHBUTTON;
+extern const uint PUSH_BUTTON;
 extern const uint DOOR_SENSOR;
 extern const uint BUZZER;
 
@@ -83,6 +84,7 @@ extern const uint32_t MSG_CARD_READ;
 extern const uint32_t MSG_LED;
 extern const uint32_t MSG_RELAY;
 extern const uint32_t MSG_DOOR;
+extern const uint32_t MSG_PUSHBUTTON;
 extern const uint32_t MSG_TX;
 extern const uint32_t MSG_RXI;
 extern const uint32_t MSG_DEBUG;
