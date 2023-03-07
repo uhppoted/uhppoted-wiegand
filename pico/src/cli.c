@@ -40,7 +40,8 @@ void reboot();
 void help();
 
 void on_card_command(char *cmd, handler fn);
-void on_door(char cmd);
+void on_door_unlock(char *cmd);
+void on_door_sensor(char cmd);
 void on_pushbutton(char cmd);
 void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
@@ -228,34 +229,44 @@ void exec(char *cmd) {
             sys_settime(&cmd[1]);
             break;
 
-        case 'w':
-        case 'W':
-            on_card_command(&cmd[1], write);
-            break;
-
-        case 'g':
-        case 'G':
-            on_card_command(&cmd[1], grant);
-            break;
-
-        case 'r':
-        case 'R':
-            on_card_command(&cmd[1], revoke);
+        case 'u':
+        case 'U':
+            on_door_unlock(cmd);
             break;
 
         case 'c':
         case 'C':
-            on_door(cmd[1]);
+            switch (cmd[1]) {
+            case 'w':
+            case 'W':
+                on_card_command(&cmd[2], write);
+                break;
+
+            case 'g':
+            case 'G':
+                on_card_command(&cmd[2], grant);
+                break;
+
+            case 'r':
+            case 'R':
+                on_card_command(&cmd[2], revoke);
+                break;
+
+            case 'l':
+            case 'L':
+                list();
+                break;
+            }
+            break;
+
+        case 'r':
+        case 'R':
+            on_door_sensor(cmd[1]);
             break;
 
         case 'p':
         case 'P':
             on_pushbutton(cmd[1]);
-            break;
-
-        case 'l':
-        case 'L':
-            list();
             break;
 
         case 'z':
@@ -578,21 +589,26 @@ void help() {
 
     tx("-----");
     tx("Commands:");
-    tx("T        Set date/time (YYYY-MM-DD HH:mm:ss)");
-    tx("Gnnnnnn  Add card to access control list");
-    tx("Rnnnnnn  Remove card from access control list");
-    tx("Lnnnnnn  List cards in access control list");
-    tx("Wnnnnnn  (emulator) Write card to Wiegand-26 interface");
-    tx("Q        Display last card read/write");
-    tx("X        Blinks reader LED 5 times");
-    tx("CO       Opens door contact relay");
-    tx("CC       Closes door contact relay");
-    tx("PP       Press pushbutton");
-    tx("PR       Release pushbutton");
-    tx("M        Mount SD card");
-    tx("U        Unmount SD card");
-    tx("Z        reboot");
-    tx("?        Display list of commands");
+    tx("T         Set date/time (YYYY-MM-DD HH:mm:ss)");
+    tx("CGnnnnnn  Grant card access rights");
+    tx("CRnnnnnn  Revoke card access rights");
+    tx("CLnnnnnn  List cards in ACL");
+    tx("CWnnnnnn  Write card to Wiegand-26 interface");
+    tx("Q         Display last card read/write");
+    tx("X         Blinks reader LED 5 times");
+    tx("UNLOCK    Unlocks door");
+    tx("LOCK      Locks door");
+    tx("CO        Opens door contact relay");
+    tx("CC        Closes door contact relay");
+    tx("PP        Press pushbutton");
+    tx("PR        Release pushbutton");
+    tx("DM        Mount SD card");
+    tx("DU        Unmount SD card");
+    tx("DF        Format SD card");
+    tx("DR        Read ACL from SD card");
+    tx("DW        Write ACL to SD card");
+    tx("Z         reboot");
+    tx("?         Display list of commands");
     tx("-----");
 }
 
@@ -629,11 +645,21 @@ void on_card_command(char *cmd, handler fn) {
     fn(facility_code, card);
 }
 
+/* Door lock.
+ *  Locks/unlocks door relay (READER mode only).
+ *
+ */
+void on_door_unlock(char *cmd) {
+    if (strncasecmp(cmd, "un", 2) == 0) {
+        door_unlock(5000);
+    }
+}
+
 /* Door contact emulation command handler.
  *  Opens/closes the door contact emulation relay (in reader mode only).
  *
  */
-void on_door(char cmd) {
+void on_door_sensor(char cmd) {
     if (cmd == 'O' || cmd == 'o') {
         relay_door_contact(false);
     }

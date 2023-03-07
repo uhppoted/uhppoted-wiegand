@@ -126,7 +126,7 @@ void on_card_read(uint32_t v) {
     }
 
     if (last_card.granted == GRANTED) {
-        relay_open(5000);
+        door_unlock(5000);
     }
 
     // ... display on console/LEDs

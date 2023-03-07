@@ -177,12 +177,14 @@ void relay_event(uint32_t v) {
     }
 }
 
-/* Sets the DOOR OPEN relay.
+/* Sets the DOOR OPEN relay (READER mode only).
  *
  */
-void relay_open(uint32_t delay) {
-    if (add_alarm_in_ms(delay, relay_timeout, NULL, false) > 0) {
-        TPIC_set(DOOR_RELAY, true);
+void door_unlock(uint32_t delay) {
+    if (mode == READER) {
+        if (add_alarm_in_ms(delay, relay_timeout, NULL, false) > 0) {
+            TPIC_set(DOOR_RELAY, true);
+        }
     }
 }
 
