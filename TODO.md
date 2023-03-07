@@ -2,15 +2,15 @@
 
 ## Reader/Writer
 
-- [ ] Relays
+- [x] Relays
       - [x] Door open/close
             - [x] _reader_ mode only
       - [x] Door contact emulation
-            - [ ] _writer_ mode only
-            - [ ] Check with controller
+            - [x] _writer_ mode only
+            - [x] Check with controller
       - [x] Pushbutton emulation
-            - [ ] _writer_ mode only
-            - [ ] Check with controller
+            - [x] _writer_ mode only
+            - [x] Check with controller
       - [x] Update Fritzing for LittelFuse relays
 
 - [ ] Split reader/writer into seperate builds

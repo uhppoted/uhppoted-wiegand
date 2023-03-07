@@ -9,7 +9,7 @@ extern const uint SPI_CS;
 
 extern spi_inst_t *SPI;
 
-const uint8_t TPIC_MASK_DOOR_RELAY = 0x01;
+const uint8_t TPIC_MASK_DOOR_UNLOCK = 0x01;
 const uint8_t TPIC_MASK_PUSHBUTTON = 0x02;
 const uint8_t TPIC_MASK_DOOR_CONTACT = 0x04;
 
@@ -41,8 +41,8 @@ void TPIC_set(enum TPICIO io, bool on) {
     static uint8_t state = 0x00;
 
     switch (io) {
-    case DOOR_RELAY:
-        state = (state & ~TPIC_MASK_DOOR_RELAY) | (on ? TPIC_MASK_DOOR_RELAY : 0x00);
+    case DOOR_UNLOCK:
+        state = (state & ~TPIC_MASK_DOOR_UNLOCK) | (on ? TPIC_MASK_DOOR_UNLOCK : 0x00);
         break;
 
     case PUSHBUTTON:

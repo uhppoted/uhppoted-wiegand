@@ -143,16 +143,16 @@ void led_event(uint32_t v) {
     switch (v) {
     case 21:
         TPIC_set(GREEN_LED, true);
-        tx("LED   ON");
+        tx("LED    ON");
         break;
 
     case 10:
         TPIC_set(GREEN_LED, false);
-        tx("LED   OFF");
+        tx("LED    OFF");
         break;
 
     default:
-        tx("LED   ???");
+        tx("LED    ???");
     }
 }
 

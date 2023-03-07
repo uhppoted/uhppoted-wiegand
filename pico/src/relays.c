@@ -163,17 +163,17 @@ bool relay_monitor(repeating_timer_t *rt) {
  */
 void relay_event(uint32_t v) {
     if (v == 0x0000) {
-        tx("RELAY UNKNOWN");
+        tx("DOOR   LOCK UNKNOWN");
     } else if (v == 0x0001) {
-        tx("RELAY NORMALLY OPEN");
+        tx("DOOR   LOCKED");
     } else if (v == 0x0002) {
-        tx("RELAY NORMALLY CLOSED");
+        tx("DOOR   UNLOCKED");
     } else if (v == 0x0003) {
-        tx("RELAY ERROR");
+        tx("DOOR   LOCK ERROR");
     } else if (v == 0x0004) {
-        tx("RELAY FAILED");
+        tx("DOOR   LOCK FAILED");
     } else {
-        tx("RELAY ????");
+        tx("DOOR   LOCK ????");
     }
 }
 
@@ -183,30 +183,34 @@ void relay_event(uint32_t v) {
 void door_unlock(uint32_t delay) {
     if (mode == READER) {
         if (add_alarm_in_ms(delay, relay_timeout, NULL, false) > 0) {
-            TPIC_set(DOOR_RELAY, true);
+            TPIC_set(DOOR_UNLOCK, true);
         }
     }
 }
 
-/* Clears the DOOR OPEN relay.
+/* Releases the DOOR UNLOCK relay.
  *
  */
 void relay_close() {
-    TPIC_set(DOOR_RELAY, false);
+    TPIC_set(DOOR_UNLOCK, false);
 }
 
-/* Sets/clears the DOOR CONTACT emulation relay.
+/* Sets/clears the DOOR CONTACT emulation relay (WRITER mode only).
  *
  */
 void relay_door_contact(bool closed) {
-    TPIC_set(DOOR_CONTACT, closed);
+    if (mode == WRITER) {
+        TPIC_set(DOOR_CONTACT, closed);
+    }
 }
 
-/* Sets/clears the PUSHBUTTON emulation relay.
+/* Sets/clears the PUSHBUTTON emulation relay (WRITER mode only).
  *
  */
 void relay_pushbutton(bool closed) {
-    TPIC_set(PUSHBUTTON, closed);
+    if (mode == WRITER) {
+        TPIC_set(PUSHBUTTON, closed);
+    }
 }
 
 /* Timeout handler. Clears the DOOR OPEN relay.

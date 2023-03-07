@@ -41,8 +41,8 @@ void help();
 
 void on_card_command(char *cmd, handler fn);
 void on_door_unlock(char *cmd);
-void on_door_sensor(char cmd);
-void on_pushbutton(char cmd);
+void on_door_sensor(char *cmd);
+void on_pushbutton(char *cmd);
 void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
@@ -229,11 +229,6 @@ void exec(char *cmd) {
             sys_settime(&cmd[1]);
             break;
 
-        case 'u':
-        case 'U':
-            on_door_unlock(cmd);
-            break;
-
         case 'c':
         case 'C':
             switch (cmd[1]) {
@@ -259,14 +254,19 @@ void exec(char *cmd) {
             }
             break;
 
+        case 'u':
+        case 'U':
+            on_door_unlock(cmd);
+            break;
+
         case 'r':
         case 'R':
-            on_door_sensor(cmd[1]);
+            on_door_sensor(cmd);
             break;
 
         case 'p':
         case 'P':
-            on_pushbutton(cmd[1]);
+            on_pushbutton(cmd);
             break;
 
         case 'z':
@@ -361,9 +361,9 @@ void grant(uint32_t facility_code, uint32_t card) {
     snprintf(c, sizeof(c), "%u%05u", facility_code, card);
 
     if (acl_grant(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD %-8s %s", c, "GRANTED");
+        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "GRANTED");
     } else {
-        snprintf(s, sizeof(s), "CARD %-8s %s", c, "ERROR");
+        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "ERROR");
     }
 
     tx(s);
@@ -380,9 +380,9 @@ void revoke(uint32_t facility_code, uint32_t card) {
     snprintf(c, sizeof(c), "%u%05u", facility_code, card);
 
     if (acl_revoke(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD %-8s %s", c, "REVOKED");
+        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "REVOKED");
     } else {
-        snprintf(s, sizeof(s), "CARD %-8s %s", c, "ERROR");
+        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "ERROR");
     }
 
     tx(s);
@@ -659,12 +659,12 @@ void on_door_unlock(char *cmd) {
  *  Opens/closes the door contact emulation relay (in reader mode only).
  *
  */
-void on_door_sensor(char cmd) {
-    if (cmd == 'O' || cmd == 'o') {
+void on_door_sensor(char *cmd) {
+    if (strncasecmp(cmd, "ro", 2) == 0) {
         relay_door_contact(false);
     }
 
-    if (cmd == 'C' || cmd == 'c') {
+    if (strncasecmp(cmd, "rc", 2) == 0) {
         relay_door_contact(true);
     }
 }
@@ -673,12 +673,12 @@ void on_door_sensor(char cmd) {
  *  Opens/closes the pushbutton emulation relay (in reader mode only).
  *
  */
-void on_pushbutton(char cmd) {
-    if (cmd == 'R' || cmd == 'r') {
-        relay_pushbutton(false);
+void on_pushbutton(char *cmd) {
+    if (strncasecmp(cmd, "pp", 2) == 0) {
+        relay_pushbutton(true);
     }
 
-    if (cmd == 'P' || cmd == 'p') {
-        relay_pushbutton(true);
+    if (strncasecmp(cmd, "pr", 2) == 0) {
+        relay_pushbutton(false);
     }
 }
