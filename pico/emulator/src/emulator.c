@@ -17,7 +17,6 @@
 #include "led.h"
 #include "read.h"
 #include "relays.h"
-#include "sdcard.h"
 #include "sys.h"
 #include "write.h"
 
@@ -248,7 +247,6 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
-        sdcard_initialise(mode);
         read_initialise(mode);
         write_initialise(mode);
         led_initialise(mode);

@@ -5,8 +5,8 @@
    - [x] MODE: EMULATOR
    - [x] Remove door unlock stuff
    - [x] Remove ACL
-   - [ ] Remove SD card support
-   - [ ] Update CLI
+   - [x] Remove SD card support
+   - [x] Update CLI
    - [ ] Fritzing
 
 ## _wiegand-controller_

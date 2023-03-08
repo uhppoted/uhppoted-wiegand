@@ -2,18 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "f_util.h"
 #include "hardware/gpio.h"
 #include "hardware/rtc.h"
 
 #include "../include/TPIC6B595.h"
 #include "../include/buzzer.h"
 #include "../include/cli.h"
+#include "../include/emulator.h"
 #include "../include/led.h"
 #include "../include/relays.h"
-#include "../include/sdcard.h"
 #include "../include/sys.h"
-#include "../include/wiegand.h"
 #include "../include/write.h"
 
 typedef struct CLI {
@@ -42,10 +40,6 @@ void on_card_command(char *cmd, handler fn);
 void on_door_sensor(char *cmd);
 void on_pushbutton(char *cmd);
 void write(uint32_t, uint32_t);
-
-void mount();
-void unmount();
-void format();
 
 /* Clears the screen
  *
@@ -242,26 +236,6 @@ void exec(char *cmd) {
             reboot();
             break;
 
-        case 'd':
-        case 'D':
-            switch (cmd[1]) {
-            case 'm':
-            case 'M':
-                mount();
-                break;
-
-            case 'u':
-            case 'U':
-                unmount();
-                break;
-
-            case 'f':
-            case 'F':
-                format();
-                break;
-            }
-            break;
-
         case '?':
             help();
             break;
@@ -309,69 +283,6 @@ void write(uint32_t facility_code, uint32_t card) {
     }
 }
 
-/* Formats the SD card.
- *
- */
-void format() {
-    bool detected = gpio_get(SD_DET) == 1;
-    int formatted = sdcard_format();
-    char s[64];
-
-    if (!detected) {
-        tx("DISK  NO SDCARD");
-    }
-
-    if (formatted != 0) {
-        snprintf(s, sizeof(s), "DISK  FORMAT ERROR (%d) %s", formatted, FRESULT_str(formatted));
-    } else {
-        snprintf(s, sizeof(s), "DISK  FORMATTED");
-    }
-
-    tx(s);
-}
-
-/* Mounts the SD card.
- *
- */
-void mount() {
-    bool detected = gpio_get(SD_DET) == 1;
-    int mounted = sdcard_mount();
-    char s[64];
-
-    if (!detected) {
-        tx("DISK  NO SDCARD");
-    }
-
-    if (mounted != 0) {
-        snprintf(s, sizeof(s), "DISK  MOUNT ERROR (%d) %s", mounted, FRESULT_str(mounted));
-    } else {
-        snprintf(s, sizeof(s), "DISK  MOUNTED");
-    }
-
-    tx(s);
-}
-
-/* Unmounts the SD card.
- *
- */
-void unmount() {
-    int unmounted = sdcard_unmount();
-    int detected = gpio_get(SD_DET);
-    char s[32];
-
-    if (!detected) {
-        tx("DISK NO SDCARD");
-    }
-
-    if (unmounted != 0) {
-        snprintf(s, sizeof(s), "DISK UNMOUNT ERROR (%d) %s", unmounted, FRESULT_str(unmounted));
-    } else {
-        snprintf(s, sizeof(s), "DISK UNMOUNTED");
-    }
-
-    tx(s);
-}
-
 /* Goes into a tight loop until the watchdog resets the processor.
  *
  */
@@ -417,9 +328,6 @@ void help() {
     tx("CC        Closes door contact relay");
     tx("PP        Press pushbutton");
     tx("PR        Release pushbutton");
-    tx("DM        Mount SD card");
-    tx("DU        Unmount SD card");
-    tx("DF        Format SD card");
     tx("Z         reboot");
     tx("?         Display list of commands");
     tx("-----");
