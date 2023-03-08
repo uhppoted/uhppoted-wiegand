@@ -9,8 +9,8 @@ clean:
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && cd build && cmake ..
 
-format: src/*.c include/*.h
-	clang-format -i src/*.c
+format: base/*.c include/*.h
+	clang-format -i base/*.c
 	clang-format -i include/*.h
 
 build: format

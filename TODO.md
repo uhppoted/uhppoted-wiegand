@@ -2,21 +2,11 @@
 
 ## Reader/Writer
 
-- [x] Relays
-      - [x] Door open/close
-            - [x] _reader_ mode only
-      - [x] Door contact emulation
-            - [x] _writer_ mode only
-            - [x] Check with controller
-      - [x] Pushbutton emulation
-            - [x] _writer_ mode only
-            - [x] Check with controller
-      - [x] Update Fritzing for LittelFuse relays
-
-- [ ] Split reader/writer into seperate builds
+- [ ] Split reader/writer 
+      - [ ] Builds
+      - [ ] Fritzing
 
 - [ ] Buzzer
-- [ ] Button
 - [ ] PicoW+TCP/IP
       - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
 - [ ] Pico + USB
@@ -31,10 +21,8 @@
 ## Breadboard 
 - [ ] Photo
 - (?) KiCard schematic
-- Door input
-- Pushbutton input
 - Buzzer
-- Pushbutton
+
 
 ## Schematic
 - RD/WR jumpers
