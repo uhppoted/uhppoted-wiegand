@@ -4,8 +4,8 @@
    - [x] Seperate build
    - [x] MODE: EMULATOR
    - [x] Remove door unlock stuff
+   - [x] Remove ACL
    - [ ] Remove SD card support
-   - [ ] Remove ACL
    - [ ] Update CLI
    - [ ] Fritzing
 

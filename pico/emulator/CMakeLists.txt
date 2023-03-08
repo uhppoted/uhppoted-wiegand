@@ -16,14 +16,13 @@ pico_sdk_init()
 
 add_executable(wiegand-emulator
   src/emulator.c
+  src/cli.c
   ../base/sys.c
-  ../base/cli.c
   ../base/read.c
   ../base/write.c
   ../base/led.c
   ../base/buzzer.c
   ../base/relays.c
-  ../base/acl.c
   ../base/sdcard.c
   ../base/TPIC6B595.c
   ../base/hwconfig.c

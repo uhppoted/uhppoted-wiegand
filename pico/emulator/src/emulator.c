@@ -12,7 +12,6 @@
 #include "pico/util/datetime.h"
 
 #include "TPIC6B595.h"
-#include "acl.h"
 #include "buzzer.h"
 #include "cli.h"
 #include "led.h"
@@ -260,8 +259,6 @@ void sysinit() {
             tx("failed to initialise relay monitor");
         }
 
-        acl_initialise((uint32_t[]){}, 0);
-
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
         add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
@@ -273,13 +270,6 @@ void sysinit() {
         rtc_get_datetime(&last_card.timestamp);
         sys_ok();
         set_scroll_area();
-
-        // ... load ACL from SD card
-        uint32_t cards[16];
-        int N = 16;
-        if (sdcard_read_acl(cards, &N) == 0) {
-            acl_initialise(cards, N);
-        }
 
         // ... 'k, done
         buzzer_beep(1);
