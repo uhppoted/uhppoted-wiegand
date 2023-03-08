@@ -68,8 +68,8 @@ const uint SPI_RX = 12;  // GPIO_12;
 const uint SPI_CS = 13;  // GPIO_13;
 const spi_inst_t *SPI = spi1;
 
-const uint MODE_READER = GPIO_7;
-const uint MODE_WRITER = GPIO_8;
+const uint JUMPER_READ = GPIO_7;
+const uint JUMPER_WRITE = GPIO_8;
 const uint BUZZER = GPIO_9;
 
 const uint WRITER_D1 = GPIO_28; // NTS: WRITER_D1 and WRITER_D0 must be adjacent for the PIO

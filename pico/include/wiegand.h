@@ -30,6 +30,7 @@ enum MODE {
     UNKNOWN = 0,
     READER = 1,
     WRITER = 2,
+    EMULATOR = 3,
     INDETERMINATE = 0xff
 };
 
@@ -56,8 +57,8 @@ typedef struct card {
 
 extern enum MODE mode;
 
-extern const uint MODE_READER;
-extern const uint MODE_WRITER;
+extern const uint JUMPER_READ;
+extern const uint JUMPER_WRITE;
 
 extern const uint READER_D0;
 extern const uint READER_D1;

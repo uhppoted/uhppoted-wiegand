@@ -346,7 +346,7 @@ void query() {
  *
  */
 void write(uint32_t facility_code, uint32_t card) {
-    if (mode == WRITER) {
+    if ((mode == WRITER) || (mode == EMULATOR)) {
         emulator_write(facility_code, card);
     }
 }

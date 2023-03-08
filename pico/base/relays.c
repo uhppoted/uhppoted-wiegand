@@ -195,11 +195,11 @@ void relay_close() {
     TPIC_set(DOOR_UNLOCK, false);
 }
 
-/* Sets/clears the DOOR CONTACT emulation relay (WRITER mode only).
+/* Sets/clears the DOOR CONTACT emulation relay (WRITER/EMULATOR mode only).
  *
  */
 void relay_door_contact(bool closed) {
-    if (mode == WRITER) {
+    if ((mode == WRITER) || (mode == EMULATOR)) {
         TPIC_set(DOOR_CONTACT, closed);
     }
 }
@@ -208,7 +208,7 @@ void relay_door_contact(bool closed) {
  *
  */
 void relay_pushbutton(bool closed) {
-    if (mode == WRITER) {
+    if ((mode == WRITER) || (mode == EMULATOR)) {
         TPIC_set(PUSHBUTTON, closed);
     }
 }

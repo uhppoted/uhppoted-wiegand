@@ -11,17 +11,16 @@
 #include "pico/stdlib.h"
 #include "pico/util/datetime.h"
 
-#include "../include/TPIC6B595.h"
-#include "../include/acl.h"
-#include "../include/buzzer.h"
-#include "../include/cli.h"
-#include "../include/controller.h"
-#include "../include/emulator.h"
-#include "../include/led.h"
-#include "../include/relays.h"
-#include "../include/sdcard.h"
-#include "../include/sys.h"
-#include "../include/wiegand.h"
+#include "TPIC6B595.h"
+#include "acl.h"
+#include "buzzer.h"
+#include "cli.h"
+#include "controller.h"
+#include "emulator.h"
+#include "led.h"
+#include "relays.h"
+#include "sdcard.h"
+#include "sys.h"
 
 #define VERSION "v0.0.0"
 
@@ -242,12 +241,10 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     SYS   STARTUP");
+        puts("                     *** WIEGAND EMULATOR");
 
-        if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
-            mode = READER;
-        } else if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
-            mode = WRITER;
+        if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
+            mode = EMULATOR;
         } else {
             mode = UNKNOWN;
         }

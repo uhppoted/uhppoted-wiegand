@@ -1,11 +1,20 @@
 # TODO
 
-## Reader/Writer
+## _wiegand-emulator_
+   - [x] Seperate build
+   - [x] MODE: EMULATOR
+   - [ ] Remove reader stuff
+   - [ ] Remove SD card support
+   - [ ] Remove ACL
+   - [ ] Update CLI
+   - [ ] Fritzing
 
-- [ ] Split reader/writer 
-      - [ ] Builds
-      - [ ] Fritzing
+## _wiegand-controller_
+   - [ ] Seperate build
+   - [ ] Remove reader stuff
+   - [ ] Fritzing
 
+## Base
 - [ ] Buzzer
 - [ ] PicoW+TCP/IP
       - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
