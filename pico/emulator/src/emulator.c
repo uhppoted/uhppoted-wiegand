@@ -93,17 +93,8 @@ void on_uart0_rx() {
 }
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand interface"));
+    bi_decl(bi_program_description("Pico-Wiegand Emulator"));
     bi_decl(bi_program_version_string(VERSION));
-    bi_decl(bi_1pin_with_name(ONBOARD_LED, "on-board LED"));
-
-    // bi_decl(bi_1pin_with_name(READER_D0, "reader D0"));
-    // bi_decl(bi_1pin_with_name(READER_D1, "reader D1"));
-    // bi_decl(bi_1pin_with_name(READER_LED, "reader LED (out)"));
-
-    // bi_decl(bi_1pin_with_name(WRITER_D0, "writer D0"));
-    // bi_decl(bi_1pin_with_name(WRITER_D1, "writer D1"));
-    // bi_decl(bi_1pin_with_name(WRITER_LED, "writer LED (in)"));
 
     stdio_init_all();
     setup_gpio();

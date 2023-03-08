@@ -8,6 +8,7 @@
    - [x] Remove SD card support
    - [x] Update CLI
    - [ ] Fritzing
+   - [ ] Commonalise CLI
 
 ## _wiegand-controller_
    - [ ] Seperate build
