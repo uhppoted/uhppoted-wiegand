@@ -15,13 +15,13 @@
 #include "../include/acl.h"
 #include "../include/buzzer.h"
 #include "../include/cli.h"
-#include "../include/controller.h"
-#include "../include/emulator.h"
 #include "../include/led.h"
+#include "../include/read.h"
 #include "../include/relays.h"
 #include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
+#include "../include/write.h"
 
 #define VERSION "v0.0.0"
 
@@ -160,6 +160,17 @@ int main() {
 
         if ((v & MSG) == MSG_CARD_READ) {
             on_card_read(v & 0x0fffffff);
+
+            if (last_card.ok && mode == READER) {
+                if (acl_allowed(last_card.facility_code, last_card.card_number)) {
+                    last_card.granted = GRANTED;
+                    led_blink(1);
+                    door_unlock(5000);
+                } else {
+                    last_card.granted = DENIED;
+                    led_blink(3);
+                }
+            }
         }
 
         if ((v & MSG) == MSG_LED) {
@@ -253,8 +264,8 @@ void sysinit() {
         }
 
         sdcard_initialise(mode);
-        controller_initialise(mode);
-        emulator_initialise(mode);
+        read_initialise(mode);
+        write_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);

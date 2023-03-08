@@ -1,4 +1,4 @@
-.program reader
+.program read
 
 loop:                 ; wait for D0 || D1
     in null, 32       ; 
@@ -23,7 +23,7 @@ loop1:                ; wait for !D0 && !D1
 
 
 % c-sdk {
-static inline void reader_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
+static inline void read_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
     uint32_t mask = (0x00000001 << d0) | (0x00000001 << d1) ;
     uint32_t dirs = (0x00000000 << d0) | (0x00000000 << d1) ;
 
@@ -35,7 +35,7 @@ static inline void reader_program_init(PIO pio, uint sm, uint offset, uint d0, u
 
     pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
 
-    pio_sm_config c = reader_program_get_default_config(offset);
+    pio_sm_config c = read_program_get_default_config(offset);
     
     sm_config_set_in_pins(&c, d0);
     sm_config_set_in_shift(&c,false,false,32);
@@ -47,7 +47,7 @@ static inline void reader_program_init(PIO pio, uint sm, uint offset, uint d0, u
     pio_sm_set_enabled(pio, sm, true);
 }
 
-static inline uint32_t reader_program_get(PIO pio, uint sm) {
+static inline uint32_t read_program_get(PIO pio, uint sm) {
     io_rw_32 *fifo = (io_rw_32 *)&pio->rxf[sm];
 
     if (!pio_sm_is_rx_fifo_empty(pio, sm)) {

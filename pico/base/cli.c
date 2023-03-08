@@ -10,12 +10,12 @@
 #include "../include/acl.h"
 #include "../include/buzzer.h"
 #include "../include/cli.h"
-#include "../include/emulator.h"
 #include "../include/led.h"
 #include "../include/relays.h"
 #include "../include/sdcard.h"
 #include "../include/sys.h"
 #include "../include/wiegand.h"
+#include "../include/write.h"
 
 typedef struct CLI {
     int ix;
@@ -347,7 +347,7 @@ void query() {
  */
 void write(uint32_t facility_code, uint32_t card) {
     if ((mode == WRITER) || (mode == EMULATOR)) {
-        emulator_write(facility_code, card);
+        write_card(facility_code, card);
     }
 }
 

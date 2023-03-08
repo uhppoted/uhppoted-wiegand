@@ -4,11 +4,8 @@
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
-#include "../include/acl.h"
-#include "../include/cli.h"
-#include "../include/controller.h"
 #include "../include/led.h"
-#include "../include/relays.h"
+#include "../include/read.h"
 
 #include <READ.pio.h>
 
@@ -27,7 +24,7 @@ const uint32_t READ_TIMEOUT = 100;
 void rxi() {
     static uint32_t card = 0;
 
-    uint32_t value = reader_program_get(PIO_READER, SM_READER);
+    uint32_t value = read_program_get(PIO_READER, SM_READER);
 
     switch (value) {
     case 1:
@@ -47,10 +44,10 @@ void rxi() {
     }
 }
 
-void controller_initialise(enum MODE mode) {
-    uint offset = pio_add_program(PIO_READER, &reader_program);
+void read_initialise(enum MODE mode) {
+    uint offset = pio_add_program(PIO_READER, &read_program);
 
-    reader_program_init(PIO_READER, SM_READER, offset, READER_D0, READER_D1);
+    read_program_init(PIO_READER, SM_READER, offset, READER_D0, READER_D1);
 
     irq_set_exclusive_handler(PIO_READER_IRQ, rxi);
     irq_set_enabled(PIO_READER_IRQ, true);
@@ -104,30 +101,12 @@ void on_card_read(uint32_t v) {
     int odd = bits(v & 0x00001fff);
     uint32_t card = (v >> 1) & 0x00ffffff;
 
+    last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
     last_card.facility_code = (card >> 16) & 0x000000ff;
     last_card.card_number = card & 0x0000ffff;
-    last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
     last_card.granted = UNKNOWN;
 
     rtc_get_datetime(&last_card.timestamp);
-
-    if (last_card.ok && mode == READER) {
-        if (acl_allowed(last_card.facility_code, last_card.card_number)) {
-            last_card.granted = GRANTED;
-        } else {
-            last_card.granted = DENIED;
-        }
-    }
-
-    if (last_card.granted == GRANTED) {
-        led_blink(1);
-    } else if (last_card.granted == DENIED) {
-        led_blink(3);
-    }
-
-    if (last_card.granted == GRANTED) {
-        door_unlock(5000);
-    }
 
     // ... display on console/LEDs
     char s[64];

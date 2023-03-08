@@ -15,12 +15,12 @@
 #include "acl.h"
 #include "buzzer.h"
 #include "cli.h"
-#include "controller.h"
-#include "emulator.h"
 #include "led.h"
+#include "read.h"
 #include "relays.h"
 #include "sdcard.h"
 #include "sys.h"
+#include "write.h"
 
 #define VERSION "v0.0.0"
 
@@ -250,8 +250,8 @@ void sysinit() {
         }
 
         sdcard_initialise(mode);
-        controller_initialise(mode);
-        emulator_initialise(mode);
+        read_initialise(mode);
+        write_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);

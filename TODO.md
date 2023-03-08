@@ -3,7 +3,7 @@
 ## _wiegand-emulator_
    - [x] Seperate build
    - [x] MODE: EMULATOR
-   - [ ] Remove reader stuff
+   - [x] Remove door unlock stuff
    - [ ] Remove SD card support
    - [ ] Remove ACL
    - [ ] Update CLI
