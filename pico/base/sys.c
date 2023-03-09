@@ -9,7 +9,7 @@
 
 const char *MODES[] = {
     "UNKNOWN",
-    "READE",
+    "READER",
     "WRITE",
     "EMULATOR",
     "CONTROLLER",

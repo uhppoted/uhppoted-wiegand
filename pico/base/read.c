@@ -107,11 +107,6 @@ void on_card_read(uint32_t v) {
     last_card.granted = UNKNOWN;
 
     rtc_get_datetime(&last_card.timestamp);
-
-    // ... display on console/LEDs
-    char s[64];
-    cardf(&last_card, s, sizeof(s));
-    puts(s);
     blink(last_card.ok ? GOOD_CARD : BAD_CARD);
 }
 

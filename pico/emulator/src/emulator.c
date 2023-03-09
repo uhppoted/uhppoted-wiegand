@@ -148,6 +148,10 @@ int main() {
 
         if ((v & MSG) == MSG_CARD_READ) {
             on_card_read(v & 0x0fffffff);
+
+           char s[64];
+            cardf(&last_card, s, sizeof(s));
+           puts(s);
         }
 
         if ((v & MSG) == MSG_LED) {

@@ -171,6 +171,10 @@ int main() {
                     led_blink(3);
                 }
             }
+
+            char s[64];
+            cardf(&last_card, s, sizeof(s));
+            puts(s);
         }
 
         if ((v & MSG) == MSG_LED) {

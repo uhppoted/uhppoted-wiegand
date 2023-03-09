@@ -16,6 +16,7 @@
    - [x] MODE: CONTROLLER
    - [x] Remove emulator stuff
    - [x] Update CLI
+   - [x] Reimplement controller card access
    - [ ] Fritzing
 
 ## Base
