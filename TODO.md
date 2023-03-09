@@ -9,10 +9,11 @@
    - [x] Update CLI
    - [ ] Fritzing
    - [ ] Commonalise CLI
+   - [ ] Commonalise cardf(...)
 
 ## _wiegand-controller_
    - [x] Seperate build
-   - [ ] MODE: CONTROLLER
+   - [x] MODE: CONTROLLER
    - [ ] Remove emulator stuff
    - [ ] Update CLI
    - [ ] Fritzing

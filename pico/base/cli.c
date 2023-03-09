@@ -646,12 +646,14 @@ void on_card_command(char *cmd, handler fn) {
 }
 
 /* Door lock.
- *  Locks/unlocks door relay (READER mode only).
+ *  Locks/unlocks door relay (READER/CONTROLLER mode only).
  *
  */
 void on_door_unlock(char *cmd) {
-    if (strncasecmp(cmd, "un", 2) == 0) {
-        door_unlock(5000);
+    if ((mode == READER) || (mode == CONTROLLER)) {
+        if (strncasecmp(cmd, "un", 2) == 0) {
+            door_unlock(5000);
+        }
     }
 }
 

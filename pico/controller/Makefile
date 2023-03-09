@@ -21,7 +21,7 @@ install: build
 	picotool reboot
 
 run: build
-	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program build/wiegand-emulator.elf verify reset exit"
+	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program build/wiegand-controller.elf verify reset exit"
 
 tty:
 	minicom -b 115200 -o -D $(PORT)

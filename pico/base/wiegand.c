@@ -161,7 +161,7 @@ int main() {
         if ((v & MSG) == MSG_CARD_READ) {
             on_card_read(v & 0x0fffffff);
 
-            if (last_card.ok && mode == READER) {
+            if (last_card.ok && ((mode == READER) || (mode == CONTROLLER))) {
                 if (acl_allowed(last_card.facility_code, last_card.card_number)) {
                     last_card.granted = GRANTED;
                     led_blink(1);

@@ -111,7 +111,7 @@ bool callback(repeating_timer_t *rt) {
 
 /* Initialises the PIO for the emulator LED input and the reader LED
  * output. The PIO is only initialised with the reader LED output
- * program if the mode is 'READER'.
+ * program if the mode is READER or CONTROLLER.
  *
  */
 void led_initialise(enum MODE mode) {
@@ -124,7 +124,7 @@ void led_initialise(enum MODE mode) {
     irq_set_enabled(PIO_LED_IRQ, true);
     pio_set_irq0_source_enabled(PIO_LED, IRQ_LED, true);
 
-    if (mode == READER) {
+    if ((mode == READER) || (mode == CONTROLLER)) {
         offset = pio_add_program(PIO_BLINK, &blink_program);
 
         blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);

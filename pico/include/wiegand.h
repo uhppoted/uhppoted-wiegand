@@ -31,6 +31,7 @@ enum MODE {
     READER = 1,
     WRITER = 2,
     EMULATOR = 3,
+    CONTROLLER = 4,
     INDETERMINATE = 0xff
 };
 

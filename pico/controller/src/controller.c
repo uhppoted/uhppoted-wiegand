@@ -253,12 +253,10 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     SYS   STARTUP");
+        puts("                     *** WIEGAND CONTROLLER");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
-            mode = READER;
-        } else if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
-            mode = WRITER;
+            mode = CONTROLLER;
         } else {
             mode = UNKNOWN;
         }
