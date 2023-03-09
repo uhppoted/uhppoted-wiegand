@@ -11,8 +11,10 @@
    - [ ] Commonalise CLI
 
 ## _wiegand-controller_
-   - [ ] Seperate build
-   - [ ] Remove reader stuff
+   - [x] Seperate build
+   - [ ] MODE: CONTROLLER
+   - [ ] Remove emulator stuff
+   - [ ] Update CLI
    - [ ] Fritzing
 
 ## Base
