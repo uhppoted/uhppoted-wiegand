@@ -16,10 +16,9 @@ pico_sdk_init()
 
 add_executable(wiegand-controller
   src/controller.c
-  ../base/cli.c
+  src/cli.c
   ../base/sys.c
   ../base/read.c
-  ../base/write.c
   ../base/led.c
   ../base/buzzer.c
   ../base/relays.c
@@ -36,11 +35,6 @@ add_subdirectory(../lib/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
 pico_generate_pio_header(
     wiegand-controller
     ${CMAKE_CURRENT_LIST_DIR}/../base/READ.pio
-)
-
-pico_generate_pio_header(
-    wiegand-controller
-    ${CMAKE_CURRENT_LIST_DIR}/../base/WRITE.pio
 )
 
 pico_generate_pio_header(

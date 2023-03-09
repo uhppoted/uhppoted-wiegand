@@ -14,8 +14,8 @@
 ## _wiegand-controller_
    - [x] Seperate build
    - [x] MODE: CONTROLLER
-   - [ ] Remove emulator stuff
-   - [ ] Update CLI
+   - [x] Remove emulator stuff
+   - [x] Update CLI
    - [ ] Fritzing
 
 ## Base
