@@ -5,13 +5,15 @@
 #include "hardware/gpio.h"
 #include "hardware/rtc.h"
 
-#include "../include/TPIC6B595.h"
-#include "../include/buzzer.h"
+#include "TPIC6B595.h"
+#include "buzzer.h"
+#include "common.h"
+#include "relays.h"
+#include "sys.h"
+#include "write.h"
+
 #include "../include/cli.h"
 #include "../include/emulator.h"
-#include "../include/relays.h"
-#include "../include/sys.h"
-#include "../include/write.h"
 
 typedef struct CLI {
     int ix;

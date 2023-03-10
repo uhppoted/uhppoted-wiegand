@@ -1,5 +1,6 @@
 #include "../include/write.h"
 #include "../include/buzzer.h"
+#include "../include/common.h"
 #include <WRITE.pio.h>
 
 typedef struct writer {

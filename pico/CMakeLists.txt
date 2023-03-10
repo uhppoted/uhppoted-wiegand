@@ -15,45 +15,46 @@ add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
 pico_sdk_init()
 
 add_executable(wiegand
-  base/wiegand.c
-  base/sys.c
-  base/cli.c
-  base/read.c
-  base/write.c
-  base/led.c
-  base/buzzer.c
-  base/relays.c
-  base/acl.c
-  base/sdcard.c
-  base/TPIC6B595.c
-  base/hwconfig.c
+  base/src/wiegand.c
+  base/src/common.c
+  base/src/sys.c
+  base/src/cli.c
+  base/src/read.c
+  base/src/write.c
+  base/src/led.c
+  base/src/buzzer.c
+  base/src/relays.c
+  base/src/acl.c
+  base/src/sdcard.c
+  base/src/TPIC6B595.c
+  base/src/hwconfig.c
 )
 
 add_subdirectory(lib/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
 
 pico_generate_pio_header(
     wiegand
-    ${CMAKE_CURRENT_LIST_DIR}/base/READ.pio
+    ${CMAKE_CURRENT_LIST_DIR}/base/src/READ.pio
 )
 
 pico_generate_pio_header(
     wiegand
-    ${CMAKE_CURRENT_LIST_DIR}/base/WRITE.pio
+    ${CMAKE_CURRENT_LIST_DIR}/base/src/WRITE.pio
 )
 
 pico_generate_pio_header(
     wiegand
-    ${CMAKE_CURRENT_LIST_DIR}/base/LED.pio
+    ${CMAKE_CURRENT_LIST_DIR}/base/src/LED.pio
 )
 
 pico_generate_pio_header(
     wiegand
-    ${CMAKE_CURRENT_LIST_DIR}/base/BLINK.pio
+    ${CMAKE_CURRENT_LIST_DIR}/base/src/BLINK.pio
 )
 
 pico_generate_pio_header(
     wiegand
-    ${CMAKE_CURRENT_LIST_DIR}/base/BUZZER.pio
+    ${CMAKE_CURRENT_LIST_DIR}/base/src/BUZZER.pio
 )
 
 pico_enable_stdio_usb (wiegand 0)

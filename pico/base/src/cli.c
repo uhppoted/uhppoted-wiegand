@@ -10,6 +10,7 @@
 #include "../include/acl.h"
 #include "../include/buzzer.h"
 #include "../include/cli.h"
+#include "../include/common.h"
 #include "../include/led.h"
 #include "../include/relays.h"
 #include "../include/sdcard.h"
