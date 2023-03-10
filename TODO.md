@@ -7,9 +7,9 @@
    - [x] Remove ACL
    - [x] Remove SD card support
    - [x] Update CLI
-   - [ ] Fritzing
+   - [x] Commonalise cardf(...)
    - [ ] Commonalise CLI
-   - [ ] Commonalise cardf(...)
+   - [x] Fritzing
 
 ## _wiegand-controller_
    - [x] Seperate build
@@ -17,7 +17,7 @@
    - [x] Remove emulator stuff
    - [x] Update CLI
    - [x] Reimplement controller card access
-   - [ ] Fritzing
+   - [x] Fritzing
 
 ## Base
 - [ ] Buzzer
