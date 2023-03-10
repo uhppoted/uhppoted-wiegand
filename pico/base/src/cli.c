@@ -42,8 +42,10 @@ void help();
 
 void on_card_command(char *cmd, handler fn);
 void on_door_unlock(char *cmd);
-void on_door_sensor(char *cmd);
-void on_pushbutton(char *cmd);
+void on_door_open();
+void on_door_close();
+void on_press_button();
+void on_release_button();
 void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
@@ -214,100 +216,85 @@ void exec(char *cmd) {
     int N = strlen(cmd);
 
     if (N > 0) {
-        switch (cmd[0]) {
-        case 'x':
-        case 'X':
-            led_blink(5);
-            break;
-
-        case 'q':
-        case 'Q':
-            query();
-            break;
-
-        case 't':
-        case 'T':
-            sys_settime(&cmd[1]);
-            break;
-
-        case 'c':
-        case 'C':
-            switch (cmd[1]) {
-            case 'w':
-            case 'W':
-                on_card_command(&cmd[2], write);
-                break;
-
-            case 'g':
-            case 'G':
-                on_card_command(&cmd[2], grant);
-                break;
-
-            case 'r':
-            case 'R':
-                on_card_command(&cmd[2], revoke);
-                break;
-
-            case 'l':
-            case 'L':
-                list();
-                break;
-            }
-            break;
-
-        case 'u':
-        case 'U':
-            on_door_unlock(cmd);
-            break;
-
-        case 'r':
-        case 'R':
-            on_door_sensor(cmd);
-            break;
-
-        case 'p':
-        case 'P':
-            on_pushbutton(cmd);
-            break;
-
-        case 'z':
-        case 'Z':
+        if (strncasecmp(cmd, "reboot", 6) == 0) {
             reboot();
-            break;
+        } else if (strncasecmp(cmd, "blink", 5) == 0) {
+            led_blink(5);
+        } else if (strncasecmp(cmd, "query", 5) == 0) {
+            query();
+        } else if (strncasecmp(cmd, "open", 4) == 0) {
+            on_door_open();
+        } else if (strncasecmp(cmd, "close", 5) == 0) {
+            on_door_close();
+        } else if (strncasecmp(cmd, "press", 5) == 0) {
+            on_press_button();
+        } else if (strncasecmp(cmd, "release", 7) == 0) {
+            on_release_button();
+        } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
+            on_card_command(&cmd[1], write);
+        } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
+            sys_settime(&cmd[1]);
+        } else {
+            switch (cmd[0]) {
+            case 'c':
+            case 'C':
+                switch (cmd[1]) {
+                case 'g':
+                case 'G':
+                    on_card_command(&cmd[2], grant);
+                    break;
 
-        case 'd':
-        case 'D':
-            switch (cmd[1]) {
-            case 'm':
-            case 'M':
-                mount();
+                case 'r':
+                case 'R':
+                    on_card_command(&cmd[2], revoke);
+                    break;
+
+                case 'l':
+                case 'L':
+                    list();
+                    break;
+                }
                 break;
 
             case 'u':
             case 'U':
-                unmount();
+                on_door_unlock(cmd);
                 break;
 
-            case 'f':
-            case 'F':
-                format();
+            case 'd':
+            case 'D':
+                switch (cmd[1]) {
+                case 'm':
+                case 'M':
+                    mount();
+                    break;
+
+                case 'u':
+                case 'U':
+                    unmount();
+                    break;
+
+                case 'f':
+                case 'F':
+                    format();
+                    break;
+
+                case 'r':
+                case 'R':
+                    read_acl();
+                    break;
+
+                case 'w':
+                case 'W':
+                    write_acl();
+                    break;
+                }
                 break;
 
-            case 'r':
-            case 'R':
-                read_acl();
-                break;
-
-            case 'w':
-            case 'W':
-                write_acl();
+            case '?':
+                help();
                 break;
             }
-            break;
-
-        case '?':
-            help();
-            break;
         }
     }
 
@@ -590,26 +577,29 @@ void help() {
 
     tx("-----");
     tx("Commands:");
-    tx("T         Set date/time (YYYY-MM-DD HH:mm:ss)");
+    tx("Wnnnnnn               Write card to Wiegand-26 interface");
+    tx("OPEN                  Opens door contact relay");
+    tx("CLOSE                 Closes door contact relay");
+    tx("PRESS                 Press pushbutton");
+    tx("RELEASE               Release pushbutton");
+    tx("");
     tx("CGnnnnnn  Grant card access rights");
     tx("CRnnnnnn  Revoke card access rights");
     tx("CLnnnnnn  List cards in ACL");
     tx("CWnnnnnn  Write card to Wiegand-26 interface");
-    tx("Q         Display last card read/write");
-    tx("X         Blinks reader LED 5 times");
+    tx("QUERY                 Display last card read/write");
     tx("UNLOCK    Unlocks door");
     tx("LOCK      Locks door");
-    tx("CO        Opens door contact relay");
-    tx("CC        Closes door contact relay");
-    tx("PP        Press pushbutton");
-    tx("PR        Release pushbutton");
     tx("DM        Mount SD card");
     tx("DU        Unmount SD card");
     tx("DF        Format SD card");
     tx("DR        Read ACL from SD card");
     tx("DW        Write ACL to SD card");
-    tx("Z         reboot");
-    tx("?         Display list of commands");
+    tx("");
+    tx("TYYYY-MM-DD HH:mm:ss  Set date/time");
+    tx("BLINK                 Blinks reader LED 5 times");
+    tx("REBOOT                Reboot");
+    tx("?                     Display list of commands");
     tx("-----");
 }
 
@@ -662,26 +652,22 @@ void on_door_unlock(char *cmd) {
  *  Opens/closes the door contact emulation relay (in reader mode only).
  *
  */
-void on_door_sensor(char *cmd) {
-    if (strncasecmp(cmd, "ro", 2) == 0) {
-        relay_door_contact(false);
-    }
+void on_door_open() {
+    relay_door_contact(false);
+}
 
-    if (strncasecmp(cmd, "rc", 2) == 0) {
-        relay_door_contact(true);
-    }
+void on_door_close(char *cmd) {
+    relay_door_contact(true);
 }
 
 /* Pushbutton emulation command handler.
  *  Opens/closes the pushbutton emulation relay (in reader mode only).
  *
  */
-void on_pushbutton(char *cmd) {
-    if (strncasecmp(cmd, "pp", 2) == 0) {
-        relay_pushbutton(true);
-    }
+void on_press_button() {
+    relay_pushbutton(true);
+}
 
-    if (strncasecmp(cmd, "pr", 2) == 0) {
-        relay_pushbutton(false);
-    }
+void on_release_button() {
+    relay_pushbutton(false);
 }

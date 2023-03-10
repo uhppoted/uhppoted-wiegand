@@ -1,5 +1,7 @@
 # TODO
 
+- [ ] Update README
+
 ## _wiegand-emulator_
    - [x] Seperate build
    - [x] MODE: EMULATOR
@@ -8,8 +10,9 @@
    - [x] Remove SD card support
    - [x] Update CLI
    - [x] Commonalise cardf(...)
-   - [ ] Commonalise CLI
    - [x] Fritzing
+   - [ ] Commonalise CLI
+   - [ ] USB
 
 ## _wiegand-controller_
    - [x] Seperate build
@@ -18,25 +21,20 @@
    - [x] Update CLI
    - [x] Reimplement controller card access
    - [x] Fritzing
+   - [ ] USB
 
 ## Base
-- [ ] Buzzer
-- [ ] PicoW+TCP/IP
-      - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
-- [ ] Pico + USB
-- [ ] Pico + DTMF
+   - [ ] USB
+   - [ ] Buzzer
+   - [ ] PicoW+TCP/IP
+         - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
+   - [ ] Pico + DTMF
 
-- (?) Authorisation
-- [ ] tweetnacl
-      - [ ] TCP/IP
-      - (?) ACL
-      - (?) Auth
-
-## Breadboard 
-- [ ] Photo
-- (?) KiCard schematic
-- Buzzer
-
+   - (?) Authorisation
+   - [ ] tweetnacl
+         - [ ] TCP/IP
+         - (?) ACL
+         - (?) Auth
 
 ## Schematic
 - RD/WR jumpers
