@@ -9,51 +9,33 @@ be useful as a basis for:
 - interfacing non-standard/off-brand readers and keypads to the UHPPOTE L0x access controllers
 
 The project includes:
-- PIO based Wiegand-26 reader
-- PIO based Wiegand-26 emulator
-- _basic_ serial port command interface
-- _(in progress) KiCad schematic for breadboard prototypes_
+- PIO based Wiegand-26 reference reader/writer implementation
+- PIO based Wiegand-26 reader emulator which can write a Wiegand-26 card out to a controller
+- PIO based Wiegand-26 controller emulator which can read from Wiegand-26 reader and unlock a door
 
 ## Raison d'être
 
 The RP2040 PIO is an intriguing peripheral and this project was an excuse to explore its capabilities and
 limitations. Wiegand-26 is particularly simple protocol and does not even begin to push the boundaries of
-the PIO but maybe the code and associated information will be useful for other things.
+the PIO but the code and associated information may be useful for other things.
 
 ## Status
 
-_\<sigh\> ... Fritzing's Lament_: 
+Breadboarded and Fritzing'ed implementations of:
+- Wiegand-26 reference reader/writer
+- Wiegand-26 reader emulator
+- Wiegand-26 controller emulator
 
-_How many times must a man shuffle his  
-Breadboard layout again?  
-And how many wires must be trim'd and cut  
-Before no connection is unsound?  
-Oh, how many times will the LEDs be  
-Completely the wrong way around?  
-The answer, my friend  
-Is blowing in the wind...  
-The answer is blowin' in the wind!_
-
-_Oh, how many years can a bug lurk and hide  
-Before it comes to the fore?  
-And how many years can some people exist  
-Happily ignorant of circuitry  
-Oh, how many times must a man type ===  
-Before val is really truthy?  
-The answer, my friend  
-Is blowing in the wind...  
-The answer is blowin' in the wind!_
-
-_And how many times can a man hook up  
-VSS straight to the GND?  
-And recalculate the series resistance  
-So that the relays don't fry?  
-Oh, how many times must a man palm his face  
-And ask "Oh god, f&@*&%@ why???"  
-The answer, my friend, is blowin' in the wind,  
-The answer is blowin' in the wind._
+Next up:
+- Wiegand-26 relay
+- (maybe) KiCad schematics
 
 ## Releases
+
+| *Version* | *Description*                                                                             |
+| --------- | ----------------------------------------------------------------------------------------- |
+| v0.8.4    | Initial release of reference, reader emulator and controller emulator                     |
+
 
 ### Building from source
 
@@ -95,18 +77,26 @@ single letter mnemonics and need to be terminated by a carriage return and/or li
 
 The supported command set comprises:
 
-| *Command*              | *Description*                           |
-| ---------------------- | --------------------------------------- |
-| O                      | Turns on the reader LED                 |
-| X                      | Turns off the reader LED                |
-| Q                      | Retrieves the last read card (if any)   |
-| Tyyyy-mm-dd HH:mm:ss   | Sets the Pico date and time             |
-| Wnnnnnnnnn             | Writes a card number out as Wiegand-26  |
-| Gnnnnnnnnn             | Grants a card access                    |
-| Rnnnnnnnnn             | Revokes a card access                   |
-| L                      | Lists cards in the access control list  |
+| *Command*      | *Description*                           |
+| -------------- | --------------------------------------- |
+| T              | Set date/time (YYYY-MM-DD HH:mm:ss)     |
+| GRANT nnnnnn   | Grant card access rights                |
+| REVOKE nnnnnn  | Revoke card access rights               |
+| CLnnnnnn       | List cards in ACL                       |
+| QUERY          | Display last card read/write            |
+| BLINK          | Blinks reader LED 5 times               |
+| UNLOCK         | Unlocks door                            |
+| LOCK           | Locks door                              |
+| MOUNT          | Mount SD card                           |
+| UNMOUNT        | Unmount SD card                         |
+| FORMAT         | Format SD card                          |
+| READ ACL       | Read ACL from SD card                   |
+| WRITE ACL      | Write ACL to SD card                    |
+| REBOOT         | Reboot                                  |
+| ?              | Display list of commands                |
 
-Notes:
+
+Notes:| |
 1. The default facility code for _emulator_ mode is a build time constant (`FACILITY_CODE` in the _Makefile_) and will
 be used if the _W_ command card number is 5 digits or less.
 
