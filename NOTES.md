@@ -46,3 +46,4 @@
 24. https://www.microchip.com/en-us/product/RN171
 25. https://docs.rs/embedded-tls/latest/embedded_tls/index.html
 26. https://imihajlov.tk/blog/posts/eth-to-spi/q
+27. https://play.google.com/store/apps/details?id=nightradio.phonopaper&gl=US

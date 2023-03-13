@@ -11,7 +11,7 @@
    - [x] Update CLI
    - [x] Commonalise cardf(...)
    - [x] Fritzing
-   - [ ] Commonalise CLI
+   - [x] Commonalise CLI
    - [ ] USB
 
 ## _wiegand-controller_

@@ -3,8 +3,8 @@
 #include "hardware/rtc.h"
 
 #include "../include/TPIC6B595.h"
-#include "../include/cli.h"
 #include "../include/relays.h"
+#include "../include/uart.h"
 
 enum RELAY_STATE {
     TRANSITION = 1,

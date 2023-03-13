@@ -4,8 +4,8 @@
 #include "hardware/rtc.h"
 
 #include "../include/TPIC6B595.h"
-#include "../include/cli.h"
 #include "../include/led.h"
+#include "../include/uart.h"
 #include "../include/wiegand.h"
 
 #include <BLINK.pio.h>

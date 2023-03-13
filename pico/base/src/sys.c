@@ -4,7 +4,7 @@
 #include "hardware/rtc.h"
 #include "pico/util/datetime.h"
 
-#include "../include/cli.h"
+#include "../include/uart.h"
 #include "../include/wiegand.h"
 
 const char *MODES[] = {

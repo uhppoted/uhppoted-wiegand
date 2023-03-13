@@ -18,6 +18,7 @@ add_executable(wiegand-controller
   src/controller.c
   src/cli.c
   ../base/src/common.c
+  ../base/src/uart.c
   ../base/src/sys.c
   ../base/src/read.c
   ../base/src/led.c

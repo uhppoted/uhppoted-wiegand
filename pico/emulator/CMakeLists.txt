@@ -19,6 +19,7 @@ add_executable(wiegand-emulator
   src/cli.c
   ../base/src/hwconfig.c
   ../base/src/common.c
+  ../base/src/uart.c
   ../base/src/sys.c
   ../base/src/read.c
   ../base/src/write.c

@@ -9,8 +9,8 @@
 #include "diskio.h"
 #include "hw_config.h"
 
-#include "../include/cli.h"
 #include "../include/sdcard.h"
+#include "../include/uart.h"
 #include "../include/wiegand.h"
 
 void spi0_dma_isr();

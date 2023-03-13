@@ -19,6 +19,7 @@
 #include "read.h"
 #include "relays.h"
 #include "sys.h"
+#include "uart.h"
 #include "write.h"
 
 #define VERSION "v0.0.0"

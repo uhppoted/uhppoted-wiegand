@@ -17,6 +17,7 @@ pico_sdk_init()
 add_executable(wiegand
   base/src/wiegand.c
   base/src/common.c
+  base/src/uart.c
   base/src/sys.c
   base/src/cli.c
   base/src/read.c
