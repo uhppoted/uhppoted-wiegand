@@ -80,13 +80,15 @@ extern const uint SD_CLK;
 extern const uint SD_DET;
 
 extern const uint32_t MSG;
-extern const uint32_t MSG_WATCHDOG;
+extern const uint32_t MSG_SYSINIT;
 extern const uint32_t MSG_SYSCHECK;
+extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_CARD_READ;
 extern const uint32_t MSG_LED;
 extern const uint32_t MSG_RELAY;
 extern const uint32_t MSG_DOOR;
 extern const uint32_t MSG_PUSHBUTTON;
+extern const uint32_t MSG_RX;
 extern const uint32_t MSG_TX;
 extern const uint32_t MSG_RXI;
 extern const uint32_t MSG_DEBUG;

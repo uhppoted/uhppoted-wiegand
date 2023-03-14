@@ -15,21 +15,23 @@ add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
 pico_sdk_init()
 
 add_executable(wiegand
-  base/src/wiegand.c
-  base/src/common.c
-  base/src/uart.c
-  base/src/sys.c
-  base/src/cli.c
-  base/src/read.c
-  base/src/write.c
-  base/src/led.c
-  base/src/buzzer.c
-  base/src/relays.c
-  base/src/acl.c
-  base/src/sdcard.c
-  base/src/TPIC6B595.c
-  base/src/hwconfig.c
+  ./reference/src/reference.c
+  ./reference/src/cli.c
+  ./base/src/common.c
+  ./base/src/uart.c
+  ./base/src/sys.c
+  ./base/src/read.c
+  ./base/src/write.c
+  ./base/src/led.c
+  ./base/src/buzzer.c
+  ./base/src/relays.c
+  ./base/src/acl.c
+  ./base/src/sdcard.c
+  ./base/src/TPIC6B595.c
+  ./base/src/hwconfig.c
 )
+
+target_include_directories(wiegand PRIVATE ./base/include)
 
 add_subdirectory(lib/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
 

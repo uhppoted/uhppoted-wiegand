@@ -12,7 +12,7 @@
    - [x] Commonalise cardf(...)
    - [x] Fritzing
    - [x] Commonalise CLI
-   - [ ] Commonalise setup stuff
+   - [x] Commonalise setup stuff
    - [ ] USB
 
 ## _wiegand-controller_
@@ -22,7 +22,7 @@
    - [x] Update CLI
    - [x] Reimplement controller card access
    - [x] Fritzing
-   - [ ] Commonalise setup stuff
+   - [x] Commonalise setup stuff
    - [ ] USB
 
 ## Base
