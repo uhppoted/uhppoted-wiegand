@@ -24,56 +24,6 @@ void echo(const char *);
 void clearline();
 void cpr(char *);
 
-/* Clears the screen
- *
- */
-void clear_screen() {
-    char s[24];
-    snprintf(s, sizeof(s), "\033[2J");
-    fputs(s, stdout);
-    fflush(stdout);
-}
-
-/* Requests terminal window size - the scroll area is set from the response.
- *
- */
-void set_scroll_area() {
-    char s[24];
-    snprintf(s, sizeof(s), "\0337\033[999;999H\033[6n\0338");
-    fputs(s, stdout);
-    fflush(stdout);
-}
-
-/* Saves the cursor position, clears the command line, redisplays the prompt and then
- * restores the cursor position.
- *
- */
-void clearline() {
-    char s[24];
-    snprintf(s, sizeof(s), "\0337\033[%d;0H>> \033[0K\0338", height);
-    fputs(s, stdout);
-    fflush(stdout);
-}
-
-/* Cursor position report.
- *  Sets the scrolling window with space at the bottom for the command echo.
- *
- */
-void cpr(char *cmd) {
-    int rows;
-    int cols;
-    int rc = sscanf(cmd, "[%d;%dR", &rows, &cols);
-
-    if (rc > 0) {
-        height = rows - 1;
-
-        char s[24];
-        snprintf(s, sizeof(s), "\0337\033[0;%dr\0338", height - 2);
-        fputs(s, stdout);
-        fflush(stdout);
-    }
-}
-
 /** Processes received UART characters.
  *
  */
@@ -193,4 +143,54 @@ void echo(const char *cmd) {
     snprintf(s, sizeof(s), "\0337\033[%d;0H>> %s\033[0K\0338", height, cmd);
     fputs(s, stdout);
     fflush(stdout);
+}
+
+/* Clears the screen
+ *
+ */
+void clear_screen() {
+    char s[24];
+    snprintf(s, sizeof(s), "\033[2J");
+    fputs(s, stdout);
+    fflush(stdout);
+}
+
+/* Requests terminal window size - the scroll area is set from the response.
+ *
+ */
+void set_scroll_area() {
+    char s[24];
+    snprintf(s, sizeof(s), "\0337\033[999;999H\033[6n\0338");
+    fputs(s, stdout);
+    fflush(stdout);
+}
+
+/* Saves the cursor position, clears the command line, redisplays the prompt and then
+ * restores the cursor position.
+ *
+ */
+void clearline() {
+    char s[24];
+    snprintf(s, sizeof(s), "\0337\033[%d;0H>> \033[0K\0338", height);
+    fputs(s, stdout);
+    fflush(stdout);
+}
+
+/* Cursor position report.
+ *  Sets the scrolling window with space at the bottom for the command echo.
+ *
+ */
+void cpr(char *cmd) {
+    int rows;
+    int cols;
+    int rc = sscanf(cmd, "[%d;%dR", &rows, &cols);
+
+    if (rc > 0) {
+        height = rows - 1;
+
+        char s[24];
+        snprintf(s, sizeof(s), "\0337\033[0;%dr\0338", height - 2);
+        fputs(s, stdout);
+        fflush(stdout);
+    }
 }

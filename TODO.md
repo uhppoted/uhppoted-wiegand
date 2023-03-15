@@ -2,6 +2,12 @@
 
 - [x] Update README
 
+- [ ] USB
+      - [x] CLI
+      - [ ] Command timeout
+      - [ ] CLS
+      - [ ] Reinitialise on connected
+
 ## _wiegand-emulator_
    - [x] Seperate build
    - [x] MODE: EMULATOR
@@ -13,7 +19,6 @@
    - [x] Fritzing
    - [x] Commonalise CLI
    - [x] Commonalise setup stuff
-   - [ ] USB
 
 ## _wiegand-controller_
    - [x] Seperate build
@@ -23,10 +28,8 @@
    - [x] Reimplement controller card access
    - [x] Fritzing
    - [x] Commonalise setup stuff
-   - [ ] USB
 
-## Base
-   - [ ] USB
+## Reference
    - [ ] Buzzer
    - [ ] PicoW+TCP/IP
          - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
@@ -89,3 +92,11 @@
    - https://electronics.stackexchange.com/questions/357351/shift-register-that-accepts-3-3v-to-drive-several-5v-relays
    - https://electronics.stackexchange.com/questions/505318/how-to-properly-use-a-relay-module-with-jd-vcc-from-arduino-raspberry/508672#508672
    - https://raspberrypi.stackexchange.com/questions/118604/using-single-5v-relay-module-jqc-3ff-s-z-asking-for-help
+
+9. USB
+   - https://forums.raspberrypi.com/viewtopic.php?t=331207
+   - https://github.com/raspberrypi/pico-examples/issues/19
+   - https://forums.raspberrypi.com/viewtopic.php?t=333027
+   - https://blog.smittytone.net/2021/10/31/how-to-send-data-to-a-raspberry-pi-pico-via-usb
+   - https://blog.smittytone.net/2022/02/16/pico-usb-serial-communications-with-circuitpython
+   - https://forum.micropython.org/viewtopic.php?t=11305

@@ -10,5 +10,5 @@ extern bool watchdog(repeating_timer_t *);
 extern bool syscheck(repeating_timer_t *rt);
 extern int64_t startup(alarm_id_t, void *);
 
-extern void on_uart0_rx();
 extern void setup_uart();
+extern void setup_usb();
