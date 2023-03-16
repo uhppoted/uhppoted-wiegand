@@ -1,35 +1,5 @@
 # TODO
 
-- [x] Update README
-
-- [x] USB
-      - [x] CLI
-      - [x] Command timeout
-      - [x] CLS
-      - [x] emulator
-      - [x] controller
-
-## _wiegand-emulator_
-   - [x] Seperate build
-   - [x] MODE: EMULATOR
-   - [x] Remove door unlock stuff
-   - [x] Remove ACL
-   - [x] Remove SD card support
-   - [x] Update CLI
-   - [x] Commonalise cardf(...)
-   - [x] Fritzing
-   - [x] Commonalise CLI
-   - [x] Commonalise setup stuff
-
-## _wiegand-controller_
-   - [x] Seperate build
-   - [x] MODE: CONTROLLER
-   - [x] Remove emulator stuff
-   - [x] Update CLI
-   - [x] Reimplement controller card access
-   - [x] Fritzing
-   - [x] Commonalise setup stuff
-
 ## Reference
    - [ ] Buzzer
    - [ ] PicoW+TCP/IP
