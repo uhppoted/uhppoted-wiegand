@@ -44,6 +44,9 @@ void exec(char *cmd) {
             on_release_button();
         } else if (strncasecmp(cmd, "reboot", 6) == 0) {
             reboot();
+        } else if (strncasecmp(cmd, "cls", 5) == 0) {
+            cls();
+            return; // don't invoke clearline because that puts a >> prompt in the wrong place
         } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
             sys_settime(&cmd[1]);
         } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
@@ -118,6 +121,7 @@ void help() {
     tx("CLOSE                 Closes door contact relay");
     tx("PRESS                 Press pushbutton");
     tx("RELEASE               Release pushbutton");
+    tx("CLS                   Resets the terminal");
     tx("REBOOT                Reboot");
     tx("?                     Display list of commands");
     tx("-----");

@@ -21,8 +21,10 @@ const uint32_t CLI_TIMEOUT = 10000;
 
 int64_t cli_timeout(alarm_id_t, void *);
 void echo(const char *);
-void clearline();
 void cpr(char *);
+void tx(char *);
+void set_scroll_area();
+void clearline();
 
 /** Processes received UART characters.
  *
@@ -145,6 +147,19 @@ void echo(const char *cmd) {
     fflush(stdout);
 }
 
+/* Reinitialises the terminal.
+ *
+ */
+void cls() {
+    char s[32];
+
+    snprintf(s, sizeof(s), "\033c\033[2J");
+    fputs(s, stdout);
+    fflush(stdout);
+
+    set_scroll_area();
+}
+
 /* Clears the screen
  *
  */
@@ -192,5 +207,7 @@ void cpr(char *cmd) {
         snprintf(s, sizeof(s), "\0337\033[0;%dr\0338", height - 2);
         fputs(s, stdout);
         fflush(stdout);
+
+        clearline();
     }
 }

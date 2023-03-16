@@ -2,11 +2,12 @@
 
 - [x] Update README
 
-- [ ] USB
+- [x] USB
       - [x] CLI
-      - [ ] Command timeout
-      - [ ] CLS
-      - [ ] Reinitialise on connected
+      - [x] Command timeout
+      - [x] CLS
+      - [ ] emulator
+      - [ ] controller
 
 ## _wiegand-emulator_
    - [x] Seperate build
@@ -55,7 +56,7 @@
 
 ## Other
 1. [NuttX](https://nuttx.apache.org/docs/latest/platforms/index.html)
-
+2. [RiotOS](https://www.riot-os.org)
 
 ## NOTES
 

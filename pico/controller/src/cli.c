@@ -49,6 +49,9 @@ void exec(char *cmd) {
             on_door_unlock();
         } else if (strncasecmp(cmd, "reboot", 6) == 0) {
             reboot();
+        } else if (strncasecmp(cmd, "cls", 5) == 0) {
+            cls();
+            return; // don't invoke clearline because that puts a >> prompt in the wrong place
         } else if (strncasecmp(cmd, "mount", 5) == 0) {
             mount();
         } else if (strncasecmp(cmd, "unmount", 7) == 0) {
@@ -281,6 +284,7 @@ void help() {
     tx("FORMAT         Format SD card");
     tx("READ ACL       Read ACL from SD card");
     tx("WRITE ACL      Write ACL to SD card");
+    tx("CLS            Resets the terminal");
     tx("REBOOT         Reboot");
     tx("?              Display list of commands");
     tx("-----");

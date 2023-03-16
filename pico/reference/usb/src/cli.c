@@ -48,6 +48,9 @@ void exec(char *cmd) {
     if (N > 0) {
         if (strncasecmp(cmd, "reboot", 6) == 0) {
             reboot();
+        } else if (strncasecmp(cmd, "cls", 5) == 0) {
+            cls();
+            return; // don't invoke clearline because that puts a >> prompt in the wrong place
         } else if (strncasecmp(cmd, "blink", 5) == 0) {
             led_blink(5);
         } else if (strncasecmp(cmd, "query", 5) == 0) {
@@ -409,6 +412,7 @@ void help() {
     tx("");
     tx("TYYYY-MM-DD HH:mm:ss  Set date/time");
     tx("BLINK                 Blinks reader LED 5 times");
+    tx("CLS                   Resets the terminal");
     tx("REBOOT                Reboot");
     tx("?                     Display list of commands");
     tx("-----");

@@ -21,6 +21,7 @@
 #include <sdcard.h>
 #include <sys.h>
 #include <uart.h>
+#include <usb.h>
 #include <wiegand.h>
 #include <write.h>
 

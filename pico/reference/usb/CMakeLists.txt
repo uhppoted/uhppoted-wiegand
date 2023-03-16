@@ -18,8 +18,9 @@ add_executable(wiegand_usb
   ./src/reference.c
   ./src/cli.c
   ../../base/src/common.c
+  ../../base/src/sys.c
   ../../base/src/uart.c
-  ../../base/src/sys_usb.c
+  ../../base/src/usb.c
   ../../base/src/read.c
   ../../base/src/write.c
   ../../base/src/led.c

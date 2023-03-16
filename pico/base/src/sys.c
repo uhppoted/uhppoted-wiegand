@@ -29,8 +29,6 @@ const char *MODES[] = {
     "CONTROLLER",
 };
 
-repeating_timer_t usb_timer;
-
 void sys_start() {
     char s[64];
     uint32_t hz = clock_get_hz(clk_sys);
