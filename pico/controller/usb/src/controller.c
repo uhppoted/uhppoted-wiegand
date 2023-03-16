@@ -20,6 +20,7 @@
 #include <relays.h>
 #include <sdcard.h>
 #include <sys.h>
+#include <usb.h>
 #include <wiegand.h>
 #include <write.h>
 
@@ -76,7 +77,7 @@ int main() {
 
     // ... initialise FIFO, UART and timers
     queue_init(&queue, sizeof(uint32_t), 64);
-    setup_uart();
+    setup_usb();
     alarm_pool_init_default();
 
     // ... initialise reader/emulator

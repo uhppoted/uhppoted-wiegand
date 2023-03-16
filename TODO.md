@@ -6,8 +6,8 @@
       - [x] CLI
       - [x] Command timeout
       - [x] CLS
-      - [ ] emulator
-      - [ ] controller
+      - [x] emulator
+      - [x] controller
 
 ## _wiegand-emulator_
    - [x] Seperate build

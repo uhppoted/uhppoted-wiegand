@@ -2,24 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "hardware/gpio.h"
-#include "hardware/rtc.h"
-#include "hardware/watchdog.h"
+#include <hardware/gpio.h>
+#include <hardware/rtc.h>
+#include <hardware/watchdog.h>
 
-#include "pico/binary_info.h"
-#include "pico/multicore.h"
-#include "pico/stdlib.h"
-#include "pico/util/datetime.h"
+#include <pico/binary_info.h>
+#include <pico/multicore.h>
+#include <pico/stdlib.h>
+#include <pico/util/datetime.h>
 
-#include "TPIC6B595.h"
-#include "buzzer.h"
-#include "common.h"
-#include "led.h"
-#include "read.h"
-#include "relays.h"
-#include "sys.h"
-#include "uart.h"
-#include "write.h"
+#include <TPIC6B595.h>
+#include <buzzer.h>
+#include <common.h>
+#include <led.h>
+#include <read.h>
+#include <relays.h>
+#include <sys.h>
+#include <uart.h>
+#include <write.h>
 
 #define VERSION "v0.8.4"
 
