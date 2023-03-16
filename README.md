@@ -30,6 +30,8 @@ Next up:
 - Wiegand-26 relay
 - (maybe) KiCad schematics
 
+<img width="800" src="documentation/images/fritzing-reference.png"> 
+
 ## Releases
 
 | *Version* | *Description*                                                                             |
@@ -80,18 +82,27 @@ The supported command set comprises:
 | *Command*      | *Description*                           |
 | -------------- | --------------------------------------- |
 | T              | Set date/time (YYYY-MM-DD HH:mm:ss)     |
+| Wnnnnnnnn      | Emulates card swipe                     |
+|                |                                         |
 | GRANT nnnnnn   | Grant card access rights                |
 | REVOKE nnnnnn  | Revoke card access rights               |
-| CLnnnnnn       | List cards in ACL                       |
+| LIST ACL       | List cards in ACL                       |
+| READ ACL       | Read ACL from SD card                   |
+| WRITE ACL      | Write ACL to SD card                    |
 | QUERY          | Display last card read/write            |
-| BLINK          | Blinks reader LED 5 times               |
-| UNLOCK         | Unlocks door                            |
-| LOCK           | Locks door                              |
+|                |                                         |
 | MOUNT          | Mount SD card                           |
 | UNMOUNT        | Unmount SD card                         |
 | FORMAT         | Format SD card                          |
-| READ ACL       | Read ACL from SD card                   |
-| WRITE ACL      | Write ACL to SD card                    |
+|                |                                         |
+| UNLOCK         | Unlocks door for 5 seconds              |
+| OPEN           | Emulates door open contact              |
+| CLOSE          | Emulates door close contact             |
+| PRESS          | Emulates pushbutton press               |
+| RELEASE        | Emulates pushbutton release             |
+|                |                                         |
+| BLINK          | Blinks reader LED 5 times               |
+| CLS            | Reinitialises terminal                  |
 | REBOOT         | Reboot                                  |
 | ?              | Display list of commands                |
 
