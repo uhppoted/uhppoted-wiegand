@@ -20,11 +20,11 @@
 #include <relays.h>
 #include <sdcard.h>
 #include <sys.h>
+#include <uart.h>
 #include <usb.h>
 #include <wiegand.h>
 #include <write.h>
 
-#include "../include/cli.h"
 #include "../include/controller.h"
 
 #define VERSION "v0.8.4"

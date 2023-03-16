@@ -23,7 +23,7 @@ void reboot();
 void help();
 
 void on_card_command(char *cmd, handler fn);
-void on_door_unlock(char *cmd);
+void on_door_unlock();
 void on_door_open();
 void on_door_close();
 void on_press_button();
@@ -31,7 +31,7 @@ void on_release_button();
 void write(uint32_t, uint32_t);
 void grant(uint32_t, uint32_t);
 void revoke(uint32_t, uint32_t);
-void list();
+void list_acl();
 
 void mount();
 void unmount();
@@ -53,6 +53,8 @@ void exec(char *cmd) {
             return; // don't invoke clearline because that puts a >> prompt in the wrong place
         } else if (strncasecmp(cmd, "blink", 5) == 0) {
             led_blink(5);
+        } else if (strncasecmp(cmd, "unlock", 6) == 0) {
+            on_door_unlock();
         } else if (strncasecmp(cmd, "query", 5) == 0) {
             query();
         } else if (strncasecmp(cmd, "open", 4) == 0) {
@@ -63,71 +65,28 @@ void exec(char *cmd) {
             on_press_button();
         } else if (strncasecmp(cmd, "release", 7) == 0) {
             on_release_button();
+        } else if (strncasecmp(cmd, "grant ", 6) == 0) {
+            on_card_command(&cmd[6], grant);
+        } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
+            on_card_command(&cmd[7], revoke);
+        } else if (strncasecmp(cmd, "read acl", 8) == 0) {
+            read_acl();
+        } else if (strncasecmp(cmd, "write acl", 9) == 0) {
+            write_acl();
+        } else if (strncasecmp(cmd, "list acl", 8) == 0) {
+            list_acl();
+        } else if (strncasecmp(cmd, "mount", 5) == 0) {
+            mount();
+        } else if (strncasecmp(cmd, "unmount", 7) == 0) {
+            unmount();
+        } else if (strncasecmp(cmd, "format", 6) == 0) {
+            format();
         } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
             on_card_command(&cmd[1], write);
         } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
             sys_settime(&cmd[1]);
         } else {
-            switch (cmd[0]) {
-            case 'c':
-            case 'C':
-                switch (cmd[1]) {
-                case 'g':
-                case 'G':
-                    on_card_command(&cmd[2], grant);
-                    break;
-
-                case 'r':
-                case 'R':
-                    on_card_command(&cmd[2], revoke);
-                    break;
-
-                case 'l':
-                case 'L':
-                    list();
-                    break;
-                }
-                break;
-
-            case 'u':
-            case 'U':
-                on_door_unlock(cmd);
-                break;
-
-            case 'd':
-            case 'D':
-                switch (cmd[1]) {
-                case 'm':
-                case 'M':
-                    mount();
-                    break;
-
-                case 'u':
-                case 'U':
-                    unmount();
-                    break;
-
-                case 'f':
-                case 'F':
-                    format();
-                    break;
-
-                case 'r':
-                case 'R':
-                    read_acl();
-                    break;
-
-                case 'w':
-                case 'W':
-                    write_acl();
-                    break;
-                }
-                break;
-
-            case '?':
-                help();
-                break;
-            }
+            help();
         }
     }
 
@@ -194,7 +153,7 @@ void revoke(uint32_t facility_code, uint32_t card) {
 /* Lists the ACL cards.
  *
  */
-void list() {
+void list_acl() {
     uint32_t *cards;
     int N = acl_list(&cards);
 
@@ -391,26 +350,26 @@ void help() {
 
     tx("-----");
     tx("Commands:");
+    tx("TYYYY-MM-DD HH:mm:ss  Set date/time");
+    tx("");
     tx("Wnnnnnn               Write card to Wiegand-26 interface");
     tx("OPEN                  Opens door contact relay");
     tx("CLOSE                 Closes door contact relay");
     tx("PRESS                 Press pushbutton");
     tx("RELEASE               Release pushbutton");
     tx("");
-    tx("CGnnnnnn  Grant card access rights");
-    tx("CRnnnnnn  Revoke card access rights");
-    tx("CLnnnnnn  List cards in ACL");
-    tx("CWnnnnnn  Write card to Wiegand-26 interface");
+    tx("GRANT nnnnnn          Grant card access rights");
+    tx("REVOKE nnnnnn         Revoke card access rights");
+    tx("READ ACL              Read ACL from SD card");
+    tx("WRITE ACL             Write ACL to SD card");
+    tx("LIST ACL              Lists the cards in the ACL");
     tx("QUERY                 Display last card read/write");
-    tx("UNLOCK    Unlocks door");
-    tx("LOCK      Locks door");
-    tx("DM        Mount SD card");
-    tx("DU        Unmount SD card");
-    tx("DF        Format SD card");
-    tx("DR        Read ACL from SD card");
-    tx("DW        Write ACL to SD card");
     tx("");
-    tx("TYYYY-MM-DD HH:mm:ss  Set date/time");
+    tx("MOUNT                 Mount SD card");
+    tx("UNMOUNT               Unmount SD card");
+    tx("FORMAT                Format SD card");
+    tx("");
+    tx("UNLOCK                Unlocks door");
     tx("BLINK                 Blinks reader LED 5 times");
     tx("CLS                   Resets the terminal");
     tx("REBOOT                Reboot");
@@ -451,15 +410,12 @@ void on_card_command(char *cmd, handler fn) {
     fn(facility_code, card);
 }
 
-/* Door lock.
- *  Locks/unlocks door relay (READER/CONTROLLER mode only).
+/* Unlocks door lock for 5 seconds (READER/CONTROLLER mode only).
  *
  */
-void on_door_unlock(char *cmd) {
+void on_door_unlock() {
     if ((mode == READER) || (mode == CONTROLLER)) {
-        if (strncasecmp(cmd, "un", 2) == 0) {
-            door_unlock(5000);
-        }
+        door_unlock(5000);
     }
 }
 

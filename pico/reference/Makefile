@@ -9,20 +9,12 @@ clean:
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && cd build && cmake ..
 
-format: base/src/*.c base/include/*.h
-	clang-format -i base/src/*.c
-	clang-format -i base/include/*.h
+format: ./src/*.c ./include/*.h
+	clang-format -i ./src/*.c
+	clang-format -i ./include/*.h
 
 build: format
 	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
-
-build-all: clean build
-	cd reference      && make clean && make build
-	cd reference/usb  && make clean && make build
-	cd emulator       && make clean && make build
-	cd emulator/usb   && make clean && make build
-	cd controller     && make clean && make build
-	cd controller/usb && make clean && make build
 
 install: build
 	picotool load build/wiegand.uf2

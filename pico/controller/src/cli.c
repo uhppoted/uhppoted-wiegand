@@ -271,22 +271,25 @@ void help() {
 
     tx("-----");
     tx("Commands:");
-    tx("T              Set date/time (YYYY-MM-DD HH:mm:ss)");
-    tx("GRANT nnnnnn   Grant card access rights");
-    tx("REVOKE nnnnnn  Revoke card access rights");
-    tx("CLnnnnnn       List cards in ACL");
-    tx("QUERY          Display last card read/write");
-    tx("BLINK          Blinks reader LED 5 times");
-    tx("UNLOCK         Unlocks door");
-    tx("LOCK           Locks door");
-    tx("MOUNT          Mount SD card");
-    tx("UNMOUNT        Unmount SD card");
-    tx("FORMAT         Format SD card");
-    tx("READ ACL       Read ACL from SD card");
-    tx("WRITE ACL      Write ACL to SD card");
-    tx("CLS            Resets the terminal");
-    tx("REBOOT         Reboot");
-    tx("?              Display list of commands");
+    tx("TYYYY-MM-DD HH:mm:ss  Set date/time (YYYY-MM-DD HH:mm:ss)");
+    tx("GRANT nnnnnn          Grant card access rights");
+    tx("REVOKE nnnnnn         Revoke card access rights");
+    tx("LIST ACL              List cards in ACL");
+    tx("READ ACL              Read ACL from SD card");
+    tx("WRITE ACL             Write ACL to SD card");
+    tx("QUERY                 Display last card read/write");
+    tx("");
+    tx("MOUNT                 Mount SD card");
+    tx("UNMOUNT               Unmount SD card");
+    tx("FORMAT                Format SD card");
+    tx("");
+    tx("UNLOCK                Unlocks door");
+    tx("LOCK                  Locks door");
+    tx("BLINK                 Blinks reader LED 5 times");
+    tx("CLS                   Resets the terminal");
+    tx("REBOOT                Reboot");
+    tx("");
+    tx("?                     Display list of commands");
     tx("-----");
 }
 

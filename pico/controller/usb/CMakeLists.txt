@@ -16,7 +16,7 @@ pico_sdk_init()
 
 add_executable(wiegand-controller-usb
   src/controller.c
-  src/cli.c
+  ../src/cli.c
   ../../base/src/common.c
   ../../base/src/sys.c
   ../../base/src/uart.c
