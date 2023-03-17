@@ -16,3 +16,9 @@ build-all:
 
 release:
 	echo "Nothing to do"
+
+publish: release
+	echo "Releasing version $(VERSION)"
+	gh release create "$(VERSION)" --draft --prerelease --title "$(VERSION)-beta" --notes-file release-notes.md
+
+
