@@ -12,20 +12,15 @@
 #include <pico/util/datetime.h>
 
 #include <TPIC6B595.h>
-#include <acl.h>
 #include <buzzer.h>
 #include <common.h>
 #include <led.h>
 #include <read.h>
 #include <relays.h>
-#include <sdcard.h>
 #include <sys.h>
 #include <uart.h>
 #include <usb.h>
-#include <wiegand.h>
 #include <write.h>
-
-#include "../include/controller.h"
 
 #define VERSION "v0.8.5"
 
@@ -63,9 +58,8 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand Controller"));
+    bi_decl(bi_program_description("Pico-Wiegand Emulator"));
     bi_decl(bi_program_version_string(VERSION));
-    bi_decl(bi_1pin_with_name(ONBOARD_LED, "on-board LED"));
 
     stdio_init_all();
     setup_gpio();
@@ -119,17 +113,6 @@ int main() {
 
         if ((v & MSG) == MSG_CARD_READ) {
             on_card_read(v & 0x0fffffff);
-
-            if (last_card.ok && mode == CONTROLLER) {
-                if (acl_allowed(last_card.facility_code, last_card.card_number)) {
-                    last_card.granted = GRANTED;
-                    led_blink(1);
-                    door_unlock(5000);
-                } else {
-                    last_card.granted = DENIED;
-                    led_blink(3);
-                }
-            }
 
             char s[64];
             cardf(&last_card, s, sizeof(s));
@@ -203,16 +186,16 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND CONTROLLER");
+        puts("                     *** WIEGAND EMULATOR-W");
 
-        if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
-            mode = CONTROLLER;
+        if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
+            mode = EMULATOR;
         } else {
             mode = UNKNOWN;
         }
 
-        sdcard_initialise(mode);
         read_initialise(mode);
+        write_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
@@ -220,8 +203,6 @@ void sysinit() {
         if (!relay_initialise(mode)) {
             tx("failed to initialise relay monitor");
         }
-
-        acl_initialise((uint32_t[]){}, 0);
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
@@ -234,13 +215,6 @@ void sysinit() {
         rtc_get_datetime(&last_card.timestamp);
         sys_ok();
         set_scroll_area();
-
-        // ... load ACL from SD card
-        uint32_t cards[16];
-        int N = 16;
-        if (sdcard_read_acl(cards, &N) == 0) {
-            acl_initialise(cards, N);
-        }
 
         // ... 'k, done
         buzzer_beep(1);

@@ -21,7 +21,7 @@
 #include <uart.h>
 #include <write.h>
 
-#define VERSION "v0.8.4"
+#define VERSION "v0.8.5"
 
 // GPIO
 const uint GPIO_25 = 25;

@@ -1,0 +1,74 @@
+cmake_minimum_required(VERSION 3.13)
+
+include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
+
+project(wiegand-emulator-w C CXX ASM)
+
+set(CMAKE_C_STANDARD   11)
+set(CMAKE_CXX_STANDARD 17)
+
+add_compile_definitions(SSID=\"${SSID}\")
+add_compile_definitions(PASSWORD=\"${PASSWORD}\")
+add_compile_definitions(SYSDATE=$(SYSDATE))
+add_compile_definitions(SYSTIME=$(SYSTIME))
+add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
+
+pico_sdk_init()
+
+add_executable(wiegand-emulator-w
+  src/emulator.c
+  src/cli.c
+  ../base/src/hwconfig.c
+  ../base/src/common.c
+  ../base/src/uart.c
+  ../base/src/sys.c
+  ../base/src/read.c
+  ../base/src/write.c
+  ../base/src/led.c
+  ../base/src/buzzer.c
+  ../base/src/relays.c
+  ../base/src/TPIC6B595.c
+)
+
+target_include_directories(wiegand-emulator-w PRIVATE ../base/include ./include)
+
+pico_generate_pio_header(
+    wiegand-emulator-w
+    ${CMAKE_CURRENT_LIST_DIR}/../base/src/READ.pio
+)
+
+pico_generate_pio_header(
+    wiegand-emulator-w
+    ${CMAKE_CURRENT_LIST_DIR}/../base/src/WRITE.pio
+)
+
+pico_generate_pio_header(
+    wiegand-emulator-w
+    ${CMAKE_CURRENT_LIST_DIR}/../base/src/LED.pio
+)
+
+pico_generate_pio_header(
+    wiegand-emulator-w
+    ${CMAKE_CURRENT_LIST_DIR}/../base/src/BLINK.pio
+)
+
+pico_generate_pio_header(
+    wiegand-emulator-w
+    ${CMAKE_CURRENT_LIST_DIR}/../base/src/BUZZER.pio
+)
+
+pico_enable_stdio_usb (wiegand-emulator-w 0)
+pico_enable_stdio_uart(wiegand-emulator-w 1)
+pico_add_extra_outputs(wiegand-emulator-w)
+
+target_link_libraries(
+    wiegand-emulator-w
+    pico_stdlib
+    pico_multicore
+    pico_cyw43_arch_lwip_threadsafe_background
+    hardware_pio
+    hardware_rtc
+    hardware_spi
+    hardware_watchdog
+)

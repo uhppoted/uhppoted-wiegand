@@ -6,26 +6,21 @@
 #include <hardware/rtc.h>
 #include <hardware/watchdog.h>
 
+#include "pico/cyw43_arch.h"
 #include <pico/binary_info.h>
 #include <pico/multicore.h>
 #include <pico/stdlib.h>
 #include <pico/util/datetime.h>
 
 #include <TPIC6B595.h>
-#include <acl.h>
 #include <buzzer.h>
 #include <common.h>
 #include <led.h>
 #include <read.h>
 #include <relays.h>
-#include <sdcard.h>
 #include <sys.h>
 #include <uart.h>
-#include <usb.h>
-#include <wiegand.h>
 #include <write.h>
-
-#include "../include/controller.h"
 
 #define VERSION "v0.8.5"
 
@@ -63,9 +58,8 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand Controller"));
+    bi_decl(bi_program_description("Pico-Wiegand EmulatorW"));
     bi_decl(bi_program_version_string(VERSION));
-    bi_decl(bi_1pin_with_name(ONBOARD_LED, "on-board LED"));
 
     stdio_init_all();
     setup_gpio();
@@ -77,13 +71,33 @@ int main() {
 
     // ... initialise FIFO, UART and timers
     queue_init(&queue, sizeof(uint32_t), 64);
-    setup_usb();
+    setup_uart();
     alarm_pool_init_default();
 
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
     clear_screen();
 
+    // ... initialise WiFi
+
+    if (cyw43_arch_init_with_country(CYW43_COUNTRY_CANADA)) {
+        printf("failed to initialise wifi\n");
+    } else {
+        printf("initialised wifi\n");
+
+        cyw43_arch_enable_sta_mode();
+
+        if (cyw43_arch_wifi_connect_timeout_ms(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
+            printf("failed to connect to wifi\n");
+
+        } else {
+            printf("connected to wifi\n");
+
+            if (cyw43_ll_wifi_get_mac(cyw43_ll_t *self_in, uint8_t *addr);
+        }
+    }
+
+    // ... event loop
     while (true) {
         uint32_t v;
         queue_remove_blocking(&queue, &v);
@@ -119,17 +133,6 @@ int main() {
 
         if ((v & MSG) == MSG_CARD_READ) {
             on_card_read(v & 0x0fffffff);
-
-            if (last_card.ok && mode == CONTROLLER) {
-                if (acl_allowed(last_card.facility_code, last_card.card_number)) {
-                    last_card.granted = GRANTED;
-                    led_blink(1);
-                    door_unlock(5000);
-                } else {
-                    last_card.granted = DENIED;
-                    led_blink(3);
-                }
-            }
 
             char s[64];
             cardf(&last_card, s, sizeof(s));
@@ -203,25 +206,23 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND CONTROLLER");
+        puts("                     *** WIEGAND EMULATOR-W");
 
-        if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
-            mode = CONTROLLER;
+        if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
+            mode = EMULATOR;
         } else {
             mode = UNKNOWN;
         }
 
-        sdcard_initialise(mode);
-        read_initialise(mode);
-        led_initialise(mode);
-        buzzer_initialise(mode);
-        TPIC_initialise(mode);
+        // read_initialise(mode);
+        // write_initialise(mode);
+        // led_initialise(mode);
+        // buzzer_initialise(mode);
+        // TPIC_initialise(mode);
 
-        if (!relay_initialise(mode)) {
-            tx("failed to initialise relay monitor");
-        }
-
-        acl_initialise((uint32_t[]){}, 0);
+        // if (!relay_initialise(mode)) {
+        //     tx("failed to initialise relay monitor");
+        // }
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
@@ -234,13 +235,6 @@ void sysinit() {
         rtc_get_datetime(&last_card.timestamp);
         sys_ok();
         set_scroll_area();
-
-        // ... load ACL from SD card
-        uint32_t cards[16];
-        int N = 16;
-        if (sdcard_read_acl(cards, &N) == 0) {
-            acl_initialise(cards, N);
-        }
 
         // ... 'k, done
         buzzer_beep(1);

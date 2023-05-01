@@ -1,10 +1,12 @@
 # TODO
 
 ## Reference
-   - [ ] Buzzer
    - [ ] PicoW+TCP/IP
+         - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server
          - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
+
    - [ ] Pico + DTMF
+   - [ ] Buzzer
 
    - (?) Authorisation
    - [ ] tweetnacl
