@@ -18,6 +18,19 @@ const uint8_t TPIC_MASK_ORANGE_LED = 0x20;
 const uint8_t TPIC_MASK_YELLOW_LED = 0x40;
 const uint8_t TPIC_MASK_GREEN_LED = 0x80;
 
+/* struct for TPIC state
+*
+ */
+struct {
+        uint8_t state;
+    bool initialised;
+
+} TPIC = {
+        .state = 0x00,
+    .initialised = false,
+};
+
+
 void TPIC_initialise(enum MODE mode) {
     gpio_init(SPI_CS);
     gpio_set_dir(SPI_CS, GPIO_OUT);
@@ -35,44 +48,46 @@ void TPIC_initialise(enum MODE mode) {
     gpio_put(SPI_CS, 0);
     spi_write_blocking(SPI, bytes, 1);
     gpio_put(SPI_CS, 1);
+
+    TPIC.initialised = true;
 }
 
 void TPIC_set(enum TPICIO io, bool on) {
-    static uint8_t state = 0x00;
-
+    if (TPIC.initialised) {
     switch (io) {
     case DOOR_UNLOCK:
-        state = (state & ~TPIC_MASK_DOOR_UNLOCK) | (on ? TPIC_MASK_DOOR_UNLOCK : 0x00);
+        TPIC.state = (TPIC.state & ~TPIC_MASK_DOOR_UNLOCK) | (on ? TPIC_MASK_DOOR_UNLOCK : 0x00);
         break;
 
     case PUSHBUTTON:
-        state = (state & ~TPIC_MASK_PUSHBUTTON) | (on ? TPIC_MASK_PUSHBUTTON : 0x00);
+        TPIC.state = (TPIC.state & ~TPIC_MASK_PUSHBUTTON) | (on ? TPIC_MASK_PUSHBUTTON : 0x00);
         break;
 
     case DOOR_CONTACT:
-        state = (state & ~TPIC_MASK_DOOR_CONTACT) | (on ? TPIC_MASK_DOOR_CONTACT : 0x00);
+        TPIC.state = (TPIC.state & ~TPIC_MASK_DOOR_CONTACT) | (on ? TPIC_MASK_DOOR_CONTACT : 0x00);
         break;
 
     case RED_LED:
-        state = (state & ~TPIC_MASK_RED_LED) | (on ? TPIC_MASK_RED_LED : 0x00);
+        TPIC.state = (TPIC.state & ~TPIC_MASK_RED_LED) | (on ? TPIC_MASK_RED_LED : 0x00);
         break;
 
     case ORANGE_LED:
-        state = (state & ~TPIC_MASK_ORANGE_LED) | (on ? TPIC_MASK_ORANGE_LED : 0x00);
+        TPIC.state = (TPIC.state & ~TPIC_MASK_ORANGE_LED) | (on ? TPIC_MASK_ORANGE_LED : 0x00);
         break;
 
     case YELLOW_LED:
-        state = (state & ~TPIC_MASK_YELLOW_LED) | (on ? TPIC_MASK_YELLOW_LED : 0x00);
+        TPIC.state = (TPIC.state & ~TPIC_MASK_YELLOW_LED) | (on ? TPIC_MASK_YELLOW_LED : 0x00);
         break;
 
     case GREEN_LED:
-        state = (state & ~TPIC_MASK_GREEN_LED) | (on ? TPIC_MASK_GREEN_LED : 0x00);
+        TPIC.state = (TPIC.state & ~TPIC_MASK_GREEN_LED) | (on ? TPIC_MASK_GREEN_LED : 0x00);
         break;
     }
 
-    uint8_t bytes[] = {state};
+    uint8_t bytes[] = {TPIC.state};
 
     gpio_put(SPI_CS, 0);
     spi_write_blocking(SPI, bytes, 1);
     gpio_put(SPI_CS, 1);
+    }
 }
