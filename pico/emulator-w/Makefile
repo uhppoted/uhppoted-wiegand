@@ -13,6 +13,7 @@ clean:
 
 format: src/*.c include/*.h
 	clang-format -i ./src/*.c
+	clang-format -i ./src/tcpd/*.c
 	clang-format -i ./include/*.h
 
 build: format

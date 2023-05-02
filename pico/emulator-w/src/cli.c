@@ -11,6 +11,7 @@
 
 #include "../include/cli.h"
 #include "../include/emulator.h"
+#include "./tcpd/tcpd.h"
 
 typedef void (*handler)(uint32_t, uint32_t);
 
@@ -82,6 +83,8 @@ void write(uint32_t facility_code, uint32_t card) {
  *
  */
 void reboot() {
+    tcpd_terminate();
+
     while (true) {
         buzzer_beep(1);
 

@@ -2,6 +2,12 @@
 
 ## Reference
    - [ ] PicoW+TCP/IP
+         - [ ] Put WIFI connect onto other core (or poll or something)
+         - [ ] Configurable port 
+         - [ ] Configurable connect timeout
+         - [ ] Retry on connect failed
+         - [ ] Reenable watchdog
+
          - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server
          - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
 

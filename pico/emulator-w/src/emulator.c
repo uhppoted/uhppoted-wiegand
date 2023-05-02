@@ -6,12 +6,12 @@
 #include <hardware/rtc.h>
 #include <hardware/watchdog.h>
 
-#include "pico/cyw43_arch.h"
 #include <pico/binary_info.h>
 #include <pico/multicore.h>
 #include <pico/stdlib.h>
 #include <pico/util/datetime.h>
 
+#include "tcpd/tcpd.h"
 #include <TPIC6B595.h>
 #include <buzzer.h>
 #include <common.h>
@@ -63,7 +63,7 @@ int main() {
 
     stdio_init_all();
     setup_gpio();
-    watchdog_enable(5000, true);
+    // watchdog_enable(5000, true);
 
     // ... initialise RTC
     rtc_init();
@@ -77,25 +77,6 @@ int main() {
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
     clear_screen();
-
-    // ... initialise WiFi
-
-    if (cyw43_arch_init_with_country(CYW43_COUNTRY_CANADA)) {
-        printf("failed to initialise wifi\n");
-    } else {
-        printf("initialised wifi\n");
-
-        cyw43_arch_enable_sta_mode();
-
-        if (cyw43_arch_wifi_connect_timeout_ms(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
-            printf("failed to connect to wifi\n");
-
-        } else {
-            printf("connected to wifi\n");
-
-            if (cyw43_ll_wifi_get_mac(cyw43_ll_t *self_in, uint8_t *addr);
-        }
-    }
 
     // ... event loop
     while (true) {
@@ -214,15 +195,16 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
+        tcpd_initialise(mode);
         // read_initialise(mode);
         // write_initialise(mode);
-        // led_initialise(mode);
-        // buzzer_initialise(mode);
-        // TPIC_initialise(mode);
+        led_initialise(mode);
+        buzzer_initialise(mode);
+        TPIC_initialise(mode);
 
-        // if (!relay_initialise(mode)) {
-        //     tx("failed to initialise relay monitor");
-        // }
+        if (!relay_initialise(mode)) {
+            tx("failed to initialise relay monitor");
+        }
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
