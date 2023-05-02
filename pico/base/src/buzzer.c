@@ -7,6 +7,16 @@
 
 const uint32_t BUZZER_DELAY = 100;
 
+/* struct for buzzer state
+*
+ */
+struct {
+    bool initialised;
+} BUZZER_STATE = {
+    .initialised = false,
+};
+
+
 /* struct for communicating between led_blinks API function and blinki
  * alarm handler. Allocated and initialiesd in led_blinks and free'd
  * in blinki.
@@ -39,6 +49,8 @@ void buzzer_initialise(enum MODE mode) {
     uint offset = pio_add_program(PIO_BUZZER, &buzzer_program);
 
     buzzer_program_init(PIO_BUZZER, SM_BUZZER, offset, BUZZER);
+
+    BUZZER_STATE.initialised = true;
 }
 
 /* Handler for a buzzer beep.
@@ -47,9 +59,11 @@ void buzzer_initialise(enum MODE mode) {
  *       is 8. Which seems like enough.
  */
 void buzzer_beep(uint8_t count) {
+    if (BUZZER_STATE.initialised) {
     struct beeps *b = malloc(sizeof(struct beeps));
 
     b->count = count > 8 ? 8 : count;
 
-    add_alarm_in_ms(BUZZER_DELAY, buzzeri, (void *)b, true);
+    add_alarm_in_ms(BUZZER_DELAY, buzzeri, (void *)b, true);        
+    }
 }
