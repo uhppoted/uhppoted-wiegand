@@ -20,7 +20,14 @@ struct {
     int good_card;
     int bad_card;
     int card_timeout;
-} LEDs = {0, 0, 0, 0};
+    bool initialised;
+} LEDs = {
+    .sys_led= 0, 
+    .good_card = 0,
+    .bad_card = 0,
+    .card_timeout= 0,
+.initialised = false,
+};
 
 /* struct for communicating between led_blinks API function and blinki
  * alarm handler. Allocated and initialised in led_blinks and free'd
@@ -132,6 +139,8 @@ void led_initialise(enum MODE mode) {
 
     // ... create repeating timer to manage blinking LEDs
     add_repeating_timer_ms(10, callback, NULL, &led_timer);
+
+    LEDs.initialised = true;
 }
 
 /* Handler for an LED event.
@@ -164,11 +173,13 @@ void led_event(uint32_t v) {
  *       at the moment.
  */
 void led_blink(uint8_t count) {
+    if (LEDs.initialised) {
     struct blinks *b = malloc(sizeof(struct blinks));
 
     b->count = count > 8 ? 8 : count;
 
-    add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);
+    add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);        
+    }
 }
 
 /* 'blink' implementation for TPIC6B595 managed LEDs.
