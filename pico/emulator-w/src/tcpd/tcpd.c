@@ -8,6 +8,8 @@
 
 #define TCP_BUFFER_SIZE 2048
 #define TCP_PORT 4242
+#define CR 13
+#define LF 10
 
 /* Internal state for the TCP server.
  *
@@ -28,25 +30,26 @@ bool tcpd_open();
 err_t tcpd_close();
 err_t tcpd_accept(void *, struct tcp_pcb *, err_t);
 err_t tcpd_recv(void *, struct tcp_pcb *, struct pbuf *, err_t);
+err_t tcpd_send(void *, struct tcp_pcb *, const char *);
 void tcpd_err(void *, err_t);
 err_t tcpd_result(int);
-void tcpd_debug(const char *);
+void tcpd_log(const char *);
 
 /* Initialises the TCP server.
  *
  */
 void tcpd_initialise(enum MODE mode) {
     if (cyw43_arch_init()) {
-        tcpd_debug("WIFI INITIALISATION FAILED");
+        tcpd_log("WIFI INITIALISATION FAILED");
     } else {
-        tcpd_debug("WIFI INITIALISED");
+        tcpd_log("WIFI INITIALISED");
 
         cyw43_arch_enable_sta_mode();
 
         if (cyw43_arch_wifi_connect_timeout_ms(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
-            tcpd_debug("WIFI CONNECT FAILED");
+            tcpd_log("WIFI CONNECT FAILED");
         } else {
-            tcpd_debug("WIFI CONNECTED");
+            tcpd_log("WIFI CONNECTED");
             tcpd_run();
         }
     }
@@ -54,12 +57,12 @@ void tcpd_initialise(enum MODE mode) {
 
 void tcpd_terminate() {
     cyw43_arch_deinit();
-    tcpd_debug("WIFI TERMINATED");
+    tcpd_log("WIFI TERMINATED");
 }
 
 void tcpd_run() {
     if (!tcpd_open()) {
-        tcpd_debug("OPEN ERROR");
+        tcpd_log("OPEN ERROR");
         tcpd_result(-1);
         return;
     }
@@ -87,24 +90,24 @@ bool tcpd_open() {
     char s[64];
 
     snprintf(s, sizeof(s), "ADDRESS %s PORT %u", ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
-    tcpd_debug(s);
+    tcpd_log(s);
 
     struct tcp_pcb *pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
     if (!pcb) {
-        tcpd_debug("ERROR CREAING pcb");
+        tcpd_log("ERROR CREAING pcb");
         return false;
     }
 
     err_t err = tcp_bind(pcb, NULL, TCP_PORT);
     if (err) {
         snprintf(s, sizeof(s), "ERROR BINDING TO PORT %u", TCP_PORT);
-        tcpd_debug(s);
+        tcpd_log(s);
         return false;
     }
 
     TCP_STATE.server_pcb = tcp_listen_with_backlog(pcb, 1);
     if (!TCP_STATE.server_pcb) {
-        tcpd_debug("LISTEN ERROR");
+        tcpd_log("LISTEN ERROR");
         if (pcb) {
             tcp_close(pcb);
         }
@@ -114,21 +117,21 @@ bool tcpd_open() {
     tcp_arg(TCP_STATE.server_pcb, &TCP_STATE);
     tcp_accept(TCP_STATE.server_pcb, tcpd_accept);
 
-    tcpd_debug("LISTENING");
+    tcpd_log("LISTENING");
 
     return true;
 }
 
 err_t tcpd_accept(void *arg, struct tcp_pcb *client_pcb, err_t err) {
-    tcpd_debug("INCOMING");
+    tcpd_log("INCOMING");
 
     if (err != ERR_OK || client_pcb == NULL) {
-        tcpd_debug("ACCEPT ERROR");
+        tcpd_log("ACCEPT ERROR");
         tcpd_result(err);
         return ERR_VAL;
     }
 
-    tcpd_debug("CLIENT CONNECTED");
+    tcpd_log("CLIENT CONNECTED");
 
     TCP_STATE.client_pcb = client_pcb;
     tcp_arg(client_pcb, &TCP_STATE);
@@ -157,7 +160,7 @@ err_t tcpd_close() {
             char s[64];
 
             snprintf(s, sizeof(s), "CLOSE ERROR %d, calling abort", err);
-            tcpd_debug(s);
+            tcpd_log(s);
             tcp_abort(TCP_STATE.client_pcb);
             err = ERR_ABRT;
         }
@@ -175,46 +178,70 @@ err_t tcpd_close() {
 }
 
 err_t tcpd_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
-    tcpd_debug("RX");
-    // TCP_SERVER_T *state = (TCP_SERVER_T*)arg;
-    // if (!p) {
-    //     return tcp_server_result(arg, -1);
-    // }
-    // // this method is callback from lwIP, so cyw43_arch_lwip_begin is not required, however you
-    // // can use this method to cause an assertion in debug mode, if this method is called when
-    // // cyw43_arch_lwip_begin IS needed
+    if (!p) {
+        return tcpd_result(-1);
+    }
+
     // cyw43_arch_lwip_check();
-    // if (p->tot_len > 0) {
-    //     DEBUG_printf("tcp_server_recv %d/%d err %d\n", p->tot_len, state->recv_len, err);
 
-    //     // Receive the buffer
-    //     const uint16_t buffer_left = BUF_SIZE - state->recv_len;
-    //     state->recv_len += pbuf_copy_partial(p, state->buffer_recv + state->recv_len,
-    //                                          p->tot_len > buffer_left ? buffer_left : p->tot_len, 0);
-    //     tcp_recved(tpcb, p->tot_len);
-    // }
-    // pbuf_free(p);
+    if (p->tot_len > 0) {
+        char s[64];
+        snprintf(s, sizeof(s), "RECV L:%d  N:%d  err:%d", p->tot_len, TCP_STATE.recv_len, err);
+        tcpd_log(s);
 
-    // // Have we have received the whole buffer
-    // if (state->recv_len == BUF_SIZE) {
+        const uint16_t remaining = TCP_BUFFER_SIZE - TCP_STATE.recv_len;
+        TCP_STATE.recv_len += pbuf_copy_partial(p,
+                                                TCP_STATE.buffer_recv + TCP_STATE.recv_len,
+                                                p->tot_len > remaining ? remaining : p->tot_len, 0);
+        tcp_recved(tpcb, p->tot_len);
+    }
 
-    //     // check it matches
-    //     if (memcmp(state->buffer_sent, state->buffer_recv, BUF_SIZE) != 0) {
-    //         DEBUG_printf("buffer mismatch\n");
-    //         return tcp_server_result(arg, -1);
-    //     }
-    //     DEBUG_printf("tcp_server_recv buffer ok\n");
+    pbuf_free(p);
 
-    //     // Test complete?
-    //     state->run_count++;
-    //     if (state->run_count >= TEST_ITERATIONS) {
-    //         tcp_server_result(arg, 0);
-    //         return ERR_OK;
-    //     }
+    // ... overflow?
+    if (TCP_STATE.recv_len == TCP_BUFFER_SIZE) {
+        TCP_STATE.recv_len = 0;
+    }
 
-    //     // Send another buffer
-    //     return tcp_server_send_data(arg, state->client_pcb);
-    // }
+    // ... CRLF?
+    for (int i = 0; i < TCP_STATE.recv_len; i++) {
+        if (TCP_STATE.buffer_recv[i] == CR || TCP_STATE.buffer_recv[i] == LF) {
+            char s[64];
+            int N = i < 64 ? i + 1 : 64;
+            snprintf(s, N, "%s", TCP_STATE.buffer_recv);
+            tcpd_log(s);
+
+            TCP_STATE.recv_len = 0;
+
+            return tcpd_send(arg, TCP_STATE.client_pcb, "wootedy woot woot\r\n");
+        }
+    }
+
+    return ERR_OK;
+}
+
+err_t tcpd_send(void *arg, struct tcp_pcb *tpcb, const char *msg) {
+    int N = strlen(msg);
+    int ix = 0;
+    int i = 0;
+
+    while (ix < TCP_BUFFER_SIZE && i < N) {
+        TCP_STATE.buffer_sent[ix++] = msg[i++];
+    }
+
+    TCP_STATE.sent_len = 0;
+
+    // cyw43_arch_lwip_check();
+
+    err_t err = tcp_write(tpcb, TCP_STATE.buffer_sent, i, TCP_WRITE_FLAG_COPY);
+    if (err != ERR_OK) {
+        char s[64];
+        snprintf(s, sizeof(s), "SEND ERROR %d", err);
+        tcpd_log(s);
+
+        return tcpd_result(-1);
+    }
+
     return ERR_OK;
 }
 
@@ -223,16 +250,16 @@ void tcpd_err(void *arg, err_t err) {
         char s[64];
 
         snprintf(s, sizeof(s), "ERROR %d", err);
-        tcpd_debug(s);
+        tcpd_log(s);
         tcpd_result(err);
     }
 }
 
 err_t tcpd_result(int status) {
     if (status == 0) {
-        tcpd_debug("OK");
+        tcpd_log("OK");
     } else {
-        tcpd_debug("FAILED");
+        tcpd_log("FAILED");
     }
 
     TCP_STATE.complete = true;
@@ -240,7 +267,7 @@ err_t tcpd_result(int status) {
     return tcpd_close();
 }
 
-void tcpd_debug(const char *msg) {
+void tcpd_log(const char *msg) {
     char s[64];
 
     snprintf(s, sizeof(s), "%-6s %s", "TCP", msg);
