@@ -22,11 +22,11 @@ const uint8_t TPIC_MASK_GREEN_LED = 0x80;
 *
  */
 struct {
-        uint8_t state;
+    uint8_t state;
     bool initialised;
 
 } TPIC = {
-        .state = 0x00,
+    .state = 0x00,
     .initialised = false,
 };
 

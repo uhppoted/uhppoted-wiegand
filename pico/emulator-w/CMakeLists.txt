@@ -8,6 +8,8 @@ project(wiegand-emulator-w C CXX ASM)
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
 
+option(PICO_CYW43_ARCH_POLL "Select polling behavior for CYW43 Wi-Fi chip" ON)
+
 add_compile_definitions(SSID=\"${SSID}\")
 add_compile_definitions(PASSWORD=\"${PASSWORD}\")
 add_compile_definitions(SYSDATE=$(SYSDATE))

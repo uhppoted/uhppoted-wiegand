@@ -3,6 +3,7 @@
 #include "pico/cyw43_arch.h"
 
 #include "uart.h"
+#include "wiegand.h"
 
 #include "tcpd.h"
 
@@ -10,6 +11,28 @@
 #define TCP_PORT 4242
 #define CR 13
 #define LF 10
+
+enum TCPD_STATE {
+    TCPD_UNKNOWN = 0,
+    TCPD_INITIALISED = 1,
+    TCPD_CONNECTING = 2,
+    TCPD_CONNECTED = 3,
+    TCPD_FATAL = 4,
+};
+
+/* struct for TCPD state
+ *
+ */
+struct {
+    enum TCPD_STATE state;
+    bool initialised;
+
+} TCPD = {
+    .state = TCPD_UNKNOWN,
+    .initialised = false,
+};
+
+const uint32_t TCPD_POLL = 1000;
 
 /* Internal state for the TCP server.
  *
@@ -35,29 +58,107 @@ void tcpd_err(void *, err_t);
 err_t tcpd_result(int);
 void tcpd_log(const char *);
 
+/* Alarm handler for TCP poll timer.
+ *
+ */
+int64_t tcpdi(alarm_id_t id, void *data) {
+    uint32_t msg = MSG_TCPD_POLL;
+
+    if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+        // nothing to do
+    }
+
+    return TCPD_POLL * 1000;
+}
+
 /* Initialises the TCP server.
  *
  */
-void tcpd_initialise(enum MODE mode) {
-    if (cyw43_arch_init()) {
-        tcpd_log("WIFI INITIALISATION FAILED");
-    } else {
-        tcpd_log("WIFI INITIALISED");
+bool tcpd_initialise(enum MODE mode) {
+    char s[64];
+    err_t err;
 
-        cyw43_arch_enable_sta_mode();
-
-        if (cyw43_arch_wifi_connect_timeout_ms(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
-            tcpd_log("WIFI CONNECT FAILED");
-        } else {
-            tcpd_log("WIFI CONNECTED");
-            tcpd_run();
-        }
+    if ((err = cyw43_arch_init()) != 0) {
+        snprintf(s, sizeof(s), "WIFI INITIALISATION ERROR (%d)", err);
+        tcpd_log(s);
+        return false;
     }
+
+    cyw43_arch_enable_sta_mode();
+
+    if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
+        snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
+        tcpd_log(s);
+        return false;
+    }
+
+    TCPD.state = TCPD_CONNECTING;
+
+    add_alarm_in_ms(TCPD_POLL, tcpdi, (void *)NULL, true);
+
+    // if (cyw43_arch_wifi_connect_timeout_ms(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
+    //     tcpd_log("WIFI CONNECT FAILED");
+    // } else {
+    //     tcpd_log("WIFI CONNECTED");
+    //     tcpd_run();
+    // }
 }
 
 void tcpd_terminate() {
     cyw43_arch_deinit();
     tcpd_log("WIFI TERMINATED");
+}
+
+void tcpd_poll() {
+    cyw43_arch_poll();
+
+    int link = cyw43_wifi_link_status(&cyw43_state, CYW43_ITF_STA);
+    char s[64];
+    err_t err;
+
+    switch (link) {
+    case CYW43_LINK_DOWN:
+        tcpd_log("WIFI LINK DOWN");
+        if (TCPD.state != TCPD_CONNECTING) {
+            if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
+                snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
+                tcpd_log(s);
+            } else {
+                tcpd_log("WIFI RECONNECTING");
+                TCPD.state = TCPD_CONNECTING;
+            }
+        }
+        break;
+
+    case CYW43_LINK_JOIN:
+        tcpd_log("WIFI CONNECTED");
+        TCPD.state = TCPD_CONNECTED;
+        break;
+
+    case CYW43_LINK_FAIL:
+        tcpd_log("WIFI CONNECTION FAILED");
+        if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
+            snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
+            tcpd_log(s);
+        } else {
+            tcpd_log("WIFI RECONNECTING");
+            TCPD.state = TCPD_CONNECTING;
+        }
+
+        break;
+
+    case CYW43_LINK_NONET:
+        tcpd_log("WIFI SSID NOT FOUND");
+        break;
+
+    case CYW43_LINK_BADAUTH:
+        tcpd_log("WIFI AUTH FAILED");
+        TCPD.state = TCPD_FATAL;
+        break;
+
+    default:
+        tcpd_log("WIFI UNKNOWN STATUS");
+    }
 }
 
 void tcpd_run() {

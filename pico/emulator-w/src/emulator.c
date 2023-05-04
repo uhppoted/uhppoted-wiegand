@@ -38,6 +38,7 @@ const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
+const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -63,7 +64,7 @@ int main() {
 
     stdio_init_all();
     setup_gpio();
-    // watchdog_enable(5000, true);
+    watchdog_enable(5000, true);
 
     // ... initialise RTC
     rtc_init();
@@ -134,6 +135,10 @@ int main() {
 
         if ((v & MSG) == MSG_PUSHBUTTON) {
             pushbutton_event(v & 0x0fffffff);
+        }
+
+        if ((v & MSG) == MSG_TCPD_POLL) {
+            tcpd_poll();
         }
 
         if ((v & MSG) == MSG_DEBUG) {
