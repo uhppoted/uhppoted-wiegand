@@ -4,14 +4,23 @@
    - [ ] PicoW+TCP/IP
          - [x] Replace blocking connect
          - [x] Reenable watchdog
-         - [ ] Listen on connected
+         - [x] Listen/accept on connected
+         - [x] Retry on connect failed
+         - [ ] Tidy up link status stuff
+         - [ ] Per connection PCBs
+         - [ ] Route commands/responses to/from CLI
+         - [ ] Reduce poll interval
+         - [ ] Detect connection closed (idle?)
          - [ ] Configurable port 
          - [ ] Configurable connect timeout
-         - [ ] Retry on connect failed
-         - [ ] Route commands/responses to/from CLI
 
+         - https://www.nongnu.org/lwip/2_1_x/index.html
          - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server
          - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
+         - https://ww1.microchip.com/downloads/en/Appnotes/Atmel-42233-Using-the-lwIP-Network-Stack_AP-Note_AT04055.pdf
+         - https://forums.raspberrypi.com/viewtopic.php?t=337666
+         - https://stackoverflow.com/questions/55167252/how-to-determine-if-ethernet-cable-has-been-unplugged-during-runtime
+         - https://forums.raspberrypi.com/viewtopic.php?t=349890
 
    - [ ] Pico + DTMF
    - [ ] Buzzer

@@ -26,10 +26,12 @@ enum TCPD_STATE {
 struct {
     enum TCPD_STATE state;
     bool initialised;
+    bool listening;
 
 } TCPD = {
     .state = TCPD_UNKNOWN,
     .initialised = false,
+    .listening = false,
 };
 
 const uint32_t TCPD_POLL = 1000;
@@ -49,7 +51,7 @@ struct {
 } TCP_STATE;
 
 void tcpd_run();
-bool tcpd_open();
+void tcpd_listen();
 err_t tcpd_close();
 err_t tcpd_accept(void *, struct tcp_pcb *, err_t);
 err_t tcpd_recv(void *, struct tcp_pcb *, struct pbuf *, err_t);
@@ -126,13 +128,17 @@ void tcpd_poll() {
             } else {
                 tcpd_log("WIFI RECONNECTING");
                 TCPD.state = TCPD_CONNECTING;
+                TCPD.listening = false;
             }
         }
         break;
 
     case CYW43_LINK_JOIN:
-        tcpd_log("WIFI CONNECTED");
-        TCPD.state = TCPD_CONNECTED;
+        if (TCPD.state != TCPD_CONNECTED) {
+            tcpd_log("WIFI CONNECTED");
+            TCPD.state = TCPD_CONNECTED;
+        }
+        tcpd_run();
         break;
 
     case CYW43_LINK_FAIL:
@@ -142,6 +148,7 @@ void tcpd_poll() {
             tcpd_log(s);
         } else {
             tcpd_log("WIFI RECONNECTING");
+            TCPD.listening = false;
             TCPD.state = TCPD_CONNECTING;
         }
 
@@ -149,10 +156,12 @@ void tcpd_poll() {
 
     case CYW43_LINK_NONET:
         tcpd_log("WIFI SSID NOT FOUND");
+        TCPD.listening = false;
         break;
 
     case CYW43_LINK_BADAUTH:
-        tcpd_log("WIFI AUTH FAILED");
+        tcpd_log("WIFI NOT AUTHORISED");
+        TCPD.listening = false;
         TCPD.state = TCPD_FATAL;
         break;
 
@@ -162,33 +171,51 @@ void tcpd_poll() {
 }
 
 void tcpd_run() {
-    if (!tcpd_open()) {
-        tcpd_log("OPEN ERROR");
-        tcpd_result(-1);
-        return;
-    }
+    char s[64];
+    err_t err;
 
-    //     while(!state->complete) {
-    //         // the following #ifdef is only here so this same example can be used in multiple modes;
-    //         // you do not need it in your code
-    // #if PICO_CYW43_ARCH_POLL
-    //         // if you are using pico_cyw43_arch_poll, then you must poll periodically from your
-    //         // main loop (not from a timer) to check for Wi-Fi driver or lwIP work that needs to be done.
-    //         cyw43_arch_poll();
-    //         // you can poll as often as you like, however if you have nothing else to do you can
-    //         // choose to sleep until either a specified time, or cyw43_arch_poll() has work to do:
-    //         cyw43_arch_wait_for_work_until(make_timeout_time_ms(1000));
-    // #else
-    //         // if you are not using pico_cyw43_arch_poll, then WiFI driver and lwIP work
-    //         // is done via interrupt in the background. This sleep is just an example of some (blocking)
-    //         // work you might be doing.
-    //         sleep_ms(1000);
-    // #endif
-    //     }
+    int link = cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA);
+
+    switch (link) {
+    case CYW43_LINK_DOWN:
+        tcpd_log("CYW43_LINK_DOWN");
+        break;
+
+    case CYW43_LINK_JOIN:
+        tcpd_log("CYW43_LINK_JOIN");
+        break;
+
+    case CYW43_LINK_NOIP:
+        tcpd_log("CYW43_LINK_NOIP");
+        break;
+
+    case CYW43_LINK_UP:
+        tcpd_log("CYW43_LINK_UP");
+        if (!TCPD.listening) {
+            tcpd_listen();
+        }
+        break;
+
+    case CYW43_LINK_FAIL:
+        tcpd_log("CYW43_LINK_FAIL");
+        break;
+
+    case CYW43_LINK_NONET:
+        tcpd_log("CYW43_LINK_NONET");
+        break;
+
+    case CYW43_LINK_BADAUTH:
+        tcpd_log("CYW43_LINK_BADAUTHCYW43_LINK_BADAUTH");
+        break;
+
+    default:
+        tcpd_log("WIFI UNKNOWN STATUS");
+    }
 }
 
-bool tcpd_open() {
+void tcpd_listen() {
     char s[64];
+    err_t err;
 
     snprintf(s, sizeof(s), "ADDRESS %s PORT %u", ip4addr_ntoa(netif_ip4_addr(netif_list)), TCP_PORT);
     tcpd_log(s);
@@ -196,31 +223,27 @@ bool tcpd_open() {
     struct tcp_pcb *pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
     if (!pcb) {
         tcpd_log("ERROR CREAING pcb");
-        return false;
+        return;
     }
 
-    err_t err = tcp_bind(pcb, NULL, TCP_PORT);
-    if (err) {
-        snprintf(s, sizeof(s), "ERROR BINDING TO PORT %u", TCP_PORT);
+    if ((err = tcp_bind(pcb, NULL, TCP_PORT)) != 0) {
+        snprintf(s, sizeof(s), "ERROR BINDING TO PORT %u (%d)", TCP_PORT, err);
         tcpd_log(s);
-        return false;
+        return;
     }
 
     TCP_STATE.server_pcb = tcp_listen_with_backlog(pcb, 1);
     if (!TCP_STATE.server_pcb) {
         tcpd_log("LISTEN ERROR");
-        if (pcb) {
-            tcp_close(pcb);
-        }
-        return false;
+        tcp_close(pcb);
+        return;
     }
 
     tcp_arg(TCP_STATE.server_pcb, &TCP_STATE);
     tcp_accept(TCP_STATE.server_pcb, tcpd_accept);
 
     tcpd_log("LISTENING");
-
-    return true;
+    TCPD.listening = true;
 }
 
 err_t tcpd_accept(void *arg, struct tcp_pcb *client_pcb, err_t err) {
