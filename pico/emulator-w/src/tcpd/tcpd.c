@@ -2,6 +2,7 @@
 #include "lwip/tcp.h"
 #include "pico/cyw43_arch.h"
 
+#include "cli.h"
 #include "uart.h"
 #include "wiegand.h"
 
@@ -60,6 +61,18 @@ err_t tcpd_send(void *, struct tcp_pcb *, const char *);
 void tcpd_err(void *, err_t);
 err_t tcpd_result(int);
 void tcpd_log(const char *);
+
+void reply(void *context, const char *msg) {
+    char s[64];
+    err_t err;
+
+    snprintf(s, sizeof(s), "%s\r\n", msg);
+
+    if ((err = tcpd_send(context, TCP_STATE.client_pcb, s)) != ERR_OK) {
+        snprintf(s, sizeof(s), "WIFI SEND ERROR (%d)", err);
+        tcpd_log(s);
+    }
+}
 
 /* Alarm handler for TCP poll timer.
  *
@@ -242,6 +255,7 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client_pcb, err_t err) {
     if (err != ERR_OK || client_pcb == NULL) {
         tcpd_log("ACCEPT ERROR");
         tcpd_result(err);
+        // FIXME close connection ?
         return ERR_VAL;
     }
 
@@ -300,7 +314,7 @@ err_t tcpd_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
 
     if (p->tot_len > 0) {
         char s[64];
-        snprintf(s, sizeof(s), "RECV L:%d  N:%d  err:%d", p->tot_len, TCP_STATE.recv_len, err);
+        snprintf(s, sizeof(s), "WIFI RECV L:%d N:%d err:%d", p->tot_len, TCP_STATE.recv_len, err);
         tcpd_log(s);
 
         const uint16_t remaining = TCP_BUFFER_SIZE - TCP_STATE.recv_len;
@@ -320,14 +334,15 @@ err_t tcpd_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
     // ... CRLF?
     for (int i = 0; i < TCP_STATE.recv_len; i++) {
         if (TCP_STATE.buffer_recv[i] == CR || TCP_STATE.buffer_recv[i] == LF) {
-            char s[64];
+            char cmd[64];
             int N = i < 64 ? i + 1 : 64;
-            snprintf(s, N, "%s", TCP_STATE.buffer_recv);
-            tcpd_log(s);
+            snprintf(cmd, N, "%s", TCP_STATE.buffer_recv);
 
             TCP_STATE.recv_len = 0;
 
-            return tcpd_send(arg, TCP_STATE.client_pcb, "wootedy woot woot\r\n");
+            execw(cmd, reply, arg);
+
+            return ERR_OK;
         }
     }
 
@@ -384,7 +399,7 @@ err_t tcpd_result(int status) {
 void tcpd_log(const char *msg) {
     char s[64];
 
-    snprintf(s, sizeof(s), "%-6s %s", "TCP", msg);
+    snprintf(s, sizeof(s), "%-6s %s", "TCPD", msg);
 
     tx(s);
 }

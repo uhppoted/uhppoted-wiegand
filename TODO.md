@@ -7,12 +7,20 @@
          - [x] Listen/accept on connected
          - [x] Retry on connect failed
          - [x] Tidy up link status stuff
+         - [x] Route commands/responses to/from CLI
+         - [ ] Reinstate read/write
          - [ ] Per connection PCBs
-         - [ ] Route commands/responses to/from CLI
+         - [ ] cyw43_arch_lwip_check
+         - [ ] Replace tcpd_result
+         - [ ] Replace tcpd_err
          - [ ] Reduce poll interval
-         - [ ] Detect connection closed (idle?)
+         - [ ] Detect connection closed
+         - [ ] Close idle connections
          - [ ] Configurable port 
          - [ ] Configurable connect timeout
+         - [ ] Multiple connected clients
+         - (?) Require login
+         - (?) Log to connected clients
 
          - https://www.nongnu.org/lwip/2_1_x/index.html
          - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server
@@ -21,6 +29,8 @@
          - https://forums.raspberrypi.com/viewtopic.php?t=337666
          - https://stackoverflow.com/questions/55167252/how-to-determine-if-ethernet-cable-has-been-unplugged-during-runtime
          - https://forums.raspberrypi.com/viewtopic.php?t=349890
+         - https://brodowsky.it-sky.net/2014/06/20/closures-in-c-and-scala
+         - https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
 
    - [ ] Pico + DTMF
    - [ ] Buzzer
