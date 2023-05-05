@@ -6,7 +6,7 @@
          - [x] Reenable watchdog
          - [x] Listen/accept on connected
          - [x] Retry on connect failed
-         - [ ] Tidy up link status stuff
+         - [x] Tidy up link status stuff
          - [ ] Per connection PCBs
          - [ ] Route commands/responses to/from CLI
          - [ ] Reduce poll interval

@@ -24,11 +24,13 @@ enum TCPD_STATE {
  *
  */
 struct {
+    int link;
     enum TCPD_STATE state;
     bool initialised;
     bool listening;
 
 } TCPD = {
+    .link = -100000,
     .state = TCPD_UNKNOWN,
     .initialised = false,
     .listening = false,
@@ -50,7 +52,6 @@ struct {
     int run_count;
 } TCP_STATE;
 
-void tcpd_run();
 void tcpd_listen();
 err_t tcpd_close();
 err_t tcpd_accept(void *, struct tcp_pcb *, err_t);
@@ -97,13 +98,6 @@ bool tcpd_initialise(enum MODE mode) {
     TCPD.state = TCPD_CONNECTING;
 
     add_alarm_in_ms(TCPD_POLL, tcpdi, (void *)NULL, true);
-
-    // if (cyw43_arch_wifi_connect_timeout_ms(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
-    //     tcpd_log("WIFI CONNECT FAILED");
-    // } else {
-    //     tcpd_log("WIFI CONNECTED");
-    //     tcpd_run();
-    // }
 }
 
 void tcpd_terminate() {
@@ -112,15 +106,54 @@ void tcpd_terminate() {
 }
 
 void tcpd_poll() {
-    cyw43_arch_poll();
-
-    int link = cyw43_wifi_link_status(&cyw43_state, CYW43_ITF_STA);
     char s[64];
     err_t err;
 
+    cyw43_arch_poll();
+
+    int link = cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA);
+
+    if (TCPD.link != link) {
+        TCPD.link = link;
+
+        switch (link) {
+        case CYW43_LINK_DOWN:
+            tcpd_log("WIFI LINK DOWN");
+            break;
+
+        case CYW43_LINK_JOIN:
+            if (TCPD.state != TCPD_CONNECTED) {
+                tcpd_log("WIFI CONNECTED");
+                break;
+
+            case CYW43_LINK_FAIL:
+                tcpd_log("WIFI CONNECTION FAILED");
+                break;
+
+            case CYW43_LINK_NONET:
+                tcpd_log("WIFI SSID NOT FOUND");
+                break;
+
+            case CYW43_LINK_BADAUTH:
+                tcpd_log("WIFI NOT AUTHORISED");
+                break;
+
+            case CYW43_LINK_NOIP:
+                tcpd_log("WIFI NO IP");
+                break;
+
+            case CYW43_LINK_UP:
+                tcpd_log("WIFI READY");
+                break;
+
+            default:
+                tcpd_log("WIFI UNKNOWN STATE");
+            }
+        }
+    }
+
     switch (link) {
     case CYW43_LINK_DOWN:
-        tcpd_log("WIFI LINK DOWN");
         if (TCPD.state != TCPD_CONNECTING) {
             if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
                 snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
@@ -135,14 +168,11 @@ void tcpd_poll() {
 
     case CYW43_LINK_JOIN:
         if (TCPD.state != TCPD_CONNECTED) {
-            tcpd_log("WIFI CONNECTED");
             TCPD.state = TCPD_CONNECTED;
         }
-        tcpd_run();
         break;
 
     case CYW43_LINK_FAIL:
-        tcpd_log("WIFI CONNECTION FAILED");
         if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
             snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
             tcpd_log(s);
@@ -151,65 +181,25 @@ void tcpd_poll() {
             TCPD.listening = false;
             TCPD.state = TCPD_CONNECTING;
         }
-
         break;
 
     case CYW43_LINK_NONET:
-        tcpd_log("WIFI SSID NOT FOUND");
         TCPD.listening = false;
         break;
 
     case CYW43_LINK_BADAUTH:
-        tcpd_log("WIFI NOT AUTHORISED");
         TCPD.listening = false;
         TCPD.state = TCPD_FATAL;
         break;
 
-    default:
-        tcpd_log("WIFI UNKNOWN STATUS");
-    }
-}
-
-void tcpd_run() {
-    char s[64];
-    err_t err;
-
-    int link = cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA);
-
-    switch (link) {
-    case CYW43_LINK_DOWN:
-        tcpd_log("CYW43_LINK_DOWN");
-        break;
-
-    case CYW43_LINK_JOIN:
-        tcpd_log("CYW43_LINK_JOIN");
-        break;
-
     case CYW43_LINK_NOIP:
-        tcpd_log("CYW43_LINK_NOIP");
         break;
 
     case CYW43_LINK_UP:
-        tcpd_log("CYW43_LINK_UP");
         if (!TCPD.listening) {
             tcpd_listen();
         }
         break;
-
-    case CYW43_LINK_FAIL:
-        tcpd_log("CYW43_LINK_FAIL");
-        break;
-
-    case CYW43_LINK_NONET:
-        tcpd_log("CYW43_LINK_NONET");
-        break;
-
-    case CYW43_LINK_BADAUTH:
-        tcpd_log("CYW43_LINK_BADAUTHCYW43_LINK_BADAUTH");
-        break;
-
-    default:
-        tcpd_log("WIFI UNKNOWN STATUS");
     }
 }
 
