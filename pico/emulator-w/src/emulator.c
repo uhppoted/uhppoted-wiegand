@@ -201,8 +201,8 @@ void sysinit() {
         }
 
         tcpd_initialise(mode);
-        // read_initialise(mode);
-        // write_initialise(mode);
+        read_initialise(mode);
+        write_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);

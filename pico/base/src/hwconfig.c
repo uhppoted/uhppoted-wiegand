@@ -5,14 +5,14 @@
 
 // PIOs
 const PIO PIO_READER = pio0;
+const PIO PIO_WRITER = pio0;
 const PIO PIO_BLINK = pio0;
-const PIO PIO_WRITER = pio1;
 const PIO PIO_LED = pio1;
 const PIO PIO_BUZZER = pio1;
 
 const uint SM_READER = 0;
+const uint SM_WRITER = 1;
 const uint SM_BLINK = 1;
-const uint SM_WRITER = 0;
 const uint SM_LED = 1;
 const uint SM_BUZZER = 2;
 

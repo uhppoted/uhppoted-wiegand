@@ -25,31 +25,31 @@ lp2:                  ;
 % c-sdk {
 
 static inline void led_program_init(PIO pio, uint sm, uint offset, uint pin) {
-    uint32_t mask = (0x00000001 << pin);
-    uint32_t dirs = (0x00000000 << pin);
-
-    pio_gpio_init(pio, pin);
-    gpio_pull_up(pin);
-
-    pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
-
-    pio_sm_config c = led_program_get_default_config(offset);
-
-    sm_config_set_in_pins(&c, pin);
-    sm_config_set_in_shift(&c,false,false,32);
-    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
-    sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms noise gate delay
-
-    pio_sm_init(pio, sm, offset, &c);
-    pio_sm_set_enabled(pio, sm, true);
+//    uint32_t mask = (0x00000001 << pin);
+//    uint32_t dirs = (0x00000000 << pin);
+//
+//    pio_gpio_init(pio, pin);
+//    gpio_pull_up(pin);
+//
+//    pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
+//
+//    pio_sm_config c = led_program_get_default_config(offset);
+//
+//    sm_config_set_in_pins(&c, pin);
+//    sm_config_set_in_shift(&c,false,false,32);
+//    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+//    sm_config_set_clkdiv(&c, 152.588);  // ~1.25ms noise gate delay
+//
+//    pio_sm_init(pio, sm, offset, &c);
+//    pio_sm_set_enabled(pio, sm, true);
 }
 
 static inline uint32_t led_program_get(PIO pio, uint sm) {
-    io_rw_32 *fifo = (io_rw_32 *)&pio->rxf[sm];
-
-    if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
-        return *fifo;
-    }
+//    io_rw_32 *fifo = (io_rw_32 *)&pio->rxf[sm];
+//
+//    if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
+//        return *fifo;
+//    }
 
     return -1;
 }
