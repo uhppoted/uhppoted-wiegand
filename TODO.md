@@ -9,6 +9,10 @@
          - [x] Tidy up link status stuff
          - [x] Route commands/responses to/from CLI
          - [ ] Reinstate read/write
+               - https://github.com/micropython/micropython/issues/9003
+               - https://stackoverflow.com/questions/74883568/oserror-errno-12-enomem-with-pi-pico-w
+               - https://github.com/sekigon-gonnoc/Pico-PIO-USB/discussions/78
+               - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
          - [ ] Per connection PCBs
          - [ ] cyw43_arch_lwip_check
          - [ ] Replace tcpd_result

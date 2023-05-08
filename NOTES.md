@@ -20,6 +20,8 @@
    - https://raspberrypi.stackexchange.com/questions/100156/how-to-read-wiegand-serial-data-rx-tx
    - CD4050
    - Needs to be bidirectional though
+   - BSS1338 or 2N7002 https://hackaday.com/2023/05/02/fet-fun-endeavors-together/
+   - https://hackaday.com/2016/12/05/taking-it-to-another-level-making-3-3v-and-5v-logic-communicate-with-level-shifters/
 
 7. Relay driver
    - https://kevinboone.me/pi-button-pipe.html
