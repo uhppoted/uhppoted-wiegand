@@ -8,13 +8,11 @@ const PIO PIO_READER = pio0;
 const PIO PIO_WRITER = pio0;
 const PIO PIO_BLINK = pio0;
 const PIO PIO_LED = pio1;
-const PIO PIO_BUZZER = pio1;
 
 const uint SM_READER = 0;
 const uint SM_WRITER = 1;
 const uint SM_BLINK = 1;
 const uint SM_LED = 1;
-const uint SM_BUZZER = 2;
 
 const enum pio_interrupt_source IRQ_READER = pis_sm0_rx_fifo_not_empty;
 const enum pio_interrupt_source IRQ_LED = pis_sm1_rx_fifo_not_empty;

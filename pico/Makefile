@@ -21,8 +21,10 @@ build-all: clean build
 	cd reference/usb  && make clean && make build
 	cd emulator       && make clean && make build
 	cd emulator/usb   && make clean && make build
+	cd emulator/usb   && make clean && make build
 	cd controller     && make clean && make build
 	cd controller/usb && make clean && make build
+	cd emulator-w     && make clean && make build
 
 install: build
 	picotool load build/wiegand.uf2

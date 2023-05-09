@@ -50,11 +50,6 @@ pico_generate_pio_header(
     ${CMAKE_CURRENT_LIST_DIR}/../../base/src/BLINK.pio
 )
 
-pico_generate_pio_header(
-    wiegand-controller-usb
-    ${CMAKE_CURRENT_LIST_DIR}/../../base/src/BUZZER.pio
-)
-
 pico_enable_stdio_usb (wiegand-controller-usb 1)
 pico_enable_stdio_uart(wiegand-controller-usb 0)
 pico_add_extra_outputs(wiegand-controller-usb)

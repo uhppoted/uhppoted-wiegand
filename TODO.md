@@ -8,11 +8,11 @@
          - [x] Retry on connect failed
          - [x] Tidy up link status stuff
          - [x] Route commands/responses to/from CLI
-         - [ ] Reinstate read/write
-               - https://github.com/micropython/micropython/issues/9003
-               - https://stackoverflow.com/questions/74883568/oserror-errno-12-enomem-with-pi-pico-w
-               - https://github.com/sekigon-gonnoc/Pico-PIO-USB/discussions/78
-               - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
+         - [ ] Reinstate full functionality with TCP/IP
+               - [x] Read/write
+               - [x] Rework buzzer to not use PIO
+               - [ ] Rework LEDs to not use PIO
+
          - [ ] Per connection PCBs
          - [ ] cyw43_arch_lwip_check
          - [ ] Replace tcpd_result
@@ -44,6 +44,9 @@
          - [ ] TCP/IP
          - (?) ACL
          - (?) Auth
+
+   - [ ] (optionally) Replace external SD card with internal flash
+         - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
 
 ## Schematic
 - RD/WR jumpers
@@ -104,3 +107,9 @@
    - https://blog.smittytone.net/2021/10/31/how-to-send-data-to-a-raspberry-pi-pico-via-usb
    - https://blog.smittytone.net/2022/02/16/pico-usb-serial-communications-with-circuitpython
    - https://forum.micropython.org/viewtopic.php?t=11305
+
+10. PicoW
+   - https://github.com/micropython/micropython/issues/9003
+   - https://stackoverflow.com/questions/74883568/oserror-errno-12-enomem-with-pi-pico-w
+   - https://github.com/sekigon-gonnoc/Pico-PIO-USB/discussions/78
+   - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76

@@ -22,11 +22,11 @@ struct {
     int card_timeout;
     bool initialised;
 } LEDs = {
-    .sys_led= 0, 
+    .sys_led = 0,
     .good_card = 0,
     .bad_card = 0,
-    .card_timeout= 0,
-.initialised = false,
+    .card_timeout = 0,
+    .initialised = false,
 };
 
 /* struct for communicating between led_blinks API function and blinki
@@ -174,11 +174,11 @@ void led_event(uint32_t v) {
  */
 void led_blink(uint8_t count) {
     if (LEDs.initialised) {
-    struct blinks *b = malloc(sizeof(struct blinks));
+        struct blinks *b = malloc(sizeof(struct blinks));
 
-    b->count = count > 8 ? 8 : count;
+        b->count = count > 8 ? 8 : count;
 
-    add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);        
+        add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);
     }
 }
 
