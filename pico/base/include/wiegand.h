@@ -10,19 +10,14 @@ extern const uint ONBOARD_LED;
 
 extern const PIO PIO_READER;
 extern const PIO PIO_WRITER;
-extern const PIO PIO_LED;
 extern const PIO PIO_BLINK;
 
 extern const uint SM_READER;
 extern const uint SM_WRITER;
-extern const uint SM_LED;
 extern const uint SM_BLINK;
 
 extern const uint PIO_READER_IRQ;
-extern const uint PIO_LED_IRQ;
-
 extern const enum pio_interrupt_source IRQ_READER;
-extern const enum pio_interrupt_source IRQ_LED;
 
 enum MODE {
     UNKNOWN = 0,

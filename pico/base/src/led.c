@@ -9,7 +9,6 @@
 #include "../include/wiegand.h"
 
 #include <BLINK.pio.h>
-#include <LED.pio.h>
 
 const uint32_t BLINK_DELAY = 1000;
 
@@ -20,12 +19,17 @@ struct {
     int good_card;
     int bad_card;
     int card_timeout;
+    float lpf;
+    bool on;
     bool initialised;
+    repeating_timer_t timer;
 } LEDs = {
     .sys_led = 0,
     .good_card = 0,
     .bad_card = 0,
     .card_timeout = 0,
+    .lpf = 0.0,
+    .on = false,
     .initialised = false,
 };
 
@@ -37,27 +41,36 @@ typedef struct blinks {
     uint32_t count;
 } blinks;
 
-/* Interrupt handler for writer LED input. Queue an LED ON/OFF message
- * to the message handler.
+/* 1ms LED callback.
+ *
+ * Polls and LPF filters the LED input from the external access controller. The
+ * LPF is just a very basic 1st order filter with hysteresis.
  *
  */
-void ledi() {
-    uint32_t value = led_program_get(PIO_LED, SM_LED);
-    uint32_t msg = MSG_LED | (value & 0x0fffffff);
+bool LED_callback(repeating_timer_t *rt) {
+    float v = gpio_get(WRITER_LED) == 0 ? 1.0 : 0.0;
 
-    switch (value) {
-    case 21:
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &msg);
-        }
-        break;
+    LEDs.lpf = 0.95 * LEDs.lpf + 0.05 * v;
 
-    case 10:
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &msg);
-        }
-        break;
+    bool on = LEDs.lpf > 0.9;
+    bool off = LEDs.lpf < 0.1;
+    uint32_t msg = 0x00000000;
+
+    if (on && !LEDs.on) {
+        LEDs.on = true;
+        msg = MSG_LED | (21 & 0x0fffffff);
     }
+
+    if (off && LEDs.on) {
+        LEDs.on = false;
+        msg = MSG_LED | (10 & 0x0fffffff);
+    }
+
+    if ((msg != 0x00000000) && !queue_is_full(&queue)) {
+        queue_try_add(&queue, &msg);
+    }
+
+    return true;
 }
 
 /* Alarm handler for 'end of blink start delay'. Queues up 'count'
@@ -121,26 +134,33 @@ bool callback(repeating_timer_t *rt) {
  * program if the mode is READER or CONTROLLER.
  *
  */
-void led_initialise(enum MODE mode) {
-    // ... initialse PIO for reader/writer LED
-    uint offset = pio_add_program(PIO_LED, &led_program);
+bool led_initialise(enum MODE mode) {
+    bool ok = true;
 
-    led_program_init(PIO_LED, SM_LED, offset, WRITER_LED);
+    gpio_init(WRITER_LED);
+    gpio_set_dir(WRITER_LED, GPIO_IN);
+    gpio_pull_up(WRITER_LED);
 
-    irq_set_exclusive_handler(PIO_LED_IRQ, ledi);
-    irq_set_enabled(PIO_LED_IRQ, true);
-    pio_set_irq0_source_enabled(PIO_LED, IRQ_LED, true);
+    // ... initialise LED input poll timer
+    if (!add_repeating_timer_us(1000, LED_callback, NULL, &LEDs.timer)) {
+        ok = false;
+    }
 
+    // ... initialise LED output stuff
     if ((mode == READER) || (mode == CONTROLLER)) {
-        offset = pio_add_program(PIO_BLINK, &blink_program);
+        uint offset = pio_add_program(PIO_BLINK, &blink_program);
 
         blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);
     }
 
     // ... create repeating timer to manage blinking LEDs
-    add_repeating_timer_ms(10, callback, NULL, &led_timer);
+    if (!add_repeating_timer_ms(10, callback, NULL, &led_timer)) {
+        ok = false;
+    }
 
-    LEDs.initialised = true;
+    LEDs.initialised = ok;
+
+    return ok;
 }
 
 /* Handler for an LED event.

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "wiegand.h"
@@ -11,7 +12,7 @@ enum LED {
     CARD_TIMEOUT,
 };
 
-extern void led_initialise(enum MODE);
+extern bool led_initialise(enum MODE);
 extern void led_event(uint32_t);
 extern void led_blink(uint8_t);
 

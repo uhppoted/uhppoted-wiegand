@@ -44,11 +44,6 @@ pico_generate_pio_header(
 
 pico_generate_pio_header(
     wiegand-emulator-usb
-    ${CMAKE_CURRENT_LIST_DIR}/../../base/src/LED.pio
-)
-
-pico_generate_pio_header(
-    wiegand-emulator-usb
     ${CMAKE_CURRENT_LIST_DIR}/../../base/src/BLINK.pio
 )
 

@@ -11,7 +11,8 @@
          - [ ] Reinstate full functionality with TCP/IP
                - [x] Read/write
                - [x] Rework buzzer to not use PIO
-               - [ ] Rework LEDs to not use PIO
+               - [x] Rework LEDs to not use PIO
+               - [ ] Rework BLINK to not use PIO
 
          - [ ] Per connection PCBs
          - [ ] cyw43_arch_lwip_check
