@@ -79,7 +79,7 @@ bool LED_callback(repeating_timer_t *rt) {
     return true;
 }
 
-/* 100ms interval blink callback.
+/* 100ms interval READER LED blink callback.
  *
  * Processes active or queued blink events.
  *
@@ -164,14 +164,15 @@ bool led_initialise(enum MODE mode) {
     gpio_set_dir(READER_LED, GPIO_OUT);
     gpio_put(READER_LED, 1);
 
-    // ... initialise LED input poll and output flash timers
+    // ... initialise LED input poll timer
     if (add_repeating_timer_us(1000, LED_callback, NULL, &LEDs.timer)) {
-        if (add_repeating_timer_ms(10, callback, NULL, &led_timer)) {
             LEDs.initialised = true;
-        } else {
-            ok = false;
-        }
     } else {
+        ok = false;
+    }
+
+    // ... initialise status LEDs output blink timer
+        if (!add_repeating_timer_ms(10, callback, NULL, &led_timer)) {
         ok = false;
     }
 

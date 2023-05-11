@@ -13,7 +13,6 @@
                - [x] Rework buzzer to not use PIO
                - [x] Rework LEDs to not use PIO
                - [x] Rework BLINK to not use PIO
-               - [ ] Doubled up LED timers????
 
          - [ ] Per connection PCBs
          - [ ] cyw43_arch_lwip_check
