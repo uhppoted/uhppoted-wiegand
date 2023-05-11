@@ -4,7 +4,7 @@ SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
 
-include ../.credentials
+include ../../.credentials
 
 clean:
 	rm -rf build
@@ -13,7 +13,6 @@ clean:
 
 format: src/*.c include/*.h
 	clang-format -i ./src/*.c
-	clang-format -i ./src/tcpd/*.c
 	clang-format -i ./include/*.h
 
 build: format

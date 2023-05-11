@@ -20,30 +20,30 @@ pico_sdk_init()
 
 add_executable(wiegand-emulator-w
   src/emulator.c
-  src/cli.c
-  src/tcpd/tcpd.c
-  ../base/src/hwconfig.c
-  ../base/src/common.c
-  ../base/src/uart.c
-  ../base/src/sys.c
-  ../base/src/read.c
-  ../base/src/write.c
-  ../base/src/led.c
-  ../base/src/buzzer.c
-  ../base/src/relays.c
-  ../base/src/TPIC6B595.c
+  ../src/cli.c
+  ../../base/src/hwconfig.c
+  ../../base/src/common.c
+  ../../base/src/uart.c
+  ../../base/src/sys.c
+  ../../base/src/read.c
+  ../../base/src/write.c
+  ../../base/src/led.c
+  ../../base/src/buzzer.c
+  ../../base/src/relays.c
+  ../../base/src/TPIC6B595.c
+  ../../base/src/tcpd.c
 )
 
-target_include_directories(wiegand-emulator-w PRIVATE ../base/include ./include)
+target_include_directories(wiegand-emulator-w PRIVATE ../../base/include ./include)
 
 pico_generate_pio_header(
     wiegand-emulator-w
-    ${CMAKE_CURRENT_LIST_DIR}/../base/src/READ.pio
+    ${CMAKE_CURRENT_LIST_DIR}/../../base/src/READ.pio
 )
 
 pico_generate_pio_header(
     wiegand-emulator-w
-    ${CMAKE_CURRENT_LIST_DIR}/../base/src/WRITE.pio
+    ${CMAKE_CURRENT_LIST_DIR}/../../base/src/WRITE.pio
 )
 
 pico_enable_stdio_usb (wiegand-emulator-w 0)

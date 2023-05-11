@@ -9,7 +9,11 @@
          - [x] Tidy up link status stuff
          - [x] Route commands/responses to/from CLI
          - [ ] Move PicoW stuff to base
-         - [ ] Reinstate full functionality with TCP/IP
+               - [ ] reference
+               - [x] emulator
+               - [x] controller
+
+         - [x] Reinstate full functionality with TCP/IP
                - [x] Read/write
                - [x] Rework buzzer to not use PIO
                - [x] Rework LEDs to not use PIO

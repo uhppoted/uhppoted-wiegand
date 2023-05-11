@@ -11,7 +11,6 @@
 #include <pico/stdlib.h>
 #include <pico/util/datetime.h>
 
-#include "tcpd/tcpd.h"
 #include <TPIC6B595.h>
 #include <buzzer.h>
 #include <common.h>
@@ -19,6 +18,7 @@
 #include <read.h>
 #include <relays.h>
 #include <sys.h>
+#include <tcpd.h>
 #include <uart.h>
 #include <write.h>
 
@@ -200,12 +200,12 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
-        // tcpd_initialise(mode);
         read_initialise(mode);
         write_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
+        tcpd_initialise(mode);
 
         if (!relay_initialise(mode)) {
             tx("failed to initialise relay monitor");

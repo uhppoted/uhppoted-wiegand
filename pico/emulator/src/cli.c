@@ -6,6 +6,7 @@
 #include "common.h"
 #include "relays.h"
 #include "sys.h"
+#include "tcpd.h"
 #include "uart.h"
 #include "write.h"
 
@@ -25,47 +26,64 @@ void on_press_button();
 void on_release_button();
 void write(uint32_t, uint32_t);
 
-/* Executes a command.
+void serial(void *context, const char *msg) {
+    puts(msg);
+}
+
+/* Executes a command from the TTY terminal.
  *
  */
 void exec(char *cmd) {
     int N = strlen(cmd);
 
     if (N > 0) {
-        if (strncasecmp(cmd, "query", 5) == 0) {
-            query();
-        } else if (strncasecmp(cmd, "open", 4) == 0) {
-            on_door_open();
-        } else if (strncasecmp(cmd, "close", 5) == 0) {
-            on_door_close();
-        } else if (strncasecmp(cmd, "press", 5) == 0) {
-            on_press_button();
-        } else if (strncasecmp(cmd, "release", 7) == 0) {
-            on_release_button();
-        } else if (strncasecmp(cmd, "reboot", 6) == 0) {
-            reboot();
-        } else if (strncasecmp(cmd, "cls", 5) == 0) {
+        if (strncasecmp(cmd, "cls", 3) == 0) {
             cls();
             return; // don't invoke clearline because that puts a >> prompt in the wrong place
-        } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
-            sys_settime(&cmd[1]);
-        } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
-            on_card_command(&cmd[1], write);
         } else {
-            help();
+            execw(cmd, serial, NULL);
         }
     }
 
     clearline();
 }
 
+void execw(char *cmd, txrx f, void *context) {
+    if (f != NULL) {
+        int N = strlen(cmd);
+
+        if (N > 0) {
+            if (strncasecmp(cmd, "query", 5) == 0) {
+                query(f, context);
+            } else if (strncasecmp(cmd, "open", 4) == 0) {
+                on_door_open();
+            } else if (strncasecmp(cmd, "close", 5) == 0) {
+                on_door_close();
+            } else if (strncasecmp(cmd, "press", 5) == 0) {
+                on_press_button();
+            } else if (strncasecmp(cmd, "release", 7) == 0) {
+                on_release_button();
+            } else if (strncasecmp(cmd, "reboot", 6) == 0) {
+                reboot();
+            } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
+                sys_settime(&cmd[1]);
+            } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
+                on_card_command(&cmd[1], write);
+            } else {
+                help(f, context);
+            }
+        }
+    }
+}
+
 /* Displays the last read/write card, if any.
  *
  */
-void query() {
+void query(txrx f, void *context) {
     char s[64];
+
     cardf(&last_card, s, sizeof(s));
-    puts(s);
+    f(context, s);
 }
 
 /* Write card command.
@@ -102,29 +120,23 @@ void reboot() {
 /* Displays a list of the supported commands.
  *
  */
-void help() {
-    static uint8_t x = 0x00;
-
-    TPIC_set(RED_LED, (x & 0x01) == 0x01);
-    TPIC_set(ORANGE_LED, (x & 0x02) == 0x02);
-    TPIC_set(YELLOW_LED, (x & 0x04) == 0x04);
-    TPIC_set(GREEN_LED, (x & 0x08) == 0x08);
-
-    x++;
-
-    tx("-----");
-    tx("Commands:");
-    tx("TYYYY-MM-DD HH:mm:ss  Set date/time");
-    tx("Wnnnnnn               Write card to Wiegand-26 interface");
-    tx("QUERY                 Display last card read/write");
-    tx("OPEN                  Opens door contact relay");
-    tx("CLOSE                 Closes door contact relay");
-    tx("PRESS                 Press pushbutton");
-    tx("RELEASE               Release pushbutton");
-    tx("CLS                   Resets the terminal");
-    tx("REBOOT                Reboot");
-    tx("?                     Display list of commands");
-    tx("-----");
+/* Displays a list of the supported commands.
+ *
+ */
+void help(txrx f, void *context) {
+    f(context, "-----");
+    f(context, "Commands:");
+    f(context, "TYYYY-MM-DD HH:mm:ss  Set date/time");
+    f(context, "Wnnnnnn               Write card to Wiegand-26 interface");
+    f(context, "QUERY                 Display last card read/write");
+    f(context, "OPEN                  Opens door contact relay");
+    f(context, "CLOSE                 Closes door contact relay");
+    f(context, "PRESS                 Press pushbutton");
+    f(context, "RELEASE               Release pushbutton");
+    f(context, "CLS                   Resets the terminal");
+    f(context, "REBOOT                Reboot");
+    f(context, "?                     Display list of commands");
+    f(context, "-----");
 }
 
 /* Card command handler.
