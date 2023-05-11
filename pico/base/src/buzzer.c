@@ -22,7 +22,7 @@ struct {
     .beep = 0,
 };
 
-/* 100ms buzzer callback.
+/* 100ms interval buzzer callback.
  *
  * Processes active or queued buzzer events.
  *
@@ -83,14 +83,17 @@ void buzzer_beep(uint8_t count) {
     if (BUZZER_STATE.initialised) {
         int32_t delay = 0x80000000 | BUZZER_DELAY;
         int32_t beep = 0x00000000 | BUZZER_BEEP;
+        int32_t interval = 0x00000000 | BUZZER_INTERVAL;
 
-        for (int i = 0; i < count; i++) {
-            if (!queue_try_add(&BUZZER_STATE.queue, &delay)) {
-                break;
-            }
+        if (queue_try_add(&BUZZER_STATE.queue, &delay)) {
+            for (int i = 0; i < count; i++) {
+                if (!queue_try_add(&BUZZER_STATE.queue, &beep)) {
+                    break;
+                }
 
-            if (!queue_try_add(&BUZZER_STATE.queue, &beep)) {
-                break;
+                if (!queue_try_add(&BUZZER_STATE.queue, &interval)) {
+                    break;
+                }
             }
         }
     }

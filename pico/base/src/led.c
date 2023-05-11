@@ -8,9 +8,9 @@
 #include "../include/uart.h"
 #include "../include/wiegand.h"
 
-#include <BLINK.pio.h>
-
-const uint32_t BLINK_DELAY = 1000;
+const uint32_t BLINK_DELAY = 500;
+const uint32_t BLINK_BLINK = 1000;
+const uint32_t BLINK_INTERVAL = 250;
 
 repeating_timer_t led_timer;
 
@@ -33,13 +33,19 @@ struct {
     .initialised = false,
 };
 
-/* struct for communicating between led_blinks API function and blinki
- * alarm handler. Allocated and initialised in led_blinks and free'd
- * in blinki.
+/* struct for blink state
+ *
  */
-typedef struct blinks {
-    uint32_t count;
-} blinks;
+struct {
+    bool initialised;
+    int32_t blink;
+    int32_t delay;
+    queue_t queue;
+    repeating_timer_t timer;
+} BLINK_STATE = {
+    .initialised = false,
+    .blink = 0,
+};
 
 /* 1ms LED callback.
  *
@@ -73,20 +79,33 @@ bool LED_callback(repeating_timer_t *rt) {
     return true;
 }
 
-/* Alarm handler for 'end of blink start delay'. Queues up 'count'
- * reader LED blinks to the BLINK FIFO..
+/* 100ms interval blink callback.
+ *
+ * Processes active or queued blink events.
  *
  */
-int64_t blinki(alarm_id_t id, void *data) {
-    uint32_t count = ((blinks *)data)->count;
+bool blink_callback(repeating_timer_t *rt) {
+    uint32_t blink;
 
-    free(data);
-
-    while (count-- > 0) {
-        blink_program_blink(PIO_BLINK, SM_BLINK);
+    if (BLINK_STATE.blink > 0) {
+        gpio_put(READER_LED, 0);
+        BLINK_STATE.blink -= 100;
+    } else if (BLINK_STATE.delay > 0) {
+        gpio_put(READER_LED, 1);
+        BLINK_STATE.delay -= 100;
+    } else if (queue_try_remove(&BLINK_STATE.queue, &blink)) {
+        if ((blink & 0x80000000) == 0x80000000) {
+            BLINK_STATE.delay = blink & 0x00ffffff;
+            gpio_put(READER_LED, 1);
+        } else {
+            BLINK_STATE.blink = blink & 0x00ffffff;
+            gpio_put(READER_LED, 0);
+        }
+    } else {
+        gpio_put(READER_LED, 1);
     }
 
-    return 0;
+    return true;
 }
 
 /* Alarm handler for 'end of blink start delay'. Queues up 'count'
@@ -141,24 +160,31 @@ bool led_initialise(enum MODE mode) {
     gpio_set_dir(WRITER_LED, GPIO_IN);
     gpio_pull_up(WRITER_LED);
 
-    // ... initialise LED input poll timer
-    if (!add_repeating_timer_us(1000, LED_callback, NULL, &LEDs.timer)) {
+    gpio_init(READER_LED);
+    gpio_set_dir(READER_LED, GPIO_OUT);
+    gpio_put(READER_LED, 1);
+
+    // ... initialise LED input poll and output flash timers
+    if (add_repeating_timer_us(1000, LED_callback, NULL, &LEDs.timer)) {
+        if (add_repeating_timer_ms(10, callback, NULL, &led_timer)) {
+            LEDs.initialised = true;
+        } else {
+            ok = false;
+        }
+    } else {
         ok = false;
     }
 
-    // ... initialise LED output stuff
+    // ... initialise READER LED
     if ((mode == READER) || (mode == CONTROLLER)) {
-        uint offset = pio_add_program(PIO_BLINK, &blink_program);
+        queue_init(&BLINK_STATE.queue, sizeof(int32_t), 16);
 
-        blink_program_init(PIO_BLINK, SM_BLINK, offset, READER_LED);
+        if (add_repeating_timer_ms(100, blink_callback, NULL, &BLINK_STATE.timer)) {
+            BLINK_STATE.initialised = true;
+        } else {
+            ok = false;
+        }
     }
-
-    // ... create repeating timer to manage blinking LEDs
-    if (!add_repeating_timer_ms(10, callback, NULL, &led_timer)) {
-        ok = false;
-    }
-
-    LEDs.initialised = ok;
 
     return ok;
 }
@@ -185,20 +211,29 @@ void led_event(uint32_t v) {
     }
 }
 
-/* Blink the reader/writer LED after a delay. The reader/writer LED is managed
- * by a PIO pin not by the TPIC6B595.
+/* Blink the reader LED after a delay. The reader LED is managed by a PIO pin
+ * not by the TPIC6B595.
  *
- * NOTE: because the PIO FIFO is only 8 deep, the maximum number of blinks
- *       is 8. Could probably get complicated about this but no reason to
- *       at the moment.
+ * NOTE: the blink queue is 16 deep so the maximum number of blinks is 8
+ *       (8 beep + 8 intervals).
  */
 void led_blink(uint8_t count) {
-    if (LEDs.initialised) {
-        struct blinks *b = malloc(sizeof(struct blinks));
+    if (BLINK_STATE.initialised) {
+        int32_t delay = 0x80000000 | BLINK_DELAY;
+        int32_t blink = 0x00000000 | BLINK_BLINK;
+        int32_t interval = 0x00000000 | BLINK_INTERVAL;
 
-        b->count = count > 8 ? 8 : count;
+        if (queue_try_add(&BLINK_STATE.queue, &delay)) {
+            for (int i = 0; i < count; i++) {
+                if (!queue_try_add(&BLINK_STATE.queue, &delay)) {
+                    break;
+                }
 
-        add_alarm_in_ms(BLINK_DELAY, blinki, (void *)b, true);
+                if (!queue_try_add(&BLINK_STATE.queue, &interval)) {
+                    break;
+                }
+            }
+        }
     }
 }
 

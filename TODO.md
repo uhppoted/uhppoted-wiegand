@@ -12,7 +12,8 @@
                - [x] Read/write
                - [x] Rework buzzer to not use PIO
                - [x] Rework LEDs to not use PIO
-               - [ ] Rework BLINK to not use PIO
+               - [x] Rework BLINK to not use PIO
+               - [ ] Doubled up LED timers????
 
          - [ ] Per connection PCBs
          - [ ] cyw43_arch_lwip_check
@@ -26,6 +27,7 @@
          - [ ] Multiple connected clients
          - (?) Require login
          - (?) Log to connected clients
+         - [ ] Move PicoW stuff to base
 
          - https://www.nongnu.org/lwip/2_1_x/index.html
          - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server
