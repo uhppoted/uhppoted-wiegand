@@ -19,6 +19,7 @@ build: format
 build-all: clean build
 	cd reference        && make clean && make build
 	cd reference/usb    && make clean && make build
+	cd reference/picow  && make clean && make build
 	cd emulator         && make clean && make build
 	cd emulator/usb     && make clean && make build
 	cd emulator/picow   && make clean && make build

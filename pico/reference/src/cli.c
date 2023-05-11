@@ -5,22 +5,23 @@
 #include "f_util.h"
 #include "hardware/rtc.h"
 
-#include "../include/TPIC6B595.h"
-#include "../include/acl.h"
-#include "../include/buzzer.h"
-#include "../include/common.h"
-#include "../include/led.h"
-#include "../include/relays.h"
-#include "../include/sdcard.h"
-#include "../include/sys.h"
-#include "../include/uart.h"
-#include "../include/write.h"
+#include "TPIC6B595.h"
+#include "acl.h"
+#include "buzzer.h"
+#include "common.h"
+#include "led.h"
+#include "relays.h"
+#include "sdcard.h"
+#include "sys.h"
+#include "tcpd.h"
+#include "uart.h"
+#include "write.h"
 
 typedef void (*handler)(uint32_t, uint32_t);
 
-void query();
+void help(txrx f, void *context);
+void query(txrx f, void *context);
 void reboot();
-void help();
 
 void on_card_command(char *cmd, handler fn);
 void on_door_unlock();
@@ -39,67 +40,87 @@ void format();
 void read_acl();
 void write_acl();
 
-/* Executes a command.
+void serial(void *context, const char *msg) {
+    puts(msg);
+}
+
+/* Executes a command from the TTY terminal.
  *
  */
 void exec(char *cmd) {
     int N = strlen(cmd);
 
     if (N > 0) {
-        if (strncasecmp(cmd, "reboot", 6) == 0) {
-            reboot();
-        } else if (strncasecmp(cmd, "cls", 5) == 0) {
+        if (strncasecmp(cmd, "cls", 3) == 0) {
             cls();
             return; // don't invoke clearline because that puts a >> prompt in the wrong place
-        } else if (strncasecmp(cmd, "blink", 5) == 0) {
-            led_blink(5);
-        } else if (strncasecmp(cmd, "unlock", 6) == 0) {
-            on_door_unlock();
-        } else if (strncasecmp(cmd, "query", 5) == 0) {
-            query();
-        } else if (strncasecmp(cmd, "open", 4) == 0) {
-            on_door_open();
-        } else if (strncasecmp(cmd, "close", 5) == 0) {
-            on_door_close();
-        } else if (strncasecmp(cmd, "press", 5) == 0) {
-            on_press_button();
-        } else if (strncasecmp(cmd, "release", 7) == 0) {
-            on_release_button();
-        } else if (strncasecmp(cmd, "grant ", 6) == 0) {
-            on_card_command(&cmd[6], grant);
-        } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
-            on_card_command(&cmd[7], revoke);
-        } else if (strncasecmp(cmd, "read acl", 8) == 0) {
-            read_acl();
-        } else if (strncasecmp(cmd, "write acl", 9) == 0) {
-            write_acl();
-        } else if (strncasecmp(cmd, "list acl", 8) == 0) {
-            list_acl();
-        } else if (strncasecmp(cmd, "mount", 5) == 0) {
-            mount();
-        } else if (strncasecmp(cmd, "unmount", 7) == 0) {
-            unmount();
-        } else if (strncasecmp(cmd, "format", 6) == 0) {
-            format();
-        } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
-            on_card_command(&cmd[1], write);
-        } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
-            sys_settime(&cmd[1]);
         } else {
-            help();
+            execw(cmd, serial, NULL);
         }
     }
 
     clearline();
 }
 
+/* Executes a command.
+ *
+ */
+void execw(char *cmd, txrx f, void *context) {
+    if (f != NULL) {
+        int N = strlen(cmd);
+
+        if (N > 0) {
+            if (strncasecmp(cmd, "reboot", 6) == 0) {
+                reboot();
+            } else if (strncasecmp(cmd, "blink", 5) == 0) {
+                led_blink(5);
+            } else if (strncasecmp(cmd, "unlock", 6) == 0) {
+                on_door_unlock();
+            } else if (strncasecmp(cmd, "query", 5) == 0) {
+                query(f, context);
+            } else if (strncasecmp(cmd, "open", 4) == 0) {
+                on_door_open();
+            } else if (strncasecmp(cmd, "close", 5) == 0) {
+                on_door_close();
+            } else if (strncasecmp(cmd, "press", 5) == 0) {
+                on_press_button();
+            } else if (strncasecmp(cmd, "release", 7) == 0) {
+                on_release_button();
+            } else if (strncasecmp(cmd, "grant ", 6) == 0) {
+                on_card_command(&cmd[6], grant);
+            } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
+                on_card_command(&cmd[7], revoke);
+            } else if (strncasecmp(cmd, "read acl", 8) == 0) {
+                read_acl();
+            } else if (strncasecmp(cmd, "write acl", 9) == 0) {
+                write_acl();
+            } else if (strncasecmp(cmd, "list acl", 8) == 0) {
+                list_acl();
+            } else if (strncasecmp(cmd, "mount", 5) == 0) {
+                mount();
+            } else if (strncasecmp(cmd, "unmount", 7) == 0) {
+                unmount();
+            } else if (strncasecmp(cmd, "format", 6) == 0) {
+                format();
+            } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
+                on_card_command(&cmd[1], write);
+            } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
+                sys_settime(&cmd[1]);
+            } else {
+                help(f, context);
+            }
+        }
+    }
+}
+
 /* Displays the last read/write card, if any.
  *
  */
-void query() {
+void query(txrx f, void *context) {
     char s[64];
+
     cardf(&last_card, s, sizeof(s));
-    puts(s);
+    f(context, s);
 }
 
 /* Write card command.
@@ -338,43 +359,34 @@ void reboot() {
 /* Displays a list of the supported commands.
  *
  */
-void help() {
-    static uint8_t x = 0x00;
-
-    TPIC_set(RED_LED, (x & 0x01) == 0x01);
-    TPIC_set(ORANGE_LED, (x & 0x02) == 0x02);
-    TPIC_set(YELLOW_LED, (x & 0x04) == 0x04);
-    TPIC_set(GREEN_LED, (x & 0x08) == 0x08);
-
-    x++;
-
-    tx("-----");
-    tx("Commands:");
-    tx("TYYYY-MM-DD HH:mm:ss  Set date/time");
-    tx("");
-    tx("Wnnnnnn               Write card to Wiegand-26 interface");
-    tx("OPEN                  Opens door contact relay");
-    tx("CLOSE                 Closes door contact relay");
-    tx("PRESS                 Press pushbutton");
-    tx("RELEASE               Release pushbutton");
-    tx("");
-    tx("GRANT nnnnnn          Grant card access rights");
-    tx("REVOKE nnnnnn         Revoke card access rights");
-    tx("READ ACL              Read ACL from SD card");
-    tx("WRITE ACL             Write ACL to SD card");
-    tx("LIST ACL              Lists the cards in the ACL");
-    tx("QUERY                 Display last card read/write");
-    tx("");
-    tx("MOUNT                 Mount SD card");
-    tx("UNMOUNT               Unmount SD card");
-    tx("FORMAT                Format SD card");
-    tx("");
-    tx("UNLOCK                Unlocks door");
-    tx("BLINK                 Blinks reader LED 5 times");
-    tx("CLS                   Resets the terminal");
-    tx("REBOOT                Reboot");
-    tx("?                     Display list of commands");
-    tx("-----");
+void help(txrx f, void *context) {
+    f(context, "-----");
+    f(context, "Commands:");
+    f(context, "TYYYY-MM-DD HH:mm:ss  Set date/time");
+    f(context, "");
+    f(context, "Wnnnnnn               Write card to Wiegand-26 interface");
+    f(context, "OPEN                  Opens door contact relay");
+    f(context, "CLOSE                 Closes door contact relay");
+    f(context, "PRESS                 Press pushbutton");
+    f(context, "RELEASE               Release pushbutton");
+    f(context, "");
+    f(context, "GRANT nnnnnn          Grant card access rights");
+    f(context, "REVOKE nnnnnn         Revoke card access rights");
+    f(context, "READ ACL              Read ACL from SD card");
+    f(context, "WRITE ACL             Write ACL to SD card");
+    f(context, "LIST ACL              Lists the cards in the ACL");
+    f(context, "QUERY                 Display last card read/write");
+    f(context, "");
+    f(context, "MOUNT                 Mount SD card");
+    f(context, "UNMOUNT               Unmount SD card");
+    f(context, "FORMAT                Format SD card");
+    f(context, "");
+    f(context, "UNLOCK                Unlocks door");
+    f(context, "BLINK                 Blinks reader LED 5 times");
+    f(context, "CLS                   Resets the terminal");
+    f(context, "REBOOT                Reboot");
+    f(context, "?                     Display list of commands");
+    f(context, "-----");
 }
 
 /* Card command handler.

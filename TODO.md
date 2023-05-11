@@ -8,8 +8,8 @@
          - [x] Retry on connect failed
          - [x] Tidy up link status stuff
          - [x] Route commands/responses to/from CLI
-         - [ ] Move PicoW stuff to base
-               - [ ] reference
+         - [x] Move PicoW stuff to base
+               - [x] reference
                - [x] emulator
                - [x] controller
 

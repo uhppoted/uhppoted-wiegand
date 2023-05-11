@@ -2,27 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "hardware/gpio.h"
-#include "hardware/rtc.h"
-#include "hardware/watchdog.h"
+#include <hardware/gpio.h>
+#include <hardware/rtc.h>
+#include <hardware/watchdog.h>
 
-#include "pico/binary_info.h"
-#include "pico/multicore.h"
-#include "pico/stdlib.h"
-#include "pico/util/datetime.h"
+#include <pico/binary_info.h>
+#include <pico/multicore.h>
+#include <pico/stdlib.h>
+#include <pico/util/datetime.h>
 
-#include "TPIC6B595.h"
-#include "acl.h"
-#include "buzzer.h"
-#include "common.h"
-#include "led.h"
-#include "read.h"
-#include "relays.h"
-#include "sdcard.h"
-#include "sys.h"
-#include "uart.h"
-#include "wiegand.h"
-#include "write.h"
+#include <TPIC6B595.h>
+#include <acl.h>
+#include <buzzer.h>
+#include <common.h>
+#include <led.h>
+#include <read.h>
+#include <relays.h>
+#include <sdcard.h>
+#include <sys.h>
+#include <tcpd.h>
+#include <uart.h>
+#include <wiegand.h>
+#include <write.h>
 
 #define VERSION "v0.8.5"
 
@@ -40,6 +41,7 @@ const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
+const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -72,7 +74,7 @@ int main() {
     rtc_init();
     sleep_us(64);
 
-    // ... initialise FIFO, UART and timers
+    // ... initialise FIFO, USB and timers
     queue_init(&queue, sizeof(uint32_t), 64);
     setup_uart();
     alarm_pool_init_default();
@@ -149,6 +151,10 @@ int main() {
             pushbutton_event(v & 0x0fffffff);
         }
 
+        if ((v & MSG) == MSG_TCPD_POLL) {
+            tcpd_poll();
+        }
+
         if ((v & MSG) == MSG_DEBUG) {
             char s[64];
             snprintf(s, sizeof(s), "DEBUG %d", v & 0x0fffffff);
@@ -200,7 +206,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION");
+        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION (WIFI)");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = READER;
@@ -216,6 +222,7 @@ void sysinit() {
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
+        tcpd_initialise(mode);
 
         if (!relay_initialise(mode)) {
             tx("failed to initialise relay monitor");
