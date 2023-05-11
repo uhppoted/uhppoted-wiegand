@@ -166,13 +166,13 @@ bool led_initialise(enum MODE mode) {
 
     // ... initialise LED input poll timer
     if (add_repeating_timer_us(1000, LED_callback, NULL, &LEDs.timer)) {
-            LEDs.initialised = true;
+        LEDs.initialised = true;
     } else {
         ok = false;
     }
 
     // ... initialise status LEDs output blink timer
-        if (!add_repeating_timer_ms(10, callback, NULL, &led_timer)) {
+    if (!add_repeating_timer_ms(10, callback, NULL, &led_timer)) {
         ok = false;
     }
 

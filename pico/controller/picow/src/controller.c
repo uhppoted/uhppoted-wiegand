@@ -20,11 +20,11 @@
 #include <relays.h>
 #include <sdcard.h>
 #include <sys.h>
-#include <uart.h>
-#include <usb.h>
+#include <tcpd.h>
 #include <wiegand.h>
 #include <write.h>
 
+#include "../../include/cli.h"
 #include "../include/controller.h"
 
 #define VERSION "v0.8.5"
@@ -43,6 +43,7 @@ const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
+const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -63,7 +64,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Wiegand Controller (USB)"));
+    bi_decl(bi_program_description("PicoW-Wiegand Controller"));
     bi_decl(bi_program_version_string(VERSION));
     bi_decl(bi_1pin_with_name(ONBOARD_LED, "on-board LED"));
 
@@ -77,7 +78,7 @@ int main() {
 
     // ... initialise FIFO, UART and timers
     queue_init(&queue, sizeof(uint32_t), 64);
-    setup_usb();
+    setup_uart();
     alarm_pool_init_default();
 
     // ... initialise reader/emulator
@@ -152,6 +153,10 @@ int main() {
             pushbutton_event(v & 0x0fffffff);
         }
 
+        if ((v & MSG) == MSG_TCPD_POLL) {
+            tcpd_poll();
+        }
+
         if ((v & MSG) == MSG_DEBUG) {
             char s[64];
             snprintf(s, sizeof(s), "DEBUG %d", v & 0x0fffffff);
@@ -203,7 +208,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND CONTROLLER (USB)");
+        puts("                     *** WIEGAND CONTROLLER (WIFI)");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = CONTROLLER;
@@ -216,6 +221,7 @@ void sysinit() {
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
+        tcpd_initialise(mode);
 
         if (!relay_initialise(mode)) {
             tx("failed to initialise relay monitor");

@@ -8,6 +8,7 @@
          - [x] Retry on connect failed
          - [x] Tidy up link status stuff
          - [x] Route commands/responses to/from CLI
+         - [ ] Move PicoW stuff to base
          - [ ] Reinstate full functionality with TCP/IP
                - [x] Read/write
                - [x] Rework buzzer to not use PIO
@@ -26,7 +27,6 @@
          - [ ] Multiple connected clients
          - (?) Require login
          - (?) Log to connected clients
-         - [ ] Move PicoW stuff to base
 
          - https://www.nongnu.org/lwip/2_1_x/index.html
          - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server

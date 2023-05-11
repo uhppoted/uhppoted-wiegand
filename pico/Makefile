@@ -17,14 +17,15 @@ build: format
 	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
 
 build-all: clean build
-	cd reference      && make clean && make build
-	cd reference/usb  && make clean && make build
-	cd emulator       && make clean && make build
-	cd emulator/usb   && make clean && make build
-	cd emulator/usb   && make clean && make build
-	cd controller     && make clean && make build
-	cd controller/usb && make clean && make build
-	cd emulator-w     && make clean && make build
+	cd reference        && make clean && make build
+	cd reference/usb    && make clean && make build
+	cd emulator         && make clean && make build
+	cd emulator/usb     && make clean && make build
+	cd emulator/usb     && make clean && make build
+	cd controller       && make clean && make build
+	cd controller/usb   && make clean && make build
+	cd controller/picow && make clean && make build
+	cd emulator-w       && make clean && make build
 
 install: build
 	picotool load build/wiegand.uf2
