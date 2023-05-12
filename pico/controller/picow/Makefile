@@ -12,6 +12,7 @@ clean:
 	export PICO_SDK_PATH=$(SDK) && cd build && cmake -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" ..
 
 format: src/*.c include/*.h
+	clang-format -i ../../base/src/*.c
 	clang-format -i ./src/*.c
 	clang-format -i ./include/*.h
 

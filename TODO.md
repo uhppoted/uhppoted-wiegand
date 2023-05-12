@@ -9,28 +9,22 @@
          - [x] Tidy up link status stuff
          - [x] Route commands/responses to/from CLI
          - [x] Move PicoW stuff to base
-               - [x] reference
-               - [x] emulator
-               - [x] controller
-
          - [x] Reinstate full functionality with TCP/IP
-               - [x] Read/write
-               - [x] Rework buzzer to not use PIO
-               - [x] Rework LEDs to not use PIO
-               - [x] Rework BLINK to not use PIO
-
          - [ ] Per connection PCBs
+         - [ ] Detect connection closed
+         - [ ] Close idle connections
+         - [ ] Close connection on accept error
+         - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
          - [ ] Replace tcpd_result
          - [ ] Replace tcpd_err
          - [ ] Reduce poll interval
-         - [ ] Detect connection closed
-         - [ ] Close idle connections
-         - [ ] Configurable port 
+         - [ ] Configurable ports 
          - [ ] Configurable connect timeout
          - [ ] Multiple connected clients
          - (?) Require login
-         - (?) Log to connected clients
+         - (?) Logging client/port
+         - (?) (optionally) log to connected clients
 
          - https://www.nongnu.org/lwip/2_1_x/index.html
          - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server

@@ -57,6 +57,7 @@ err_t tcpd_close();
 err_t tcpd_accept(void *, struct tcp_pcb *, err_t);
 err_t tcpd_recv(void *, struct tcp_pcb *, struct pbuf *, err_t);
 err_t tcpd_send(void *, struct tcp_pcb *, const char *);
+err_t tcpd_sent(void *, struct tcp_pcb *, u16_t);
 void tcpd_err(void *, err_t);
 err_t tcpd_result(int);
 void tcpd_log(const char *);
@@ -266,7 +267,7 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client_pcb, err_t err) {
 
     TCP_STATE.client_pcb = client_pcb;
     tcp_arg(client_pcb, &TCP_STATE);
-    // tcp_sent(client_pcb, tcp_server_sent);
+    tcp_sent(client_pcb, tcpd_sent);
     tcp_recv(client_pcb, tcpd_recv);
     // tcp_poll(client_pcb, tcp_server_poll, POLL_TIME_S * 2);
     tcp_err(client_pcb, tcpd_err);
@@ -372,6 +373,21 @@ err_t tcpd_send(void *arg, struct tcp_pcb *tpcb, const char *msg) {
         tcpd_log(s);
 
         return tcpd_result(-1);
+    }
+
+    return ERR_OK;
+}
+
+// TODO dequeue next message
+err_t tcpd_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
+    char s[64];
+    snprintf(s, sizeof(s), "SENT %d BYTES", len);
+    tcpd_log(s);
+
+    // TCP_STATE *state = (TCP_STATE *) arg;
+    TCP_STATE.sent_len += len;
+
+    if (TCP_STATE.sent_len >= TCP_BUFFER_SIZE) {
     }
 
     return ERR_OK;
