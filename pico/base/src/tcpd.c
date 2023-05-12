@@ -8,9 +8,11 @@
 #include "tcpd.h"
 
 #define TCP_BUFFER_SIZE 2048
-#define TCP_PORT 4242
-#define CR 13
-#define LF 10
+
+const uint16_t TCP_PORT = 4242;
+const uint8_t TCP_POLL_INTERVAL = 5;
+const uint8_t CR = 13;
+const uint8_t LF = 10;
 
 enum TCPD_STATE {
     TCPD_UNKNOWN = 0,
@@ -49,7 +51,7 @@ struct {
     uint8_t buffer_recv[TCP_BUFFER_SIZE];
     int sent_len;
     int recv_len;
-    int run_count;
+    int idle_count;
 } TCP_STATE;
 
 void tcpd_listen();
@@ -58,6 +60,7 @@ err_t tcpd_accept(void *, struct tcp_pcb *, err_t);
 err_t tcpd_recv(void *, struct tcp_pcb *, struct pbuf *, err_t);
 err_t tcpd_send(void *, struct tcp_pcb *, const char *);
 err_t tcpd_sent(void *, struct tcp_pcb *, u16_t);
+err_t tcpd_monitor(void *arg, struct tcp_pcb *tpcb);
 void tcpd_err(void *, err_t);
 err_t tcpd_result(int);
 void tcpd_log(const char *);
@@ -253,10 +256,12 @@ void tcpd_listen() {
     TCPD.listening = true;
 }
 
-err_t tcpd_accept(void *arg, struct tcp_pcb *client_pcb, err_t err) {
-    tcpd_log("INCOMING");
+err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
+    char s[64];
+    snprintf(s, sizeof(s), "INCOMING %s", ip4addr_ntoa(&client->remote_ip));
+    tcpd_log(s);
 
-    if (err != ERR_OK || client_pcb == NULL) {
+    if (err != ERR_OK || client == NULL) {
         tcpd_log("ACCEPT ERROR");
         tcpd_result(err);
         // FIXME close connection ?
@@ -265,14 +270,14 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client_pcb, err_t err) {
 
     tcpd_log("CLIENT CONNECTED");
 
-    TCP_STATE.client_pcb = client_pcb;
-    tcp_arg(client_pcb, &TCP_STATE);
-    tcp_sent(client_pcb, tcpd_sent);
-    tcp_recv(client_pcb, tcpd_recv);
-    // tcp_poll(client_pcb, tcp_server_poll, POLL_TIME_S * 2);
-    tcp_err(client_pcb, tcpd_err);
+    TCP_STATE.client_pcb = client;
+    TCP_STATE.idle_count = 0;
 
-    // return tcp_server_send_data(arg, state->client_pcb);
+    tcp_arg(client, &TCP_STATE);
+    tcp_sent(client, tcpd_sent);
+    tcp_recv(client, tcpd_recv);
+    tcp_poll(client, tcpd_monitor, TCP_POLL_INTERVAL * 2);
+    tcp_err(client, tcpd_err);
 
     return ERR_OK;
 }
@@ -391,6 +396,36 @@ err_t tcpd_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
     }
 
     return ERR_OK;
+}
+
+err_t tcpd_monitor(void *arg, struct tcp_pcb *pcb) {
+    err_t err = ERR_OK;
+
+    char s[64];
+    snprintf(s, sizeof(s), "MONITOR CLIENT %s", ip4addr_ntoa(&pcb->remote_ip));
+    tcpd_log(s);
+
+    if (++TCP_STATE.idle_count > 12) {
+        snprintf(s, sizeof(s), "MONITOR CLIENT %s IDLE", ip4addr_ntoa(&pcb->remote_ip));
+        tcpd_log(s);
+
+        tcp_arg(TCP_STATE.client_pcb, NULL);
+        tcp_poll(TCP_STATE.client_pcb, NULL, 0);
+        tcp_sent(TCP_STATE.client_pcb, NULL);
+        tcp_recv(TCP_STATE.client_pcb, NULL);
+        tcp_err(TCP_STATE.client_pcb, NULL);
+
+        if ((err = tcp_close(pcb)) != ERR_OK) {
+            snprintf(s, sizeof(s), "CLOSE ERROR %d, calling abort", err);
+            tcpd_log(s);
+            tcp_abort(pcb);
+            err = ERR_ABRT;
+        }
+
+        TCP_STATE.client_pcb = NULL;
+    }
+
+    return err;
 }
 
 void tcpd_err(void *arg, err_t err) {

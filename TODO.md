@@ -10,9 +10,9 @@
          - [x] Route commands/responses to/from CLI
          - [x] Move PicoW stuff to base
          - [x] Reinstate full functionality with TCP/IP
-         - [ ] Per connection PCBs
+         - [x] Close idle connections
          - [ ] Detect connection closed
-         - [ ] Close idle connections
+         - [ ] Per connection PCBs
          - [ ] Close connection on accept error
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
