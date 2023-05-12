@@ -258,7 +258,7 @@ void tcpd_listen() {
 
 err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
     char s[64];
-    snprintf(s, sizeof(s), "INCOMING %s", ip4addr_ntoa(&client->remote_ip));
+    snprintf(s, sizeof(s), "%s  INCOMING", ip4addr_ntoa(&client->remote_ip));
     tcpd_log(s);
 
     if (err != ERR_OK || client == NULL) {
@@ -268,7 +268,8 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
         return ERR_VAL;
     }
 
-    tcpd_log("CLIENT CONNECTED");
+    snprintf(s, sizeof(s), "%s  CONNECTED", ip4addr_ntoa(&client->remote_ip));
+    tcpd_log(s);
 
     TCP_STATE.client_pcb = client;
     TCP_STATE.idle_count = 0;
@@ -314,15 +315,26 @@ err_t tcpd_close() {
     return err;
 }
 
-err_t tcpd_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
-    if (!p) {
-        return tcpd_result(-1);
+err_t tcpd_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
+    char s[64];
+
+    // ... closed ?
+    if (p == NULL) {
+        snprintf(s, sizeof(s), "%s  CLOSED", ip4addr_ntoa(&pcb->remote_ip));
+        tcpd_log(s);
+
+        tcp_arg(TCP_STATE.client_pcb, NULL);
+        tcp_poll(TCP_STATE.client_pcb, NULL, 0);
+        tcp_sent(TCP_STATE.client_pcb, NULL);
+        tcp_recv(TCP_STATE.client_pcb, NULL);
+        tcp_err(TCP_STATE.client_pcb, NULL);
+
+        return ERR_OK;
     }
 
     // cyw43_arch_lwip_check();
 
     if (p->tot_len > 0) {
-        char s[64];
         snprintf(s, sizeof(s), "WIFI RECV L:%d N:%d err:%d", p->tot_len, TCP_STATE.recv_len, err);
         tcpd_log(s);
 
@@ -330,7 +342,7 @@ err_t tcpd_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
         TCP_STATE.recv_len += pbuf_copy_partial(p,
                                                 TCP_STATE.buffer_recv + TCP_STATE.recv_len,
                                                 p->tot_len > remaining ? remaining : p->tot_len, 0);
-        tcp_recved(tpcb, p->tot_len);
+        tcp_recved(pcb, p->tot_len);
     }
 
     pbuf_free(p);
@@ -377,6 +389,7 @@ err_t tcpd_send(void *arg, struct tcp_pcb *tpcb, const char *msg) {
         snprintf(s, sizeof(s), "SEND ERROR %d", err);
         tcpd_log(s);
 
+        tcpd_log("OOOOOPS/2");
         return tcpd_result(-1);
     }
 
@@ -384,9 +397,9 @@ err_t tcpd_send(void *arg, struct tcp_pcb *tpcb, const char *msg) {
 }
 
 // TODO dequeue next message
-err_t tcpd_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
+err_t tcpd_sent(void *arg, struct tcp_pcb *pcb, u16_t len) {
     char s[64];
-    snprintf(s, sizeof(s), "SENT %d BYTES", len);
+    snprintf(s, sizeof(s), "%s  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), len);
     tcpd_log(s);
 
     // TCP_STATE *state = (TCP_STATE *) arg;
@@ -399,14 +412,11 @@ err_t tcpd_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
 }
 
 err_t tcpd_monitor(void *arg, struct tcp_pcb *pcb) {
+    char s[64];
     err_t err = ERR_OK;
 
-    char s[64];
-    snprintf(s, sizeof(s), "MONITOR CLIENT %s", ip4addr_ntoa(&pcb->remote_ip));
-    tcpd_log(s);
-
     if (++TCP_STATE.idle_count > 12) {
-        snprintf(s, sizeof(s), "MONITOR CLIENT %s IDLE", ip4addr_ntoa(&pcb->remote_ip));
+        snprintf(s, sizeof(s), "%s  IDLE", ip4addr_ntoa(&pcb->remote_ip));
         tcpd_log(s);
 
         tcp_arg(TCP_STATE.client_pcb, NULL);
@@ -416,13 +426,16 @@ err_t tcpd_monitor(void *arg, struct tcp_pcb *pcb) {
         tcp_err(TCP_STATE.client_pcb, NULL);
 
         if ((err = tcp_close(pcb)) != ERR_OK) {
-            snprintf(s, sizeof(s), "CLOSE ERROR %d, calling abort", err);
+            snprintf(s, sizeof(s), "%s  CLOSE ERROR %d", ip4addr_ntoa(&pcb->remote_ip), err);
             tcpd_log(s);
             tcp_abort(pcb);
             err = ERR_ABRT;
         }
 
         TCP_STATE.client_pcb = NULL;
+    } else {
+        snprintf(s, sizeof(s), "%s  OK", ip4addr_ntoa(&pcb->remote_ip));
+        tcpd_log(s);
     }
 
     return err;

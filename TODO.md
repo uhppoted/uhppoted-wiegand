@@ -11,17 +11,18 @@
          - [x] Move PicoW stuff to base
          - [x] Reinstate full functionality with TCP/IP
          - [x] Close idle connections
-         - [ ] Detect connection closed
-         - [ ] Per connection PCBs
+         - [x] Detect connection closed
+         - [ ] Multiple client connections
          - [ ] Close connection on accept error
+         - [ ] Restart server occasionally on idle 
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
-         - [ ] Replace tcpd_result
+         - [ ] Remove tcpd_result
          - [ ] Replace tcpd_err
          - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout
-         - [ ] Multiple connected clients
+         - [ ] Configurable client idle timeout
          - (?) Require login
          - (?) Logging client/port
          - (?) (optionally) log to connected clients
