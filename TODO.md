@@ -13,8 +13,11 @@
          - [x] Close idle connections
          - [x] Detect connection closed
          - [x] Close connection on accept error
+         - [x] Remove tcpd_result
          - [ ] Multiple client connections
                - [x] Per connection state
+               - [ ] Check malloc return on connect
+               - (?) Fixed array rather than malloc
                - [ ] Free client connections on shutdown
                - [ ] Test shutdown!!!!!
 ```
@@ -23,8 +26,6 @@
          - [ ] Restart server occasionally on server idle 
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
-         - [ ] Remove tcpd_result
-         - [ ] Replace tcpd_err
          - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout

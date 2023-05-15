@@ -22,7 +22,7 @@ enum TCPD_STATE {
     TCPD_FATAL = 4,
 };
 
-/* struct for TCPD state
+/* Internal state for the TCP server.
  *
  */
 struct {
@@ -30,7 +30,8 @@ struct {
     enum TCPD_STATE state;
     bool initialised;
     bool listening;
-
+    struct tcp_pcb *server;
+    struct tcp_pcb *clients;
 } TCPD = {
     .link = -100000,
     .state = TCPD_UNKNOWN,
@@ -39,18 +40,6 @@ struct {
 };
 
 const uint32_t TCPD_POLL = 1000;
-
-/* Internal state for the TCP server.
- *
- */
-struct {
-    struct tcp_pcb *server_pcb;
-    struct tcp_pcb *client_pcb;
-    uint8_t buffer_sent[TCP_BUFFER_SIZE];
-    uint8_t buffer_recv[TCP_BUFFER_SIZE];
-    int sent_len;
-    int recv_len;
-} TCP_STATE;
 
 /* State for a client connection.
  *
@@ -75,7 +64,6 @@ err_t tcpd_send(void *, struct tcp_pcb *, const char *);
 err_t tcpd_sent(void *, struct tcp_pcb *, u16_t);
 err_t tcpd_monitor(void *arg, struct tcp_pcb *tpcb);
 void tcpd_err(void *, err_t);
-err_t tcpd_result(int);
 void tcpd_log(const char *);
 
 void reply(void *context, const char *msg) {
@@ -258,16 +246,16 @@ void tcpd_listen() {
         return;
     }
 
-    TCP_STATE.server_pcb = tcp_listen_with_backlog(pcb, 1);
-    if (!TCP_STATE.server_pcb) {
+    TCPD.server = tcp_listen_with_backlog(pcb, 1);
+    if (!TCPD.server) {
         snprintf(s, sizeof(s), "LISTEN ERROR (%d)", err);
         tcpd_log(s);
         tcp_close(pcb);
         return;
     }
 
-    tcp_arg(TCP_STATE.server_pcb, &TCP_STATE);
-    tcp_accept(TCP_STATE.server_pcb, tcpd_accept);
+    tcp_arg(TCPD.server, &TCPD);
+    tcp_accept(TCPD.server, tcpd_accept);
 
     tcpd_log("LISTENING");
     TCPD.listening = true;
@@ -302,7 +290,7 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
 
     connection *conn = (connection *)malloc(sizeof(connection));
 
-    conn->server = TCP_STATE.server_pcb;
+    conn->server = TCPD.server;
     conn->client = client;
     conn->sent = 0;
     conn->received = 0;
@@ -320,7 +308,7 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
 err_t tcpd_close() {
     err_t err = ERR_OK;
 
-    struct tcp_pcb *p = TCP_STATE.client_pcb;
+    struct tcp_pcb *p = TCPD.clients;
 
     // FIXME free connection structs
     while (p != NULL) {
@@ -342,12 +330,12 @@ err_t tcpd_close() {
         p = p->next;
     }
 
-    TCP_STATE.client_pcb = NULL;
+    TCPD.clients = NULL;
 
-    if (TCP_STATE.server_pcb) {
-        tcp_arg(TCP_STATE.server_pcb, NULL);
-        tcp_close(TCP_STATE.server_pcb);
-        TCP_STATE.server_pcb = NULL;
+    if (TCPD.server) {
+        tcp_arg(TCPD.server, NULL);
+        tcp_close(TCPD.server);
+        TCPD.server = NULL;
     }
 
     return err;
@@ -356,8 +344,8 @@ err_t tcpd_close() {
 err_t tcpd_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
     char s[64];
 
-    snprintf(s, sizeof(s), ">>>> DEBUG state:%p this:%p  next:%p", TCP_STATE.client_pcb, pcb, pcb->next);
-    tcpd_log(s);
+    // snprintf(s, sizeof(s), ">>>> DEBUG active:%p", active);
+    // tcpd_log(s);
 
     connection *conn = (connection *)arg;
     conn->idle = 0;
@@ -502,18 +490,7 @@ void tcpd_err(void *arg, err_t err) {
 
         snprintf(s, sizeof(s), "ERROR %d", err);
         tcpd_log(s);
-        tcpd_result(err);
     }
-}
-
-err_t tcpd_result(int status) {
-    if (status == 0) {
-        tcpd_log("OK");
-    } else {
-        tcpd_log("FAILED");
-    }
-
-    return tcpd_close();
 }
 
 void tcpd_log(const char *msg) {
