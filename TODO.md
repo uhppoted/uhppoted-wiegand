@@ -14,7 +14,13 @@
          - [x] Detect connection closed
          - [x] Close connection on accept error
          - [ ] Multiple client connections
-         - [ ] Restart server occasionally on idle 
+               - [x] Per connection state
+               - [ ] Free client connections on shutdown
+               - [ ] Test shutdown!!!!!
+```
+2023-05-12 11:13:44  TCPD   >>>> DEBUG state:00000000 this:2000D468  next:2000D50C
+```
+         - [ ] Restart server occasionally on server idle 
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
          - [ ] Remove tcpd_result
