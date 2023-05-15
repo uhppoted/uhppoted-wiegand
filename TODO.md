@@ -12,8 +12,8 @@
          - [x] Reinstate full functionality with TCP/IP
          - [x] Close idle connections
          - [x] Detect connection closed
+         - [x] Close connection on accept error
          - [ ] Multiple client connections
-         - [ ] Close connection on accept error
          - [ ] Restart server occasionally on idle 
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check

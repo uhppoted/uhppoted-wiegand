@@ -244,7 +244,8 @@ void tcpd_listen() {
 
     TCP_STATE.server_pcb = tcp_listen_with_backlog(pcb, 1);
     if (!TCP_STATE.server_pcb) {
-        tcpd_log("LISTEN ERROR");
+        snprintf(s, sizeof(s), "LISTEN ERROR (%d)", err);
+        tcpd_log(s);
         tcp_close(pcb);
         return;
     }
@@ -261,13 +262,25 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
     snprintf(s, sizeof(s), "%s  INCOMING", ip4addr_ntoa(&client->remote_ip));
     tcpd_log(s);
 
+    // ... accept error?
     if (err != ERR_OK || client == NULL) {
-        tcpd_log("ACCEPT ERROR");
-        tcpd_result(err);
-        // FIXME close connection ?
+        snprintf(s, sizeof(s), "ACCEPT ERROR (%d)", err);
+        tcpd_log(s);
+
+        if (client != NULL) {
+            err_t err = tcp_close(client);
+            if (err != ERR_OK) {
+                snprintf(s, sizeof(s), "CLOSE ERROR (%d)", err);
+                tcpd_log(s);
+                tcp_abort(client);
+                return ERR_ABRT;
+            }
+        }
+
         return ERR_VAL;
     }
 
+    // ... connected!
     snprintf(s, sizeof(s), "%s  CONNECTED", ip4addr_ntoa(&client->remote_ip));
     tcpd_log(s);
 
@@ -297,7 +310,7 @@ err_t tcpd_close() {
         if (err != ERR_OK) {
             char s[64];
 
-            snprintf(s, sizeof(s), "CLOSE ERROR %d, calling abort", err);
+            snprintf(s, sizeof(s), "CLOSE ERROR (%d)", err);
             tcpd_log(s);
             tcp_abort(TCP_STATE.client_pcb);
             err = ERR_ABRT;
@@ -386,11 +399,10 @@ err_t tcpd_send(void *arg, struct tcp_pcb *tpcb, const char *msg) {
     err_t err = tcp_write(tpcb, TCP_STATE.buffer_sent, i, TCP_WRITE_FLAG_COPY);
     if (err != ERR_OK) {
         char s[64];
-        snprintf(s, sizeof(s), "SEND ERROR %d", err);
+        snprintf(s, sizeof(s), "SEND ERROR (%d)", err);
         tcpd_log(s);
 
-        tcpd_log("OOOOOPS/2");
-        return tcpd_result(-1);
+        return err;
     }
 
     return ERR_OK;
@@ -426,7 +438,7 @@ err_t tcpd_monitor(void *arg, struct tcp_pcb *pcb) {
         tcp_err(TCP_STATE.client_pcb, NULL);
 
         if ((err = tcp_close(pcb)) != ERR_OK) {
-            snprintf(s, sizeof(s), "%s  CLOSE ERROR %d", ip4addr_ntoa(&pcb->remote_ip), err);
+            snprintf(s, sizeof(s), "%s  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), err);
             tcpd_log(s);
             tcp_abort(pcb);
             err = ERR_ABRT;
