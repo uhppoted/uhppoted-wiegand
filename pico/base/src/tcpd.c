@@ -9,10 +9,12 @@
 
 #define TCP_BUFFER_SIZE 2048
 
-const uint16_t TCP_PORT = 4242;
-const uint8_t TCP_POLL_INTERVAL = 5;
 const uint8_t CR = 13;
 const uint8_t LF = 10;
+const uint16_t TCP_PORT = 4242;
+const uint8_t TCP_POLL_INTERVAL = 5; // seconds
+const int IDLE_TIME = 5 * 60;        // seconds
+const int IDLE_COUNT = IDLE_TIME / TCP_POLL_INTERVAL;
 
 enum TCPD_STATE {
     TCPD_UNKNOWN = 0,
@@ -31,7 +33,6 @@ struct {
     bool initialised;
     bool listening;
     struct tcp_pcb *server;
-    struct tcp_pcb *clients;
 } TCPD = {
     .link = -100000,
     .state = TCPD_UNKNOWN,
@@ -47,12 +48,19 @@ const uint32_t TCPD_POLL = 1000;
 typedef struct connection {
     struct tcp_pcb *server;
     struct tcp_pcb *client;
-    uint8_t buffer_sent[TCP_BUFFER_SIZE];
-    uint8_t buffer_recv[TCP_BUFFER_SIZE];
     int sent;
     int received;
     int idle;
+    uint8_t buffer_sent[TCP_BUFFER_SIZE];
+    uint8_t buffer_recv[TCP_BUFFER_SIZE];
 } connection;
+
+static connection connections[2] = {
+    {.server = NULL, .client = NULL, .sent = 0, .received = 0, .idle = 0},
+    {.server = NULL, .client = NULL, .sent = 0, .received = 0, .idle = 0},
+};
+
+const int CONNECTIONS = sizeof(connections) / sizeof(connection);
 
 /** Function prototypes **/
 
@@ -67,11 +75,11 @@ void tcpd_err(void *, err_t);
 void tcpd_log(const char *);
 
 void reply(void *context, const char *msg) {
-    connection *conn = (connection *)context;
-    conn->idle = 0;
-
     char s[64];
     err_t err;
+
+    connection *conn = (connection *)context;
+    conn->idle = 0;
 
     snprintf(s, sizeof(s), "%s\r\n", msg);
 
@@ -288,49 +296,62 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
     snprintf(s, sizeof(s), "%s:%d  CONNECTED", ip4addr_ntoa(&client->remote_ip), client->remote_port);
     tcpd_log(s);
 
-    connection *conn = (connection *)malloc(sizeof(connection));
+    for (int i = 0; i < CONNECTIONS; i++) {
+        connection *conn = &connections[i];
 
-    conn->server = TCPD.server;
-    conn->client = client;
-    conn->sent = 0;
-    conn->received = 0;
-    conn->idle = 0;
+        if (conn->client == NULL) {
+            conn->server = TCPD.server;
+            conn->client = client;
+            conn->sent = 0;
+            conn->received = 0;
+            conn->idle = 0;
 
-    tcp_arg(client, conn);
-    tcp_sent(client, tcpd_sent);
-    tcp_recv(client, tcpd_recv);
-    tcp_poll(client, tcpd_monitor, TCP_POLL_INTERVAL * 2);
-    tcp_err(client, tcpd_err);
+            tcp_arg(client, conn);
+            tcp_sent(client, tcpd_sent);
+            tcp_recv(client, tcpd_recv);
+            tcp_poll(client, tcpd_monitor, TCP_POLL_INTERVAL * 2);
+            tcp_err(client, tcpd_err);
 
-    return ERR_OK;
+            return ERR_OK;
+        }
+    }
+
+    // ... too many connections
+    snprintf(s, sizeof(s), "%s:%d  TOO MANY CONNECTIONS", ip4addr_ntoa(&client->remote_ip), client->remote_port);
+    tcpd_log(s);
+
+    tcp_abort(client);
+
+    return ERR_ABRT;
 }
 
 err_t tcpd_close() {
     err_t err = ERR_OK;
 
-    struct tcp_pcb *p = TCPD.clients;
+    for (int i = 0; i < CONNECTIONS; i++) {
+        connection *conn = &connections[i];
+        struct tcp_pcb *p = conn->client;
 
-    // FIXME free connection structs
-    while (p != NULL) {
-        tcp_arg(p, NULL);
-        tcp_poll(p, NULL, 0);
-        tcp_sent(p, NULL);
-        tcp_recv(p, NULL);
-        tcp_err(p, NULL);
+        if (p != NULL) {
+            tcp_arg(p, NULL);
+            tcp_poll(p, NULL, 0);
+            tcp_sent(p, NULL);
+            tcp_recv(p, NULL);
+            tcp_err(p, NULL);
 
-        if ((err = tcp_close(p)) != ERR_OK) {
-            char s[64];
+            if ((err = tcp_close(p)) != ERR_OK) {
+                char s[64];
 
-            snprintf(s, sizeof(s), "CLOSE ERROR (%d)", err);
-            tcpd_log(s);
-            tcp_abort(p);
-            err = ERR_ABRT;
+                snprintf(s, sizeof(s), "CLOSE ERROR (%d)", err);
+                tcpd_log(s);
+                tcp_abort(p);
+                err = ERR_ABRT;
+            }
         }
 
-        p = p->next;
+        conn->server = NULL;
+        conn->client = NULL;
     }
-
-    TCPD.clients = NULL;
 
     if (TCPD.server) {
         tcp_arg(TCPD.server, NULL);
@@ -341,13 +362,10 @@ err_t tcpd_close() {
     return err;
 }
 
-err_t tcpd_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
+err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
     char s[64];
 
-    // snprintf(s, sizeof(s), ">>>> DEBUG active:%p", active);
-    // tcpd_log(s);
-
-    connection *conn = (connection *)arg;
+    connection *conn = (connection *)context;
     conn->idle = 0;
 
     // ... closed ?
@@ -355,13 +373,13 @@ err_t tcpd_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
         snprintf(s, sizeof(s), "%s:%d  CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
         tcpd_log(s);
 
-        tcp_arg(conn->client, NULL);
-        tcp_poll(conn->client, NULL, 0);
-        tcp_sent(conn->client, NULL);
-        tcp_recv(conn->client, NULL);
-        tcp_err(conn->client, NULL);
+        tcp_arg(pcb, NULL);
+        tcp_poll(pcb, NULL, 0);
+        tcp_sent(pcb, NULL);
+        tcp_recv(pcb, NULL);
+        tcp_err(pcb, NULL);
 
-        free(conn);
+        conn->client = NULL;
 
         return ERR_OK;
     }
@@ -395,7 +413,7 @@ err_t tcpd_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
 
             conn->received = 0;
 
-            execw(cmd, reply, arg);
+            execw(cmd, reply, context);
 
             return ERR_OK;
         }
@@ -404,12 +422,12 @@ err_t tcpd_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
     return ERR_OK;
 }
 
-err_t tcpd_send(void *arg, struct tcp_pcb *pcb, const char *msg) {
+err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
     int N = strlen(msg);
     int ix = 0;
     int i = 0;
 
-    connection *conn = (connection *)arg;
+    connection *conn = (connection *)context;
     conn->idle = 0;
 
     while (ix < TCP_BUFFER_SIZE && i < N) {
@@ -433,12 +451,12 @@ err_t tcpd_send(void *arg, struct tcp_pcb *pcb, const char *msg) {
 }
 
 // TODO dequeue next message
-err_t tcpd_sent(void *arg, struct tcp_pcb *pcb, u16_t len) {
+err_t tcpd_sent(void *context, struct tcp_pcb *pcb, u16_t len) {
     char s[64];
     snprintf(s, sizeof(s), "%s:%d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
     tcpd_log(s);
 
-    connection *conn = (connection *)arg;
+    connection *conn = (connection *)context;
     conn->idle = 0;
 
     conn->sent += len;
@@ -449,25 +467,23 @@ err_t tcpd_sent(void *arg, struct tcp_pcb *pcb, u16_t len) {
     return ERR_OK;
 }
 
-err_t tcpd_monitor(void *arg, struct tcp_pcb *pcb) {
+err_t tcpd_monitor(void *context, struct tcp_pcb *pcb) {
     char s[64];
     err_t err = ERR_OK;
 
-    connection *conn = (connection *)arg;
+    connection *conn = (connection *)context;
 
     conn->idle++;
 
-    if (conn->idle > 12) {
+    if (conn->idle >= IDLE_COUNT) {
         snprintf(s, sizeof(s), "%s:%d  IDLE", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
         tcpd_log(s);
 
-        tcp_arg(conn->client, NULL);
-        tcp_poll(conn->client, NULL, 0);
-        tcp_sent(conn->client, NULL);
-        tcp_recv(conn->client, NULL);
-        tcp_err(conn->client, NULL);
-
-        free(conn);
+        tcp_arg(pcb, NULL);
+        tcp_poll(pcb, NULL, 0);
+        tcp_sent(pcb, NULL);
+        tcp_recv(pcb, NULL);
+        tcp_err(pcb, NULL);
 
         if ((err = tcp_close(pcb)) != ERR_OK) {
             snprintf(s, sizeof(s), "%s:%d  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, err);
@@ -475,6 +491,8 @@ err_t tcpd_monitor(void *arg, struct tcp_pcb *pcb) {
             tcp_abort(pcb);
             err = ERR_ABRT;
         }
+
+        conn->client = NULL;
 
     } else {
         snprintf(s, sizeof(s), "%s:%d  OK", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
@@ -484,10 +502,10 @@ err_t tcpd_monitor(void *arg, struct tcp_pcb *pcb) {
     return err;
 }
 
-void tcpd_err(void *arg, err_t err) {
-    if (err != ERR_ABRT) {
-        char s[64];
+void tcpd_err(void *context, err_t err) {
+    char s[64];
 
+    if (err != ERR_ABRT) {
         snprintf(s, sizeof(s), "ERROR %d", err);
         tcpd_log(s);
     }
@@ -497,6 +515,5 @@ void tcpd_log(const char *msg) {
     char s[64];
 
     snprintf(s, sizeof(s), "%-6s %s", "TCPD", msg);
-
     tx(s);
 }

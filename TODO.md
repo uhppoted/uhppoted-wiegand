@@ -14,35 +14,23 @@
          - [x] Detect connection closed
          - [x] Close connection on accept error
          - [x] Remove tcpd_result
-         - [ ] Multiple client connections
+         - [x] Multiple client connections
                - [x] Per connection state
-               - [ ] Check malloc return on connect
-               - (?) Fixed array rather than malloc
-               - [ ] Free client connections on shutdown
-               - [ ] Test shutdown!!!!!
+               - [x] Static array of connections
+               - [x] Cleanup  client connections on shutdown
+         - [ ] Restart server occasionally on server idle 
+         - [ ] Test shutdown!!!!!
 ```
 2023-05-12 11:13:44  TCPD   >>>> DEBUG state:00000000 this:2000D468  next:2000D50C
 ```
-         - [ ] Restart server occasionally on server idle 
+         - [ ] Logging client/port
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
          - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout
-         - [ ] Configurable client idle timeout
+         - [ ] Configurable idle timeout
          - (?) Require login
-         - (?) Logging client/port
-         - (?) (optionally) log to connected clients
-
-         - https://www.nongnu.org/lwip/2_1_x/index.html
-         - https://github.com/raspberrypi/pico-examples/tree/master/pico_w/wifi/tcp_server
-         - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
-         - https://ww1.microchip.com/downloads/en/Appnotes/Atmel-42233-Using-the-lwIP-Network-Stack_AP-Note_AT04055.pdf
-         - https://forums.raspberrypi.com/viewtopic.php?t=337666
-         - https://stackoverflow.com/questions/55167252/how-to-determine-if-ethernet-cable-has-been-unplugged-during-runtime
-         - https://forums.raspberrypi.com/viewtopic.php?t=349890
-         - https://brodowsky.it-sky.net/2014/06/20/closures-in-c-and-scala
-         - https://stackoverflow.com/questions/4393716/is-there-a-a-way-to-achieve-closures-in-c
 
    - [ ] Pico + DTMF
    - [ ] Buzzer
@@ -121,3 +109,9 @@
    - https://stackoverflow.com/questions/74883568/oserror-errno-12-enomem-with-pi-pico-w
    - https://github.com/sekigon-gonnoc/Pico-PIO-USB/discussions/78
    - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
+   - https://www.nongnu.org/lwip/2_1_x/index.html
+   - https://www.scaprile.com/2023/02/05/on-hardware-state-machines-how-to-write-a-simple-mac-controller-using-the-rp2040-pios
+   - https://ww1.microchip.com/downloads/en/Appnotes/Atmel-42233-Using-the-lwIP-Network-Stack_AP-Note_AT04055.pdf
+   - https://forums.raspberrypi.com/viewtopic.php?t=337666
+   - https://forums.raspberrypi.com/viewtopic.php?t=349890
+
