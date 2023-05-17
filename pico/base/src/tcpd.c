@@ -12,9 +12,12 @@
 const uint8_t CR = 13;
 const uint8_t LF = 10;
 const uint16_t TCP_PORT = 4242;
-const uint8_t TCP_POLL_INTERVAL = 5; // seconds
-const int IDLE_TIME = 5 * 60;        // seconds
-const int IDLE_COUNT = IDLE_TIME / TCP_POLL_INTERVAL;
+const uint32_t TCPD_POLL = 1000;
+const uint8_t TCP_SERVER_POLL = 30;  // seconds
+const uint8_t TCP_CLIENT_POLL = 5;   // seconds
+const int CLIENT_IDLE_TIME = 5 * 60; // seconds
+const int CLIENT_IDLE_COUNT = CLIENT_IDLE_TIME / TCP_CLIENT_POLL;
+const int SERVER_IDLE_COUNT = 10;
 
 enum TCPD_STATE {
     TCPD_UNKNOWN = 0,
@@ -27,20 +30,15 @@ enum TCPD_STATE {
 /* Internal state for the TCP server.
  *
  */
-struct {
+typedef struct TCPD {
     int link;
     enum TCPD_STATE state;
     bool initialised;
     bool listening;
+    bool closed;
+    uint32_t idle;
     struct tcp_pcb *server;
-} TCPD = {
-    .link = -100000,
-    .state = TCPD_UNKNOWN,
-    .initialised = false,
-    .listening = false,
-};
-
-const uint32_t TCPD_POLL = 1000;
+} TCPD;
 
 /* State for a client connection.
  *
@@ -54,6 +52,15 @@ typedef struct connection {
     uint8_t buffer_sent[TCP_BUFFER_SIZE];
     uint8_t buffer_recv[TCP_BUFFER_SIZE];
 } connection;
+
+static TCPD tcpd = {
+    .link = -100000,
+    .state = TCPD_UNKNOWN,
+    .initialised = false,
+    .listening = false,
+    .closed = false,
+    .idle = 0,
+};
 
 static connection connections[2] = {
     {.server = NULL, .client = NULL, .sent = 0, .received = 0, .idle = 0},
@@ -70,7 +77,8 @@ err_t tcpd_accept(void *, struct tcp_pcb *, err_t);
 err_t tcpd_recv(void *, struct tcp_pcb *, struct pbuf *, err_t);
 err_t tcpd_send(void *, struct tcp_pcb *, const char *);
 err_t tcpd_sent(void *, struct tcp_pcb *, u16_t);
-err_t tcpd_monitor(void *arg, struct tcp_pcb *tpcb);
+err_t tcpd_server_monitor(void *, struct tcp_pcb *);
+err_t tcpd_client_monitor(void *, struct tcp_pcb *);
 void tcpd_err(void *, err_t);
 void tcpd_log(const char *);
 
@@ -123,7 +131,7 @@ bool tcpd_initialise(enum MODE mode) {
         return false;
     }
 
-    TCPD.state = TCPD_CONNECTING;
+    tcpd.state = TCPD_CONNECTING;
 
     if (!add_alarm_in_ms(TCPD_POLL, tcpdi, (void *)NULL, true)) {
         return false;
@@ -145,8 +153,8 @@ void tcpd_poll() {
 
     int link = cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA);
 
-    if (TCPD.link != link) {
-        TCPD.link = link;
+    if (tcpd.link != link) {
+        tcpd.link = link;
 
         switch (link) {
         case CYW43_LINK_DOWN:
@@ -154,7 +162,7 @@ void tcpd_poll() {
             break;
 
         case CYW43_LINK_JOIN:
-            if (TCPD.state != TCPD_CONNECTED) {
+            if (tcpd.state != TCPD_CONNECTED) {
                 tcpd_log("WIFI CONNECTED");
                 break;
 
@@ -186,21 +194,22 @@ void tcpd_poll() {
 
     switch (link) {
     case CYW43_LINK_DOWN:
-        if (TCPD.state != TCPD_CONNECTING) {
+        if (tcpd.state != TCPD_CONNECTING) {
             if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
                 snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
                 tcpd_log(s);
             } else {
                 tcpd_log("WIFI RECONNECTING");
-                TCPD.state = TCPD_CONNECTING;
-                TCPD.listening = false;
+                tcpd.state = TCPD_CONNECTING;
+                tcpd.listening = false;
+                tcpd.closed = false;
             }
         }
         break;
 
     case CYW43_LINK_JOIN:
-        if (TCPD.state != TCPD_CONNECTED) {
-            TCPD.state = TCPD_CONNECTED;
+        if (tcpd.state != TCPD_CONNECTED) {
+            tcpd.state = TCPD_CONNECTED;
         }
         break;
 
@@ -210,26 +219,31 @@ void tcpd_poll() {
             tcpd_log(s);
         } else {
             tcpd_log("WIFI RECONNECTING");
-            TCPD.listening = false;
-            TCPD.state = TCPD_CONNECTING;
+            tcpd.listening = false;
+            tcpd.closed = false;
+            tcpd.state = TCPD_CONNECTING;
         }
         break;
 
     case CYW43_LINK_NONET:
-        TCPD.listening = false;
+        tcpd.listening = false;
+        tcpd.closed = false;
         break;
 
     case CYW43_LINK_BADAUTH:
-        TCPD.listening = false;
-        TCPD.state = TCPD_FATAL;
+        tcpd.listening = false;
+        tcpd.closed = false;
+        tcpd.state = TCPD_FATAL;
         break;
 
     case CYW43_LINK_NOIP:
         break;
 
     case CYW43_LINK_UP:
-        if (!TCPD.listening) {
+        if (!tcpd.listening) {
             tcpd_listen();
+        } else {
+            tcpd_server_monitor(&tcpd, tcpd.server);
         }
         break;
     }
@@ -254,19 +268,20 @@ void tcpd_listen() {
         return;
     }
 
-    TCPD.server = tcp_listen_with_backlog(pcb, 1);
-    if (!TCPD.server) {
+    tcpd.server = tcp_listen_with_backlog(pcb, 1);
+    if (!tcpd.server) {
         snprintf(s, sizeof(s), "LISTEN ERROR (%d)", err);
         tcpd_log(s);
         tcp_close(pcb);
         return;
     }
 
-    tcp_arg(TCPD.server, &TCPD);
-    tcp_accept(TCPD.server, tcpd_accept);
+    tcp_arg(tcpd.server, &tcpd);
+    tcp_accept(tcpd.server, tcpd_accept);
 
     tcpd_log("LISTENING");
-    TCPD.listening = true;
+    tcpd.listening = true;
+    tcpd.closed = false;
 }
 
 err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
@@ -300,7 +315,7 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
         connection *conn = &connections[i];
 
         if (conn->client == NULL) {
-            conn->server = TCPD.server;
+            conn->server = tcpd.server;
             conn->client = client;
             conn->sent = 0;
             conn->received = 0;
@@ -309,7 +324,7 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
             tcp_arg(client, conn);
             tcp_sent(client, tcpd_sent);
             tcp_recv(client, tcpd_recv);
-            tcp_poll(client, tcpd_monitor, TCP_POLL_INTERVAL * 2);
+            tcp_poll(client, tcpd_client_monitor, TCP_CLIENT_POLL * 2);
             tcp_err(client, tcpd_err);
 
             return ERR_OK;
@@ -326,6 +341,15 @@ err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
 }
 
 err_t tcpd_close() {
+    char s[64];
+
+    if (tcpd.server != NULL) {
+        snprintf(s, sizeof(s), "%s:%d  CLOSING", ip4addr_ntoa(&tcpd.server->local_ip), tcpd.server->local_port);
+        tcpd_log(s);
+    } else {
+        tcpd_log("CLOSING");
+    }
+
     err_t err = ERR_OK;
 
     for (int i = 0; i < CONNECTIONS; i++) {
@@ -353,11 +377,14 @@ err_t tcpd_close() {
         conn->client = NULL;
     }
 
-    if (TCPD.server) {
-        tcp_arg(TCPD.server, NULL);
-        tcp_close(TCPD.server);
-        TCPD.server = NULL;
+    if (tcpd.server) {
+        tcp_arg(tcpd.server, NULL);
+        tcp_close(tcpd.server);
+        tcpd.server = NULL;
+        tcpd.closed = true;
     }
+
+    tcpd_log("CLOSED");
 
     return err;
 }
@@ -467,7 +494,44 @@ err_t tcpd_sent(void *context, struct tcp_pcb *pcb, u16_t len) {
     return ERR_OK;
 }
 
-err_t tcpd_monitor(void *context, struct tcp_pcb *pcb) {
+err_t tcpd_server_monitor(void *context, struct tcp_pcb *pcb) {
+    static int count = 0;
+
+    char s[64];
+    TCPD *tcpd = (TCPD *)context;
+
+    if (++count > 32) {
+        count = 0;
+
+        int clients = 0;
+        for (int i = 0; i < CONNECTIONS; i++) {
+            if (connections[i].client != NULL) {
+                clients++;
+            }
+        }
+
+        if (clients == 0) {
+            tcpd->idle++;
+        } else {
+            tcpd->idle = 0;
+        }
+
+        if (tcpd->idle >= SERVER_IDLE_COUNT) {
+            if (tcpd->closed) {
+                tcpd_log("SHUTDOWN");
+            } else {
+                snprintf(s, sizeof(s), "%s:%d  SERVER IDLE %lu", ip4addr_ntoa(&pcb->local_ip), pcb->local_port, tcpd->idle);
+                tcpd_log(s);
+                tcpd_close();
+            }
+        } else {
+            snprintf(s, sizeof(s), "%s:%d  CONNECTIONS:%d", ip4addr_ntoa(&pcb->local_ip), pcb->local_port, clients);
+            tcpd_log(s);
+        }
+    }
+}
+
+err_t tcpd_client_monitor(void *context, struct tcp_pcb *pcb) {
     char s[64];
     err_t err = ERR_OK;
 
@@ -475,7 +539,7 @@ err_t tcpd_monitor(void *context, struct tcp_pcb *pcb) {
 
     conn->idle++;
 
-    if (conn->idle >= IDLE_COUNT) {
+    if (conn->idle >= CLIENT_IDLE_COUNT) {
         snprintf(s, sizeof(s), "%s:%d  IDLE", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
         tcpd_log(s);
 

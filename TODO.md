@@ -15,14 +15,10 @@
          - [x] Close connection on accept error
          - [x] Remove tcpd_result
          - [x] Multiple client connections
-               - [x] Per connection state
-               - [x] Static array of connections
-               - [x] Cleanup  client connections on shutdown
          - [ ] Restart server occasionally on server idle 
-         - [ ] Test shutdown!!!!!
-```
-2023-05-12 11:13:44  TCPD   >>>> DEBUG state:00000000 this:2000D468  next:2000D50C
-```
+               - [x] Close on idle
+               - [x] Test shutdown
+               - [ ] Restart
          - [ ] Logging client/port
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
