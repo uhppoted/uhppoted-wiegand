@@ -15,10 +15,10 @@
          - [x] Close connection on accept error
          - [x] Remove tcpd_result
          - [x] Multiple client connections
-         - [ ] Restart server occasionally on server idle 
+         - [x] Restart server occasionally on server idle 
                - [x] Close on idle
                - [x] Test shutdown
-               - [ ] Restart
+               - [x] Restart
          - [ ] Logging client/port
          - [ ] Send queue
          - [ ] cyw43_arch_lwip_check

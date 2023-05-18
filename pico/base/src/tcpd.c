@@ -15,9 +15,10 @@ const uint16_t TCP_PORT = 4242;
 const uint32_t TCPD_POLL = 1000;
 const uint8_t TCP_SERVER_POLL = 30;  // seconds
 const uint8_t TCP_CLIENT_POLL = 5;   // seconds
-const int CLIENT_IDLE_TIME = 5 * 60; // seconds
+const int CLIENT_IDLE_TIME = 2 * 60; // seconds
 const int CLIENT_IDLE_COUNT = CLIENT_IDLE_TIME / TCP_CLIENT_POLL;
-const int SERVER_IDLE_COUNT = 10;
+const int SERVER_IDLE_TIME = 5 * 60; // seconds
+const int SERVER_IDLE_COUNT = SERVER_IDLE_TIME / TCP_SERVER_POLL;
 
 enum TCPD_STATE {
     TCPD_UNKNOWN = 0,
@@ -33,7 +34,6 @@ enum TCPD_STATE {
 typedef struct TCPD {
     int link;
     enum TCPD_STATE state;
-    bool initialised;
     bool listening;
     bool closed;
     uint32_t idle;
@@ -56,7 +56,6 @@ typedef struct connection {
 static TCPD tcpd = {
     .link = -100000,
     .state = TCPD_UNKNOWN,
-    .initialised = false,
     .listening = false,
     .closed = false,
     .idle = 0,
@@ -282,6 +281,7 @@ void tcpd_listen() {
     tcpd_log("LISTENING");
     tcpd.listening = true;
     tcpd.closed = false;
+    tcpd.idle = 0;
 }
 
 err_t tcpd_accept(void *arg, struct tcp_pcb *client, err_t err) {
@@ -382,6 +382,8 @@ err_t tcpd_close() {
         tcp_close(tcpd.server);
         tcpd.server = NULL;
         tcpd.closed = true;
+        tcpd.listening = false;
+        tcpd.state = TCPD_UNKNOWN;
     }
 
     tcpd_log("CLOSED");
@@ -499,8 +501,9 @@ err_t tcpd_server_monitor(void *context, struct tcp_pcb *pcb) {
 
     char s[64];
     TCPD *tcpd = (TCPD *)context;
+    const int N = TCP_SERVER_POLL * 1000 / TCPD_POLL;
 
-    if (++count > 32) {
+    if (++count >= N) {
         count = 0;
 
         int clients = 0;
@@ -516,17 +519,23 @@ err_t tcpd_server_monitor(void *context, struct tcp_pcb *pcb) {
             tcpd->idle = 0;
         }
 
-        if (tcpd->idle >= SERVER_IDLE_COUNT) {
-            if (tcpd->closed) {
-                tcpd_log("SHUTDOWN");
-            } else {
-                snprintf(s, sizeof(s), "%s:%d  SERVER IDLE %lu", ip4addr_ntoa(&pcb->local_ip), pcb->local_port, tcpd->idle);
-                tcpd_log(s);
-                tcpd_close();
-            }
+        if (tcpd->closed) {
+            tcpd_log("CLOSED");
+        } else if (clients == 0) {
+            snprintf(s, sizeof(s), "%s:%d  SERVER IDLE %lus",
+                     ip4addr_ntoa(&pcb->local_ip),
+                     pcb->local_port,
+                     tcpd->idle * TCP_SERVER_POLL);
+
+            tcpd_log(s);
         } else {
             snprintf(s, sizeof(s), "%s:%d  CONNECTIONS:%d", ip4addr_ntoa(&pcb->local_ip), pcb->local_port, clients);
             tcpd_log(s);
+        }
+
+        if (tcpd->idle >= SERVER_IDLE_COUNT && !tcpd->closed) {
+            tcpd_log("SHUTDOWN");
+            tcpd_close();
         }
     }
 }
