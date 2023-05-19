@@ -16,29 +16,25 @@
          - [x] Remove tcpd_result
          - [x] Multiple client connections
          - [x] Restart server occasionally on server idle 
-               - [x] Close on idle
-               - [x] Test shutdown
-               - [x] Restart
+         - [x] ~~Send queue~~
          - [ ] Logging client/port
-         - [ ] Send queue
          - [ ] cyw43_arch_lwip_check
          - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout
          - [ ] Configurable idle timeout
-         - (?) Require login
 
-   - [ ] Pico + DTMF
    - [ ] Buzzer
-
-   - (?) Authorisation
-   - [ ] tweetnacl
+   - (?) CLI auth
+         - HOTP
+   - [ ] tweetnacl/TLS
          - [ ] TCP/IP
          - (?) ACL
          - (?) Auth
 
    - [ ] (optionally) Replace external SD card with internal flash
          - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
+   - (?) DTMF
 
 ## Schematic
 - RD/WR jumpers

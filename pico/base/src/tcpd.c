@@ -7,7 +7,7 @@
 
 #include "tcpd.h"
 
-#define TCP_BUFFER_SIZE 2048
+#define TCP_BUFFER_SIZE 512
 
 const uint8_t CR = 13;
 const uint8_t LF = 10;
