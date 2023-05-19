@@ -18,6 +18,10 @@
          - [x] Restart server occasionally on server idle 
          - [x] ~~Send queue~~
          - [ ] Logging client/port
+               - [x] logd listener
+               - [ ] ignore CLI requests
+               - [ ] route log messages
+
          - [ ] cyw43_arch_lwip_check
          - [ ] Reduce poll interval
          - [ ] Configurable ports 

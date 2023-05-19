@@ -27,6 +27,7 @@ add_executable(wiegand_usb
   ../../base/src/buzzer.c
   ../../base/src/relays.c
   ../../base/src/acl.c
+  ../../base/src/logd.c
   ../../base/src/sdcard.c
   ../../base/src/TPIC6B595.c
   ../../base/src/hwconfig.c

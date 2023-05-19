@@ -32,6 +32,7 @@ add_executable(wiegand-emulator-w
   ../../base/src/relays.c
   ../../base/src/TPIC6B595.c
   ../../base/src/tcpd.c
+  ../../base/src/logd.c
 )
 
 target_include_directories(wiegand-emulator-w PRIVATE ../../base/include ./include)

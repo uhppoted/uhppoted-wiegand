@@ -22,7 +22,6 @@ const uint32_t CLI_TIMEOUT = 10000;
 int64_t cli_timeout(alarm_id_t, void *);
 void echo(const char *);
 void cpr(char *);
-void tx(char *);
 void set_scroll_area();
 void clearline();
 
@@ -100,7 +99,7 @@ void rx(char *received) {
 /* Adds a message to the queue.
  *
  */
-void tx(char *message) {
+void tx(const char *message) {
     static int size = 128;
     char *s;
 
@@ -117,7 +116,7 @@ void tx(char *message) {
 
         msg = MSG_TX | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
         if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
-            free(message);
+            // free(message);
         }
     }
 }

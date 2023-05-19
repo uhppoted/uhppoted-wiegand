@@ -9,8 +9,8 @@
 #include <pico/time.h>
 #include <pico/util/datetime.h>
 
+#include "../include/logd.h"
 #include "../include/sys.h"
-#include "../include/uart.h"
 #include "../include/wiegand.h"
 
 #define UART0 uart0
@@ -34,7 +34,7 @@ void sys_start() {
     uint32_t hz = clock_get_hz(clk_sys);
 
     snprintf(s, sizeof(s), "%6s %d", "CLOCK", hz);
-    tx(s);
+    logd_log(s);
 }
 
 void sys_ok() {
@@ -46,7 +46,7 @@ void sys_ok() {
         snprintf(s, sizeof(s), "%-6s %-8s %s", "SYS", "???", "OK");
     }
 
-    tx(s);
+    logd_log(s);
 }
 
 // NTS: seems like this needs to be a 'long lived struct' for RTC
@@ -88,7 +88,7 @@ void sys_settime(char *t) {
 
     char s[64];
     snprintf(s, sizeof(s), "SYS    SET TIME %s", ok ? "OK" : "ERROR");
-    tx(s);
+    logd_log(s);
 }
 
 bool watchdog(repeating_timer_t *rt) {

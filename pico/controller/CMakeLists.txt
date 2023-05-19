@@ -28,6 +28,7 @@ add_executable(wiegand-controller
   ../base/src/hwconfig.c
   ../base/src/sdcard.c
   ../base/src/acl.c
+  ../base/src/logd.c
 )
 
 target_include_directories(wiegand-controller PRIVATE ../base/include)

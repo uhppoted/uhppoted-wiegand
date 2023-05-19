@@ -29,6 +29,7 @@ add_executable(wiegand-controller-usb
   ../../base/src/hwconfig.c
   ../../base/src/sdcard.c
   ../../base/src/acl.c
+  ../../base/src/logd.c
 )
 
 target_include_directories(wiegand-controller-usb PRIVATE ../../base/include)

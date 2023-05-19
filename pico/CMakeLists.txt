@@ -17,6 +17,7 @@ pico_sdk_init()
 add_executable(wiegand
   ./reference/src/reference.c
   ./reference/src/cli.c
+  ./base/src/hwconfig.c
   ./base/src/common.c
   ./base/src/uart.c
   ./base/src/sys.c
@@ -26,9 +27,9 @@ add_executable(wiegand
   ./base/src/buzzer.c
   ./base/src/relays.c
   ./base/src/acl.c
+  ./base/src/logd.c
   ./base/src/sdcard.c
   ./base/src/TPIC6B595.c
-  ./base/src/hwconfig.c
 )
 
 target_include_directories(wiegand PRIVATE ./base/include)

@@ -16,6 +16,7 @@
 #include <buzzer.h>
 #include <common.h>
 #include <led.h>
+#include <logd.h>
 #include <read.h>
 #include <relays.h>
 #include <sdcard.h>
@@ -216,6 +217,7 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
+        logd_initialise(mode);
         sdcard_initialise(mode);
         read_initialise(mode);
         led_initialise(mode);

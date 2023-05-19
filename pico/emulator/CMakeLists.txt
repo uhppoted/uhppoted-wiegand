@@ -26,6 +26,7 @@ add_executable(wiegand-emulator
   ../base/src/led.c
   ../base/src/buzzer.c
   ../base/src/relays.c
+  ../base/src/logd.c
   ../base/src/TPIC6B595.c
 )
 
