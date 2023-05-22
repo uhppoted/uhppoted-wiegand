@@ -36,6 +36,7 @@ typedef struct connection {
     const char *tag;
     struct tcp_pcb *server;
     struct tcp_pcb *client;
+    tcpd_handler handler;
     int sent;
     int received;
     int idle;
@@ -44,13 +45,13 @@ typedef struct connection {
 } connection;
 
 static connection clients[2] = {
-    {.tag = "TCPD", .server = NULL, .client = NULL, .sent = 0, .received = 0, .idle = 0},
-    {.tag = "TCPD", .server = NULL, .client = NULL, .sent = 0, .received = 0, .idle = 0},
+    {.tag = "TCPD", .server = NULL, .client = NULL, .handler = NULL, .sent = 0, .received = 0, .idle = 0},
+    {.tag = "TCPD", .server = NULL, .client = NULL, .handler = NULL, .sent = 0, .received = 0, .idle = 0},
 };
 
 static connection loggers[2] = {
-    {.tag = "LOGD", .server = NULL, .client = NULL, .sent = 0, .received = 0, .idle = 0},
-    {.tag = "LOGD", .server = NULL, .client = NULL, .sent = 0, .received = 0, .idle = 0},
+    {.tag = "LOGD", .server = NULL, .client = NULL, .handler = NULL, .sent = 0, .received = 0, .idle = 0},
+    {.tag = "LOGD", .server = NULL, .client = NULL, .handler = NULL, .sent = 0, .received = 0, .idle = 0},
 };
 
 /* Internal state for the TCP server.
@@ -65,6 +66,7 @@ typedef struct TCPD {
     uint32_t count;
     uint32_t idle;
     struct tcp_pcb *server;
+    tcpd_handler handler;
     connection *connections;
 } TCPD;
 
@@ -76,6 +78,7 @@ static TCPD tcpd = {
     .closed = false,
     .count = 0,
     .idle = 0,
+    .handler = tcpd_cli,
     .connections = clients,
 };
 
@@ -87,6 +90,7 @@ static TCPD logd = {
     .closed = false,
     .count = 0,
     .idle = 0,
+    .handler = NULL,
     .connections = loggers,
 };
 
@@ -104,21 +108,6 @@ err_t tcpd_server_monitor(void *, struct tcp_pcb *);
 err_t tcpd_client_monitor(void *, struct tcp_pcb *);
 void tcpd_err(void *, err_t);
 void tcpd_log(const char *, const char *);
-
-void reply(void *context, const char *msg) {
-    char s[64];
-    err_t err;
-
-    connection *conn = (connection *)context;
-    conn->idle = 0;
-
-    snprintf(s, sizeof(s), "%s\r\n", msg);
-
-    if ((err = tcpd_send(context, conn->client, s)) != ERR_OK) {
-        snprintf(s, sizeof(s), "WIFI SEND ERROR (%d)", err);
-        tcpd_log("TCPD", s);
-    }
-}
 
 /* Alarm handler for TCP poll timer.
  *
@@ -166,6 +155,40 @@ bool tcpd_initialise(enum MODE mode) {
 void tcpd_terminate() {
     cyw43_arch_deinit();
     tcpd_log("TCPD", "WIFI TERMINATED");
+}
+
+void tcpd_cli(void *context) {
+    connection *conn = (connection *)context;
+    conn->idle = 0;
+
+    // ... CRLF?
+    for (int i = 0; i < conn->received; i++) {
+        if (conn->buffer_recv[i] == CR || conn->buffer_recv[i] == LF) {
+            char cmd[64];
+            int N = i < 64 ? i + 1 : 64;
+            snprintf(cmd, N, "%s", conn->buffer_recv);
+
+            conn->received = 0;
+
+            execw(cmd, tcpd_tx, context);
+            return;
+        }
+    }
+}
+
+void tcpd_tx(void *context, const char *msg) {
+    char s[64];
+    err_t err;
+
+    connection *conn = (connection *)context;
+    conn->idle = 0;
+
+    snprintf(s, sizeof(s), "%s\r\n", msg);
+
+    if ((err = tcpd_send(context, conn->client, s)) != ERR_OK) {
+        snprintf(s, sizeof(s), "WIFI SEND ERROR (%d)", err);
+        tcpd_log("TCPD", s);
+    }
 }
 
 void tcpd_poll() {
@@ -349,6 +372,7 @@ err_t tcpd_accept(void *context, struct tcp_pcb *client, err_t err) {
         if (conn->client == NULL) {
             conn->server = tcpd->server;
             conn->client = client;
+            conn->handler = tcpd->handler;
             conn->sent = 0;
             conn->received = 0;
             conn->idle = 0;
@@ -461,24 +485,26 @@ err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
     pbuf_free(p);
 
     // ... overflow?
-    if (conn->received == TCP_BUFFER_SIZE) {
+    if (conn->received == TCP_BUFFER_SIZE || conn->handler == NULL) {
         conn->received = 0;
+    } else {
+        conn->handler(conn);
     }
 
-    // ... CRLF?
-    for (int i = 0; i < conn->received; i++) {
-        if (conn->buffer_recv[i] == CR || conn->buffer_recv[i] == LF) {
-            char cmd[64];
-            int N = i < 64 ? i + 1 : 64;
-            snprintf(cmd, N, "%s", conn->buffer_recv);
-
-            conn->received = 0;
-
-            execw(cmd, reply, context);
-
-            return ERR_OK;
-        }
-    }
+    // // ... CRLF?
+    // for (int i = 0; i < conn->received; i++) {
+    //     if (conn->buffer_recv[i] == CR || conn->buffer_recv[i] == LF) {
+    //         char cmd[64];
+    //         int N = i < 64 ? i + 1 : 64;
+    //         snprintf(cmd, N, "%s", conn->buffer_recv);
+    //
+    //         conn->received = 0;
+    //
+    //         execw(cmd, tcpd_tx, context);
+    //
+    //         return ERR_OK;
+    //     }
+    // }
 
     return ERR_OK;
 }

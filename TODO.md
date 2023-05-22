@@ -19,7 +19,7 @@
          - [x] ~~Send queue~~
          - [ ] Logging client/port
                - [x] logd listener
-               - [ ] ignore CLI requests
+               - [x] ignore CLI requests
                - [ ] route log messages
 
          - [ ] cyw43_arch_lwip_check
