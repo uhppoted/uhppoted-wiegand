@@ -44,6 +44,7 @@ const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
+const uint32_t MSG_LOG = 0xb0000000;
 const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
@@ -152,6 +153,13 @@ int main() {
 
         if ((v & MSG) == MSG_PUSHBUTTON) {
             pushbutton_event(v & 0x0fffffff);
+        }
+
+        if ((v & MSG) == MSG_LOG) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            printf("%s", b);
+            tcpd_log(b);
+            free(b);
         }
 
         if ((v & MSG) == MSG_TCPD_POLL) {

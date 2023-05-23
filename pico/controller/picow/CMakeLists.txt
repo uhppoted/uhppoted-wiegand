@@ -21,7 +21,6 @@ pico_sdk_init()
 add_executable(wiegand-controller-w
   src/controller.c
   ../src/cli.c
-  ../src/logd.c
   ../../base/src/hwconfig.c
   ../../base/src/common.c
   ../../base/src/uart.c
@@ -33,6 +32,7 @@ add_executable(wiegand-controller-w
   ../../base/src/TPIC6B595.c
   ../../base/src/sdcard.c
   ../../base/src/acl.c
+  ../../base/src/logd.c
   ../../base/src/tcpd.c
 )
 

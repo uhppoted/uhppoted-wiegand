@@ -18,15 +18,19 @@
          - [x] Restart server occasionally on server idle 
          - [x] ~~Send queue~~
          - [ ] Logging client/port
-               - [x] logd listener
-               - [x] ignore CLI requests
-               - [ ] route log messages
+               - [x] Logd listener
+               - [x] Ignore CLI requests
+               - [x] Route log messages
+               - [ ] Switch all logging to logd
 
+         - [ ] Merge picow branch back into main
          - [ ] cyw43_arch_lwip_check
          - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout
          - [ ] Configurable idle timeout
+         - [ ] USB+WiFi variants
+         
 
    - [ ] Buzzer
    - (?) CLI auth

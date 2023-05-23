@@ -116,7 +116,7 @@ void tx(const char *message) {
 
         msg = MSG_TX | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
         if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
-            // free(message);
+            free(s);
         }
     }
 }

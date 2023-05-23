@@ -95,6 +95,7 @@ static TCPD logd = {
 };
 
 const int CONNECTIONS = 2; // sizeof(connections) / sizeof(connection);
+const int LOGGERS = 2;     // sizeof(loggers) / sizeof(connection);
 
 /** Function prototypes **/
 
@@ -106,8 +107,9 @@ err_t tcpd_send(void *, struct tcp_pcb *, const char *);
 err_t tcpd_sent(void *, struct tcp_pcb *, u16_t);
 err_t tcpd_server_monitor(void *, struct tcp_pcb *);
 err_t tcpd_client_monitor(void *, struct tcp_pcb *);
+void tcpd_reply(void *, const char *);
 void tcpd_err(void *, err_t);
-void tcpd_log(const char *, const char *);
+void tcpd_infof(const char *, const char *);
 
 /* Alarm handler for TCP poll timer.
  *
@@ -131,7 +133,7 @@ bool tcpd_initialise(enum MODE mode) {
 
     if ((err = cyw43_arch_init()) != 0) {
         snprintf(s, sizeof(s), "WIFI INITIALISATION ERROR (%d)", err);
-        tcpd_log("TCPD", s);
+        tcpd_infof("TCPD", s);
         return false;
     }
 
@@ -139,7 +141,7 @@ bool tcpd_initialise(enum MODE mode) {
 
     if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
         snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
-        tcpd_log("TCPD", s);
+        tcpd_infof("TCPD", s);
         return false;
     }
 
@@ -154,7 +156,7 @@ bool tcpd_initialise(enum MODE mode) {
 
 void tcpd_terminate() {
     cyw43_arch_deinit();
-    tcpd_log("TCPD", "WIFI TERMINATED");
+    tcpd_infof("TCPD", "WIFI TERMINATED");
 }
 
 void tcpd_cli(void *context) {
@@ -170,24 +172,25 @@ void tcpd_cli(void *context) {
 
             conn->received = 0;
 
-            execw(cmd, tcpd_tx, context);
+            execw(cmd, tcpd_reply, context);
             return;
         }
     }
 }
 
-void tcpd_tx(void *context, const char *msg) {
-    char s[64];
+void tcpd_log(const char *msg) {
     err_t err;
 
-    connection *conn = (connection *)context;
-    conn->idle = 0;
+    for (int i = 0; i < LOGGERS; i++) {
+        connection *conn = &logd.connections[i];
 
-    snprintf(s, sizeof(s), "%s\r\n", msg);
-
-    if ((err = tcpd_send(context, conn->client, s)) != ERR_OK) {
-        snprintf(s, sizeof(s), "WIFI SEND ERROR (%d)", err);
-        tcpd_log("TCPD", s);
+        if (conn->client != NULL) {
+            if ((err = tcpd_send(conn, conn->client, msg)) != ERR_OK) {
+                char s[64];
+                snprintf(s, sizeof(s), "LOG ERROR (%d)", err);
+                tcpd_infof("TCPD", s);
+            }
+        }
     }
 }
 
@@ -204,36 +207,36 @@ void tcpd_poll() {
 
         switch (link) {
         case CYW43_LINK_DOWN:
-            tcpd_log("TCPD", "WIFI LINK DOWN");
+            tcpd_infof("TCPD", "WIFI LINK DOWN");
             break;
 
         case CYW43_LINK_JOIN:
             if (tcpd.state != TCPD_CONNECTED) {
-                tcpd_log("TCPD", "WIFI CONNECTED");
+                tcpd_infof("TCPD", "WIFI CONNECTED");
                 break;
 
             case CYW43_LINK_FAIL:
-                tcpd_log("TCPD", "WIFI CONNECTION FAILED");
+                tcpd_infof("TCPD", "WIFI CONNECTION FAILED");
                 break;
 
             case CYW43_LINK_NONET:
-                tcpd_log("TCPD", "WIFI SSID NOT FOUND");
+                tcpd_infof("TCPD", "WIFI SSID NOT FOUND");
                 break;
 
             case CYW43_LINK_BADAUTH:
-                tcpd_log("TCPD", "WIFI NOT AUTHORISED");
+                tcpd_infof("TCPD", "WIFI NOT AUTHORISED");
                 break;
 
             case CYW43_LINK_NOIP:
-                tcpd_log("TCPD", "WIFI NO IP");
+                tcpd_infof("TCPD", "WIFI NO IP");
                 break;
 
             case CYW43_LINK_UP:
-                tcpd_log("TCPD", "WIFI READY");
+                tcpd_infof("TCPD", "WIFI READY");
                 break;
 
             default:
-                tcpd_log("TCPD", "WIFI UNKNOWN STATE");
+                tcpd_infof("TCPD", "WIFI UNKNOWN STATE");
             }
         }
     }
@@ -243,9 +246,9 @@ void tcpd_poll() {
         if (tcpd.state != TCPD_CONNECTING) {
             if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
                 snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
-                tcpd_log("TCPD", s);
+                tcpd_infof("TCPD", s);
             } else {
-                tcpd_log("TCPD", "WIFI RECONNECTING");
+                tcpd_infof("TCPD", "WIFI RECONNECTING");
                 tcpd.state = TCPD_CONNECTING;
                 tcpd.listening = false;
                 tcpd.closed = false;
@@ -262,9 +265,9 @@ void tcpd_poll() {
     case CYW43_LINK_FAIL:
         if ((err = cyw43_arch_wifi_connect_async(SSID, PASSWORD, CYW43_AUTH_WPA2_AES_PSK)) != 0) {
             snprintf(s, sizeof(s), "WIFI CONNECT ERROR (%d)", err);
-            tcpd_log("TCPD", s);
+            tcpd_infof("TCPD", s);
         } else {
-            tcpd_log("TCPD", "WIFI RECONNECTING");
+            tcpd_infof("TCPD", "WIFI RECONNECTING");
             tcpd.listening = false;
             tcpd.closed = false;
             tcpd.state = TCPD_CONNECTING;
@@ -306,24 +309,24 @@ void tcpd_listen(TCPD *tcpd, uint16_t port) {
     err_t err;
 
     snprintf(s, sizeof(s), "ADDRESS %s PORT %u", ip4addr_ntoa(netif_ip4_addr(netif_list)), port);
-    tcpd_log(tcpd->tag, s);
+    tcpd_infof(tcpd->tag, s);
 
     struct tcp_pcb *pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
     if (!pcb) {
-        tcpd_log(tcpd->tag, "ERROR CREAING pcb");
+        tcpd_infof(tcpd->tag, "ERROR CREAING pcb");
         return;
     }
 
     if ((err = tcp_bind(pcb, NULL, port)) != 0) {
         snprintf(s, sizeof(s), "ERROR BINDING TO PORT %u (%d)", port, err);
-        tcpd_log(tcpd->tag, s);
+        tcpd_infof(tcpd->tag, s);
         return;
     }
 
     tcpd->server = tcp_listen_with_backlog(pcb, 1);
     if (!tcpd->server) {
         snprintf(s, sizeof(s), "LISTEN ERROR (%d)", err);
-        tcpd_log(tcpd->tag, s);
+        tcpd_infof(tcpd->tag, s);
         tcp_close(pcb);
         return;
     }
@@ -331,7 +334,7 @@ void tcpd_listen(TCPD *tcpd, uint16_t port) {
     tcp_arg(tcpd->server, tcpd);
     tcp_accept(tcpd->server, tcpd_accept);
 
-    tcpd_log(tcpd->tag, "LISTENING");
+    tcpd_infof(tcpd->tag, "LISTENING");
     tcpd->listening = true;
     tcpd->closed = false;
     tcpd->idle = 0;
@@ -342,18 +345,18 @@ err_t tcpd_accept(void *context, struct tcp_pcb *client, err_t err) {
     char s[64];
 
     snprintf(s, sizeof(s), "%s:%d  INCOMING", ip4addr_ntoa(&client->remote_ip), client->remote_port);
-    tcpd_log(tcpd->tag, s);
+    tcpd_infof(tcpd->tag, s);
 
     // ... accept error?
     if (err != ERR_OK || client == NULL) {
         snprintf(s, sizeof(s), "ACCEPT ERROR (%d)", err);
-        tcpd_log(tcpd->tag, s);
+        tcpd_infof(tcpd->tag, s);
 
         if (client != NULL) {
             err_t err = tcp_close(client);
             if (err != ERR_OK) {
                 snprintf(s, sizeof(s), "CLOSE ERROR (%d)", err);
-                tcpd_log(tcpd->tag, s);
+                tcpd_infof(tcpd->tag, s);
                 tcp_abort(client);
                 return ERR_ABRT;
             }
@@ -364,7 +367,7 @@ err_t tcpd_accept(void *context, struct tcp_pcb *client, err_t err) {
 
     // ... connected!
     snprintf(s, sizeof(s), "%s:%d  CONNECTED", ip4addr_ntoa(&client->remote_ip), client->remote_port);
-    tcpd_log(tcpd->tag, s);
+    tcpd_infof(tcpd->tag, s);
 
     for (int i = 0; i < CONNECTIONS; i++) {
         connection *conn = &tcpd->connections[i];
@@ -389,7 +392,7 @@ err_t tcpd_accept(void *context, struct tcp_pcb *client, err_t err) {
 
     // ... too many connections
     snprintf(s, sizeof(s), "%s:%d  TOO MANY CONNECTIONS", ip4addr_ntoa(&client->remote_ip), client->remote_port);
-    tcpd_log(tcpd->tag, s);
+    tcpd_infof(tcpd->tag, s);
 
     tcp_abort(client);
 
@@ -401,9 +404,9 @@ err_t tcpd_close(TCPD *tcpd) {
 
     if (tcpd->server != NULL) {
         snprintf(s, sizeof(s), "%s:%d  CLOSING", ip4addr_ntoa(&tcpd->server->local_ip), tcpd->server->local_port);
-        tcpd_log(tcpd->tag, s);
+        tcpd_infof(tcpd->tag, s);
     } else {
-        tcpd_log(tcpd->tag, "CLOSING");
+        tcpd_infof(tcpd->tag, "CLOSING");
     }
 
     err_t err = ERR_OK;
@@ -423,7 +426,7 @@ err_t tcpd_close(TCPD *tcpd) {
                 char s[64];
 
                 snprintf(s, sizeof(s), "CLOSE ERROR (%d)", err);
-                tcpd_log(tcpd->tag, s);
+                tcpd_infof(tcpd->tag, s);
                 tcp_abort(p);
                 err = ERR_ABRT;
             }
@@ -442,7 +445,7 @@ err_t tcpd_close(TCPD *tcpd) {
         tcpd->state = TCPD_UNKNOWN;
     }
 
-    tcpd_log(tcpd->tag, "CLOSED");
+    tcpd_infof(tcpd->tag, "CLOSED");
 
     return err;
 }
@@ -456,7 +459,7 @@ err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
     // ... closed ?
     if (p == NULL) {
         snprintf(s, sizeof(s), "%s:%d  CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
-        tcpd_log("TCPD", s);
+        tcpd_infof("TCPD", s);
 
         tcp_arg(pcb, NULL);
         tcp_poll(pcb, NULL, 0);
@@ -473,7 +476,7 @@ err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
 
     if (p->tot_len > 0) {
         snprintf(s, sizeof(s), "WIFI RECV L:%d N:%d err:%d", p->tot_len, conn->received, err);
-        tcpd_log("TCPD", s);
+        tcpd_infof("TCPD", s);
 
         const uint16_t remaining = TCP_BUFFER_SIZE - conn->received;
         conn->received += pbuf_copy_partial(p,
@@ -490,21 +493,6 @@ err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
     } else {
         conn->handler(conn);
     }
-
-    // // ... CRLF?
-    // for (int i = 0; i < conn->received; i++) {
-    //     if (conn->buffer_recv[i] == CR || conn->buffer_recv[i] == LF) {
-    //         char cmd[64];
-    //         int N = i < 64 ? i + 1 : 64;
-    //         snprintf(cmd, N, "%s", conn->buffer_recv);
-    //
-    //         conn->received = 0;
-    //
-    //         execw(cmd, tcpd_tx, context);
-    //
-    //         return ERR_OK;
-    //     }
-    // }
 
     return ERR_OK;
 }
@@ -529,7 +517,7 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
     if (err != ERR_OK) {
         char s[64];
         snprintf(s, sizeof(s), "SEND ERROR (%d)", err);
-        tcpd_log("TCPD", s);
+        tcpd_infof("TCPD", s);
 
         return err;
     }
@@ -540,7 +528,7 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
 err_t tcpd_sent(void *context, struct tcp_pcb *pcb, u16_t len) {
     char s[64];
     snprintf(s, sizeof(s), "%s:%d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
-    tcpd_log("TCPD", s);
+    tcpd_infof("TCPD", s);
 
     connection *conn = (connection *)context;
     conn->idle = 0;
@@ -577,21 +565,21 @@ err_t tcpd_server_monitor(void *context, struct tcp_pcb *pcb) {
         }
 
         if (tcpd->closed) {
-            tcpd_log(tcpd->tag, "CLOSED");
+            tcpd_infof(tcpd->tag, "CLOSED");
         } else if (connected == 0) {
             snprintf(s, sizeof(s), "%s:%d  SERVER IDLE %lus",
                      ip4addr_ntoa(&pcb->local_ip),
                      pcb->local_port,
                      tcpd->idle * TCP_SERVER_POLL);
 
-            tcpd_log(tcpd->tag, s);
+            tcpd_infof(tcpd->tag, s);
         } else {
             snprintf(s, sizeof(s), "%s:%d  CONNECTIONS:%d", ip4addr_ntoa(&pcb->local_ip), pcb->local_port, connected);
-            tcpd_log(tcpd->tag, s);
+            tcpd_infof(tcpd->tag, s);
         }
 
         if (tcpd->idle >= SERVER_IDLE_COUNT && !tcpd->closed) {
-            tcpd_log(tcpd->tag, "SHUTDOWN");
+            tcpd_infof(tcpd->tag, "SHUTDOWN");
             tcpd_close(tcpd);
         }
     }
@@ -607,7 +595,7 @@ err_t tcpd_client_monitor(void *context, struct tcp_pcb *pcb) {
 
     if (conn->idle >= CLIENT_IDLE_COUNT) {
         snprintf(s, sizeof(s), "%s:%d  IDLE", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
-        tcpd_log(conn->tag, s);
+        tcpd_infof(conn->tag, s);
 
         tcp_arg(pcb, NULL);
         tcp_poll(pcb, NULL, 0);
@@ -617,7 +605,7 @@ err_t tcpd_client_monitor(void *context, struct tcp_pcb *pcb) {
 
         if ((err = tcp_close(pcb)) != ERR_OK) {
             snprintf(s, sizeof(s), "%s:%d  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, err);
-            tcpd_log(conn->tag, s);
+            tcpd_infof(conn->tag, s);
             tcp_abort(pcb);
             err = ERR_ABRT;
         }
@@ -626,10 +614,25 @@ err_t tcpd_client_monitor(void *context, struct tcp_pcb *pcb) {
 
     } else {
         snprintf(s, sizeof(s), "%s:%d  OK", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
-        tcpd_log(conn->tag, s);
+        tcpd_infof(conn->tag, s);
     }
 
     return err;
+}
+
+void tcpd_reply(void *context, const char *msg) {
+    char s[64];
+    err_t err;
+
+    connection *conn = (connection *)context;
+    conn->idle = 0;
+
+    snprintf(s, sizeof(s), "%s\r\n", msg);
+
+    if ((err = tcpd_send(context, conn->client, s)) != ERR_OK) {
+        snprintf(s, sizeof(s), "WIFI SEND ERROR (%d)", err);
+        tcpd_infof("TCPD", s);
+    }
 }
 
 void tcpd_err(void *context, err_t err) {
@@ -639,11 +642,11 @@ void tcpd_err(void *context, err_t err) {
 
     if (err != ERR_ABRT) {
         snprintf(s, sizeof(s), "ERROR %d", err);
-        tcpd_log(conn->tag, s);
+        tcpd_infof(conn->tag, s);
     }
 }
 
-void tcpd_log(const char *tag, const char *msg) {
+void tcpd_infof(const char *tag, const char *msg) {
     char s[64];
 
     snprintf(s, sizeof(s), "%-6s %s", tag, msg);

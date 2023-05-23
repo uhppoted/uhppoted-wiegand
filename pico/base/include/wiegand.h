@@ -81,6 +81,7 @@ extern const uint32_t MSG_DOOR;
 extern const uint32_t MSG_PUSHBUTTON;
 extern const uint32_t MSG_RX;
 extern const uint32_t MSG_TX;
+extern const uint32_t MSG_LOG;
 extern const uint32_t MSG_RXI;
 extern const uint32_t MSG_TCPD_POLL;
 extern const uint32_t MSG_DEBUG;
