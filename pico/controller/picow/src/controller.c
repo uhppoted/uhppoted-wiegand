@@ -234,7 +234,7 @@ void sysinit() {
         tcpd_initialise(mode);
 
         if (!relay_initialise(mode)) {
-            tx("failed to initialise relay monitor");
+            logd_log("failed to initialise relay monitor");
         }
 
         acl_initialise((uint32_t[]){}, 0);

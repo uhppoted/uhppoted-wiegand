@@ -15,6 +15,7 @@
 #include <buzzer.h>
 #include <common.h>
 #include <led.h>
+#include <logd.h>
 #include <read.h>
 #include <relays.h>
 #include <sys.h>
@@ -202,7 +203,7 @@ void sysinit() {
         TPIC_initialise(mode);
 
         if (!relay_initialise(mode)) {
-            tx("failed to initialise relay monitor");
+            logd_log("failed to initialise relay monitor");
         }
 
         // ... setup sys stuff

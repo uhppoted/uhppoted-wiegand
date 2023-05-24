@@ -16,6 +16,7 @@
 #include <buzzer.h>
 #include <common.h>
 #include <led.h>
+#include <logd.h>
 #include <read.h>
 #include <relays.h>
 #include <sdcard.h>
@@ -226,7 +227,7 @@ void sysinit() {
         tcpd_initialise(mode);
 
         if (!relay_initialise(mode)) {
-            tx("failed to initialise relay monitor");
+            logd_log("failed to initialise relay monitor");
         }
 
         acl_initialise((uint32_t[]){}, 0);

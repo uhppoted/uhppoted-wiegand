@@ -9,8 +9,8 @@
 #include "diskio.h"
 #include "hw_config.h"
 
+#include "../include/logd.h"
 #include "../include/sdcard.h"
-#include "../include/uart.h"
 #include "../include/wiegand.h"
 
 void spi0_dma_isr();
@@ -84,7 +84,7 @@ void sdcard_initialise(enum MODE mode) {
 
         if ((rc = sdcard_mount()) != 0) {
             snprintf(s, sizeof(s), "DISK  MOUNT ERROR (%d) %s", rc, FRESULT_str(rc));
-            tx(s);
+            logd_log(s);
         }
 
         sd_card_t *sdcard = sd_get_by_num(0);
@@ -97,7 +97,7 @@ void sdcard_initialise(enum MODE mode) {
                 &card_detect_callback);
         }
     } else {
-        tx("DISK  INIT ERROR");
+        logd_log("DISK  INIT ERROR");
     }
 }
 

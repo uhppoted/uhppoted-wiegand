@@ -5,7 +5,7 @@
 
 #include "../include/TPIC6B595.h"
 #include "../include/led.h"
-#include "../include/uart.h"
+#include "../include/logd.h"
 #include "../include/wiegand.h"
 
 const uint32_t BLINK_DELAY = 500;
@@ -199,16 +199,16 @@ void led_event(uint32_t v) {
     switch (v) {
     case 21:
         TPIC_set(GREEN_LED, true);
-        tx("LED    ON");
+        logd_log("LED    ON");
         break;
 
     case 10:
         TPIC_set(GREEN_LED, false);
-        tx("LED    OFF");
+        logd_log("LED    OFF");
         break;
 
     default:
-        tx("LED    ???");
+        logd_log("LED    ???");
     }
 }
 

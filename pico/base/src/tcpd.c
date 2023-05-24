@@ -2,7 +2,7 @@
 #include "lwip/tcp.h"
 #include "pico/cyw43_arch.h"
 
-#include <uart.h>
+#include <logd.h>
 #include <wiegand.h>
 
 #include "tcpd.h"
@@ -650,5 +650,5 @@ void tcpd_infof(const char *tag, const char *msg) {
     char s[64];
 
     snprintf(s, sizeof(s), "%-6s %s", tag, msg);
-    tx(s);
+    logd_log(s);
 }

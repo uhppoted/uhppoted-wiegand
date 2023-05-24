@@ -4,6 +4,8 @@ SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
 
+.DEFAULT_GOAL := build
+
 include ../../.credentials
 
 clean:

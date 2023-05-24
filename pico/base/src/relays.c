@@ -3,8 +3,8 @@
 #include "hardware/rtc.h"
 
 #include "../include/TPIC6B595.h"
+#include "../include/logd.h"
 #include "../include/relays.h"
-#include "../include/uart.h"
 
 enum RELAY_STATE {
     TRANSITION = 1,
@@ -163,17 +163,17 @@ bool relay_monitor(repeating_timer_t *rt) {
  */
 void relay_event(uint32_t v) {
     if (v == 0x0000) {
-        tx("DOOR   LOCK UNKNOWN");
+        logd_log("DOOR   LOCK UNKNOWN");
     } else if (v == 0x0001) {
-        tx("DOOR   LOCKED");
+        logd_log("DOOR   LOCKED");
     } else if (v == 0x0002) {
-        tx("DOOR   UNLOCKED");
+        logd_log("DOOR   UNLOCKED");
     } else if (v == 0x0003) {
-        tx("DOOR   LOCK ERROR");
+        logd_log("DOOR   LOCK ERROR");
     } else if (v == 0x0004) {
-        tx("DOOR   LOCK FAILED");
+        logd_log("DOOR   LOCK FAILED");
     } else {
-        tx("DOOR   LOCK ????");
+        logd_log("DOOR   LOCK ????");
     }
 }
 
@@ -226,13 +226,13 @@ int64_t relay_timeout(alarm_id_t id, void *data) {
  */
 void door_event(uint32_t v) {
     if (v == 0x0000) {
-        tx("DOOR  UNKNOWN");
+        logd_log("DOOR  UNKNOWN");
     } else if (v == 0x0001) {
-        tx("DOOR   OPEN");
+        logd_log("DOOR   OPEN");
     } else if (v == 0x0002) {
-        tx("DOOR   CLOSED");
+        logd_log("DOOR   CLOSED");
     } else {
-        tx("DOOR  ????");
+        logd_log("DOOR  ????");
     }
 }
 
@@ -241,12 +241,12 @@ void door_event(uint32_t v) {
  */
 void pushbutton_event(uint32_t v) {
     if (v == 0x0000) {
-        tx("BUTTON UNKNOWN");
+        logd_log("BUTTON UNKNOWN");
     } else if (v == 0x0001) {
-        tx("BUTTON PRESSED");
+        logd_log("BUTTON PRESSED");
     } else if (v == 0x0002) {
-        tx("BUTTON RELEASED");
+        logd_log("BUTTON RELEASED");
     } else {
-        tx("BUTTON ????");
+        logd_log("BUTTON ????");
     }
 }

@@ -21,7 +21,9 @@
                - [x] Logd listener
                - [x] Ignore CLI requests
                - [x] Route log messages
-               - [ ] Switch all logging to logd
+               - [x] Switch all logging to logd
+               - [ ] Format CLI command responses
+               - (?) logd_log also logs its own sends to TCPD
 
          - [ ] Merge picow branch back into main
          - [ ] cyw43_arch_lwip_check

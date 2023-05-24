@@ -10,6 +10,7 @@
 #include "buzzer.h"
 #include "common.h"
 #include "led.h"
+#include "logd.h"
 #include "relays.h"
 #include "sdcard.h"
 #include "sys.h"
@@ -17,28 +18,31 @@
 #include "uart.h"
 #include "write.h"
 
-typedef void (*handler)(uint32_t, uint32_t);
+typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
-void help(txrx f, void *context);
-void query(txrx f, void *context);
+void help(txrx, void *);
+void cli_set_time(char *, txrx, void *);
+void query(txrx, void *);
 void reboot();
 
-void on_card_command(char *cmd, handler fn);
-void on_door_unlock();
-void on_door_open();
-void on_door_close();
-void on_press_button();
-void on_release_button();
-void write(uint32_t, uint32_t);
-void grant(uint32_t, uint32_t);
-void revoke(uint32_t, uint32_t);
-void list_acl();
+void on_card_command(char *, handler, txrx, void *);
 
-void mount();
-void unmount();
-void format();
-void read_acl();
-void write_acl();
+void on_door_unlock(txrx, void *);
+void on_door_open(txrx, void *);
+void on_door_close(txrx, void *);
+void on_press_button(txrx, void *);
+void on_release_button(txrx, void *);
+void write(uint32_t, uint32_t, txrx, void *);
+
+void grant(uint32_t, uint32_t, txrx, void *);
+void revoke(uint32_t, uint32_t, txrx, void *);
+void list_acl(txrx, void *);
+void read_acl(txrx, void *);
+void write_acl(txrx, void *);
+
+void mount(txrx, void *);
+void unmount(txrx, void *);
+void format(txrx, void *);
 
 void serial(void *context, const char *msg) {
     puts(msg);
@@ -71,46 +75,55 @@ void execw(char *cmd, txrx f, void *context) {
 
         if (N > 0) {
             if (strncasecmp(cmd, "reboot", 6) == 0) {
-                reboot();
+                reboot(f, context);
             } else if (strncasecmp(cmd, "blink", 5) == 0) {
                 led_blink(5);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
-                on_door_unlock();
+                on_door_unlock(f, context);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
-                on_door_open();
+                on_door_open(f, context);
             } else if (strncasecmp(cmd, "close", 5) == 0) {
-                on_door_close();
+                on_door_close(f, context);
             } else if (strncasecmp(cmd, "press", 5) == 0) {
-                on_press_button();
+                on_press_button(f, context);
             } else if (strncasecmp(cmd, "release", 7) == 0) {
-                on_release_button();
+                on_release_button(f, context);
             } else if (strncasecmp(cmd, "grant ", 6) == 0) {
-                on_card_command(&cmd[6], grant);
+                on_card_command(&cmd[6], grant, f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
-                on_card_command(&cmd[7], revoke);
+                on_card_command(&cmd[7], revoke, f, context);
             } else if (strncasecmp(cmd, "read acl", 8) == 0) {
-                read_acl();
+                read_acl(f, context);
             } else if (strncasecmp(cmd, "write acl", 9) == 0) {
-                write_acl();
+                write_acl(f, context);
             } else if (strncasecmp(cmd, "list acl", 8) == 0) {
-                list_acl();
+                list_acl(f, context);
             } else if (strncasecmp(cmd, "mount", 5) == 0) {
-                mount();
+                mount(f, context);
             } else if (strncasecmp(cmd, "unmount", 7) == 0) {
-                unmount();
+                unmount(f, context);
             } else if (strncasecmp(cmd, "format", 6) == 0) {
-                format();
+                format(f, context);
             } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
-                on_card_command(&cmd[1], write);
+                on_card_command(&cmd[1], write, f, context);
             } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
-                sys_settime(&cmd[1]);
+                cli_set_time(&cmd[1], f, context);
             } else {
                 help(f, context);
             }
         }
     }
+}
+
+/* Sets the system time.
+ *
+ */
+void cli_set_time(char *cmd, txrx f, void *context) {
+    sys_settime(cmd);
+
+    f(context, "SET TIME OK");
 }
 
 /* Displays the last read/write card, if any.
@@ -127,16 +140,19 @@ void query(txrx f, void *context) {
  *  Extract the facility code and card number pushes it to the emulator queue.
  *
  */
-void write(uint32_t facility_code, uint32_t card) {
+void write(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     if ((mode == WRITER) || (mode == EMULATOR)) {
         write_card(facility_code, card);
     }
+
+    f(context, "CARD WRITE OK");
+    logd_log("CARD WRITE OK");
 }
 
 /* Adds a card number to the ACL.
  *
  */
-void grant(uint32_t facility_code, uint32_t card) {
+void grant(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     char s[64];
     char c[16];
 
@@ -148,14 +164,16 @@ void grant(uint32_t facility_code, uint32_t card) {
         snprintf(s, sizeof(s), "CARD  %-8s %s", c, "ERROR");
     }
 
-    tx(s);
-    write_acl();
+    f(context, s);
+    logd_log(s);
+
+    write_acl(f, context);
 }
 
 /* Removes a card number from the ACL.
  *
  */
-void revoke(uint32_t facility_code, uint32_t card) {
+void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     char s[64];
     char c[16];
 
@@ -167,24 +185,27 @@ void revoke(uint32_t facility_code, uint32_t card) {
         snprintf(s, sizeof(s), "CARD  %-8s %s", c, "ERROR");
     }
 
-    tx(s);
-    write_acl();
+    f(context, s);
+    logd_log(s);
+
+    write_acl(f, context);
 }
 
 /* Lists the ACL cards.
  *
  */
-void list_acl() {
+void list_acl(txrx f, void *context) {
     uint32_t *cards;
     int N = acl_list(&cards);
 
     if (N == 0) {
-        tx("ACL   NO CARDS");
+        f(context, "ACL   NO CARDS");
+        logd_log("ACL   NO CARDS");
     } else {
         for (int i = 0; i < N; i++) {
             char s[32];
             snprintf(s, sizeof(s), "ACL   %u", cards[i]);
-            tx(s);
+            f(context, s);
         }
     }
 
@@ -194,34 +215,37 @@ void list_acl() {
 /* Formats the SD card.
  *
  */
-void format() {
+void format(txrx f, void *context) {
     bool detected = gpio_get(SD_DET) == 1;
     int formatted = sdcard_format();
     char s[64];
 
     if (!detected) {
-        tx("DISK  NO SDCARD");
+        f(context, "DISK   NO SDCARD");
+        logd_log("DISK   NO SDCARD");
     }
 
     if (formatted != 0) {
-        snprintf(s, sizeof(s), "DISK  FORMAT ERROR (%d) %s", formatted, FRESULT_str(formatted));
+        snprintf(s, sizeof(s), "DISK   FORMAT ERROR (%d) %s", formatted, FRESULT_str(formatted));
     } else {
-        snprintf(s, sizeof(s), "DISK  FORMATTED");
+        snprintf(s, sizeof(s), "DISK   FORMATTED");
     }
 
-    tx(s);
+    f(context, s);
+    logd_log(s);
 }
 
 /* Mounts the SD card.
  *
  */
-void mount() {
+void mount(txrx f, void *context) {
     bool detected = gpio_get(SD_DET) == 1;
     int mounted = sdcard_mount();
     char s[64];
 
     if (!detected) {
-        tx("DISK  NO SDCARD");
+        f(context, "DISK   NO SDCARD");
+        logd_log("DISK   NO SDCARD");
     }
 
     if (mounted != 0) {
@@ -230,19 +254,21 @@ void mount() {
         snprintf(s, sizeof(s), "DISK  MOUNTED");
     }
 
-    tx(s);
+    f(context, s);
+    logd_log(s);
 }
 
 /* Unmounts the SD card.
  *
  */
-void unmount() {
+void unmount(txrx f, void *context) {
     int unmounted = sdcard_unmount();
     int detected = gpio_get(SD_DET);
     char s[32];
 
     if (!detected) {
-        tx("DISK NO SDCARD");
+        f(context, "DISK   NO SDCARD");
+        logd_log("DISK   NO SDCARD");
     }
 
     if (unmounted != 0) {
@@ -251,13 +277,14 @@ void unmount() {
         snprintf(s, sizeof(s), "DISK UNMOUNTED");
     }
 
-    tx(s);
+    f(context, s);
+    logd_log(s);
 }
 
 /* Loads an ACL from the SD card
  *
  */
-void read_acl() {
+void read_acl(txrx f, void *context) {
     uint32_t cards[16];
     int N = 16;
     int rc = sdcard_read_acl(cards, &N);
@@ -265,7 +292,8 @@ void read_acl() {
     char s[32];
 
     if (!detected) {
-        tx("DISK NO SDCARD");
+        f(context, "DISK   NO SDCARD");
+        logd_log("DISK   NO SDCARD");
     }
 
     if (rc != 0) {
@@ -276,13 +304,14 @@ void read_acl() {
         acl_initialise(cards, N);
     }
 
-    tx(s);
+    f(context, s);
+    logd_log(s);
 }
 
 /* Writes the ACL to the SD card
  *
  */
-void write_acl() {
+void write_acl(txrx f, void *context) {
     uint32_t *cards;
     int N = acl_list(&cards);
     char s[32];
@@ -323,7 +352,8 @@ void write_acl() {
     int rc = sdcard_write_acl(acl, N);
 
     if (!gpio_get(SD_DET)) {
-        tx("DISK NO SDCARD");
+        f(context, "DISK   NO SDCARD");
+        logd_log("DISK   NO SDCARD");
     }
 
     if (rc != 0) {
@@ -332,13 +362,14 @@ void write_acl() {
         snprintf(s, sizeof(s), "DISK  WRITE ACL OK");
     }
 
-    tx(s);
+    f(context, s);
+    logd_log(s);
 }
 
 /* Goes into a tight loop until the watchdog resets the processor.
  *
  */
-void reboot() {
+void reboot(txrx f, void *context) {
     while (true) {
         buzzer_beep(1);
 
@@ -393,7 +424,7 @@ void help(txrx f, void *context) {
  *  Extract the facility code and card number and invokes the handler function.
  *
  */
-void on_card_command(char *cmd, handler fn) {
+void on_card_command(char *cmd, handler fn, txrx f, void *context) {
     uint32_t facility_code = FACILITY_CODE;
     uint32_t card = 0;
     int N = strlen(cmd);
@@ -419,13 +450,13 @@ void on_card_command(char *cmd, handler fn) {
         }
     }
 
-    fn(facility_code, card);
+    fn(facility_code, card, f, context);
 }
 
 /* Unlocks door lock for 5 seconds (READER/CONTROLLER mode only).
  *
  */
-void on_door_unlock() {
+void on_door_unlock(txrx f, void *context) {
     if ((mode == READER) || (mode == CONTROLLER)) {
         door_unlock(5000);
     }
@@ -435,11 +466,11 @@ void on_door_unlock() {
  *  Opens/closes the door contact emulation relay (in reader mode only).
  *
  */
-void on_door_open() {
+void on_door_open(txrx f, void *context) {
     relay_door_contact(false);
 }
 
-void on_door_close(char *cmd) {
+void on_door_close(txrx f, void *context) {
     relay_door_contact(true);
 }
 
@@ -447,10 +478,10 @@ void on_door_close(char *cmd) {
  *  Opens/closes the pushbutton emulation relay (in reader mode only).
  *
  */
-void on_press_button() {
+void on_press_button(txrx f, void *context) {
     relay_pushbutton(true);
 }
 
-void on_release_button() {
+void on_release_button(txrx f, void *context) {
     relay_pushbutton(false);
 }

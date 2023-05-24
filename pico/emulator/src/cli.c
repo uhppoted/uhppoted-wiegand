@@ -4,6 +4,7 @@
 #include "TPIC6B595.h"
 #include "buzzer.h"
 #include "common.h"
+#include "logd.h"
 #include "relays.h"
 #include "sys.h"
 #include "tcpd.h"
@@ -13,18 +14,20 @@
 #include "../include/cli.h"
 #include "../include/emulator.h"
 
-typedef void (*handler)(uint32_t, uint32_t);
+typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
-void query();
+void help(txrx, void *);
+void cli_set_time(char *, txrx, void *);
+void query(txrx, void *);
 void reboot();
-void help();
 
-void on_card_command(char *cmd, handler fn);
-void on_door_open();
-void on_door_close();
-void on_press_button();
-void on_release_button();
-void write(uint32_t, uint32_t);
+void on_card_command(char *cmd, handler fn, txrx, void *);
+
+void on_door_open(txrx, void *);
+void on_door_close(txrx, void *);
+void on_press_button(txrx, void *);
+void on_release_button(txrx, void *);
+void write(uint32_t, uint32_t, txrx, void *);
 
 void serial(void *context, const char *msg) {
     puts(msg);
@@ -56,24 +59,33 @@ void execw(char *cmd, txrx f, void *context) {
             if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
-                on_door_open();
+                on_door_open(f, context);
             } else if (strncasecmp(cmd, "close", 5) == 0) {
-                on_door_close();
+                on_door_close(f, context);
             } else if (strncasecmp(cmd, "press", 5) == 0) {
-                on_press_button();
+                on_press_button(f, context);
             } else if (strncasecmp(cmd, "release", 7) == 0) {
-                on_release_button();
+                on_release_button(f, context);
             } else if (strncasecmp(cmd, "reboot", 6) == 0) {
-                reboot();
+                reboot(f, context);
             } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
-                sys_settime(&cmd[1]);
+                cli_set_time(&cmd[1], f, context);
             } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
-                on_card_command(&cmd[1], write);
+                on_card_command(&cmd[1], write, f, context);
             } else {
                 help(f, context);
             }
         }
     }
+}
+
+/* Sets the system time.
+ *
+ */
+void cli_set_time(char *cmd, txrx f, void *context) {
+    sys_settime(cmd);
+
+    f(context, "SET TIME OK");
 }
 
 /* Displays the last read/write card, if any.
@@ -90,16 +102,19 @@ void query(txrx f, void *context) {
  *  Extract the facility code and card number pushes it to the emulator queue.
  *
  */
-void write(uint32_t facility_code, uint32_t card) {
+void write(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     if ((mode == WRITER) || (mode == EMULATOR)) {
         write_card(facility_code, card);
     }
+
+    f(context, "CARD WRITE OK");
+    logd_log("CARD WRITE OK");
 }
 
 /* Goes into a tight loop until the watchdog resets the processor.
  *
  */
-void reboot() {
+void reboot(txrx f, void *context) {
     while (true) {
         buzzer_beep(1);
 
@@ -143,7 +158,7 @@ void help(txrx f, void *context) {
  *  Extract the facility code and card number and invokes the handler function.
  *
  */
-void on_card_command(char *cmd, handler fn) {
+void on_card_command(char *cmd, handler fn, txrx f, void *context) {
     uint32_t facility_code = FACILITY_CODE;
     uint32_t card = 0;
     int N = strlen(cmd);
@@ -169,18 +184,18 @@ void on_card_command(char *cmd, handler fn) {
         }
     }
 
-    fn(facility_code, card);
+    fn(facility_code, card, f, context);
 }
 
 /* Door contact emulation command handler.
  *  Opens/closes the door contact emulation relay (in reader mode only).
  *
  */
-void on_door_open() {
+void on_door_open(txrx f, void *context) {
     relay_door_contact(false);
 }
 
-void on_door_close(char *cmd) {
+void on_door_close(txrx f, void *context) {
     relay_door_contact(true);
 }
 
@@ -188,10 +203,10 @@ void on_door_close(char *cmd) {
  *  Opens/closes the pushbutton emulation relay (in reader mode only).
  *
  */
-void on_press_button() {
+void on_press_button(txrx f, void *context) {
     relay_pushbutton(true);
 }
 
-void on_release_button() {
+void on_release_button(txrx f, void *context) {
     relay_pushbutton(false);
 }
