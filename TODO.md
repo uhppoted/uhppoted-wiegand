@@ -24,8 +24,8 @@
                - [x] Route log messages
                - [x] Switch all logging to logd
                - [x] Format CLI command responses
+         - [x] cyw43_arch_lwip_check
 
-         - [ ] cyw43_arch_lwip_check
          - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout

@@ -472,8 +472,7 @@ err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
         return ERR_OK;
     }
 
-    // cyw43_arch_lwip_check();
-
+    cyw43_arch_lwip_begin();
     if (p->tot_len > 0) {
         snprintf(s, sizeof(s), "WIFI RECV L:%d N:%d err:%d", p->tot_len, conn->received, err);
         tcpd_infof("TCPD", s);
@@ -484,6 +483,7 @@ err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
                                             p->tot_len > remaining ? remaining : p->tot_len, 0);
         tcp_recved(pcb, p->tot_len);
     }
+    cyw43_arch_lwip_end();
 
     pbuf_free(p);
 
@@ -511,9 +511,10 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
 
     conn->sent = 0;
 
-    // cyw43_arch_lwip_check();
-
+    cyw43_arch_lwip_begin();
     err_t err = tcp_write(pcb, conn->buffer_sent, i, TCP_WRITE_FLAG_COPY);
+    cyw43_arch_lwip_end();
+
     if (err != ERR_OK) {
         char s[64];
         snprintf(s, sizeof(s), "SEND ERROR (%d)", err);
