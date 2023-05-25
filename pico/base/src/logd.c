@@ -38,7 +38,7 @@ void logd_log(const char *message) {
 
         N = timef(now, s, size);
 
-        snprintf(&s[N], size - N, "  ....   %s\n", message);
+        snprintf(&s[N], size - N, "  %s\n", message);
 
         msg = MSG_LOG | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
         if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {

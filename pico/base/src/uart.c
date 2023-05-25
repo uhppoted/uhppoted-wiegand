@@ -125,10 +125,7 @@ void echo(const char *cmd) {
  *
  */
 void cls() {
-    char s[32];
-
-    snprintf(s, sizeof(s), "\033c\033[2J");
-    fputs(s, stdout);
+    fputs("\033c\033[2J", stdout);
     fflush(stdout);
 
     set_scroll_area();
@@ -138,9 +135,7 @@ void cls() {
  *
  */
 void clear_screen() {
-    char s[24];
-    snprintf(s, sizeof(s), "\033[2J");
-    fputs(s, stdout);
+    fputs("\033[2J", stdout);
     fflush(stdout);
 }
 
@@ -148,9 +143,7 @@ void clear_screen() {
  *
  */
 void set_scroll_area() {
-    char s[24];
-    snprintf(s, sizeof(s), "\0337\033[999;999H\033[6n\0338");
-    fputs(s, stdout);
+    fputs("\0337\033[999;999H\033[6n\0338", stdout);
     fflush(stdout);
 }
 

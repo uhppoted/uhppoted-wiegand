@@ -17,22 +17,22 @@
          - [x] Multiple client connections
          - [x] Restart server occasionally on server idle 
          - [x] ~~Send queue~~
-         - [ ] Logging client/port
+         - [x] Merge picow branch back into main
+         - [x] Logging client/port
                - [x] Logd listener
                - [x] Ignore CLI requests
                - [x] Route log messages
                - [x] Switch all logging to logd
-               - [ ] Format CLI command responses
-               - (?) logd_log also logs its own sends to TCPD
+               - [x] Format CLI command responses
 
-         - [ ] Merge picow branch back into main
          - [ ] cyw43_arch_lwip_check
          - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout
          - [ ] Configurable idle timeout
          - [ ] USB+WiFi variants
-         
+         - [ ] Check emulator
+         - [ ] Check reference
 
    - [ ] Buzzer
    - (?) CLI auth

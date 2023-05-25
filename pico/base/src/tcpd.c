@@ -621,13 +621,13 @@ err_t tcpd_client_monitor(void *context, struct tcp_pcb *pcb) {
 }
 
 void tcpd_reply(void *context, const char *msg) {
-    char s[64];
+    char s[100];
     err_t err;
 
     connection *conn = (connection *)context;
     conn->idle = 0;
 
-    snprintf(s, sizeof(s), "%s\r\n", msg);
+    snprintf(s, sizeof(s), ">  %s\r\n", msg);
 
     if ((err = tcpd_send(context, conn->client, s)) != ERR_OK) {
         snprintf(s, sizeof(s), "WIFI SEND ERROR (%d)", err);

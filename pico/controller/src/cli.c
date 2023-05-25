@@ -40,7 +40,9 @@ void format(txrx, void *);
 void woot(txrx f, void *context);
 
 void serial(void *context, const char *msg) {
-    puts(msg);
+    char s[100];
+    snprintf(s,sizeof(s),">  %s",msg);
+    puts(s);
 }
 
 /* Executes a command from the TTY terminal.
