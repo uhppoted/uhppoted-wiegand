@@ -25,8 +25,8 @@
                - [x] Switch all logging to logd
                - [x] Format CLI command responses
          - [x] cyw43_arch_lwip_check
+         - [x] Reduce poll interval
 
-         - [ ] Reduce poll interval
          - [ ] Configurable ports 
          - [ ] Configurable connect timeout
          - [ ] Configurable idle timeout
