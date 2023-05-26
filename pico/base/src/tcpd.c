@@ -11,14 +11,14 @@
 
 const uint8_t CR = 13;
 const uint8_t LF = 10;
-const uint16_t CLI_PORT = 4242;
-const uint16_t LOGD_PORT = 2424;
-const uint32_t TCPD_POLL = 500;
-const uint8_t TCP_SERVER_POLL = 30;  // seconds
-const uint8_t TCP_CLIENT_POLL = 5;   // seconds
-const int CLIENT_IDLE_TIME = 2 * 60; // seconds
+const uint16_t CLI_PORT = TCPD_CLI_PORT;
+const uint16_t LOGD_PORT = TCPD_LOG_PORT;
+const uint32_t TCPD_POLL = TCPD_POLL_INTERVAL; // ms
+const uint8_t TCP_SERVER_POLL = 30;            // seconds
+const uint8_t TCP_CLIENT_POLL = 5;             // seconds
+const int CLIENT_IDLE_TIME = TCPD_CLIENT_IDLE; // seconds
 const int CLIENT_IDLE_COUNT = CLIENT_IDLE_TIME / TCP_CLIENT_POLL;
-const int SERVER_IDLE_TIME = 5 * 60; // seconds
+const int SERVER_IDLE_TIME = TCPD_SERVER_IDLE; // seconds
 const int SERVER_IDLE_COUNT = SERVER_IDLE_TIME / TCP_SERVER_POLL;
 
 enum TCPD_STATE {

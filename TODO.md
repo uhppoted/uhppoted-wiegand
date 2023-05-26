@@ -26,13 +26,16 @@
                - [x] Format CLI command responses
          - [x] cyw43_arch_lwip_check
          - [x] Reduce poll interval
-
-         - [ ] Configurable ports 
-         - [ ] Configurable connect timeout
-         - [ ] Configurable idle timeout
+         - [x] Configurable ports 
+         - [x] Configurable connect timeout
+         - [x] Configurable idle timeout
          - [ ] USB+WiFi variants
+               - [ ] controller
+               - [ ] emulator
+               - [ ] reference
          - [ ] Check emulator
          - [ ] Check reference
+
 
    - [ ] Buzzer
    - (?) CLI auth
