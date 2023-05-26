@@ -30,6 +30,7 @@
          - [x] Configurable connect timeout
          - [x] Configurable idle timeout
          - [ ] USB+WiFi variants
+               - https://forums.raspberrypi.com/viewtopic.php?t=340270
                - [ ] controller
                - [ ] emulator
                - [ ] reference

@@ -4,7 +4,10 @@
    - https://forums.raspberrypi.com/viewtopic.php?t=312516
    - https://forums.raspberrypi.com/viewtopic.php?t=326979
 
-2. 10058339
+2. USB + WiFi
+   - https://forums.raspberrypi.com/viewtopic.php?t=340270
+
+3. 10058339
    0 0110 0100 1110 0100 0001 1111 1
      6    4    e    4    1    f
      start parity: 6+0 ones (e)
@@ -27,7 +30,7 @@
    0000 0000 0000 0000 0001 1111 1111 1111
    0    0    0    0    1    f    f    f
 
-3. https://www.raspberrypi.com/news/how-to-add-ethernet-to-raspberry-pi-pico/
+4. https://www.raspberrypi.com/news/how-to-add-ethernet-to-raspberry-pi-pico/
 
 ### Debugging reader glitch
 ```
