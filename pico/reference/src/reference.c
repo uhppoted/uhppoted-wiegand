@@ -212,7 +212,7 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
-        sdcard_initialise(mode);
+        sdcard_initialise(mode, true);
         read_initialise(mode);
         write_initialise(mode);
         led_initialise(mode);

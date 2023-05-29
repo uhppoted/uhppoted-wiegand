@@ -4,12 +4,26 @@ SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
 
+CLI_PORT=4242
+LOG_PORT=2424
+TCPD_CLIENT_IDLE=120
+TCPD_SERVER_IDLE=300
+TCPD_POLL_INTERVAL=500
+
 include ../../.credentials
 
 clean:
 	rm -rf build
 	mkdir -p build
-	export PICO_SDK_PATH=$(SDK) && cd build && cmake -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" ..
+	export PICO_SDK_PATH=$(SDK) && \
+	       cd build && \
+	       cmake -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" \
+	             -DTCPD_CLI_PORT="$(CLI_PORT)" \
+	             -DTCPD_LOG_PORT="$(LOG_PORT)" \
+	             -DTCPD_CLIENT_IDLE="$(TCPD_CLIENT_IDLE)" \
+	             -DTCPD_SERVER_IDLE="$(TCPD_SERVER_IDLE)" \
+	             -DTCPD_POLL_INTERVAL="$(TCPD_POLL_INTERVAL)" \
+	             ..
 
 format: src/*.c
 	clang-format -i ./src/*.c

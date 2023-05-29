@@ -2,6 +2,7 @@
 #include "lwip/tcp.h"
 #include "pico/cyw43_arch.h"
 
+#include <led.h>
 #include <logd.h>
 #include <wiegand.h>
 
@@ -126,6 +127,7 @@ int64_t tcpdi(alarm_id_t id, void *data) {
 
 /* Initialises the TCP server.
  *
+ * Ref. https://forums.raspberrypi.com/viewtopic.php?t=340270
  */
 bool tcpd_initialise(enum MODE mode) {
     char s[64];
@@ -195,6 +197,8 @@ void tcpd_log(const char *msg) {
 }
 
 void tcpd_poll() {
+    blink(GOOD_CARD);
+
     char s[64];
     err_t err;
 
@@ -527,9 +531,9 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
 }
 
 err_t tcpd_sent(void *context, struct tcp_pcb *pcb, u16_t len) {
-    char s[64];
-    snprintf(s, sizeof(s), "%s:%d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
-    tcpd_infof("TCPD", s);
+    // char s[64];
+    // snprintf(s, sizeof(s), "%s:%d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
+    // tcpd_infof("TCPD", s);
 
     connection *conn = (connection *)context;
     conn->idle = 0;

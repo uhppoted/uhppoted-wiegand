@@ -41,7 +41,7 @@ void woot(txrx f, void *context);
 
 void serial(void *context, const char *msg) {
     char s[100];
-    snprintf(s,sizeof(s),">  %s",msg);
+    snprintf(s, sizeof(s), ">  %s", msg);
     puts(s);
 }
 

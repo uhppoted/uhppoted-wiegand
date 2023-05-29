@@ -30,10 +30,11 @@
          - [x] Configurable connect timeout
          - [x] Configurable idle timeout
          - [ ] USB+WiFi variants
-               - https://forums.raspberrypi.com/viewtopic.php?t=340270
+               - [ ] Figure out SD card detect interrupt conflict
                - [ ] controller
                - [ ] emulator
                - [ ] reference
+               - [x] Don't log SENT bytes to TCP log (infinite loop)
          - [ ] Check emulator
          - [ ] Check reference
 

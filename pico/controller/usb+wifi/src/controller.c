@@ -159,7 +159,7 @@ int main() {
         if ((v & MSG) == MSG_LOG) {
             char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
             printf("%s", b);
-            // tcpd_log(b);
+            tcpd_log(b);
             free(b);
         }
 
@@ -227,7 +227,7 @@ void sysinit() {
         }
 
         logd_initialise(mode);
-        sdcard_initialise(mode);
+        sdcard_initialise(mode, false); // mysterious conflict between card detect interrupt, USB and cyw43
         read_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);

@@ -2,7 +2,7 @@
 
 #include "wiegand.h"
 
-void sdcard_initialise(enum MODE mode);
+void sdcard_initialise(enum MODE, bool);
 
 int sdcard_format();
 int sdcard_mount();

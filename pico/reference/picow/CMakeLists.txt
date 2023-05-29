@@ -10,11 +10,17 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(PICO_CYW43_ARCH_POLL "Select polling behavior for CYW43 Wi-Fi chip" ON)
 
-add_compile_definitions(SSID=\"${SSID}\")
-add_compile_definitions(PASSWORD=\"${PASSWORD}\")
 add_compile_definitions(SYSDATE=$(SYSDATE))
 add_compile_definitions(SYSTIME=$(SYSTIME))
 add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
+
+add_compile_definitions(SSID=\"${SSID}\")
+add_compile_definitions(PASSWORD=\"${PASSWORD}\")
+add_compile_definitions(TCPD_CLI_PORT=${TCPD_CLI_PORT})
+add_compile_definitions(TCPD_LOG_PORT=${TCPD_LOG_PORT})
+add_compile_definitions(TCPD_SERVER_IDLE=${TCPD_SERVER_IDLE})
+add_compile_definitions(TCPD_CLIENT_IDLE=${TCPD_CLIENT_IDLE})
+add_compile_definitions(TCPD_POLL_INTERVAL=${TCPD_POLL_INTERVAL})
 
 pico_sdk_init()
 

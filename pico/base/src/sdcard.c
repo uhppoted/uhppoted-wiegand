@@ -22,6 +22,15 @@ static void card_detect_callback(uint, uint32_t);
 #define CS 5
 #define DET 6
 
+/* Internal state for the SDCARD.
+ *
+ */
+struct {
+    bool initialised;
+} SDCARD = {
+    .initialised = false,
+};
+
 // Configure SD card SPI
 static spi_t spis[] = {
     {
@@ -77,19 +86,21 @@ spi_t *spi_get_by_num(size_t num) {
 /* Initialises the SD card driver.
  *
  */
-void sdcard_initialise(enum MODE mode) {
-    if (sd_init_driver()) {
-        int rc;
-        char s[64];
+void sdcard_initialise(enum MODE mode, bool card_detect_enabled) {
+    char s[64];
 
-        if ((rc = sdcard_mount()) != 0) {
-            snprintf(s, sizeof(s), "DISK  MOUNT ERROR (%d) %s", rc, FRESULT_str(rc));
-            logd_log(s);
-        }
+    if (sd_init_driver()) {
+        SDCARD.initialised = true;
 
         sd_card_t *sdcard = sd_get_by_num(0);
 
-        if (sdcard->use_card_detect) {
+        FRESULT fr = f_mount(&sdcard->fatfs, sdcard->pcName, 1);
+        if (fr != FR_OK) {
+            snprintf(s, sizeof(s), "DISK  MOUNT ERROR (%d) %s", fr, FRESULT_str(fr));
+            logd_log(s);
+        }
+
+        if (card_detect_enabled && sdcard->use_card_detect) {
             gpio_set_irq_enabled_with_callback(
                 sdcard->card_detect_gpio,
                 GPIO_IRQ_EDGE_FALL,
@@ -105,6 +116,10 @@ void sdcard_initialise(enum MODE mode) {
  *
  */
 int sdcard_mount() {
+    if (!SDCARD.initialised) {
+        return -1;
+    }
+
     sd_card_t *sdcard = sd_get_by_num(0);
     FRESULT fr = f_mount(&sdcard->fatfs, sdcard->pcName, 1);
 
@@ -115,6 +130,10 @@ int sdcard_mount() {
  *
  */
 int sdcard_unmount() {
+    if (!SDCARD.initialised) {
+        return -1;
+    }
+
     sd_card_t *sdcard = sd_get_by_num(0);
     FRESULT fr;
 
@@ -131,6 +150,10 @@ int sdcard_unmount() {
  *
  */
 int sdcard_format() {
+    if (!SDCARD.initialised) {
+        return -1;
+    }
+
     sd_card_t *sdcard = sd_get_by_num(0);
     FRESULT fr = f_mkfs(sdcard->pcName, 0, 0, FF_MAX_SS * 2);
 
@@ -141,6 +164,10 @@ int sdcard_format() {
  *
  */
 int sdcard_read_acl(uint32_t cards[], int *N) {
+    if (!SDCARD.initialised) {
+        return -1;
+    }
+
     FIL file;
     FRESULT fr;
 
@@ -167,6 +194,10 @@ int sdcard_read_acl(uint32_t cards[], int *N) {
  *
  */
 int sdcard_write_acl(CARD cards[], int N) {
+    if (!SDCARD.initialised) {
+        return -1;
+    }
+
     FIL file;
     FRESULT fr;
 
@@ -213,7 +244,7 @@ int sdcard_write_acl(CARD cards[], int N) {
 static void card_detect_callback(uint gpio, uint32_t events) {
     static bool busy;
 
-    if (!busy && !gpio_get(SD_DET)) {
+    if (SDCARD.initialised && !busy && !gpio_get(SD_DET)) {
         busy = true;
 
         sd_card_t *sdcard = sd_get_by_num(0);
