@@ -32,9 +32,22 @@
          - [ ] USB+WiFi variants
                - [ ] Figure out SD card detect interrupt conflict
                - [x] controller
-               - [ ] emulator
+               - [x] emulator
                - [ ] reference
                - [x] Don't log SENT bytes to TCP log (infinite loop)
+               - [x] Don't log SEND error to TCP log
+               - [x] Close client connection on SEND ERROR
+               - [ ] emulator: log connections being closed mysteriouly?
+```
+2023-05-30 09:54:29  SYS    EMULATOR OK
+2023-05-30 09:54:35  SYS    EMULATOR OK
+2023-05-30 09:54:35  TCPD   SEND ERROR (-11)
+2023-05-30 09:54:35  TCPD   LOG ERROR (-13)
+2023-05-30 09:54:39  SYS    EMULATOR OK
+2023-05-30 09:54:42  TCPD   0.0.0.0:4242  SERVER IDLE 60s
+2023-05-30 09:54:42  LOGD   0.0.0.0:2424  CONNECTIONS:1
+```
+
          - [ ] Check emulator
          - [ ] Check reference
 

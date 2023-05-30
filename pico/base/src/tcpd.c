@@ -111,6 +111,7 @@ err_t tcpd_client_monitor(void *, struct tcp_pcb *);
 void tcpd_reply(void *, const char *);
 void tcpd_err(void *, err_t);
 void tcpd_infof(const char *, const char *);
+void tcpd_debugf(const char *, const char *);
 
 /* Alarm handler for TCP poll timer.
  *
@@ -522,7 +523,25 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
     if (err != ERR_OK) {
         char s[64];
         snprintf(s, sizeof(s), "SEND ERROR (%d)", err);
-        tcpd_infof("TCPD", s);
+        tcpd_debugf("TCPD", s);
+
+        tcp_arg(pcb, NULL);
+        tcp_poll(pcb, NULL, 0);
+        tcp_sent(pcb, NULL);
+        tcp_recv(pcb, NULL);
+        tcp_err(pcb, NULL);
+
+        conn->client = NULL;
+
+        if ((err = tcp_close(pcb)) != ERR_OK) {
+            snprintf(s, sizeof(s), "%s:%d  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, err);
+            tcpd_debugf(conn->tag, s);
+            tcp_abort(pcb);
+            return ERR_ABRT;
+        }
+
+        snprintf(s, sizeof(s), "%s:%d  CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
+        tcpd_debugf("TCPD", s);
 
         return err;
     }
@@ -531,9 +550,9 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
 }
 
 err_t tcpd_sent(void *context, struct tcp_pcb *pcb, u16_t len) {
-    // char s[64];
-    // snprintf(s, sizeof(s), "%s:%d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
-    // tcpd_infof("TCPD", s);
+    char s[64];
+    snprintf(s, sizeof(s), "%s:%d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
+    tcpd_debugf("TCPD", s);
 
     connection *conn = (connection *)context;
     conn->idle = 0;
@@ -656,4 +675,12 @@ void tcpd_infof(const char *tag, const char *msg) {
 
     snprintf(s, sizeof(s), "%-6s %s", tag, msg);
     logd_log(s);
+}
+
+// Sends message to serial port only
+void tcpd_debugf(const char *tag, const char *msg) {
+    char s[64];
+
+    snprintf(s, sizeof(s), "%-6s %s", tag, msg);
+    logd_debug(s);
 }

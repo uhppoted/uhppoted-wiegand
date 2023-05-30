@@ -112,7 +112,7 @@ void execw(char *cmd, txrx f, void *context) {
 void cli_set_time(char *cmd, txrx f, void *context) {
     sys_settime(cmd);
 
-    f(context, "SET TIME OK");
+    f(context, ">> SET TIME OK");
 }
 
 /* Displays the last read/write card, if any.

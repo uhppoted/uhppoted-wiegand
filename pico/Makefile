@@ -22,7 +22,8 @@ build-all: clean build
 	cd reference/picow     && make clean && make build
 	cd emulator            && make clean && make build
 	cd emulator/usb        && make clean && make build
-	cd emulator/picow      && make clean && make build
+	cd emulator/wifi       && make clean && make build
+	cd emulator/usb+wifi   && make clean && make build
 	cd controller          && make clean && make build
 	cd controller/usb      && make clean && make build
 	cd controller/wifi     && make clean && make build

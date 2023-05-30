@@ -85,7 +85,7 @@ void execw(char *cmd, txrx f, void *context) {
 void cli_set_time(char *cmd, txrx f, void *context) {
     sys_settime(cmd);
 
-    f(context, "SET TIME OK");
+    f(context, ">> SET TIME OK");
 }
 
 /* Displays the last read/write card, if any.
@@ -107,8 +107,8 @@ void write(uint32_t facility_code, uint32_t card, txrx f, void *context) {
         write_card(facility_code, card);
     }
 
-    f(context, "CARD WRITE OK");
-    logd_log("CARD WRITE OK");
+    f(context, "CARD   WRITE OK");
+    logd_log("CARD   WRITE OK");
 }
 
 /* Goes into a tight loop until the watchdog resets the processor.
@@ -193,10 +193,12 @@ void on_card_command(char *cmd, handler fn, txrx f, void *context) {
  */
 void on_door_open(txrx f, void *context) {
     relay_door_contact(false);
+    f(context, ">> OPENED");
 }
 
 void on_door_close(txrx f, void *context) {
     relay_door_contact(true);
+    f(context, ">> CLOSED");
 }
 
 /* Pushbutton emulation command handler.
@@ -205,8 +207,10 @@ void on_door_close(txrx f, void *context) {
  */
 void on_press_button(txrx f, void *context) {
     relay_pushbutton(true);
+    f(context, ">> PRESSED");
 }
 
 void on_release_button(txrx f, void *context) {
     relay_pushbutton(false);
+    f(context, ">> RELEASED");
 }

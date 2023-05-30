@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.13)
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
 
-project(wiegand-emulator-w C CXX ASM)
+project(wiegand-emulator-wifi C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
@@ -24,7 +24,7 @@ add_compile_definitions(TCPD_POLL_INTERVAL=${TCPD_POLL_INTERVAL})
 
 pico_sdk_init()
 
-add_executable(wiegand-emulator-w
+add_executable(wiegand-emulator-wifi
   src/emulator.c
   ../src/cli.c
   ../../base/src/hwconfig.c
@@ -41,24 +41,24 @@ add_executable(wiegand-emulator-w
   ../../base/src/logd.c
 )
 
-target_include_directories(wiegand-emulator-w PRIVATE ../../base/include ./include)
+target_include_directories(wiegand-emulator-wifi PRIVATE ../../base/include ./include)
 
 pico_generate_pio_header(
-    wiegand-emulator-w
+    wiegand-emulator-wifi
     ${CMAKE_CURRENT_LIST_DIR}/../../base/src/READ.pio
 )
 
 pico_generate_pio_header(
-    wiegand-emulator-w
+    wiegand-emulator-wifi
     ${CMAKE_CURRENT_LIST_DIR}/../../base/src/WRITE.pio
 )
 
-pico_enable_stdio_usb (wiegand-emulator-w 0)
-pico_enable_stdio_uart(wiegand-emulator-w 1)
-pico_add_extra_outputs(wiegand-emulator-w)
+pico_enable_stdio_usb (wiegand-emulator-wifi 0)
+pico_enable_stdio_uart(wiegand-emulator-wifi 1)
+pico_add_extra_outputs(wiegand-emulator-wifi)
 
 target_link_libraries(
-    wiegand-emulator-w
+    wiegand-emulator-wifi
     pico_stdlib
     pico_multicore
     pico_cyw43_arch_lwip_threadsafe_background

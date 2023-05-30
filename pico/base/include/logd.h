@@ -7,3 +7,4 @@
 extern bool logd_initialise(enum MODE);
 extern void logd_terminate();
 extern void logd_log(const char *);
+extern void logd_debug(const char *);
