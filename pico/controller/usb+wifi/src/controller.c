@@ -227,12 +227,12 @@ void sysinit() {
         }
 
         logd_initialise(mode);
-        sdcard_initialise(mode, false); // mysterious conflict between card detect interrupt, USB and cyw43
         read_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
         tcpd_initialise(mode);
+        sdcard_initialise(mode, false); // mysterious conflict between card detect interrupt, USB and cyw43 WiFi driver
 
         if (!relay_initialise(mode)) {
             logd_log("failed to initialise relay monitor");

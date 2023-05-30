@@ -100,6 +100,8 @@ void sdcard_initialise(enum MODE mode, bool card_detect_enabled) {
             logd_log(s);
         }
 
+        // NTS: there is a weird unresolved conflict between the SD card detect interrupt
+        //      USB and the CYW43 WiFi stack
         if (card_detect_enabled && sdcard->use_card_detect) {
             gpio_set_irq_enabled_with_callback(
                 sdcard->card_detect_gpio,

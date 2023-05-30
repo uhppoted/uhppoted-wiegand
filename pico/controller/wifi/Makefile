@@ -38,11 +38,11 @@ build: format
 	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
 
 install: build
-	picotool load build/wiegand-emulator-w.uf2
+	picotool load build/wiegand-controller-wifi.uf2
 	picotool reboot
 
 run: build
-	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program build/wiegand-controller-w.elf verify reset exit"
+	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program build/wiegand-controller-wifi.elf verify reset exit"
 
 tty:
 	minicom -b 115200 -o -D $(PORT)

@@ -31,7 +31,7 @@
          - [x] Configurable idle timeout
          - [ ] USB+WiFi variants
                - [ ] Figure out SD card detect interrupt conflict
-               - [ ] controller
+               - [x] controller
                - [ ] emulator
                - [ ] reference
                - [x] Don't log SENT bytes to TCP log (infinite loop)
