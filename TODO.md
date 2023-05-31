@@ -19,11 +19,6 @@
          - [x] ~~Send queue~~
          - [x] Merge picow branch back into main
          - [x] Logging client/port
-               - [x] Logd listener
-               - [x] Ignore CLI requests
-               - [x] Route log messages
-               - [x] Switch all logging to logd
-               - [x] Format CLI command responses
          - [x] cyw43_arch_lwip_check
          - [x] Reduce poll interval
          - [x] Configurable ports 
@@ -31,13 +26,18 @@
          - [x] Configurable idle timeout
          - [ ] USB+WiFi variants
                - [ ] Figure out SD card detect interrupt conflict
+                     - https://github.com/georgerobotics/cyw43-driver/issues/33
+                     - https://github.com/raspberrypi/pico-sdk/issues/1068
+                     - https://forums.raspberrypi.com/viewtopic.php?t=348664
+                     - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
                - [x] controller
                - [x] emulator
                - [ ] reference
                - [x] Don't log SENT bytes to TCP log (infinite loop)
                - [x] Don't log SEND error to TCP log
                - [x] Close client connection on SEND ERROR
-               - [ ] emulator: log connections being closed mysteriouly?
+               - [x] ~~emulator: log connections being closed mysteriouly?~~
+                     - cable modem instability ?
 ```
 2023-05-30 09:54:29  SYS    EMULATOR OK
 2023-05-30 09:54:35  SYS    EMULATOR OK

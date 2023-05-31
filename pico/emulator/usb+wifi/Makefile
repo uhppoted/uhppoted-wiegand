@@ -10,6 +10,10 @@ TCPD_CLIENT_IDLE=120
 TCPD_SERVER_IDLE=300
 TCPD_POLL_INTERVAL=500
 
+.DEFAULT_GOAL := build
+
+.PHONY: format
+
 include ../../.credentials
 
 clean:
@@ -30,6 +34,7 @@ format: src/*.c include/*.h
 	clang-format -i ./include/*.h
 
 build: format
+	echo "$(SYSDATE) $(SYSTIME)"
 	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
 
 install: build
