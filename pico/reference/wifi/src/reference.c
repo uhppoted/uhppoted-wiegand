@@ -64,7 +64,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand interface"));
+    bi_decl(bi_program_description("Pico-Wiegand reference interface (WiFi)"));
     bi_decl(bi_program_version_string(VERSION));
     bi_decl(bi_1pin_with_name(ONBOARD_LED, "on-board LED"));
 

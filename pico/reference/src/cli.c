@@ -145,8 +145,8 @@ void write(uint32_t facility_code, uint32_t card, txrx f, void *context) {
         write_card(facility_code, card);
     }
 
-    f(context, "CARD WRITE OK");
-    logd_log("CARD WRITE OK");
+    f(context, "CARD   WRITE OK");
+    logd_log("CARD   WRITE OK");
 }
 
 /* Adds a card number to the ACL.
@@ -159,9 +159,9 @@ void grant(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     snprintf(c, sizeof(c), "%u%05u", facility_code, card);
 
     if (acl_grant(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "GRANTED");
+        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "GRANTED");
     } else {
-        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "ERROR");
+        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "ERROR");
     }
 
     f(context, s);
@@ -180,9 +180,9 @@ void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     snprintf(c, sizeof(c), "%u%05u", facility_code, card);
 
     if (acl_revoke(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "REVOKED");
+        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "REVOKED");
     } else {
-        snprintf(s, sizeof(s), "CARD  %-8s %s", c, "ERROR");
+        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "ERROR");
     }
 
     f(context, s);
@@ -297,9 +297,9 @@ void read_acl(txrx f, void *context) {
     }
 
     if (rc != 0) {
-        snprintf(s, sizeof(s), "DISK READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+        snprintf(s, sizeof(s), "DISK   READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
     } else {
-        snprintf(s, sizeof(s), "DISK READ ACL OK (%d)", N);
+        snprintf(s, sizeof(s), "DISK   READ ACL OK (%d)", N);
 
         acl_initialise(cards, N);
     }

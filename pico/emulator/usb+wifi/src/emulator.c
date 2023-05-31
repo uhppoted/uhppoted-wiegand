@@ -209,6 +209,7 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
+        logd_initialise(mode);
         read_initialise(mode);
         write_initialise(mode);
         led_initialise(mode);

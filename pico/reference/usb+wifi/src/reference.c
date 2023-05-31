@@ -12,14 +12,19 @@
 #include <pico/util/datetime.h>
 
 #include <TPIC6B595.h>
+#include <acl.h>
 #include <buzzer.h>
 #include <common.h>
 #include <led.h>
 #include <logd.h>
 #include <read.h>
 #include <relays.h>
+#include <sdcard.h>
 #include <sys.h>
+#include <tcpd.h>
 #include <uart.h>
+#include <usb.h>
+#include <wiegand.h>
 #include <write.h>
 
 #define VERSION "v0.8.5"
@@ -39,6 +44,7 @@ const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
 const uint32_t MSG_LOG = 0xb0000000;
+const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -59,8 +65,9 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand Emulator"));
+    bi_decl(bi_program_description("Pico-Wiegand reference interface (USB+WIFI)"));
     bi_decl(bi_program_version_string(VERSION));
+    bi_decl(bi_1pin_with_name(ONBOARD_LED, "on-board LED"));
 
     stdio_init_all();
     setup_gpio();
@@ -70,9 +77,9 @@ int main() {
     rtc_init();
     sleep_us(64);
 
-    // ... initialise FIFO, UART and timers
+    // ... initialise FIFO, USB and timers
     queue_init(&queue, sizeof(uint32_t), 64);
-    setup_uart();
+    setup_usb();
     alarm_pool_init_default();
 
     // ... initialise reader/emulator
@@ -115,6 +122,17 @@ int main() {
         if ((v & MSG) == MSG_CARD_READ) {
             on_card_read(v & 0x0fffffff);
 
+            if (last_card.ok && ((mode == READER) || (mode == CONTROLLER))) {
+                if (acl_allowed(last_card.facility_code, last_card.card_number)) {
+                    last_card.granted = GRANTED;
+                    led_blink(1);
+                    door_unlock(5000);
+                } else {
+                    last_card.granted = DENIED;
+                    led_blink(3);
+                }
+            }
+
             char s[64];
             cardf(&last_card, s, sizeof(s));
             puts(s);
@@ -134,6 +152,17 @@ int main() {
 
         if ((v & MSG) == MSG_PUSHBUTTON) {
             pushbutton_event(v & 0x0fffffff);
+        }
+
+        if ((v & MSG) == MSG_LOG) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            printf("%s", b);
+            tcpd_log(b);
+            free(b);
+        }
+
+        if ((v & MSG) == MSG_TCPD_POLL) {
+            tcpd_poll();
         }
 
         if ((v & MSG) == MSG_DEBUG) {
@@ -187,24 +216,30 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND EMULATOR");
+        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION (USB)");
 
-        if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
-            mode = EMULATOR;
+        if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
+            mode = READER;
+        } else if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
+            mode = WRITER;
         } else {
             mode = UNKNOWN;
         }
 
         logd_initialise(mode);
+        sdcard_initialise(mode, false); // GPIO interrupt conflict with SD card detect
         read_initialise(mode);
         write_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
+        tcpd_initialise(mode);
 
         if (!relay_initialise(mode)) {
             logd_log("failed to initialise relay monitor");
         }
+
+        acl_initialise((uint32_t[]){}, 0);
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
@@ -217,6 +252,13 @@ void sysinit() {
         rtc_get_datetime(&last_card.timestamp);
         sys_ok();
         set_scroll_area();
+
+        // ... load ACL from SD card
+        uint32_t cards[16];
+        int N = 16;
+        if (sdcard_read_acl(cards, &N) == 0) {
+            acl_initialise(cards, N);
+        }
 
         // ... 'k, done
         buzzer_beep(1);

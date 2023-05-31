@@ -1,7 +1,8 @@
 # TODO
 
-## Reference
-   - [ ] PicoW+TCP/IP
+- [ ] github workflow
+
+- [ ] PicoW+TCP/IP
          - [x] Replace blocking connect
          - [x] Reenable watchdog
          - [x] Listen/accept on connected
@@ -25,31 +26,22 @@
          - [x] Configurable connect timeout
          - [x] Configurable idle timeout
          - [ ] USB+WiFi variants
+               - [x] controller
+               - [x] emulator
+               - [x] reference
+               - [x] Don't log SENT bytes to TCP log (infinite loop)
+               - [x] Don't log SEND error to TCP log
+               - [x] Close client connection on SEND ERROR
+               - [x] ~~emulator: log connections being closed mysteriouly?~~
                - [ ] Figure out SD card detect interrupt conflict
                      - https://github.com/georgerobotics/cyw43-driver/issues/33
                      - https://github.com/raspberrypi/pico-sdk/issues/1068
                      - https://forums.raspberrypi.com/viewtopic.php?t=348664
                      - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
-               - [x] controller
-               - [x] emulator
-               - [ ] reference
-               - [x] Don't log SENT bytes to TCP log (infinite loop)
-               - [x] Don't log SEND error to TCP log
-               - [x] Close client connection on SEND ERROR
-               - [x] ~~emulator: log connections being closed mysteriouly?~~
-                     - cable modem instability ?
-```
-2023-05-30 09:54:29  SYS    EMULATOR OK
-2023-05-30 09:54:35  SYS    EMULATOR OK
-2023-05-30 09:54:35  TCPD   SEND ERROR (-11)
-2023-05-30 09:54:35  TCPD   LOG ERROR (-13)
-2023-05-30 09:54:39  SYS    EMULATOR OK
-2023-05-30 09:54:42  TCPD   0.0.0.0:4242  SERVER IDLE 60s
-2023-05-30 09:54:42  LOGD   0.0.0.0:2424  CONNECTIONS:1
-```
 
-         - [ ] Check emulator
-         - [ ] Check reference
+         - [ ] Check all controller variants
+         - [ ] Check all emulator variants
+         - [ ] Check all reference variants
 
 
    - [ ] Buzzer

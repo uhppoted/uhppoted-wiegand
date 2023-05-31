@@ -63,7 +63,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand interface"));
+    bi_decl(bi_program_description("Pico-Wiegand Reference interface (USB)"));
     bi_decl(bi_program_version_string(VERSION));
     bi_decl(bi_1pin_with_name(ONBOARD_LED, "on-board LED"));
 
@@ -150,6 +150,12 @@ int main() {
 
         if ((v & MSG) == MSG_PUSHBUTTON) {
             pushbutton_event(v & 0x0fffffff);
+        }
+
+        if ((v & MSG) == MSG_LOG) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            printf("%s", b);
+            free(b);
         }
 
         if ((v & MSG) == MSG_DEBUG) {

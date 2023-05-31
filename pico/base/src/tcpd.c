@@ -349,7 +349,7 @@ err_t tcpd_accept(void *context, struct tcp_pcb *client, err_t err) {
     TCPD *tcpd = (TCPD *)context;
     char s[64];
 
-    snprintf(s, sizeof(s), "%s:%d  INCOMING", ip4addr_ntoa(&client->remote_ip), client->remote_port);
+    snprintf(s, sizeof(s), "%s:%-5d  INCOMING", ip4addr_ntoa(&client->remote_ip), client->remote_port);
     tcpd_infof(tcpd->tag, s);
 
     // ... accept error?
@@ -371,7 +371,7 @@ err_t tcpd_accept(void *context, struct tcp_pcb *client, err_t err) {
     }
 
     // ... connected!
-    snprintf(s, sizeof(s), "%s:%d  CONNECTED", ip4addr_ntoa(&client->remote_ip), client->remote_port);
+    snprintf(s, sizeof(s), "%s:%-5d  CONNECTED", ip4addr_ntoa(&client->remote_ip), client->remote_port);
     tcpd_infof(tcpd->tag, s);
 
     for (int i = 0; i < CONNECTIONS; i++) {
@@ -396,7 +396,7 @@ err_t tcpd_accept(void *context, struct tcp_pcb *client, err_t err) {
     }
 
     // ... too many connections
-    snprintf(s, sizeof(s), "%s:%d  TOO MANY CONNECTIONS", ip4addr_ntoa(&client->remote_ip), client->remote_port);
+    snprintf(s, sizeof(s), "%s:%-5d  TOO MANY CONNECTIONS", ip4addr_ntoa(&client->remote_ip), client->remote_port);
     tcpd_infof(tcpd->tag, s);
 
     tcp_abort(client);
@@ -408,7 +408,7 @@ err_t tcpd_close(TCPD *tcpd) {
     char s[64];
 
     if (tcpd->server != NULL) {
-        snprintf(s, sizeof(s), "%s:%d  CLOSING", ip4addr_ntoa(&tcpd->server->local_ip), tcpd->server->local_port);
+        snprintf(s, sizeof(s), "%s:%-5d  CLOSING", ip4addr_ntoa(&tcpd->server->local_ip), tcpd->server->local_port);
         tcpd_infof(tcpd->tag, s);
     } else {
         tcpd_infof(tcpd->tag, "CLOSING");
@@ -463,7 +463,7 @@ err_t tcpd_recv(void *context, struct tcp_pcb *pcb, struct pbuf *p, err_t err) {
 
     // ... closed ?
     if (p == NULL) {
-        snprintf(s, sizeof(s), "%s:%d  CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
+        snprintf(s, sizeof(s), "%s:%-5d  CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
         tcpd_infof("TCPD", s);
 
         tcp_arg(pcb, NULL);
@@ -534,13 +534,13 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
         conn->client = NULL;
 
         if ((err = tcp_close(pcb)) != ERR_OK) {
-            snprintf(s, sizeof(s), "%s:%d  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, err);
+            snprintf(s, sizeof(s), "%s:%-5d  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, err);
             tcpd_debugf(conn->tag, s);
             tcp_abort(pcb);
             return ERR_ABRT;
         }
 
-        snprintf(s, sizeof(s), "%s:%d  CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
+        snprintf(s, sizeof(s), "%s:%-5d  CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
         tcpd_debugf("TCPD", s);
 
         return err;
@@ -551,7 +551,7 @@ err_t tcpd_send(void *context, struct tcp_pcb *pcb, const char *msg) {
 
 err_t tcpd_sent(void *context, struct tcp_pcb *pcb, u16_t len) {
     char s[64];
-    snprintf(s, sizeof(s), "%s:%d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
+    snprintf(s, sizeof(s), "%s:%-5d  SENT %d BYTES", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, len);
     tcpd_debugf("TCPD", s);
 
     connection *conn = (connection *)context;
@@ -591,14 +591,14 @@ err_t tcpd_server_monitor(void *context, struct tcp_pcb *pcb) {
         if (tcpd->closed) {
             tcpd_infof(tcpd->tag, "CLOSED");
         } else if (connected == 0) {
-            snprintf(s, sizeof(s), "%s:%d  SERVER IDLE %lus",
+            snprintf(s, sizeof(s), "%s:%-5d  SERVER IDLE %lus",
                      ip4addr_ntoa(&pcb->local_ip),
                      pcb->local_port,
                      tcpd->idle * TCP_SERVER_POLL);
 
             tcpd_infof(tcpd->tag, s);
         } else {
-            snprintf(s, sizeof(s), "%s:%d  CONNECTIONS:%d", ip4addr_ntoa(&pcb->local_ip), pcb->local_port, connected);
+            snprintf(s, sizeof(s), "%s:%-5d  CONNECTIONS:%d", ip4addr_ntoa(&pcb->local_ip), pcb->local_port, connected);
             tcpd_infof(tcpd->tag, s);
         }
 
@@ -628,16 +628,19 @@ err_t tcpd_client_monitor(void *context, struct tcp_pcb *pcb) {
         tcp_err(pcb, NULL);
 
         if ((err = tcp_close(pcb)) != ERR_OK) {
-            snprintf(s, sizeof(s), "%s:%d  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, err);
+            snprintf(s, sizeof(s), "%s:%-5d  CLOSE ERROR (%d)", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port, err);
             tcpd_infof(conn->tag, s);
             tcp_abort(pcb);
             err = ERR_ABRT;
+        } else {
+            snprintf(s, sizeof(s), "%s:%-5d  IDLE:CLOSED", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
+            tcpd_infof(conn->tag, s);
         }
 
         conn->client = NULL;
 
     } else {
-        snprintf(s, sizeof(s), "%s:%d  OK", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
+        snprintf(s, sizeof(s), "%s:%-5d  OK", ip4addr_ntoa(&pcb->remote_ip), pcb->remote_port);
         tcpd_infof(conn->tag, s);
     }
 
