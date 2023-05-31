@@ -4,13 +4,13 @@ SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
 
-SSID = "SHAW-1E4E80"
-
 CLI_PORT=4242
 LOG_PORT=2424
 TCPD_CLIENT_IDLE=120
 TCPD_SERVER_IDLE=300
 TCPD_POLL_INTERVAL=500
+
+.PHONY: format
 
 .DEFAULT_GOAL := build
 

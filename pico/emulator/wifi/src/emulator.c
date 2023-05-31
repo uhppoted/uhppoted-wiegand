@@ -139,6 +139,13 @@ int main() {
             pushbutton_event(v & 0x0fffffff);
         }
 
+        if ((v & MSG) == MSG_LOG) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            printf("%s", b);
+            tcpd_log(b);
+            free(b);
+        }
+
         if ((v & MSG) == MSG_TCPD_POLL) {
             tcpd_poll();
         }

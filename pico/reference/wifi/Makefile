@@ -10,6 +10,10 @@ TCPD_CLIENT_IDLE=120
 TCPD_SERVER_IDLE=300
 TCPD_POLL_INTERVAL=500
 
+.PHONY: format
+
+.DEFAULT_GOAL := build
+
 include ../../.credentials
 
 clean:
@@ -32,11 +36,11 @@ build: format
 	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
 
 install: build
-	picotool load build/wiegand-w.uf2
+	picotool load build/wiegand-wifi.uf2
 	picotool reboot
 
 run: build
-	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program build/wiegand_w.elf verify reset exit"
+	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program build/wiegand_wifi.elf verify reset exit"
 
 tty:
 	minicom -b 115200 -o -D $(PORT)
