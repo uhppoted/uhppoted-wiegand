@@ -159,7 +159,7 @@ bool tcpd_initialise(enum MODE mode) {
 
 void tcpd_terminate() {
     cyw43_arch_deinit();
-    tcpd_infof("TCPD", "WIFI TERMINATED");
+    tcpd_debugf("TCPD", "WIFI TERMINATED");
 }
 
 void tcpd_cli(void *context) {

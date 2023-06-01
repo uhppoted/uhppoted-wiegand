@@ -42,6 +42,7 @@
          - [ ] Check all controller variants
          - [ ] Check all emulator variants
          - [ ] Check all reference variants
+         - [ ] SYSDATE and SYSTIME only set on 'clean' ?
 
 
    - [ ] Buzzer
