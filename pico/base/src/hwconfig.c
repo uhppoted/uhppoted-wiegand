@@ -37,7 +37,6 @@ const uint GPIO_19 = 19; // Pico 25
 const uint GPIO_20 = 20; // Pico 26
 const uint GPIO_21 = 21; // Pico 27
 const uint GPIO_22 = 22; // Pico 29
-// const uint GPIO_25 = 25; // Pico LED
 const uint GPIO_26 = 26; // Pico 31
 const uint GPIO_27 = 27; // Pico 32
 const uint GPIO_28 = 28; // Pico 34

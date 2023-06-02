@@ -6,6 +6,7 @@
 #include "../include/TPIC6B595.h"
 #include "../include/led.h"
 #include "../include/logd.h"
+#include "../include/sysled.h"
 #include "../include/wiegand.h"
 
 const uint32_t BLINK_DELAY = 500;
@@ -117,7 +118,7 @@ bool callback(repeating_timer_t *rt) {
         LEDs.sys_led -= 10;
         if (LEDs.sys_led <= 0) {
             LEDs.sys_led = 0;
-            gpio_put(ONBOARD_LED, 0);
+            set_sysled(0);
         }
     }
 
@@ -155,6 +156,8 @@ bool callback(repeating_timer_t *rt) {
  */
 bool led_initialise(enum MODE mode) {
     bool ok = true;
+
+    init_sysled();
 
     gpio_init(WRITER_LED);
     gpio_set_dir(WRITER_LED, GPIO_IN);
@@ -245,7 +248,7 @@ void blink(enum LED led) {
     switch (led) {
     case SYS_LED:
         LEDs.sys_led = 50;
-        gpio_put(ONBOARD_LED, 1);
+        set_sysled(1);
         break;
 
     case GOOD_CARD:
