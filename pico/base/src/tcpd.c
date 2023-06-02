@@ -55,6 +55,8 @@ static connection loggers[2] = {
     {.tag = "LOGD", .server = NULL, .client = NULL, .handler = NULL, .sent = 0, .received = 0, .idle = 0},
 };
 
+static repeating_timer_t tcpd_timer;
+
 /* Internal state for the TCP server.
  *
  */
@@ -113,17 +115,17 @@ void tcpd_err(void *, err_t);
 void tcpd_infof(const char *, const char *);
 void tcpd_debugf(const char *, const char *);
 
-/* Alarm handler for TCP poll timer.
+/* Poll timer callback - schedules a TCP poll.
  *
  */
-int64_t tcpdi(alarm_id_t id, void *data) {
+bool tcpdi(repeating_timer_t *rt) {
     uint32_t msg = MSG_TCPD_POLL;
 
     if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
         // nothing to do
     }
 
-    return TCPD_POLL * 1000;
+    return true;
 }
 
 /* Initialises the TCP server.
@@ -150,7 +152,7 @@ bool tcpd_initialise(enum MODE mode) {
 
     tcpd.state = TCPD_CONNECTING;
 
-    if (!add_alarm_in_ms(TCPD_POLL, tcpdi, (void *)NULL, true)) {
+    if (add_repeating_timer_ms(-TCPD_POLL, tcpdi, NULL, &tcpd_timer)) {
         return false;
     }
 

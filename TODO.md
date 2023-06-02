@@ -25,6 +25,7 @@
          - [x] Configurable ports 
          - [x] Configurable connect timeout
          - [x] Configurable idle timeout
+         - [x] Replace alarm with repeating timer
          - [ ] USB+WiFi variants
                - [x] controller
                - [x] emulator
@@ -39,6 +40,9 @@
                      - https://forums.raspberrypi.com/viewtopic.php?t=348664
                      - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
 
+
+         - [ ] Fix SYS_LED conflict
+               https://forums.raspberrypi.com/viewtopic.php?t=348664
          - [ ] Check all controller variants
          - [ ] Check all emulator variants
          - [ ] Check all reference variants
