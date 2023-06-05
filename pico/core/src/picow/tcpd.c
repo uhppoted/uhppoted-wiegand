@@ -136,11 +136,11 @@ bool tcpd_initialise(enum MODE mode) {
     char s[64];
     err_t err;
 
-    if ((err = cyw43_arch_init()) != 0) {
-        snprintf(s, sizeof(s), "WIFI INITIALISATION ERROR (%d)", err);
-        tcpd_infof("TCPD", s);
-        return false;
-    }
+    // if ((err = cyw43_arch_init()) != 0) {
+    //     snprintf(s, sizeof(s), "WIFI INITIALISATION ERROR (%d)", err);
+    //     tcpd_infof("TCPD", s);
+    //     return false;
+    // }
 
     cyw43_arch_enable_sta_mode();
 
@@ -200,8 +200,6 @@ void tcpd_log(const char *msg) {
 }
 
 void tcpd_poll() {
-    blink(GOOD_CARD);
-
     char s[64];
     err_t err;
 

@@ -118,7 +118,7 @@ bool callback(repeating_timer_t *rt) {
         LEDs.sys_led -= 10;
         if (LEDs.sys_led <= 0) {
             LEDs.sys_led = 0;
-            set_sysled(0);
+            set_sysled(false);
         }
     }
 
@@ -247,8 +247,8 @@ void led_blink(uint8_t count) {
 void blink(enum LED led) {
     switch (led) {
     case SYS_LED:
-        LEDs.sys_led = 50;
-        set_sysled(1);
+        LEDs.sys_led = 750; // FIXME 50 ?;
+        set_sysled(true);
         break;
 
     case GOOD_CARD:

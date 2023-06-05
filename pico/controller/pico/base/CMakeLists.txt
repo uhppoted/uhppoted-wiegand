@@ -8,6 +8,10 @@ project(wiegand-controller C CXX ASM)
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
 
+set(CORE "../../../core")
+set(COMMON "../../common")
+set(FATFS "../../../lib/no-OS-FatFS-SD-SPI-RPi-Pico")
+
 add_compile_definitions(SYSDATE=$(SYSDATE))
 add_compile_definitions(SYSTIME=$(SYSTIME))
 add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
@@ -16,29 +20,29 @@ pico_sdk_init()
 
 add_executable(wiegand-controller
   ./src/controller.c
-  ../src/cli.c
-  ../../base/src/common.c
-  ../../base/src/uart.c
-  ../../base/src/sys.c
-  ../../base/src/read.c
-  ../../base/src/led.c
-  ../../base/src/buzzer.c
-  ../../base/src/relays.c
-  ../../base/src/TPIC6B595.c
-  ../../base/src/sdcard.c
-  ../../base/src/acl.c
-  ../../base/src/logd.c
-  ../../base/src/sysled.c
-  ../../base/src/hwconfig.c
+  ${COMMON}/src/cli.c
+  ${CORE}/src/common.c
+  ${CORE}/src/uart.c
+  ${CORE}/src/sys.c
+  ${CORE}/src/read.c
+  ${CORE}/src/led.c
+  ${CORE}/src/buzzer.c
+  ${CORE}/src/relays.c
+  ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/sdcard.c
+  ${CORE}/src/acl.c
+  ${CORE}/src/logd.c
+  ${CORE}/src/hwconfig.c
+  ${CORE}/src/pico/sysled.c
 )
 
-target_include_directories(wiegand-controller PRIVATE ../../base/include)
+target_include_directories(wiegand-controller PRIVATE ${CORE}/include)
 
-add_subdirectory(../../lib/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
+add_subdirectory(${FATFS}/FatFs_SPI build)
 
 pico_generate_pio_header(
     wiegand-controller
-    ${CMAKE_CURRENT_LIST_DIR}/../../base/src/READ.pio
+    ${CMAKE_CURRENT_LIST_DIR}/${CORE}/src/READ.pio
 )
 
 pico_enable_stdio_usb (wiegand-controller 0)

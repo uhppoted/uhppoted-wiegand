@@ -23,6 +23,7 @@
 #include <sdcard.h>
 #include <sys.h>
 #include <tcpd.h>
+#include <uart.h>
 #include <usb.h>
 #include <wiegand.h>
 #include <write.h>
@@ -64,7 +65,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Wiegand Controller (USB+WiFI)"));
+    bi_decl(bi_program_description("Wiegand Controller (PicoW+USB+WiFI)"));
     bi_decl(bi_program_version_string(VERSION));
 
     stdio_init_all();
@@ -211,7 +212,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND CONTROLLER (USB+WiFi)");
+        puts("                     *** WIEGAND CONTROLLER (PicoW+WIFI+USB)");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = CONTROLLER;

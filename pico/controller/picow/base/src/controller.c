@@ -7,6 +7,7 @@
 #include <hardware/watchdog.h>
 
 #include <pico/binary_info.h>
+#include <pico/cyw43_arch.h>
 #include <pico/multicore.h>
 #include <pico/stdlib.h>
 #include <pico/util/datetime.h>
@@ -22,7 +23,6 @@
 #include <relays.h>
 #include <sdcard.h>
 #include <sys.h>
-#include <tcpd.h>
 #include <uart.h>
 #include <wiegand.h>
 #include <write.h>
@@ -43,7 +43,6 @@ const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
 const uint32_t MSG_LOG = 0xb0000000;
-const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -51,6 +50,7 @@ const uint32_t MSG_DEBUG = 0xf0000000;
 // FUNCTION PROTOTYPES
 
 void setup_gpio(void);
+void setup_cyw43(void);
 void sysinit();
 
 // GLOBALS
@@ -64,7 +64,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Wiegand Controller (PicoW+WIFI)"));
+    bi_decl(bi_program_description("Wiegand Controller (PicoW)"));
     bi_decl(bi_program_version_string(VERSION));
 
     stdio_init_all();
@@ -80,12 +80,17 @@ int main() {
     setup_uart();
     alarm_pool_init_default();
 
+    // ... initialise CYW43
+
+    // setup_cyw43();
+
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
     clear_screen();
 
     while (true) {
         uint32_t v;
+
         queue_remove_blocking(&queue, &v);
 
         if ((v & MSG) == MSG_SYSINIT) {
@@ -155,12 +160,7 @@ int main() {
         if ((v & MSG) == MSG_LOG) {
             char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
             printf("%s", b);
-            tcpd_log(b);
             free(b);
-        }
-
-        if ((v & MSG) == MSG_TCPD_POLL) {
-            tcpd_poll();
         }
 
         if ((v & MSG) == MSG_DEBUG) {
@@ -205,13 +205,26 @@ void setup_gpio() {
     gpio_pull_down(SD_DET);
 }
 
+void setup_cyw43() {
+    char s[64];
+    int err;
+
+    if ((err = cyw43_arch_init()) != 0) {
+        snprintf(s, sizeof(s), "CYW43 initialiation error (%d)", err);
+        puts(s);
+    } else {
+        puts("CYW43 initialised");
+    }
+}
+
 void sysinit() {
     static bool initialised = false;
     static repeating_timer_t watchdog_rt;
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND CONTROLLER (Picow+WIFI)");
+        puts("                     *** WIEGAND CONTROLLER (PicoW)");
+        puts("");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = CONTROLLER;
@@ -220,12 +233,12 @@ void sysinit() {
         }
 
         logd_initialise(mode);
-        sdcard_initialise(mode, true);
         read_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
-        tcpd_initialise(mode);
+        setup_cyw43();
+        sdcard_initialise(mode, true);
 
         if (!relay_initialise(mode)) {
             logd_log("failed to initialise relay monitor");
@@ -234,7 +247,8 @@ void sysinit() {
         acl_initialise((uint32_t[]){}, 0);
 
         // ... setup sys stuff
-        add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
+        // FIXME add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
+        add_repeating_timer_ms(2000, watchdog, NULL, &watchdog_rt);
         add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
 
         char dt[32];

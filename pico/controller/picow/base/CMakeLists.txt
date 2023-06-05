@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.13)
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
 
-project(wiegand-controller-wifi C CXX ASM)
+project(wiegand-controller-picow C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
@@ -28,7 +28,7 @@ add_compile_definitions(TCPD_POLL_INTERVAL=${TCPD_POLL_INTERVAL})
 
 pico_sdk_init()
 
-add_executable(wiegand-controller-wifi
+add_executable(wiegand-controller-picow
   ./src/controller.c
   ${COMMON}/src/cli.c
   ${CORE}/src/common.c
@@ -44,27 +44,26 @@ add_executable(wiegand-controller-wifi
   ${CORE}/src/logd.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/picow/sysled.c
-  ${CORE}/src/picow/tcpd.c
 )
 
-target_include_directories(wiegand-controller-wifi PRIVATE ${CORE}/include ./include)
+target_include_directories(wiegand-controller-picow PRIVATE ${CORE}/include ./include)
 
 add_subdirectory(${FATFS}/FatFs_SPI build)
 
 pico_generate_pio_header(
-    wiegand-controller-wifi
+    wiegand-controller-picow
     ${CMAKE_CURRENT_LIST_DIR}/${CORE}/src/READ.pio
 )
 
-pico_enable_stdio_usb (wiegand-controller-wifi 0)
-pico_enable_stdio_uart(wiegand-controller-wifi 1)
-pico_add_extra_outputs(wiegand-controller-wifi)
+pico_enable_stdio_usb (wiegand-controller-picow 0)
+pico_enable_stdio_uart(wiegand-controller-picow 1)
+pico_add_extra_outputs(wiegand-controller-picow)
 
 target_link_libraries(
-    wiegand-controller-wifi
+    wiegand-controller-picow
     pico_stdlib
     pico_multicore
-    pico_cyw43_arch_lwip_threadsafe_background
+    pico_cyw43_arch_none
     hardware_pio
     hardware_rtc
     hardware_spi

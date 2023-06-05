@@ -3,10 +3,14 @@ cmake_minimum_required(VERSION 3.13)
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
 
-project(wiegand-controller-usb-wifi C CXX ASM)
+project(wiegand-controller-wifi-usb C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
+
+set(CORE "../../../core")
+set(COMMON "../../common")
+set(FATFS "../../../lib/no-OS-FatFS-SD-SPI-RPi-Pico")
 
 option(PICO_CYW43_ARCH_POLL "Select polling behavior for CYW43 Wi-Fi chip" ON)
 
@@ -24,41 +28,41 @@ add_compile_definitions(TCPD_POLL_INTERVAL=${TCPD_POLL_INTERVAL})
 
 pico_sdk_init()
 
-add_executable(wiegand-controller-usb-wifi
+add_executable(wiegand-controller-wifi-usb
   ./src/controller.c
-  ../../src/cli.c
-  ../../../base/src/common.c
-  ../../../base/src/sys.c
-  ../../../base/src/uart.c
-  ../../../base/src/usb.c
-  ../../../base/src/read.c
-  ../../../base/src/led.c
-  ../../../base/src/buzzer.c
-  ../../../base/src/relays.c
-  ../../../base/src/TPIC6B595.c
-  ../../../base/src/sdcard.c
-  ../../../base/src/acl.c
-  ../../../base/src/logd.c
-  ../../../base/src/tcpd.c
-  ../../../base/src/picow/sysled.c
-  ../../../base/src/hwconfig.c
+  ${CORE}/src/acl.c
+  ${CORE}/src/buzzer.c
+  ${COMMON}/src/cli.c
+  ${CORE}/src/common.c
+  ${CORE}/src/led.c
+  ${CORE}/src/logd.c
+  ${CORE}/src/read.c
+  ${CORE}/src/relays.c
+  ${CORE}/src/sdcard.c
+  ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/uart.c
+  ${CORE}/src/usb.c
+  ${CORE}/src/sys.c
+  ${CORE}/src/hwconfig.c
+  ${CORE}/src/picow/sysled.c
+  ${CORE}/src/picow/tcpd.c
 )
 
-target_include_directories(wiegand-controller-usb-wifi PRIVATE ../../../base/include ./include)
+target_include_directories(wiegand-controller-wifi-usb PRIVATE ${CORE}/include ./include)
 
-add_subdirectory(../../../lib/no-OS-FatFS-SD-SPI-RPi-Pico/FatFs_SPI build)
+add_subdirectory(${FATFS}/FatFs_SPI build)
 
 pico_generate_pio_header(
-    wiegand-controller-usb-wifi
-    ${CMAKE_CURRENT_LIST_DIR}/../../../base/src/READ.pio
+    wiegand-controller-wifi-usb
+    ${CMAKE_CURRENT_LIST_DIR}/${CORE}/src/READ.pio
 )
 
-pico_enable_stdio_usb (wiegand-controller-usb-wifi 1)
-pico_enable_stdio_uart(wiegand-controller-usb-wifi 0)
-pico_add_extra_outputs(wiegand-controller-usb-wifi)
+pico_enable_stdio_usb (wiegand-controller-wifi-usb 1)
+pico_enable_stdio_uart(wiegand-controller-wifi-usb 0)
+pico_add_extra_outputs(wiegand-controller-wifi-usb)
 
 target_link_libraries(
-    wiegand-controller-usb-wifi
+    wiegand-controller-wifi-usb
     pico_stdlib
     pico_multicore
     pico_cyw43_arch_lwip_threadsafe_background
