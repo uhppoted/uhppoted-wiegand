@@ -9,9 +9,11 @@ clean:
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && cd build && cmake ..
 
-format: base/src/*.c base/include/*.h
-	clang-format -i base/src/*.c
-	clang-format -i base/include/*.h
+format: core/src/*.c core/include/*.h
+	clang-format -i core/src/*.c
+	clang-format -i core/src/pico/*.c
+	clang-format -i core/src/picow/*.c
+	clang-format -i core/include/*.h
 
 build: format
 	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)

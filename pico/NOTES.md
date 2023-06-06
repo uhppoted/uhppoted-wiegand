@@ -7,7 +7,10 @@
 2. USB + WiFi
    - https://forums.raspberrypi.com/viewtopic.php?t=340270
 
-3. 10058339
+3. CYW43 sysled - invoking from a repeating timer callback seems to cause a lockup
+   if invoked at intervals less than 500ms.
+
+4. 10058339
    0 0110 0100 1110 0100 0001 1111 1
      6    4    e    4    1    f
      start parity: 6+0 ones (e)
@@ -30,7 +33,7 @@
    0000 0000 0000 0000 0001 1111 1111 1111
    0    0    0    0    1    f    f    f
 
-4. https://www.raspberrypi.com/news/how-to-add-ethernet-to-raspberry-pi-pico/
+5. https://www.raspberrypi.com/news/how-to-add-ethernet-to-raspberry-pi-pico/
 
 ### Debugging reader glitch
 ```

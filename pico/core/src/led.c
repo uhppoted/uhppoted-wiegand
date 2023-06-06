@@ -109,8 +109,7 @@ bool blink_callback(repeating_timer_t *rt) {
     return true;
 }
 
-/* Alarm handler for 'end of blink start delay'. Queues up 'count'
- * reader LED blinks to the BLINK FIFO..
+/* Communal 100ms repeating timer handler for blinkable LEDs. Turns LED off after blink interval. 
  *
  */
 bool callback(repeating_timer_t *rt) {
@@ -247,7 +246,7 @@ void led_blink(uint8_t count) {
 void blink(enum LED led) {
     switch (led) {
     case SYS_LED:
-        LEDs.sys_led = 750; // FIXME 50 ?;
+        LEDs.sys_led = 50;
         set_sysled(true);
         break;
 

@@ -49,8 +49,9 @@
                      - https://forums.raspberrypi.com/viewtopic.php?t=348664
                      - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
          - [ ] PicoW variants without WIFI
-               - pico_cyw43_arch_none
-               - base/src/picow/sysled.c
+               - [ ] reference
+               - [ ] controller
+               - [ ] emulator
 
          - [ ] Check all controller variants
          - [ ] Check all emulator variants

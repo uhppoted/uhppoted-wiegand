@@ -42,6 +42,7 @@ const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
+const uint32_t MSG_SYSLED = 0xa0000000;
 const uint32_t MSG_LOG = 0xb0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
@@ -95,6 +96,10 @@ int main() {
 
         if ((v & MSG) == MSG_SYSINIT) {
             sysinit();
+        }
+
+        if ((v & MSG) == MSG_SYSLED) {
+            set_sysled_off();
         }
 
         if ((v & MSG) == MSG_SYSCHECK) {
@@ -248,7 +253,7 @@ void sysinit() {
 
         // ... setup sys stuff
         // FIXME add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
-        add_repeating_timer_ms(2000, watchdog, NULL, &watchdog_rt);
+        add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
         add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
 
         char dt[32];

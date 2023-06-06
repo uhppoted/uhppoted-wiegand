@@ -73,6 +73,7 @@ extern const uint SD_DET;
 extern const uint32_t MSG;
 extern const uint32_t MSG_SYSINIT;
 extern const uint32_t MSG_SYSCHECK;
+extern const uint32_t MSG_SYSLED;
 extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_CARD_READ;
 extern const uint32_t MSG_LED;
