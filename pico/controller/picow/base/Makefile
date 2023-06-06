@@ -21,7 +21,8 @@ clean:
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && \
 	       cd build && \
-	       cmake -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" \
+	       cmake -DCMAKE_BUILD_TYPE=Debug \
+	             -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" \
 	             -DTCPD_CLI_PORT="$(CLI_PORT)" \
 	             -DTCPD_LOG_PORT="$(LOG_PORT)" \
 	             -DTCPD_CLIENT_IDLE="$(TCPD_CLIENT_IDLE)" \
@@ -42,6 +43,9 @@ install: build
 
 run: build
 	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program build/wiegand-controller-picow.elf verify reset exit"
+
+debug:
+	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg
 
 tty:
 	minicom -b 115200 -o -D $(PORT)

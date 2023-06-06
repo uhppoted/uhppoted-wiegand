@@ -12,8 +12,6 @@ set(CORE "../../../core")
 set(COMMON "../../common")
 set(FATFS "../../../lib/no-OS-FatFS-SD-SPI-RPi-Pico")
 
-option(PICO_CYW43_ARCH_POLL "Select polling behavior for CYW43 Wi-Fi chip" ON)
-
 add_compile_definitions(SYSDATE=$(SYSDATE))
 add_compile_definitions(SYSTIME=$(SYSTIME))
 add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))

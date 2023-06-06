@@ -15,7 +15,7 @@ void init_sysled() {
  */
 void set_sysled(bool on) {
     if (on) {
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, on);
+        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, true);
     } else {
         uint32_t msg = MSG_SYSLED | (0 & 0x0fffffff);
 

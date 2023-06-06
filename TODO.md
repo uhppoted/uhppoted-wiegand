@@ -28,12 +28,34 @@
          - [x] Replace alarm with repeating timer
          - [ ] Fix SYS_LED conflict
                - (?) Move set_sysled out of alarm callback
-               - (?) Maximum toggle rate ?
+               - [ ] Remove debug from cmake command
 
                - https://smist08.wordpress.com/2022/08/26/introducing-the-raspberry-pi-pico-w/
                - https://forums.raspberrypi.com/viewtopic.php?t=348664
                - https://datasheets.raspberrypi.com/picow/connecting-to-the-internet-with-pico-w.pdf
                - https://www.raspberrypi.com/documentation/pico-sdk/networking.html#pico_cyw43_driver
+```
+CYW43 initialised
+sd_spi_go_low_frequency: Actual frequency: 398089
+V2-Version Card
+R3/R7: 0x1aa
+R3/R7: 0x40ff8000
+R3/R7: 0xc0ff8000
+Card Initialized: High Capacity Card
+SD card initialized
+SDHC/SDXC Card: hc_c_size: 119279
+Sectors: 122142720
+Capacity:    59640 MB
+sd_spi_go_high_frequency: Actual frequency: 12500000
+2023-06-06 11:01:03  SYS    SET TIME OK
+2023-06-06 11:01:03  SYS    CONTROLLER OK
+2023-06-06 11:01:03  DOOR   LOCK UNKNOWN
+2023-06-06 11:01:03  DOOR   OPEN
+2023-06-06 11:01:03  BUTTON RELEASED
+Version: 7.95.49 (2271bb6 CY) CRC: b7a28ef3 Date: Mon 2021-11-29 22:50:27 PST Ucode Ver: 1043.2162 FWID 01-c51d9400
+cyw43 loaded ok, mac 28:cd:c1:08:28:34
+```
+
 
          - [ ] USB+WiFi variants
                - [x] controller

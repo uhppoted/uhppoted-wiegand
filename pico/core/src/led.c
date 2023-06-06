@@ -109,7 +109,7 @@ bool blink_callback(repeating_timer_t *rt) {
     return true;
 }
 
-/* Communal 100ms repeating timer handler for blinkable LEDs. Turns LED off after blink interval. 
+/* Communal 100ms repeating timer handler for blinkable LEDs. Turns LED off after blink interval.
  *
  */
 bool callback(repeating_timer_t *rt) {
