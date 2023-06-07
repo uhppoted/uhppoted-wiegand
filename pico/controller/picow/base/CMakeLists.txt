@@ -41,6 +41,7 @@ add_executable(wiegand-controller-picow
   ${CORE}/src/acl.c
   ${CORE}/src/logd.c
   ${CORE}/src/hwconfig.c
+  ${CORE}/src/picow/cyw43.c
   ${CORE}/src/picow/sysled.c
 )
 

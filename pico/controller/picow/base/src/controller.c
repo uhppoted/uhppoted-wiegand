@@ -19,6 +19,7 @@
 #include <common.h>
 #include <led.h>
 #include <logd.h>
+#include <picow.h>
 #include <read.h>
 #include <relays.h>
 #include <sdcard.h>
@@ -51,7 +52,6 @@ const uint32_t MSG_DEBUG = 0xf0000000;
 // FUNCTION PROTOTYPES
 
 void setup_gpio(void);
-void setup_cyw43(void);
 void sysinit();
 
 // GLOBALS
@@ -82,8 +82,7 @@ int main() {
     alarm_pool_init_default();
 
     // ... initialise CYW43
-
-    // setup_cyw43();
+    setup_cyw43();
 
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
@@ -210,18 +209,6 @@ void setup_gpio() {
     gpio_pull_down(SD_DET);
 }
 
-void setup_cyw43() {
-    char s[64];
-    int err;
-
-    if ((err = cyw43_arch_init()) != 0) {
-        snprintf(s, sizeof(s), "CYW43 initialiation error (%d)", err);
-        puts(s);
-    } else {
-        puts("CYW43 initialised");
-    }
-}
-
 void sysinit() {
     static bool initialised = false;
     static repeating_timer_t watchdog_rt;
@@ -242,7 +229,6 @@ void sysinit() {
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
-        setup_cyw43();
         sdcard_initialise(mode, true);
 
         if (!relay_initialise(mode)) {
@@ -252,7 +238,6 @@ void sysinit() {
         acl_initialise((uint32_t[]){}, 0);
 
         // ... setup sys stuff
-        // FIXME add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
         add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);
 

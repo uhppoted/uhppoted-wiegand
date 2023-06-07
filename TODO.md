@@ -27,9 +27,8 @@
          - [x] Configurable idle timeout
          - [x] Replace alarm with repeating timer
          - [ ] Fix SYS_LED conflict
-               - (?) Move set_sysled out of alarm callback
+               - [ ] Move set_sysled out of alarm callback
                - [ ] Remove debug from cmake command
-
                - https://smist08.wordpress.com/2022/08/26/introducing-the-raspberry-pi-pico-w/
                - https://forums.raspberrypi.com/viewtopic.php?t=348664
                - https://datasheets.raspberrypi.com/picow/connecting-to-the-internet-with-pico-w.pdf
