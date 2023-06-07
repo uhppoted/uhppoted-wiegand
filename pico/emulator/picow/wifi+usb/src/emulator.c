@@ -16,6 +16,7 @@
 #include <common.h>
 #include <led.h>
 #include <logd.h>
+#include <picow.h>
 #include <read.h>
 #include <relays.h>
 #include <sys.h>
@@ -35,8 +36,10 @@ const uint32_t MSG_CARD_READ = 0x40000000;
 const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
+const uint32_t MSG_SYSLED = 0xa0000000;
 const uint32_t MSG_LOG = 0xb0000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
+const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -73,6 +76,9 @@ int main() {
     setup_usb();
     alarm_pool_init_default();
 
+    // ... initialise CYW43
+    setup_cyw43();
+
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
     clear_screen();
@@ -83,6 +89,10 @@ int main() {
 
         if ((v & MSG) == MSG_SYSINIT) {
             sysinit();
+        }
+
+        if ((v & MSG) == MSG_SYSLED) {
+            set_sysled_off();
         }
 
         if ((v & MSG) == MSG_SYSCHECK) {
@@ -132,6 +142,17 @@ int main() {
 
         if ((v & MSG) == MSG_PUSHBUTTON) {
             pushbutton_event(v & 0x0fffffff);
+        }
+
+        if ((v & MSG) == MSG_LOG) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            printf("%s", b);
+            tcpd_log(b);
+            free(b);
+        }
+
+        if ((v & MSG) == MSG_TCPD_POLL) {
+            tcpd_poll();
         }
 
         if ((v & MSG) == MSG_DEBUG) {
@@ -195,6 +216,7 @@ void sysinit() {
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
+        tcpd_initialise(mode);
 
         if (!relay_initialise(mode)) {
             logd_log("failed to initialise relay monitor");
