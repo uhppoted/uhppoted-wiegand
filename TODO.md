@@ -31,7 +31,7 @@
          - [ ] PicoW variants without WIFI
                - [x] reference
                - [x] controller
-               - [ ] emulator
+               - [x] emulator
 
          - [ ] Check all controller variants
          - [ ] Check all emulator variants

@@ -11,4 +11,3 @@ void setup_cyw43() {
         puts("CYW43 initialised");
     }
 }
-

@@ -20,6 +20,7 @@
 #include <read.h>
 #include <relays.h>
 #include <sys.h>
+#include <tcpd.h>
 #include <uart.h>
 #include <usb.h>
 #include <write.h>
