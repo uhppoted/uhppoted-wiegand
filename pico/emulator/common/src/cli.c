@@ -11,9 +11,6 @@
 #include "uart.h"
 #include "write.h"
 
-#include "../include/cli.h"
-#include "../include/emulator.h"
-
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
 void help(txrx, void *);

@@ -26,17 +26,8 @@
          - [x] Configurable connect timeout
          - [x] Configurable idle timeout
          - [x] Replace alarm with repeating timer
-         - [ ] CYW43 SYS_LED implementation
-               - [x] Move set_sysled out of alarm callback
-               - [x] Remove debug from cmake command
-         - [ ] USB+WiFi variants
-               - [x] controller
-               - [x] emulator
-               - [x] reference
-               - [x] Don't log SENT bytes to TCP log (infinite loop)
-               - [x] Don't log SEND error to TCP log
-               - [x] Close client connection on SEND ERROR
-               - [x] ~~emulator: log connections being closed mysteriouly?~~
+         - [x] CYW43 SYS_LED implementation
+         - [x] USB+WiFi variants
          - [ ] PicoW variants without WIFI
                - [x] reference
                - [x] controller
