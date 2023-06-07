@@ -26,9 +26,34 @@
          - [x] Configurable connect timeout
          - [x] Configurable idle timeout
          - [x] Replace alarm with repeating timer
+         - [ ] CYW43 SYS_LED implementation
+               - [x] Move set_sysled out of alarm callback
+               - [x] Remove debug from cmake command
+         - [ ] USB+WiFi variants
+               - [x] controller
+               - [x] emulator
+               - [x] reference
+               - [x] Don't log SENT bytes to TCP log (infinite loop)
+               - [x] Don't log SEND error to TCP log
+               - [x] Close client connection on SEND ERROR
+               - [x] ~~emulator: log connections being closed mysteriouly?~~
+         - [ ] PicoW variants without WIFI
+               - [x] reference
+               - [x] controller
+               - [ ] emulator
+
+         - [ ] Check all controller variants
+         - [ ] Check all emulator variants
+         - [ ] Check all reference variants
+         - [ ] SYSDATE and SYSTIME only set on 'clean' ?
+
+         - [ ] Figure out SD card detect interrupt conflict
+               - https://github.com/georgerobotics/cyw43-driver/issues/33
+               - https://github.com/raspberrypi/pico-sdk/issues/1068
+               - https://forums.raspberrypi.com/viewtopic.php?t=348664
+               - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
+
          - [ ] Fix SYS_LED conflict
-               - [ ] Move set_sysled out of alarm callback
-               - [ ] Remove debug from cmake command
                - https://smist08.wordpress.com/2022/08/26/introducing-the-raspberry-pi-pico-w/
                - https://forums.raspberrypi.com/viewtopic.php?t=348664
                - https://datasheets.raspberrypi.com/picow/connecting-to-the-internet-with-pico-w.pdf
@@ -54,31 +79,6 @@ sd_spi_go_high_frequency: Actual frequency: 12500000
 Version: 7.95.49 (2271bb6 CY) CRC: b7a28ef3 Date: Mon 2021-11-29 22:50:27 PST Ucode Ver: 1043.2162 FWID 01-c51d9400
 cyw43 loaded ok, mac 28:cd:c1:08:28:34
 ```
-
-
-         - [ ] USB+WiFi variants
-               - [x] controller
-               - [x] emulator
-               - [x] reference
-               - [x] Don't log SENT bytes to TCP log (infinite loop)
-               - [x] Don't log SEND error to TCP log
-               - [x] Close client connection on SEND ERROR
-               - [x] ~~emulator: log connections being closed mysteriouly?~~
-               - [ ] Figure out SD card detect interrupt conflict
-                     - https://github.com/georgerobotics/cyw43-driver/issues/33
-                     - https://github.com/raspberrypi/pico-sdk/issues/1068
-                     - https://forums.raspberrypi.com/viewtopic.php?t=348664
-                     - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
-         - [ ] PicoW variants without WIFI
-               - [ ] reference
-               - [ ] controller
-               - [ ] emulator
-
-         - [ ] Check all controller variants
-         - [ ] Check all emulator variants
-         - [ ] Check all reference variants
-         - [ ] SYSDATE and SYSTIME only set on 'clean' ?
-
 
    - [ ] Buzzer
    - (?) CLI auth

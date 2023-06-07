@@ -18,6 +18,7 @@
 #include <common.h>
 #include <led.h>
 #include <logd.h>
+#include <picow.h>
 #include <read.h>
 #include <relays.h>
 #include <sdcard.h>
@@ -42,6 +43,7 @@ const uint32_t MSG_LED = 0x50000000;
 const uint32_t MSG_RELAY = 0x60000000;
 const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
+const uint32_t MSG_SYSLED = 0xa0000000;
 const uint32_t MSG_LOG = 0xb0000000;
 const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_RXI = 0xd0000000;
@@ -80,6 +82,9 @@ int main() {
     setup_uart();
     alarm_pool_init_default();
 
+    // ... initialise CYW43
+    setup_cyw43();
+
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
     clear_screen();
@@ -90,6 +95,10 @@ int main() {
 
         if ((v & MSG) == MSG_SYSINIT) {
             sysinit();
+        }
+
+        if ((v & MSG) == MSG_SYSLED) {
+            set_sysled_off();
         }
 
         if ((v & MSG) == MSG_SYSCHECK) {

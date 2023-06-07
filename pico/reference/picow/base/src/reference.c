@@ -92,6 +92,10 @@ int main() {
             sysinit();
         }
 
+        if ((v & MSG) == MSG_SYSLED) {
+            set_sysled_off();
+        }
+
         if ((v & MSG) == MSG_SYSCHECK) {
             sys_ok();
         }

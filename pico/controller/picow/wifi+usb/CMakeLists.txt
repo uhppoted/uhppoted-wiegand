@@ -44,6 +44,7 @@ add_executable(wiegand-controller-wifi-usb
   ${CORE}/src/usb.c
   ${CORE}/src/sys.c
   ${CORE}/src/hwconfig.c
+  ${CORE}/src/picow/cyw43.c
   ${CORE}/src/picow/sysled.c
   ${CORE}/src/picow/tcpd.c
 )

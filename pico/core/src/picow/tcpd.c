@@ -136,6 +136,7 @@ bool tcpd_initialise(enum MODE mode) {
     char s[64];
     err_t err;
 
+    // NTS: cyw43_arch_init() should be in main initialisation (for e.g. SYSLED)
     // if ((err = cyw43_arch_init()) != 0) {
     //     snprintf(s, sizeof(s), "WIFI INITIALISATION ERROR (%d)", err);
     //     tcpd_infof("TCPD", s);
