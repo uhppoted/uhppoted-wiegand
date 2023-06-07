@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "TPIC6B595.h"
-#include "buzzer.h"
-#include "common.h"
-#include "logd.h"
-#include "relays.h"
-#include "sys.h"
-#include "tcpd.h"
-#include "uart.h"
-#include "write.h"
+#include <TPIC6B595.h>
+#include <buzzer.h>
+#include <common.h>
+#include <logd.h>
+#include <relays.h>
+#include <sys.h>
+#include <tcpd.h>
+#include <uart.h>
+#include <write.h>
 
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
