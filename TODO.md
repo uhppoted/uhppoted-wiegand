@@ -28,15 +28,36 @@
          - [x] Replace alarm with repeating timer
          - [x] CYW43 SYS_LED implementation
          - [x] USB+WiFi variants
-         - [ ] PicoW variants without WIFI
-               - [x] reference
-               - [x] controller
-               - [x] emulator
+         - [x] PicoW variants without WIFI
+         
+         - [ ] SYSDATE and SYSTIME only set on 'clean' ?
 
          - [ ] Check all controller variants
+               - [ ] pico
+                     - [ ] base
+                     - [ ] usb
+               - [x] picow
+                     - [x] base
+                     - [x] wifi
+                     - [x] wifi+usb
+
          - [ ] Check all emulator variants
+               - [ ] pico
+                     - [ ] base
+                     - [ ] usb
+               - [ ] picow
+                     - [ ] base
+                     - [ ] wifi
+                     - [ ] wifi+usb
+
          - [ ] Check all reference variants
-         - [ ] SYSDATE and SYSTIME only set on 'clean' ?
+               - [ ] pico
+                     - [ ] base
+                     - [ ] usb
+               - [ ] picow
+                     - [ ] base
+                     - [ ] wifi
+                     - [ ] wifi+usb
 
          - [ ] Figure out SD card detect interrupt conflict
                - https://github.com/georgerobotics/cyw43-driver/issues/33

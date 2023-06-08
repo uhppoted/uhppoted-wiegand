@@ -13,7 +13,7 @@ int bits(uint32_t v) {
     return (v * 0x01010101) >> 24;
 }
 
-void cardf(const card *c, char *s, int N) {
+void cardf(const card *c, char *s, int N, bool timestamped) {
     char t[24];
     char n[16];
     char g[16];
@@ -44,7 +44,11 @@ void cardf(const card *c, char *s, int N) {
         }
     }
 
-    snprintf(s, N, "%-19s  CARD   %-8s %s", t, n, g);
+    if (timestamped) {
+        snprintf(s, N, "%-19s  CARD   %-8s %s", t, n, g);
+    } else {
+        snprintf(s, N, "CARD   %-8s %s", n, g);
+    }
 }
 
 int timef(const datetime_t timestamp, char *s, int N) {

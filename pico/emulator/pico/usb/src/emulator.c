@@ -114,8 +114,8 @@ int main() {
             on_card_read(v & 0x0fffffff);
 
             char s[64];
-            cardf(&last_card, s, sizeof(s));
-            puts(s);
+            cardf(&last_card, s, sizeof(s), false);
+            logd_log(s);
         }
 
         if ((v & MSG) == MSG_LED) {

@@ -1,7 +1,4 @@
 #include <pico/cyw43_arch.h>
-#include <stdio.h>
-
-#include <wiegand.h>
 
 void init_sysled() {
 }
@@ -11,22 +8,10 @@ void init_sysled() {
  * callback seems to cause a lockup if the interval is less than about 750ms.
  * Immediate cause is a cyw43 driver loop waiting to acquire a lock (which makes
  * absolutely no sense in the context). Interim workaround (pending more investigation)
- * is to use a queued MSG.
+ * is to set the LED pin low immediately after initialisation.
  *
  * Ref. https://forums.raspberrypi.com/viewtopic.php?t=348664
  */
 void set_sysled(bool on) {
-    if (on) {
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, true);
-    } else {
-        uint32_t msg = MSG_SYSLED | (0 & 0x0fffffff);
-
-        if ((msg != 0x00000000) && !queue_is_full(&queue)) {
-            queue_try_add(&queue, &msg);
-        }
-    }
-}
-
-void set_sysled_off() {
-    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, false);
+    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, on);
 }

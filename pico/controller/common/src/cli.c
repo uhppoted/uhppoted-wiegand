@@ -121,7 +121,7 @@ void cli_set_time(char *cmd, txrx f, void *context) {
 void query(txrx f, void *context) {
     char s[64];
 
-    cardf(&last_card, s, sizeof(s));
+    cardf(&last_card, s, sizeof(s), true);
     f(context, s);
 }
 

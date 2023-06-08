@@ -129,8 +129,8 @@ int main() {
             }
 
             char s[64];
-            cardf(&last_card, s, sizeof(s));
-            puts(s);
+            cardf(&last_card, s, sizeof(s), false);
+            logd_log(s);
         }
 
         if ((v & MSG) == MSG_LED) {
