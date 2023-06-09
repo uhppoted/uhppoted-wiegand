@@ -29,8 +29,7 @@
          - [x] CYW43 SYS_LED implementation
          - [x] USB+WiFi variants
          - [x] PicoW variants without WIFI
-         
-         - [ ] SYSDATE and SYSTIME only set on 'clean' ?
+         - [x] SYSDATE and SYSTIME only set on 'clean'
 
          - [ ] Check all controller variants
                - [ ] pico

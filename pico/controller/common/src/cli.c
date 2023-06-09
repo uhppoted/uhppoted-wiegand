@@ -37,7 +37,6 @@ void write_acl(txrx, void *);
 void mount(txrx, void *);
 void unmount(txrx, void *);
 void format(txrx, void *);
-void woot(txrx f, void *context);
 
 void serial(void *context, const char *msg) {
     char s[100];
@@ -95,8 +94,6 @@ void execw(char *cmd, txrx f, void *context) {
                 on_card_command(&cmd[6], grant, f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
                 on_card_command(&cmd[7], revoke, f, context);
-            } else if (strncasecmp(cmd, "woot", 4) == 0) {
-                woot(f, context);
             } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
                 cli_set_time(&cmd[1], f, context);
             } else {
@@ -432,11 +429,4 @@ void format(txrx f, void *context) {
 
     f(context, s);
     logd_log(s);
-}
-
-/* Woots.
- *
- */
-void woot(txrx f, void *context) {
-    f(context, ".. and woot right back atcha' :-)");
 }

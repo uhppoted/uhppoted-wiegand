@@ -21,7 +21,7 @@ clean:
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && \
 	       cd build && \
-	       cmake -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" \
+	       cmake -DPICO_BOARD=pico_w -DSSID="$(SSID)" -DPASSWORD="$(PASSWORD)" \
 	             -DTCPD_CLI_PORT="$(CLI_PORT)" \
 	             -DTCPD_LOG_PORT="$(LOG_PORT)" \
 	             -DTCPD_CLIENT_IDLE="$(TCPD_CLIENT_IDLE)" \
@@ -35,7 +35,7 @@ clean-debug:
 	export PICO_SDK_PATH=$(SDK) && \
 	       cd build && \
 	       cmake -DCMAKE_BUILD_TYPE=Debug \
-	             -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" \
+	             -DPICO_BOARD=pico_w -DSSID="$(SSID)" -DPASSWORD="$(PASSWORD)" \
 	             -DTCPD_CLI_PORT="$(CLI_PORT)" \
 	             -DTCPD_LOG_PORT="$(LOG_PORT)" \
 	             -DTCPD_CLIENT_IDLE="$(TCPD_CLIENT_IDLE)" \
@@ -48,7 +48,7 @@ format: src/*.c include/*.h
 	clang-format -i ./include/*.h
 
 build: format
-	export PICO_SDK_PATH=$(SDK) && cd build && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
+	export PICO_SDK_PATH=$(SDK) && cd build && make clean && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
 
 install: build
 	picotool load build/wiegand-controller-picow.uf2
