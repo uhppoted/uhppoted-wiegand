@@ -30,35 +30,35 @@
          - [x] USB+WiFi variants
          - [x] PicoW variants without WIFI
          - [x] SYSDATE and SYSTIME only set on 'clean'
-
-         - [ ] Check all controller variants
-               - [ ] pico
-                     - [ ] base
-                     - [ ] usb
+         - [x] Check all controller variants
+               - [x] pico
+                     - [x] base
+                     - [x] usb
                - [x] picow
                      - [x] base
                      - [x] wifi
                      - [x] wifi+usb
 
-         - [ ] Check all emulator variants
-               - [ ] pico
-                     - [ ] base
-                     - [ ] usb
-               - [ ] picow
-                     - [ ] base
-                     - [ ] wifi
-                     - [ ] wifi+usb
+         - [x] Check all emulator variants
+               - [x] pico
+                     - [x] base
+                     - [x] usb
+               - [x] picow
+                     - [x] base
+                     - [x] wifi
+                     - [x] wifi+usb
 
-         - [ ] Check all reference variants
-               - [ ] pico
-                     - [ ] base
-                     - [ ] usb
-               - [ ] picow
-                     - [ ] base
-                     - [ ] wifi
-                     - [ ] wifi+usb
+         - [x] Check all reference variants
+               - [x] pico
+                     - [x] base
+                     - [x] usb
+               - [x] picow
+                     - [x] base
+                     - [x] wifi
+                     - [x] wifi+usb
 
          - [ ] Figure out SD card detect interrupt conflict
+               - (?) Use GPIO poll
                - https://github.com/georgerobotics/cyw43-driver/issues/33
                - https://github.com/raspberrypi/pico-sdk/issues/1068
                - https://forums.raspberrypi.com/viewtopic.php?t=348664

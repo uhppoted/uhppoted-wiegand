@@ -153,6 +153,12 @@ int main() {
             pushbutton_event(v & 0x0fffffff);
         }
 
+        if ((v & MSG) == MSG_LOG) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            printf("%s", b);
+            free(b);
+        }
+
         if ((v & MSG) == MSG_DEBUG) {
             char s[64];
             snprintf(s, sizeof(s), "DEBUG %d", v & 0x0fffffff);
