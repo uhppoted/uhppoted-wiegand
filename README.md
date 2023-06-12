@@ -36,6 +36,7 @@ Next up:
 
 | *Version* | *Description*                                                                             |
 | --------- | ----------------------------------------------------------------------------------------- |
+| v0.8.5    | Added support for PicoW and a telnet CLI                                                  |
 | v0.8.4    | Initial release of reference, reader emulator and controller emulator                     |
 
 
