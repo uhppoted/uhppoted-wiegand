@@ -225,12 +225,11 @@ void sysinit() {
         buzzer_initialise(mode);
         TPIC_initialise(mode);
         sdcard_initialise(mode, true);
+        acl_initialise();
 
         if (!relay_initialise(mode)) {
             logd_log("failed to initialise relay monitor");
         }
-
-        acl_initialise((uint32_t[]){}, 0);
 
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
@@ -244,12 +243,10 @@ void sysinit() {
         sys_ok();
         set_scroll_area();
 
-        // ... load ACL from SD card
-        uint32_t cards[16];
-        int N = 16;
-        if (sdcard_read_acl(cards, &N) == 0) {
-            acl_initialise(cards, N);
-        }
+        // ... load ACL from flash/SDCARD
+        char s[64];
+        acl_load(s, sizeof(s));
+        logd_log(s);
 
         // ... 'k, done
         buzzer_beep(1);

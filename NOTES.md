@@ -29,6 +29,9 @@
 
 8. SD card
    - https://www.digikey.com/en/maker/projects/raspberry-pi-pico-rp2040-sd-card-example-with-micropython-and-cc/e472c7f578734bfd96d437e68e670050
+   - http://elm-chan.org/fsw/ff/00index_e.html
+   - https://apple.stackexchange.com/questions/415891/how-do-i-use-macos-terminal-or-other-app-to-format-an-mbr-fat32-sd-card-as-a-0x0
+   - https://allthingsembedded.com/2018/12/29/adding-gpt-support-to-fatfs
 
 9. PicoW + LWIP
    - https://github.com/raspberrypi/pico-sdk/issues/1079

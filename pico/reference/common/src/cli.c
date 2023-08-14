@@ -285,24 +285,15 @@ void unmount(txrx f, void *context) {
  *
  */
 void read_acl(txrx f, void *context) {
-    uint32_t cards[16];
-    int N = 16;
-    int rc = sdcard_read_acl(cards, &N);
     int detected = gpio_get(SD_DET);
-    char s[32];
+    char s[64];
 
     if (!detected) {
         f(context, "DISK   NO SDCARD");
         logd_log("DISK   NO SDCARD");
     }
 
-    if (rc != 0) {
-        snprintf(s, sizeof(s), "DISK   READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
-    } else {
-        snprintf(s, sizeof(s), "DISK   READ ACL OK (%d)", N);
-
-        acl_initialise(cards, N);
-    }
+    acl_load(s, sizeof(s));
 
     f(context, s);
     logd_log(s);

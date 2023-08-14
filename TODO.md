@@ -2,71 +2,24 @@
 
 - [ ] github workflow
 
+- [ ] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
+      - [ ] Move SDCARD reads/writes to ACL
+      - [ ] Read from flash
+      - [ ] Write to flash
+      - [ ] Checksum
+      - [ ] Set ACL size from CMakeLists variable
+
+      - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
+      - https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash
+      - https://forums.raspberrypi.com/viewtopic.php?t=305570
+
 - [ ] PicoW+TCP/IP
-         - [x] Replace blocking connect
-         - [x] Reenable watchdog
-         - [x] Listen/accept on connected
-         - [x] Retry on connect failed
-         - [x] Tidy up link status stuff
-         - [x] Route commands/responses to/from CLI
-         - [x] Move PicoW stuff to base
-         - [x] Reinstate full functionality with TCP/IP
-         - [x] Close idle connections
-         - [x] Detect connection closed
-         - [x] Close connection on accept error
-         - [x] Remove tcpd_result
-         - [x] Multiple client connections
-         - [x] Restart server occasionally on server idle 
-         - [x] ~~Send queue~~
-         - [x] Merge picow branch back into main
-         - [x] Logging client/port
-         - [x] cyw43_arch_lwip_check
-         - [x] Reduce poll interval
-         - [x] Configurable ports 
-         - [x] Configurable connect timeout
-         - [x] Configurable idle timeout
-         - [x] Replace alarm with repeating timer
-         - [x] CYW43 SYS_LED implementation
-         - [x] USB+WiFi variants
-         - [x] PicoW variants without WIFI
-         - [x] SYSDATE and SYSTIME only set on 'clean'
-         - [x] Check all controller variants
-         - [x] Check all emulator variants
-         - [x] Check all reference variants
-
-         - [ ] Figure out SD card detect interrupt conflict
-               - (?) Use GPIO poll
-               - https://github.com/georgerobotics/cyw43-driver/issues/33
-               - https://github.com/raspberrypi/pico-sdk/issues/1068
-               - https://forums.raspberrypi.com/viewtopic.php?t=348664
-               - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
-
-         - [ ] Fix SYS_LED conflict
-               - https://smist08.wordpress.com/2022/08/26/introducing-the-raspberry-pi-pico-w/
-               - https://forums.raspberrypi.com/viewtopic.php?t=348664
-               - https://datasheets.raspberrypi.com/picow/connecting-to-the-internet-with-pico-w.pdf
-               - https://www.raspberrypi.com/documentation/pico-sdk/networking.html#pico_cyw43_driver
-```
-CYW43 initialised
-sd_spi_go_low_frequency: Actual frequency: 398089
-V2-Version Card
-R3/R7: 0x1aa
-R3/R7: 0x40ff8000
-R3/R7: 0xc0ff8000
-Card Initialized: High Capacity Card
-SD card initialized
-SDHC/SDXC Card: hc_c_size: 119279
-Sectors: 122142720
-Capacity:    59640 MB
-sd_spi_go_high_frequency: Actual frequency: 12500000
-2023-06-06 11:01:03  SYS    SET TIME OK
-2023-06-06 11:01:03  SYS    CONTROLLER OK
-2023-06-06 11:01:03  DOOR   LOCK UNKNOWN
-2023-06-06 11:01:03  DOOR   OPEN
-2023-06-06 11:01:03  BUTTON RELEASED
-Version: 7.95.49 (2271bb6 CY) CRC: b7a28ef3 Date: Mon 2021-11-29 22:50:27 PST Ucode Ver: 1043.2162 FWID 01-c51d9400
-cyw43 loaded ok, mac 28:cd:c1:08:28:34
-```
+      - [ ] Figure out SD card detect interrupt conflict
+            - (?) Use GPIO poll
+            - https://github.com/georgerobotics/cyw43-driver/issues/33
+            - https://github.com/raspberrypi/pico-sdk/issues/1068
+            - https://forums.raspberrypi.com/viewtopic.php?t=348664
+            - https://github.com/sekigon-gonnoc/Pico-PIO-USB/issues/76
 
    - [ ] Buzzer
    - (?) CLI auth
@@ -76,8 +29,6 @@ cyw43 loaded ok, mac 28:cd:c1:08:28:34
          - (?) ACL
          - (?) Auth
 
-   - [ ] (optionally) Replace external SD card with internal flash
-         - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
    - (?) DTMF
 
 ## Schematic
@@ -150,4 +101,10 @@ cyw43 loaded ok, mac 28:cd:c1:08:28:34
    - https://ww1.microchip.com/downloads/en/Appnotes/Atmel-42233-Using-the-lwIP-Network-Stack_AP-Note_AT04055.pdf
    - https://forums.raspberrypi.com/viewtopic.php?t=337666
    - https://forums.raspberrypi.com/viewtopic.php?t=349890
+   
+11. PicoW + SYSLED
+   - https://smist08.wordpress.com/2022/08/26/introducing-the-raspberry-pi-pico-w/
+   - https://forums.raspberrypi.com/viewtopic.php?t=348664
+   - https://datasheets.raspberrypi.com/picow/connecting-to-the-internet-with-pico-w.pdf
+   - https://www.raspberrypi.com/documentation/pico-sdk/networking.html#pico_cyw43_driver
 

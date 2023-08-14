@@ -1,6 +1,10 @@
+#include <stdio.h>
 #include <stdlib.h>
 
+#include <f_util.h>
+
 #include "../include/acl.h"
+#include "../include/sdcard.h"
 #include "../include/wiegand.h"
 
 uint32_t ACL[32] = {};
@@ -8,15 +12,35 @@ uint32_t ACL[32] = {};
 /* Initialises the ACL.
  *
  */
-void acl_initialise(uint32_t cards[], int N) {
-    static int size = sizeof(ACL) / sizeof(uint32_t);
+void acl_initialise() {
+    int size = sizeof(ACL) / sizeof(uint32_t);
 
     for (int i = 0; i < size; i++) {
         ACL[i] = 0xffffffff;
     }
+}
 
-    for (int i = 0; i < N && i < size; i++) {
-        ACL[i] = cards[i];
+/* Initialises the ACL from flash/SDCARD.
+ *
+ */
+void acl_load(char *s, int len) {
+    int size = sizeof(ACL) / sizeof(uint32_t);
+    uint32_t cards[16];
+    int N = 16;
+    int rc = sdcard_read_acl(cards, &N);
+
+    if (rc != 0) {
+        snprintf(s, len, "DISK   READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+    } else {
+        snprintf(s, len, "DISK   READ ACL OK (%d)", N);
+
+        for (int i = 0; i < size; i++) {
+            ACL[i] = 0xffffffff;
+        }
+
+        for (int i = 0; i < N && i < size; i++) {
+            ACL[i] = cards[i];
+        }
     }
 }
 
