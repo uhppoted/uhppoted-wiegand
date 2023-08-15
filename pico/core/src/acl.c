@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include <f_util.h>
+#include <hardware/rtc.h>
 
 #include "../include/acl.h"
 #include "../include/sdcard.h"
@@ -25,8 +26,8 @@ void acl_initialise() {
  */
 void acl_load(char *s, int len) {
     int size = sizeof(ACL) / sizeof(uint32_t);
-    uint32_t cards[16];
-    int N = 16;
+    int N = size;
+    uint32_t cards[N];
     int rc = sdcard_read_acl(cards, &N);
 
     if (rc != 0) {
@@ -41,6 +42,55 @@ void acl_load(char *s, int len) {
         for (int i = 0; i < N && i < size; i++) {
             ACL[i] = cards[i];
         }
+    }
+}
+
+/* Persists the in-memory ACL to flash/SDCARD
+ *
+ */
+void acl_save(char *s, int len) {
+    uint32_t *cards;
+    int N = acl_list(&cards);
+    CARD acl[N];
+
+    datetime_t now;
+    datetime_t start;
+    datetime_t end;
+
+    rtc_get_datetime(&now);
+
+    start.year = now.year;
+    start.month = 1;
+    start.day = 1;
+    start.dotw = 0;
+    start.hour = 0;
+    start.min = 0;
+    start.sec = 0;
+
+    end.year = now.year + 1;
+    end.month = 12;
+    end.day = 31;
+    end.dotw = 0;
+    end.hour = 23;
+    end.min = 59;
+    end.sec = 59;
+
+    for (int i = 0; i < N; i++) {
+        acl[i].card_number = cards[i];
+        acl[i].start = start;
+        acl[i].end = end;
+        acl[i].allowed = true;
+        acl[i].name = "----";
+    }
+
+    free(cards);
+
+    int rc = sdcard_write_acl(acl, N);
+
+    if (rc != 0) {
+        snprintf(s, len, "DISK   WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+    } else {
+        snprintf(s, len, "DISK   WRITE ACL OK");
     }
 }
 

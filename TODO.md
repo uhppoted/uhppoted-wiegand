@@ -3,7 +3,8 @@
 - [ ] github workflow
 
 - [ ] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
-      - [ ] Move SDCARD reads/writes to ACL
+      - [x] Move SDCARD reads to ACL
+      - [x] Move SDCARD writes to ACL
       - [ ] Read from flash
       - [ ] Write to flash
       - [ ] Checksum

@@ -303,58 +303,17 @@ void read_acl(txrx f, void *context) {
  *
  */
 void write_acl(txrx f, void *context) {
-    uint32_t *cards;
-    int N = acl_list(&cards);
-    char s[32];
-    CARD acl[N];
-
-    datetime_t now;
-    datetime_t start;
-    datetime_t end;
-
-    rtc_get_datetime(&now);
-
-    start.year = now.year;
-    start.month = 1;
-    start.day = 1;
-    start.dotw = 0;
-    start.hour = 0;
-    start.min = 0;
-    start.sec = 0;
-
-    end.year = now.year + 1;
-    end.month = 12;
-    end.day = 31;
-    end.dotw = 0;
-    end.hour = 23;
-    end.min = 59;
-    end.sec = 59;
-
-    for (int i = 0; i < N; i++) {
-        acl[i].card_number = cards[i];
-        acl[i].start = start;
-        acl[i].end = end;
-        acl[i].allowed = true;
-        acl[i].name = "----";
-    }
-
-    free(cards);
-
-    int rc = sdcard_write_acl(acl, N);
+    char s[64];
 
     if (!gpio_get(SD_DET)) {
-        f(context, "DISK   NO SDCARD");
-        logd_log("DISK   NO SDCARD");
+        f(context, "DISK NO SDCARD");
+        logd_log("DISK NO SDCARD");
     }
 
-    if (rc != 0) {
-        snprintf(s, sizeof(s), "DISK  WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
-    } else {
-        snprintf(s, sizeof(s), "DISK  WRITE ACL OK");
-    }
+    acl_save(s, sizeof(s));
+    logd_log(s);
 
     f(context, s);
-    logd_log(s);
 }
 
 /* Goes into a tight loop until the watchdog resets the processor.
