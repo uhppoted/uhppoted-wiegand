@@ -37,6 +37,7 @@ add_executable(wiegand-controller-picow
   ${CORE}/src/buzzer.c
   ${CORE}/src/relays.c
   ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/flash.c
   ${CORE}/src/sdcard.c
   ${CORE}/src/acl.c
   ${CORE}/src/logd.c
@@ -67,5 +68,6 @@ target_link_libraries(
     hardware_rtc
     hardware_spi
     hardware_watchdog
+    hardware_flash
     FatFs_SPI
 )

@@ -6,9 +6,14 @@
       - [x] Move SDCARD reads to ACL
       - [x] Move SDCARD writes to ACL
       - [ ] Read from flash
+            - [ ] Validate header magic number
+            - [ ] Validate header version
+            - [ ] Validate cards < 60
+            - [ ] Validate header CRC
       - [ ] Write to flash
+            - [ ] Ping-pong sectors
+            - [ ] Only write used pages
       - [ ] Checksum
-      - [ ] Set ACL size from CMakeLists variable
 
       - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
       - https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash

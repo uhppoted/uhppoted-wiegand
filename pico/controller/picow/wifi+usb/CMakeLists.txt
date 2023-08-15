@@ -38,6 +38,7 @@ add_executable(wiegand-controller-wifi-usb
   ${CORE}/src/logd.c
   ${CORE}/src/read.c
   ${CORE}/src/relays.c
+  ${CORE}/src/flash.c
   ${CORE}/src/sdcard.c
   ${CORE}/src/TPIC6B595.c
   ${CORE}/src/uart.c
@@ -71,5 +72,6 @@ target_link_libraries(
     hardware_rtc
     hardware_spi
     hardware_watchdog
+    hardware_flash
     FatFs_SPI
 )

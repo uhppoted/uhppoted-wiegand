@@ -5,6 +5,7 @@
 #include <hardware/rtc.h>
 
 #include "../include/acl.h"
+#include "../include/flash.h"
 #include "../include/sdcard.h"
 #include "../include/wiegand.h"
 
@@ -28,6 +29,11 @@ void acl_load(char *s, int len) {
     int size = sizeof(ACL) / sizeof(uint32_t);
     int N = size;
     uint32_t cards[N];
+
+    // ... load ACL from flash
+    flash_read_acl();
+
+    // ... override with ACL from SDCARD
     int rc = sdcard_read_acl(cards, &N);
 
     if (rc != 0) {
@@ -85,6 +91,10 @@ void acl_save(char *s, int len) {
 
     free(cards);
 
+    // ... save to flash
+    flash_write_acl(acl, N);
+
+    // ... save to SDCARD
     int rc = sdcard_write_acl(acl, N);
 
     if (rc != 0) {

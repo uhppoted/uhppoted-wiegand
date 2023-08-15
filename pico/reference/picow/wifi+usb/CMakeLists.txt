@@ -39,6 +39,7 @@ add_executable(wiegand_wifi_usb
   ${CORE}/src/relays.c
   ${CORE}/src/acl.c
   ${CORE}/src/logd.c
+  ${CORE}/src/flash.c
   ${CORE}/src/sdcard.c
   ${CORE}/src/TPIC6B595.c
   ${CORE}/src/usb.c
@@ -74,5 +75,6 @@ target_link_libraries(
     hardware_pio
     hardware_rtc
     hardware_watchdog
+    hardware_flash
     FatFs_SPI
 )

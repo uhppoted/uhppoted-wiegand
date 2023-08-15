@@ -29,6 +29,7 @@ add_executable(wiegand-controller
   ${CORE}/src/buzzer.c
   ${CORE}/src/relays.c
   ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/flash.c
   ${CORE}/src/sdcard.c
   ${CORE}/src/acl.c
   ${CORE}/src/logd.c
@@ -53,6 +54,7 @@ target_link_libraries(
     wiegand-controller 
     pico_stdlib
     pico_multicore
+    hardware_flash
     hardware_pio
     hardware_rtc
     hardware_spi
