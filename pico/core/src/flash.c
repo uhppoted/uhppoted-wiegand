@@ -9,7 +9,10 @@
 
 #define FLASH_TARGET_OFFSET (PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE)
 
-const uint32_t MAGIC_WORD = 0xaa5555aa;
+const uint32_t ACL_MAGIC_WORD = 0xaa5555aa;
+const uint32_t ACL_ALLOWED = 1;
+const uint32_t ACL_DENIED = 0;
+const uint32_t ACL_VERSION = 16384;
 
 typedef struct header {
     uint32_t magic;
@@ -35,18 +38,22 @@ void flash_read_acl() {
     header.cards = *p++;
     header.crc = *p++;
 
-    snprintf(s, sizeof(s), ">>>>>>> HEADER: magic:%08x version:%lu cards:%lu crc:%lu", header.magic, header.version, header.cards, header.crc);
+    snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%lu", header.magic, header.version, header.cards, header.crc);
     logd_debug(s);
 
-    if (header.cards <= 60) {
+    if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
         p = (uint32_t *)(addr + FLASH_PAGE_SIZE);
 
         for (uint32_t i = 0; i < header.cards; i++) {
             uint32_t card = *(p + 0);
             uint32_t start = *(p + 1);
             uint32_t end = *(p + 2);
+            bool allowed = *(p + 3) == ACL_ALLOWED;
+            char name[48];
 
-            snprintf(s, sizeof(s), ">>>>>>> CARD  %lu  %-10lu %08x %08x", i + 1, card, start, end);
+            snprintf(name, sizeof(name), "%s", (char *)(p + 4));
+
+            snprintf(s, sizeof(s), ">>>>   CARD    %lu  %-10lu %08x %08x %s %s", i + 1, card, start, end, allowed ? "Y" : "N", name);
             logd_debug(s);
 
             p += 64;
@@ -61,7 +68,7 @@ void flash_write_acl(CARD cards[], int N) {
     uint32_t buffer[FLASH_SECTOR_SIZE / sizeof(uint32_t)];
     struct header header;
 
-    header.magic = MAGIC_WORD;
+    header.magic = ACL_MAGIC_WORD;
     header.version = 1;
     header.cards = N;
     header.crc = 0x00000000;
@@ -80,6 +87,9 @@ void flash_write_acl(CARD cards[], int N) {
         *(p + 0) = card.card_number;
         *(p + 1) = bcd(cards[ix].start);
         *(p + 2) = bcd(cards[ix].end);
+        *(p + 3) = card.allowed ? ACL_ALLOWED : ACL_DENIED;
+
+        snprintf((char *)(p + 4), 48, "%s", card.name);
 
         p += 64;
         ix++;

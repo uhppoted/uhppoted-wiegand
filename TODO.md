@@ -6,9 +6,9 @@
       - [x] Move SDCARD reads to ACL
       - [x] Move SDCARD writes to ACL
       - [ ] Read from flash
-            - [ ] Validate header magic number
-            - [ ] Validate header version
-            - [ ] Validate cards < 60
+            - [x] Validate header magic number
+            - [x] Validate cards < 60
+            - [x] Validate header version
             - [ ] Validate header CRC
       - [ ] Write to flash
             - [ ] Ping-pong sectors
