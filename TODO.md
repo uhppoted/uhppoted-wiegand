@@ -11,9 +11,9 @@
             - [x] Validate header version
             - [ ] Validate header CRC
       - [ ] Write to flash
+            - [x] Checksum
             - [ ] Ping-pong sectors
             - [ ] Only write used pages
-      - [ ] Checksum
 
       - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
       - https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash

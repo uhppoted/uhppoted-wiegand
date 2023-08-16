@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <hardware/flash.h>
 #include <hardware/sync.h>
@@ -22,6 +23,7 @@ typedef struct header {
 } header;
 
 uint32_t bcd(datetime_t);
+uint32_t crc32(const char *, size_t);
 
 /* Reads the ACL from onboard flash.
  *
@@ -38,7 +40,7 @@ void flash_read_acl() {
     header.cards = *p++;
     header.crc = *p++;
 
-    snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%lu", header.magic, header.version, header.cards, header.crc);
+    snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x", header.magic, header.version, header.cards, header.crc);
     logd_debug(s);
 
     if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
@@ -68,18 +70,9 @@ void flash_write_acl(CARD cards[], int N) {
     uint32_t buffer[FLASH_SECTOR_SIZE / sizeof(uint32_t)];
     struct header header;
 
-    header.magic = ACL_MAGIC_WORD;
-    header.version = 1;
-    header.cards = N;
-    header.crc = 0x00000000;
-
-    buffer[0] = header.magic;
-    buffer[1] = header.version;
-    buffer[2] = header.cards;
-    buffer[3] = header.crc;
-
-    int ix = 0;
+    // .. fill cards buffer
     uint32_t *p = &buffer[64];
+    int ix = 0;
 
     while (ix < N && ix < 60) {
         CARD card = cards[ix];
@@ -89,12 +82,25 @@ void flash_write_acl(CARD cards[], int N) {
         *(p + 2) = bcd(cards[ix].end);
         *(p + 3) = card.allowed ? ACL_ALLOWED : ACL_DENIED;
 
+        memset((char *)(p + 4), 0, 48);
         snprintf((char *)(p + 4), 48, "%s", card.name);
 
         p += 64;
         ix++;
     }
 
+    // ... fill header
+    header.magic = ACL_MAGIC_WORD;
+    header.version = 1;
+    header.cards = N;
+    header.crc = crc32((char *)(p + 4), N * 64);
+
+    buffer[0] = header.magic;
+    buffer[1] = header.version;
+    buffer[2] = header.cards;
+    buffer[3] = header.crc;
+
+    // ... write to flash
     uint32_t interrupts = save_and_disable_interrupts();
     flash_range_erase((PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE), FLASH_SECTOR_SIZE);
     flash_range_program((PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE), (uint8_t *)buffer, FLASH_SECTOR_SIZE);
@@ -118,4 +124,19 @@ uint32_t bcd(datetime_t dt) {
     }
 
     return bcd;
+}
+
+// Ref. https://lxp32.github.io/docs/a-simple-example-crc32-calculation
+uint32_t crc32(const char *s, size_t N) {
+    uint32_t crc = 0xFFFFFFFF;
+
+    for (size_t i = 0; i < N; i++) {
+        char ch = s[i];
+        for (size_t j = 0; j < 8; j++) {
+            crc = ((ch ^ crc) & 1) ? (crc >> 1) ^ 0xEDB88320 : crc >> 1;
+            ch >>= 1;
+        }
+    }
+
+    return ~crc;
 }
