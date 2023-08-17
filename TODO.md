@@ -9,7 +9,7 @@
             - [x] Validate header magic number
             - [x] Validate cards < 60
             - [x] Validate header version
-            - [ ] Validate header CRC
+            - [x] Validate header CRC
       - [ ] Write to flash
             - [x] Checksum
             - [ ] Ping-pong sectors

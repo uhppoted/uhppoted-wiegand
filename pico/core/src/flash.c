@@ -14,6 +14,7 @@ const uint32_t ACL_MAGIC_WORD = 0xaa5555aa;
 const uint32_t ACL_ALLOWED = 1;
 const uint32_t ACL_DENIED = 0;
 const uint32_t ACL_VERSION = 16384;
+const uint32_t HEADER_SIZE = FLASH_PAGE_SIZE;
 
 typedef struct header {
     uint32_t magic;
@@ -33,32 +34,40 @@ void flash_read_acl() {
     uint32_t *p = (uint32_t *)addr;
 
     struct header header;
-    char s[64];
+    char s[128];
 
     header.magic = *p++;
     header.version = *p++;
     header.cards = *p++;
     header.crc = *p++;
 
-    snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x", header.magic, header.version, header.cards, header.crc);
+    snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x",
+             header.magic,
+             header.version,
+             header.cards,
+             header.crc);
     logd_debug(s);
 
     if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
-        p = (uint32_t *)(addr + FLASH_PAGE_SIZE);
+        uint32_t crc = crc32((char *)(addr + HEADER_SIZE), header.cards * 64);
 
-        for (uint32_t i = 0; i < header.cards; i++) {
-            uint32_t card = *(p + 0);
-            uint32_t start = *(p + 1);
-            uint32_t end = *(p + 2);
-            bool allowed = *(p + 3) == ACL_ALLOWED;
-            char name[48];
+        if (header.crc == crc) {
+            p = (uint32_t *)(addr + HEADER_SIZE);
 
-            snprintf(name, sizeof(name), "%s", (char *)(p + 4));
+            for (uint32_t i = 0; i < header.cards; i++) {
+                uint32_t card = *(p + 0);
+                uint32_t start = *(p + 1);
+                uint32_t end = *(p + 2);
+                bool allowed = *(p + 3) == ACL_ALLOWED;
+                char name[48];
 
-            snprintf(s, sizeof(s), ">>>>   CARD    %lu  %-10lu %08x %08x %s %s", i + 1, card, start, end, allowed ? "Y" : "N", name);
-            logd_debug(s);
+                snprintf(name, sizeof(name), "%s", (char *)(p + 4));
 
-            p += 64;
+                snprintf(s, sizeof(s), ">>>>   CARD    %lu  %-10lu %08x %08x %s %s", i + 1, card, start, end, allowed ? "Y" : "N", name);
+                logd_debug(s);
+
+                p += 16;
+            }
         }
     }
 }
@@ -70,8 +79,14 @@ void flash_write_acl(CARD cards[], int N) {
     uint32_t buffer[FLASH_SECTOR_SIZE / sizeof(uint32_t)];
     struct header header;
 
+    // ... fill header
+    header.magic = ACL_MAGIC_WORD;
+    header.version = 1;
+    header.cards = N;
+    header.crc = 0;
+
     // .. fill cards buffer
-    uint32_t *p = &buffer[64];
+    uint32_t *p = (uint32_t *)(&buffer[64]);
     int ix = 0;
 
     while (ix < N && ix < 60) {
@@ -85,16 +100,13 @@ void flash_write_acl(CARD cards[], int N) {
         memset((char *)(p + 4), 0, 48);
         snprintf((char *)(p + 4), 48, "%s", card.name);
 
-        p += 64;
+        p += 16;
         ix++;
     }
 
-    // ... fill header
-    header.magic = ACL_MAGIC_WORD;
-    header.version = 1;
-    header.cards = N;
-    header.crc = crc32((char *)(p + 4), N * 64);
+    header.crc = crc32((char *)(&buffer[64]), N * 64);
 
+    // ... copy header to buffer
     buffer[0] = header.magic;
     buffer[1] = header.version;
     buffer[2] = header.cards;
