@@ -9,16 +9,16 @@
 #include "../include/sdcard.h"
 #include "../include/wiegand.h"
 
-uint32_t ACL[32] = {};
+CARD ACL[32];
+
+#define ACL_SIZE (sizeof(ACL) / sizeof(CARD))
 
 /* Initialises the ACL.
  *
  */
 void acl_initialise() {
-    int size = sizeof(ACL) / sizeof(uint32_t);
-
-    for (int i = 0; i < size; i++) {
-        ACL[i] = 0xffffffff;
+    for (int i = 0; i < ACL_SIZE; i++) {
+        ACL[i].card_number = 0xffffffff;
     }
 }
 
@@ -26,39 +26,56 @@ void acl_initialise() {
  *
  */
 void acl_load(char *s, int len) {
-    int size = sizeof(ACL) / sizeof(uint32_t);
-    int N = size;
-    uint32_t cards[N];
-
     // ... load ACL from flash
-    flash_read_acl();
+    {
+        int N = ACL_SIZE;
 
-    // ... override with ACL from SDCARD
-    int rc = sdcard_read_acl(cards, &N);
-
-    if (rc != 0) {
-        snprintf(s, len, "DISK   READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
-    } else {
-        snprintf(s, len, "DISK   READ ACL OK (%d)", N);
-
-        for (int i = 0; i < size; i++) {
-            ACL[i] = 0xffffffff;
-        }
-
-        for (int i = 0; i < N && i < size; i++) {
-            ACL[i] = cards[i];
-        }
+        flash_read_acl(ACL, &N);
+        snprintf(s, len, "FLASH  CARDS %d", N);
     }
+
+    // // ... override with ACL from SDCARD
+    // uint32_t cards[N];
+    // int N = ACL_SIZE;
+    // int rc = sdcard_read_acl(cards, &N);
+    //
+    // if (rc != 0) {
+    //     snprintf(s, len, "DISK   READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+    // } else {
+    //     snprintf(s, len, "DISK   READ ACL OK (%d)", N);
+    //
+    //     for (int i = 0; i < size; i++) {
+    //         ACL[i] = 0xffffffff;
+    //     }
+    //
+    //     for (int i = 0; i < N && i < size; i++) {
+    //         ACL[i] = cards[i];
+    //     }
+    // }
 }
 
 /* Persists the in-memory ACL to flash/SDCARD
  *
  */
 void acl_save(char *s, int len) {
-    uint32_t *cards;
-    int N = acl_list(&cards);
-    CARD acl[N];
+    // ... save to flash
+    flash_write_acl(ACL, ACL_SIZE);
 
+    // // ... save to SDCARD
+    // int rc = sdcard_write_acl(acl, N);
+    //
+    // if (rc != 0) {
+    //     snprintf(s, len, "DISK   WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+    // } else {
+    //     snprintf(s, len, "DISK   WRITE ACL OK");
+    // }
+}
+
+/* Adds a card to the ACL.
+ *
+ */
+bool acl_grant(uint32_t facility_code, uint32_t card) {
+    uint32_t v = (facility_code * 100000) + (card % 100000);
     datetime_t now;
     datetime_t start;
     datetime_t end;
@@ -81,46 +98,24 @@ void acl_save(char *s, int len) {
     end.min = 59;
     end.sec = 59;
 
-    for (int i = 0; i < N; i++) {
-        acl[i].card_number = cards[i];
-        acl[i].start = start;
-        acl[i].end = end;
-        acl[i].allowed = true;
-        acl[i].name = "----";
-    }
-
-    free(cards);
-
-    // ... save to flash
-    flash_write_acl(acl, N);
-
-    // ... save to SDCARD
-    int rc = sdcard_write_acl(acl, N);
-
-    if (rc != 0) {
-        snprintf(s, len, "DISK   WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
-    } else {
-        snprintf(s, len, "DISK   WRITE ACL OK");
-    }
-}
-
-/* Adds a card to the ACL.
- *
- */
-bool acl_grant(uint32_t facility_code, uint32_t card) {
-    static int N = sizeof(ACL) / sizeof(uint32_t);
-
-    uint32_t v = (facility_code * 100000) + (card % 100000);
-
-    for (int i = 0; i < N; i++) {
-        if (ACL[i] == v) {
+    for (int i = 0; i < ACL_SIZE; i++) {
+        if (ACL[i].card_number == v) {
+            ACL[i].start = start;
+            ACL[i].end = end;
+            ACL[i].allowed = true;
+            ACL[i].name = "----";
             return true;
         }
     }
 
-    for (int i = 0; i < N; i++) {
-        if (ACL[i] == 0xffffffff) {
-            ACL[i] = v;
+    for (int i = 0; i < ACL_SIZE; i++) {
+        if (ACL[i].card_number == 0xffffffff) {
+            ACL[i].card_number = v;
+            ACL[i].start = start;
+            ACL[i].end = end;
+            ACL[i].allowed = true;
+            ACL[i].name = "----";
+
             return true;
         }
     }
@@ -132,14 +127,13 @@ bool acl_grant(uint32_t facility_code, uint32_t card) {
  *
  */
 bool acl_revoke(uint32_t facility_code, uint32_t card) {
-    static int N = sizeof(ACL) / sizeof(uint32_t);
-
     uint32_t v = (facility_code * 100000) + (card % 100000);
     bool revoked = false;
 
-    for (int i = 0; i < N; i++) {
-        if (ACL[i] == v) {
-            ACL[i] = 0xffffffff;
+    for (int i = 0; i < ACL_SIZE; i++) {
+        if (ACL[i].card_number == v) {
+            ACL[i].card_number = 0xffffffff;
+            ACL[i].allowed = false;
             revoked = true;
         }
     }
@@ -151,13 +145,12 @@ bool acl_revoke(uint32_t facility_code, uint32_t card) {
  *
  */
 bool acl_allowed(uint32_t facility_code, uint32_t card) {
-    static int N = sizeof(ACL) / sizeof(uint32_t);
+    for (int i = 0; i < ACL_SIZE; i++) {
+        const uint32_t card_number = ACL[i].card_number;
+        const bool allowed = ACL[i].allowed;
 
-    for (int i = 0; i < N; i++) {
-        const uint32_t c = ACL[i];
-
-        if ((c != 0xffffffff) && ((c / 100000) == facility_code) && ((c % 100000) == card)) {
-            return true;
+        if ((card_number != 0xffffffff) && ((card_number / 100000) == facility_code) && ((card_number % 100000) == card)) {
+            return allowed;
         }
     }
 
@@ -168,20 +161,18 @@ bool acl_allowed(uint32_t facility_code, uint32_t card) {
  *
  */
 int acl_list(uint32_t *list[]) {
-    static int N = sizeof(ACL) / sizeof(uint32_t);
-
     int count = 0;
-    for (int i = 0; i < N; i++) {
-        if (ACL[i] != 0xffffffff) {
+    for (int i = 0; i < ACL_SIZE; i++) {
+        if (ACL[i].card_number != 0xffffffff) {
             count++;
         }
     }
 
     if ((*list = calloc(count, sizeof(uint32_t))) != NULL) {
         int ix = 0;
-        for (int i = 0; i < N; i++) {
-            if (ACL[i] != 0xffffffff) {
-                (*list)[ix++] = ACL[i];
+        for (int i = 0; i < ACL_SIZE; i++) {
+            if (ACL[i].card_number != 0xffffffff) {
+                (*list)[ix++] = ACL[i].card_number;
             }
         }
     }

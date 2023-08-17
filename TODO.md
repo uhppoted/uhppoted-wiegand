@@ -5,15 +5,23 @@
 - [ ] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
       - [x] Move SDCARD reads to ACL
       - [x] Move SDCARD writes to ACL
+      - (?) Move logging to ACL
       - [ ] Read from flash
             - [x] Validate header magic number
             - [x] Validate cards < 60
             - [x] Validate header version
             - [x] Validate header CRC
+            - [ ] Populate ACL
+                  - start date
+                  - end date
+                  - card name
       - [ ] Write to flash
             - [x] Checksum
+            - [ ] _revoke_ weirdness
             - [ ] Ping-pong sectors
             - [ ] Only write used pages
+
+      - [ ] Reinstate SD card stuff
 
       - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
       - https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash

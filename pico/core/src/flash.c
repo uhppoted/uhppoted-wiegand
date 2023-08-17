@@ -24,12 +24,13 @@ typedef struct header {
 } header;
 
 uint32_t bcd(datetime_t);
+datetime_t date(uint32_t yyyymmdd);
 uint32_t crc32(const char *, size_t);
 
 /* Reads the ACL from onboard flash.
  *
  */
-void flash_read_acl() {
+void flash_read_acl(CARD cards[], int *N) {
     uint32_t addr = XIP_BASE + FLASH_TARGET_OFFSET;
     uint32_t *p = (uint32_t *)addr;
 
@@ -41,20 +42,22 @@ void flash_read_acl() {
     header.cards = *p++;
     header.crc = *p++;
 
-    snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x",
+    snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x N:%d",
              header.magic,
              header.version,
              header.cards,
-             header.crc);
+             header.crc,
+             *N);
     logd_debug(s);
 
     if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
         uint32_t crc = crc32((char *)(addr + HEADER_SIZE), header.cards * 64);
 
         if (header.crc == crc) {
-            p = (uint32_t *)(addr + HEADER_SIZE);
+            uint32_t *p = (uint32_t *)(addr + HEADER_SIZE);
+            int ix = 0;
 
-            for (uint32_t i = 0; i < header.cards; i++) {
+            for (uint32_t i = 0; i < header.cards && ix < *N; i++) {
                 uint32_t card = *(p + 0);
                 uint32_t start = *(p + 1);
                 uint32_t end = *(p + 2);
@@ -63,13 +66,40 @@ void flash_read_acl() {
 
                 snprintf(name, sizeof(name), "%s", (char *)(p + 4));
 
-                snprintf(s, sizeof(s), ">>>>   CARD    %lu  %-10lu %08x %08x %s %s", i + 1, card, start, end, allowed ? "Y" : "N", name);
+                snprintf(s, sizeof(s), ">>>>   CARD    %lu  %-8lu %08x   %08x   %s %s", i + 1, card, start, end, allowed ? "Y" : "N", name);
                 logd_debug(s);
 
                 p += 16;
+
+                cards[ix].card_number = card;
+                cards[ix].start = date(start);
+                cards[ix].end = date(end);
+                cards[ix].allowed = allowed;
+                cards[ix].name = "????";
+                // FIXME cards[ix].name = ?????;
+
+                snprintf(s, sizeof(s), ">>>>   DEBUG      %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
+                         cards[ix].card_number,
+                         cards[ix].start.year,
+                         cards[ix].start.month,
+                         cards[ix].start.day,
+                         cards[ix].end.year,
+                         cards[ix].end.month,
+                         cards[ix].end.day,
+                         cards[ix].allowed ? "Y" : "N",
+                         cards[ix].name);
+
+                logd_debug(s);
+
+                ix++;
             }
+
+            *N = ix;
+            return;
         }
     }
+
+    *N = 0;
 }
 
 /* Writes the ACL to onboard flash.
@@ -79,32 +109,35 @@ void flash_write_acl(CARD cards[], int N) {
     uint32_t buffer[FLASH_SECTOR_SIZE / sizeof(uint32_t)];
     struct header header;
 
-    // ... fill header
-    header.magic = ACL_MAGIC_WORD;
-    header.version = 1;
-    header.cards = N;
-    header.crc = 0;
-
     // .. fill cards buffer
     uint32_t *p = (uint32_t *)(&buffer[64]);
     int ix = 0;
+    int count = 0;
 
-    while (ix < N && ix < 60) {
+    while (ix < N && count < 60) {
         CARD card = cards[ix];
 
-        *(p + 0) = card.card_number;
-        *(p + 1) = bcd(cards[ix].start);
-        *(p + 2) = bcd(cards[ix].end);
-        *(p + 3) = card.allowed ? ACL_ALLOWED : ACL_DENIED;
+        if (card.card_number != 0xffffffff) {
+            *(p + 0) = card.card_number;
+            *(p + 1) = bcd(cards[ix].start);
+            *(p + 2) = bcd(cards[ix].end);
+            *(p + 3) = card.allowed ? ACL_ALLOWED : ACL_DENIED;
 
-        memset((char *)(p + 4), 0, 48);
-        snprintf((char *)(p + 4), 48, "%s", card.name);
+            memset((char *)(p + 4), 0, 48);
+            snprintf((char *)(p + 4), 48, "%s", card.name);
 
-        p += 16;
+            p += 16;
+            count++;
+        }
+
         ix++;
     }
 
-    header.crc = crc32((char *)(&buffer[64]), N * 64);
+    // ... set header
+    header.magic = ACL_MAGIC_WORD;
+    header.version = 1;
+    header.cards = count;
+    header.crc = crc32((char *)(&buffer[64]), count * 64);
 
     // ... copy header to buffer
     buffer[0] = header.magic;
@@ -136,6 +169,32 @@ uint32_t bcd(datetime_t dt) {
     }
 
     return bcd;
+}
+
+uint32_t bin(uint32_t bcd) {
+    uint32_t v = 0;
+
+    for (int i = 0; i < 8; i++) {
+        int shr = 4 * (7 - i);
+        v *= 10;
+        v += (bcd >> shr) & 0x0f;
+    }
+
+    return v;
+}
+
+datetime_t date(uint32_t yyyymmdd) {
+    datetime_t dt;
+
+    dt.year = bin((yyyymmdd >> 16) & 0x0000ffff);
+    dt.month = bin((yyyymmdd >> 8) & 0x000000ff);
+    dt.day = bin((yyyymmdd >> 0) & 0x000000ff);
+    dt.dotw = 0;
+    dt.hour = 0;
+    dt.min = 0;
+    dt.sec = 0;
+
+    return dt;
 }
 
 // Ref. https://lxp32.github.io/docs/a-simple-example-crc32-calculation
