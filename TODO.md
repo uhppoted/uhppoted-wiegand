@@ -6,14 +6,14 @@
       - [x] Move SDCARD reads to ACL
       - [x] Move SDCARD writes to ACL
       - [x] Return result code from acl_load/save
-      - [ ] Read from flash
+      - [x] Read from flash
             - [x] Validate header magic number
             - [x] Validate cards < 60
             - [x] Validate header version
             - [x] Validate header CRC
             - [x] Populate ACL
-            - [ ] Ping-pong sectors
-            - [ ] Version rollover
+            - [x] Ping-pong sectors
+            - [x] Version rollover
       - [ ] Write to flash
             - [x] Checksum
             - [x] ~~_revoke_ weirdness (because of message thing?)~~

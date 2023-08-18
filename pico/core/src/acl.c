@@ -32,7 +32,7 @@ int acl_load() {
     char s[64];
 
     flash_read_acl(ACL, &N);
-    snprintf(s, sizeof(s), "ACL    FLASH   LOADED %d CARDS", N);
+    snprintf(s, sizeof(s), "ACL    LOADED %d CARDS FROM FLASH", N);
     logd_log(s);
 
     // // ... override with ACL from SDCARD
