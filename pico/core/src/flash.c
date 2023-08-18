@@ -105,6 +105,7 @@ void flash_read_acl(CARD cards[], int *N) {
  *
  */
 void flash_write_acl(CARD cards[], int N) {
+    uint32_t addr = XIP_BASE + FLASH_TARGET_OFFSET;
     uint32_t buffer[FLASH_SECTOR_SIZE / sizeof(uint32_t)];
     struct header header;
 
@@ -133,8 +134,10 @@ void flash_write_acl(CARD cards[], int N) {
     }
 
     // ... set header
+    uint32_t version = *((uint32_t *)(addr) + 1);
+
     header.magic = ACL_MAGIC_WORD;
-    header.version = 1;
+    header.version = (version + 1) % ACL_VERSION;
     header.cards = count;
     header.crc = crc32((char *)(&buffer[64]), count * 64);
 

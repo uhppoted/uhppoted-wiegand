@@ -17,7 +17,7 @@
       - [ ] Write to flash
             - [x] Checksum
             - [x] ~~_revoke_ weirdness (because of message thing?)~~
-            - [ ] Bump version
+            - [x] Bump version
             - [ ] Ping-pong sectors
             - [ ] Only write used pages
 
