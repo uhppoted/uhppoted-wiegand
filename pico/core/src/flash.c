@@ -62,7 +62,7 @@ void flash_read_acl(CARD cards[], int *N) {
                 uint32_t start = *(p + 1);
                 uint32_t end = *(p + 2);
                 bool allowed = *(p + 3) == ACL_ALLOWED;
-                char name[48];
+                char name[CARD_NAME_SIZE];
 
                 snprintf(name, sizeof(name), "%s", (char *)(p + 4));
 
@@ -75,8 +75,7 @@ void flash_read_acl(CARD cards[], int *N) {
                 cards[ix].start = date(start);
                 cards[ix].end = date(end);
                 cards[ix].allowed = allowed;
-                cards[ix].name = "????";
-                // FIXME cards[ix].name = ?????;
+                snprintf(cards[ix].name, CARD_NAME_SIZE, name);
 
                 snprintf(s, sizeof(s), ">>>>   DEBUG      %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
                          cards[ix].card_number,

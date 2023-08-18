@@ -250,9 +250,7 @@ void sysinit() {
         set_scroll_area();
 
         // ... load ACL from flash/SDCARD
-        char s[64];
-        acl_load(s, sizeof(s));
-        logd_log(s);
+        acl_load();
 
         // ... 'k, done
         buzzer_beep(1);

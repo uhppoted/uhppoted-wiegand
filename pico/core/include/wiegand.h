@@ -4,6 +4,8 @@
 
 #include "pico/util/queue.h"
 
+#define CARD_NAME_SIZE 48
+
 extern const uint UART0_RX;
 extern const uint UART0_TX;
 extern const uint ONBOARD_LED;
@@ -36,7 +38,7 @@ typedef struct CARD {
     datetime_t start;
     datetime_t end;
     bool allowed;
-    const char *name;
+    char name[CARD_NAME_SIZE];
 } CARD;
 
 typedef struct card {

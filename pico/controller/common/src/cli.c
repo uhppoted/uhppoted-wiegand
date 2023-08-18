@@ -196,7 +196,12 @@ void read_acl(txrx f, void *context) {
         logd_log("DISK   NO SDCARD");
     }
 
-    acl_load(s, sizeof(s));
+    int rc = acl_load();
+    if (rc < 0) {
+        snprintf(s, sizeof(s), "ACL    READ ERROR (%d)", rc);
+    } else {
+        snprintf(s, sizeof(s), "ACL    READ OK (%d CARDS)", rc);
+    }
 
     f(context, s);
 }
@@ -212,8 +217,13 @@ void write_acl(txrx f, void *context) {
         logd_log("DISK NO SDCARD");
     }
 
-    acl_save(s, sizeof(s));
-    logd_log(s);
+    int rc = acl_save();
+
+    if (rc < 0) {
+        snprintf(s, sizeof(s), "DISK   ACL WRITE ERROR (%d)", rc);
+    } else {
+        snprintf(s, sizeof(s), "DISK   ACL WRITE OK (%d)", rc);
+    }
 
     f(context, s);
 }
