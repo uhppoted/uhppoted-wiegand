@@ -14,12 +14,11 @@
             - [x] Populate ACL
             - [x] Ping-pong sectors
             - [x] Version rollover
-      - [ ] Write to flash
+      - [x] Write to flash
             - [x] Checksum
             - [x] ~~_revoke_ weirdness (because of message thing?)~~
             - [x] Bump version
-            - [ ] Ping-pong sectors
-            - (?) Only write used pages
+            - [x] Ping-pong sectors
 
       - [ ] Reinstate SD card stuff
 

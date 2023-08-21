@@ -8,11 +8,11 @@
 #include "../include/flash.h"
 #include "../include/logd.h"
 
-#define FLASH_TARGET_OFFSET1 (PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE)
-#define FLASH_TARGET_OFFSET2 (PICO_FLASH_SIZE_BYTES - 2 * FLASH_SECTOR_SIZE)
+const uint32_t OFFSETS[2] = {
+    PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE,
+    PICO_FLASH_SIZE_BYTES - 2 * FLASH_SECTOR_SIZE};
 
-const uint32_t ADDR[2] = {XIP_BASE + FLASH_TARGET_OFFSET1, XIP_BASE + FLASH_TARGET_OFFSET2};
-const int NADDR = sizeof(ADDR) / sizeof(uint32_t);
+const int PAGES = sizeof(OFFSETS) / sizeof(uint32_t);
 
 const uint32_t ACL_MAGIC_WORD = 0xaa5555aa;
 const uint32_t ACL_ALLOWED = 1;
@@ -28,6 +28,7 @@ typedef struct header {
 } header;
 
 int flash_get_current_page();
+uint32_t flash_get_version(int);
 uint32_t bcd(datetime_t);
 datetime_t date(uint32_t yyyymmdd);
 uint32_t crc32(const char *, size_t);
@@ -36,12 +37,10 @@ uint32_t crc32(const char *, size_t);
  *
  */
 void flash_read_acl(CARD cards[], int *N) {
-    char s[128];
-
     uint32_t page = flash_get_current_page();
 
-    if (page != -1 && page < NADDR) {
-        uint32_t addr = ADDR[page];
+    if (page != -1 && page < PAGES) {
+        uint32_t addr = XIP_BASE + OFFSETS[page];
         uint32_t size = *(((uint32_t *)addr) + 2);
         uint32_t *p = (uint32_t *)(addr + HEADER_SIZE);
         int ix = 0;
@@ -51,12 +50,7 @@ void flash_read_acl(CARD cards[], int *N) {
             uint32_t start = *(p + 1);
             uint32_t end = *(p + 2);
             bool allowed = *(p + 3) == ACL_ALLOWED;
-            char name[CARD_NAME_SIZE];
-
-            snprintf(name, sizeof(name), "%s", (char *)(p + 4));
-
-            // snprintf(s, sizeof(s), ">>>>   DEBUG   %-8lu %08x   %08x   %s %s", card, start, end, allowed ? "Y" : "N", name);
-            // logd_debug(s);
+            char *name = (char *)(p + 4);
 
             p += 16;
 
@@ -66,19 +60,21 @@ void flash_read_acl(CARD cards[], int *N) {
             cards[ix].allowed = allowed;
             snprintf(cards[ix].name, CARD_NAME_SIZE, name);
 
-            snprintf(s, sizeof(s), ">>>>   CARD %-2lu %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
-                     i + 1,
-                     cards[ix].card_number,
-                     cards[ix].start.year,
-                     cards[ix].start.month,
-                     cards[ix].start.day,
-                     cards[ix].end.year,
-                     cards[ix].end.month,
-                     cards[ix].end.day,
-                     cards[ix].allowed ? "Y" : "N",
-                     cards[ix].name);
-
-            logd_debug(s);
+            // char s[128];
+            //
+            // snprintf(s, sizeof(s), ">>>>   CARD %-2lu %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
+            //          i + 1,
+            //          cards[ix].card_number,
+            //          cards[ix].start.year,
+            //          cards[ix].start.month,
+            //          cards[ix].start.day,
+            //          cards[ix].end.year,
+            //          cards[ix].end.month,
+            //          cards[ix].end.day,
+            //          cards[ix].allowed ? "Y" : "N",
+            //          cards[ix].name);
+            //
+            // logd_debug(s);
 
             ix++;
         }
@@ -87,8 +83,7 @@ void flash_read_acl(CARD cards[], int *N) {
         return;
     }
 
-    snprintf(s, sizeof(s), "FLASH  NO VALID ACL");
-    logd_log(s);
+    logd_log("FLASH  NO VALID ACL");
 
     *N = 0;
 }
@@ -97,7 +92,18 @@ void flash_read_acl(CARD cards[], int *N) {
  *
  */
 void flash_write_acl(CARD cards[], int N) {
-    uint32_t addr = XIP_BASE + FLASH_TARGET_OFFSET1;
+    uint32_t page = flash_get_current_page();
+    uint32_t version = flash_get_version(page);
+
+    if (page != -1 && page < PAGES) {
+        page = (page + 1) % PAGES;
+        version = (version + 1) % ACL_VERSION;
+    } else {
+        page = 0;
+        version = 1;
+    }
+
+    uint32_t offset = OFFSETS[page];
     uint32_t buffer[FLASH_SECTOR_SIZE / sizeof(uint32_t)];
     struct header header;
 
@@ -126,10 +132,8 @@ void flash_write_acl(CARD cards[], int N) {
     }
 
     // ... set header
-    uint32_t version = *((uint32_t *)(addr) + 1);
-
     header.magic = ACL_MAGIC_WORD;
-    header.version = (version + 1) % ACL_VERSION;
+    header.version = version;
     header.cards = count;
     header.crc = crc32((char *)(&buffer[64]), count * 64);
 
@@ -139,25 +143,20 @@ void flash_write_acl(CARD cards[], int N) {
     buffer[2] = header.cards;
     buffer[3] = header.crc;
 
-    // ... write to flash
+    // // ... write to flash
     uint32_t interrupts = save_and_disable_interrupts();
-    flash_range_erase((PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE), FLASH_SECTOR_SIZE);
-    flash_range_program((PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE), (uint8_t *)buffer, FLASH_SECTOR_SIZE);
+    flash_range_erase(offset, FLASH_SECTOR_SIZE);
+    flash_range_program(offset, (uint8_t *)buffer, FLASH_SECTOR_SIZE);
     restore_interrupts(interrupts);
 }
 
 int flash_get_current_page() {
-    char s[128];
-
-    uint32_t version1 = *((uint32_t *)(ADDR[0]) + 1) % ACL_VERSION;
-    uint32_t version2 = *((uint32_t *)(ADDR[1]) + 1) % ACL_VERSION;
+    uint32_t version1 = *((uint32_t *)(XIP_BASE + OFFSETS[0]) + 1) % ACL_VERSION;
+    uint32_t version2 = *((uint32_t *)(XIP_BASE + OFFSETS[1]) + 1) % ACL_VERSION;
     int index = (version2 == 0 ? ACL_VERSION : version2) > (version1 == 0 ? ACL_VERSION : version1) ? 1 : 0;
 
-    snprintf(s, sizeof(s), ">>>>   DEBUG   V(0):%lu  V(1):%lu  INDEX:%d", version1, version2, index);
-    logd_debug(s);
-
-    for (int ix = 0; ix < NADDR; ix++) {
-        uint32_t addr = ADDR[index % NADDR];
+    for (int ix = 0; ix < PAGES; ix++) {
+        uint32_t addr = XIP_BASE + OFFSETS[index % PAGES];
         uint32_t *p = (uint32_t *)addr;
         struct header header;
 
@@ -166,18 +165,20 @@ int flash_get_current_page() {
         header.cards = *p++;
         header.crc = *p++;
 
-        snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x",
-                 header.magic,
-                 header.version,
-                 header.cards,
-                 header.crc);
-        logd_debug(s);
+        // char s[128];
+        //
+        // snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x",
+        //          header.magic,
+        //          header.version,
+        //          header.cards,
+        //          header.crc);
+        // logd_debug(s);
 
         if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
             uint32_t crc = crc32((char *)(addr + HEADER_SIZE), header.cards * 64);
 
             if (header.crc == crc) {
-                return index % NADDR;
+                return index % PAGES;
             }
         }
 
@@ -185,6 +186,17 @@ int flash_get_current_page() {
     }
 
     return -1;
+}
+
+uint32_t flash_get_version(int page) {
+    if (page != -1 && page < PAGES) {
+        uint32_t addr = XIP_BASE + OFFSETS[page];
+        uint32_t version = *(((uint32_t *)addr) + 1);
+
+        return version;
+    }
+
+    return 0;
 }
 
 uint32_t bcd(datetime_t dt) {
