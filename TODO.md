@@ -20,11 +20,15 @@
             - [x] Bump version
             - [x] Ping-pong sectors
 
-      - [ ] Reinstate SD card stuff
+      - [x] Reinstate SD card stuff
 
       - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
       - https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash
       - https://forums.raspberrypi.com/viewtopic.php?t=305570
+
+- [ ] SD card
+      - [ ] Figure out FAT32 stuff
+      - [ ] Fix completely broken ACL read
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

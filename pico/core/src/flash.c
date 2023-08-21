@@ -30,7 +30,7 @@ typedef struct header {
 int flash_get_current_page();
 uint32_t flash_get_version(int);
 uint32_t bcd(datetime_t);
-datetime_t date(uint32_t yyyymmdd);
+datetime_t bin2date(uint32_t yyyymmdd);
 uint32_t crc32(const char *, size_t);
 
 /* Reads the ACL from onboard flash.
@@ -55,8 +55,8 @@ void flash_read_acl(CARD cards[], int *N) {
             p += 16;
 
             cards[ix].card_number = card;
-            cards[ix].start = date(start);
-            cards[ix].end = date(end);
+            cards[ix].start = bin2date(start);
+            cards[ix].end = bin2date(end);
             cards[ix].allowed = allowed;
             snprintf(cards[ix].name, CARD_NAME_SIZE, name);
 
@@ -230,7 +230,7 @@ uint32_t bin(uint32_t bcd) {
     return v;
 }
 
-datetime_t date(uint32_t yyyymmdd) {
+datetime_t bin2date(uint32_t yyyymmdd) {
     datetime_t dt;
 
     dt.year = bin((yyyymmdd >> 16) & 0x0000ffff);

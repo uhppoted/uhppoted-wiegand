@@ -14,6 +14,8 @@
 #include "../include/wiegand.h"
 
 void spi0_dma_isr();
+datetime_t string2date(const char *);
+
 static void card_detect_callback(uint, uint32_t);
 
 #define CLK 2
@@ -165,7 +167,7 @@ int sdcard_format() {
 /* Reads the ACL file from the SD card.
  *
  */
-int sdcard_read_acl(uint32_t cards[], int *N) {
+int sdcard_read_acl(CARD cards[], int *N) {
     if (!SDCARD.initialised) {
         return -1;
     }
@@ -178,16 +180,21 @@ int sdcard_read_acl(uint32_t cards[], int *N) {
     }
 
     char buffer[256];
-    int count = 0;
-    uint32_t card;
-    while (f_gets(buffer, sizeof(buffer), &file) && count < *N) {
+    int ix = 0;
+    uint32_t card_number;
+    while (f_gets(buffer, sizeof(buffer), &file) && ix < *N) {
         buffer[strcspn(buffer, "\n")] = 0;
-        if ((card = strtol(buffer, NULL, 10)) != 0) {
-            cards[count++] = card;
+
+        if ((card_number = strtol(buffer, NULL, 10)) != 0) {
+            cards[ix].card_number = card_number;
+            cards[ix].start = string2date("2023-01-01");
+            cards[ix].end = string2date("2023-12-31");;
+            cards[ix].allowed = true;
+            snprintf(cards[ix].name, CARD_NAME_SIZE, "****");
         }
     }
 
-    *N = count;
+    *N = ix;
 
     return f_close(&file);
 }
@@ -266,3 +273,18 @@ static void card_detect_callback(uint gpio, uint32_t events) {
         busy = false;
     }
 }
+
+datetime_t string2date(const char *s) {
+    datetime_t dt;
+
+    dt.year = 2023;
+    dt.month = 1;
+    dt.day = 1;
+    dt.dotw = 0;
+    dt.hour = 0;
+    dt.min = 0;
+    dt.sec = 0;
+
+    return dt;
+}
+

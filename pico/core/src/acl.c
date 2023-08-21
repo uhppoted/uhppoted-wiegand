@@ -12,7 +12,7 @@
 
 CARD ACL[32];
 
-#define ACL_SIZE (sizeof(ACL) / sizeof(CARD))
+const int ACL_SIZE = sizeof(ACL) / sizeof(CARD);
 
 /* Initialises the ACL.
  *
@@ -35,26 +35,32 @@ int acl_load() {
     snprintf(s, sizeof(s), "ACL    LOADED %d CARDS FROM FLASH", N);
     logd_log(s);
 
-    // // ... override with ACL from SDCARD
-    // uint32_t cards[N];
-    // int N = ACL_SIZE;
-    // int rc = sdcard_read_acl(cards, &N);
-    //
-    // if (rc != 0) {
-    //     snprintf(s, len, "DISK   READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
-    //     logd_warn(s);
-    //     return -1;
-    // } else {
-    //     snprintf(s, len, "DISK   READ ACL OK (%d)", N);
-    //
-    //     for (int i = 0; i < size; i++) {
-    //         ACL[i] = 0xffffffff;
-    //     }
-    //
-    //     for (int i = 0; i < N && i < size; i++) {
-    //         ACL[i] = cards[i];
-    //     }
-    // }
+    // ... override with ACL from SDCARD
+    {
+        CARD cards[ACL_SIZE];
+        int N = ACL_SIZE;
+        int rc = sdcard_read_acl(cards, &N);
+
+        if (rc != 0) {
+            snprintf(s, sizeof(s), "DISK   READ ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+            logd_log(s);
+            return -1;
+        } else {
+            snprintf(s, sizeof(s), "DISK   READ ACL OK (%d)", N);
+
+            for (int i = 0; i < ACL_SIZE; i++) {
+                ACL[i].card_number = 0xffffffff;
+            }
+
+            for (int i = 0; i < N && i < ACL_SIZE; i++) {
+                ACL[i].card_number = cards[i].card_number;
+                ACL[i].start = cards[i].start;
+                ACL[i].end = cards[i].end;
+                ACL[i].allowed = cards[i].allowed;
+                snprintf(ACL[1].name, CARD_NAME_SIZE, name);
+            }
+        }
+    }
 
     return N;
 }
@@ -63,24 +69,30 @@ int acl_load() {
  *
  */
 int acl_save() {
+    int N = 0;
+    char s[64];
+
+    for (int i = 0; i < ACL_SIZE; i++) {
+        if (ACL[i].card_number != 0xffffffff) {
+            N++;
+        }
+    }
+
     // ... save to flash
     flash_write_acl(ACL, ACL_SIZE);
+    snprintf(s, sizeof(s), "ACL    STORED %d CARDS TO FLASH", N);
+    logd_log(s);
 
-    // // ... save to SDCARD
-    // int rc = sdcard_write_acl(acl, N);
-    // char s[64];
-    //
-    // if (rc != 0) {
-    //     snprintf(s, sizeof(s), "DISK   WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
-    //     logd_warn(s);
-    //
-    //     return -1;
-    // } else {
-    //     snprintf(s, sizeof(s), "DISK   WRITE ACL OK");
-    //     logd_info(s);
-    //
-    //     return 0;
-    // }
+    // ... save to SDCARD
+    int rc = sdcard_write_acl(ACL, N);
+
+    if (rc != 0) {
+        snprintf(s, sizeof(s), "DISK   WRITE ACL ERROR (%d) %s", rc, FRESULT_str(rc));
+        logd_log(s);
+    } else {
+        snprintf(s, sizeof(s), "DISK   WRITE ACL OK");
+        logd_log(s);
+    }
 
     return 0;
 }
