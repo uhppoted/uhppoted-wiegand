@@ -19,7 +19,7 @@
             - [x] ~~_revoke_ weirdness (because of message thing?)~~
             - [x] Bump version
             - [ ] Ping-pong sectors
-            - [ ] Only write used pages
+            - (?) Only write used pages
 
       - [ ] Reinstate SD card stuff
 

@@ -27,6 +27,7 @@ typedef struct header {
     uint32_t crc;
 } header;
 
+int flash_get_current_page();
 uint32_t bcd(datetime_t);
 datetime_t date(uint32_t yyyymmdd);
 uint32_t crc32(const char *, size_t);
@@ -37,81 +38,53 @@ uint32_t crc32(const char *, size_t);
 void flash_read_acl(CARD cards[], int *N) {
     char s[128];
 
-    uint32_t version1 = *((uint32_t *)(ADDR[0]) + 1) % ACL_VERSION;
-    uint32_t version2 = *((uint32_t *)(ADDR[1]) + 1) % ACL_VERSION;
-    int index = (version2 == 0 ? ACL_VERSION : version2) > (version1 == 0 ? ACL_VERSION : version1) ? 1 : 0;
+    uint32_t page = flash_get_current_page();
 
-    snprintf(s, sizeof(s), ">>>>   DEBUG   V(0):%lu  V(1):%lu  INDEX:%d", version1, version2, index);
-    logd_debug(s);
+    if (page != -1 && page < NADDR) {
+        uint32_t addr = ADDR[page];
+        uint32_t size = *(((uint32_t *)addr) + 2);
+        uint32_t *p = (uint32_t *)(addr + HEADER_SIZE);
+        int ix = 0;
 
-    for (int ix = 0; ix < NADDR; ix++) {
-        uint32_t addr = ADDR[index % NADDR];
-        uint32_t *p = (uint32_t *)addr;
-        struct header header;
+        for (uint32_t i = 0; i < size && ix < *N; i++) {
+            uint32_t card = *(p + 0);
+            uint32_t start = *(p + 1);
+            uint32_t end = *(p + 2);
+            bool allowed = *(p + 3) == ACL_ALLOWED;
+            char name[CARD_NAME_SIZE];
 
-        index++;
+            snprintf(name, sizeof(name), "%s", (char *)(p + 4));
 
-        header.magic = *p++;
-        header.version = *p++;
-        header.cards = *p++;
-        header.crc = *p++;
+            // snprintf(s, sizeof(s), ">>>>   DEBUG   %-8lu %08x   %08x   %s %s", card, start, end, allowed ? "Y" : "N", name);
+            // logd_debug(s);
 
-        snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x N:%d",
-                 header.magic,
-                 header.version,
-                 header.cards,
-                 header.crc,
-                 *N);
-        logd_debug(s);
+            p += 16;
 
-        if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
-            uint32_t crc = crc32((char *)(addr + HEADER_SIZE), header.cards * 64);
+            cards[ix].card_number = card;
+            cards[ix].start = date(start);
+            cards[ix].end = date(end);
+            cards[ix].allowed = allowed;
+            snprintf(cards[ix].name, CARD_NAME_SIZE, name);
 
-            if (header.crc == crc) {
-                uint32_t *p = (uint32_t *)(addr + HEADER_SIZE);
-                int ix = 0;
+            snprintf(s, sizeof(s), ">>>>   CARD %-2lu %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
+                     i + 1,
+                     cards[ix].card_number,
+                     cards[ix].start.year,
+                     cards[ix].start.month,
+                     cards[ix].start.day,
+                     cards[ix].end.year,
+                     cards[ix].end.month,
+                     cards[ix].end.day,
+                     cards[ix].allowed ? "Y" : "N",
+                     cards[ix].name);
 
-                for (uint32_t i = 0; i < header.cards && ix < *N; i++) {
-                    uint32_t card = *(p + 0);
-                    uint32_t start = *(p + 1);
-                    uint32_t end = *(p + 2);
-                    bool allowed = *(p + 3) == ACL_ALLOWED;
-                    char name[CARD_NAME_SIZE];
+            logd_debug(s);
 
-                    snprintf(name, sizeof(name), "%s", (char *)(p + 4));
-
-                    // snprintf(s, sizeof(s), ">>>>   DEBUG   %-8lu %08x   %08x   %s %s", card, start, end, allowed ? "Y" : "N", name);
-                    // logd_debug(s);
-
-                    p += 16;
-
-                    cards[ix].card_number = card;
-                    cards[ix].start = date(start);
-                    cards[ix].end = date(end);
-                    cards[ix].allowed = allowed;
-                    snprintf(cards[ix].name, CARD_NAME_SIZE, name);
-
-                    snprintf(s, sizeof(s), ">>>>   CARD %-2lu %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
-                             i + 1,
-                             cards[ix].card_number,
-                             cards[ix].start.year,
-                             cards[ix].start.month,
-                             cards[ix].start.day,
-                             cards[ix].end.year,
-                             cards[ix].end.month,
-                             cards[ix].end.day,
-                             cards[ix].allowed ? "Y" : "N",
-                             cards[ix].name);
-
-                    logd_debug(s);
-
-                    ix++;
-                }
-
-                *N = ix;
-                return;
-            }
+            ix++;
         }
+
+        *N = ix;
+        return;
     }
 
     snprintf(s, sizeof(s), "FLASH  NO VALID ACL");
@@ -171,6 +144,47 @@ void flash_write_acl(CARD cards[], int N) {
     flash_range_erase((PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE), FLASH_SECTOR_SIZE);
     flash_range_program((PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE), (uint8_t *)buffer, FLASH_SECTOR_SIZE);
     restore_interrupts(interrupts);
+}
+
+int flash_get_current_page() {
+    char s[128];
+
+    uint32_t version1 = *((uint32_t *)(ADDR[0]) + 1) % ACL_VERSION;
+    uint32_t version2 = *((uint32_t *)(ADDR[1]) + 1) % ACL_VERSION;
+    int index = (version2 == 0 ? ACL_VERSION : version2) > (version1 == 0 ? ACL_VERSION : version1) ? 1 : 0;
+
+    snprintf(s, sizeof(s), ">>>>   DEBUG   V(0):%lu  V(1):%lu  INDEX:%d", version1, version2, index);
+    logd_debug(s);
+
+    for (int ix = 0; ix < NADDR; ix++) {
+        uint32_t addr = ADDR[index % NADDR];
+        uint32_t *p = (uint32_t *)addr;
+        struct header header;
+
+        header.magic = *p++;
+        header.version = *p++;
+        header.cards = *p++;
+        header.crc = *p++;
+
+        snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x",
+                 header.magic,
+                 header.version,
+                 header.cards,
+                 header.crc);
+        logd_debug(s);
+
+        if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
+            uint32_t crc = crc32((char *)(addr + HEADER_SIZE), header.cards * 64);
+
+            if (header.crc == crc) {
+                return index % NADDR;
+            }
+        }
+
+        index++;
+    }
+
+    return -1;
 }
 
 uint32_t bcd(datetime_t dt) {
