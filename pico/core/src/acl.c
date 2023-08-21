@@ -57,7 +57,7 @@ int acl_load() {
                 ACL[i].start = cards[i].start;
                 ACL[i].end = cards[i].end;
                 ACL[i].allowed = cards[i].allowed;
-                snprintf(ACL[1].name, CARD_NAME_SIZE, name);
+                snprintf(ACL[1].name, CARD_NAME_SIZE, cards[i].name);
             }
         }
     }
@@ -126,26 +126,28 @@ int acl_list(uint32_t *list[]) {
 bool acl_grant(uint32_t facility_code, uint32_t card) {
     uint32_t v = (facility_code * 100000) + (card % 100000);
     datetime_t now;
-    datetime_t start;
-    datetime_t end;
 
     rtc_get_datetime(&now);
 
-    start.year = now.year;
-    start.month = 1;
-    start.day = 1;
-    start.dotw = 0;
-    start.hour = 0;
-    start.min = 0;
-    start.sec = 0;
+    datetime_t start = {
+        .year = now.year,
+        .month = 1,
+        .day = 1,
+        .dotw = 0,
+        .hour = 0,
+        .min = 0,
+        .sec = 0,
+    };
 
-    end.year = now.year + 1;
-    end.month = 12;
-    end.day = 31;
-    end.dotw = 0;
-    end.hour = 23;
-    end.min = 59;
-    end.sec = 59;
+    datetime_t end = {
+        .year = now.year + 1,
+        .month = 12,
+        .day = 31,
+        .dotw = 0,
+        .hour = 23,
+        .min = 59,
+        .sec = 59,
+    };
 
     for (int i = 0; i < ACL_SIZE; i++) {
         if (ACL[i].card_number == v) {

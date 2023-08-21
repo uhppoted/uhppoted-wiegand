@@ -188,7 +188,8 @@ int sdcard_read_acl(CARD cards[], int *N) {
         if ((card_number = strtol(buffer, NULL, 10)) != 0) {
             cards[ix].card_number = card_number;
             cards[ix].start = string2date("2023-01-01");
-            cards[ix].end = string2date("2023-12-31");;
+            cards[ix].end = string2date("2023-12-31");
+            ;
             cards[ix].allowed = true;
             snprintf(cards[ix].name, CARD_NAME_SIZE, "****");
         }
@@ -287,4 +288,3 @@ datetime_t string2date(const char *s) {
 
     return dt;
 }
-
