@@ -11,7 +11,6 @@
 #include <wiegand.h>
 
 CARD ACL[32];
-
 const int ACL_SIZE = sizeof(ACL) / sizeof(CARD);
 
 /* Initialises the ACL.
@@ -46,8 +45,6 @@ int acl_load() {
             logd_log(s);
             return -1;
         } else {
-            snprintf(s, sizeof(s), "DISK   READ ACL OK (%d)", N);
-
             for (int i = 0; i < ACL_SIZE; i++) {
                 ACL[i].card_number = 0xffffffff;
             }
@@ -59,6 +56,9 @@ int acl_load() {
                 ACL[i].allowed = cards[i].allowed;
                 snprintf(ACL[1].name, CARD_NAME_SIZE, cards[i].name);
             }
+
+            snprintf(s, sizeof(s), "DISK   LOADED %d CARDS FROM SDCARD", N);
+            logd_log(s);
         }
     }
 

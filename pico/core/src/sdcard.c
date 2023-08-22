@@ -40,8 +40,11 @@ static spi_t spis[] = {
         .miso_gpio = SO,
         .mosi_gpio = SI,
         .sck_gpio = CLK,
-        .baud_rate = 12500 * 1000, // 12500 * 1000,
+        .baud_rate = 12500 * 1000,
         .dma_isr = spi0_dma_isr,
+        .set_drive_strength = true,
+        .mosi_gpio_drive_strength = GPIO_DRIVE_STRENGTH_2MA,
+        .sck_gpio_drive_strength = GPIO_DRIVE_STRENGTH_2MA,
     },
 };
 
@@ -54,6 +57,8 @@ static sd_card_t sd_cards[] = {
         .use_card_detect = true,
         .card_detect_gpio = DET,
         .card_detected_true = 1,
+        .set_drive_strength = true,
+        .ss_gpio_drive_strength = GPIO_DRIVE_STRENGTH_2MA,
         .m_Status = STA_NOINIT,
     }};
 
@@ -185,13 +190,42 @@ int sdcard_read_acl(CARD cards[], int *N) {
     while (f_gets(buffer, sizeof(buffer), &file) && ix < *N) {
         buffer[strcspn(buffer, "\n")] = 0;
 
-        if ((card_number = strtol(buffer, NULL, 10)) != 0) {
+        char *p = strtok(buffer, " ");
+
+        if (p && ((card_number = strtol(p, NULL, 10)) != 0)) {
             cards[ix].card_number = card_number;
-            cards[ix].start = string2date("2023-01-01");
-            cards[ix].end = string2date("2023-12-31");
-            ;
-            cards[ix].allowed = true;
+            cards[ix].start = string2date("2000-01-01");
+            cards[ix].end = string2date("2000-12-31");
+            cards[ix].allowed = false;
             snprintf(cards[ix].name, CARD_NAME_SIZE, "****");
+
+            if ((p = strtok(NULL, " ")) != NULL) {
+                cards[ix].start = string2date(p);
+                if ((p = strtok(NULL, " ")) != NULL) {
+                    cards[ix].end = string2date(p);
+                    if ((p = strtok(NULL, " ")) != NULL) {
+                        cards[ix].allowed = strncmp(p, "Y", 1) == 0 || strncmp(p, "y", 1) == 0;
+                        if ((p = strtok(NULL, " ")) != NULL) {
+                            snprintf(cards[ix].name, CARD_NAME_SIZE, p);
+                        }
+                    }
+                }
+            }
+
+            // char s[128];
+            // snprintf(s, sizeof(s), ">>>>   CARD %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
+            //          cards[ix].card_number,
+            //          cards[ix].start.year,
+            //          cards[ix].start.month,
+            //          cards[ix].start.day,
+            //          cards[ix].end.year,
+            //          cards[ix].end.month,
+            //          cards[ix].end.day,
+            //          cards[ix].allowed ? "Y" : "N",
+            //          cards[ix].name);
+            // logd_debug(s);
+
+            ix++;
         }
     }
 
@@ -244,7 +278,8 @@ int sdcard_write_acl(CARD cards[], int N) {
     // ... rename ACL.tmp to ACL file
     f_unlink("ACL.bak");
 
-    if ((fr = f_rename("ACL", "ACL.bak")) != FR_OK) {
+    fr = f_rename("ACL", "ACL.bak");
+    if (fr != FR_OK && fr != FR_NO_FILE) {
         return fr;
     }
 
@@ -276,15 +311,28 @@ static void card_detect_callback(uint gpio, uint32_t events) {
 }
 
 datetime_t string2date(const char *s) {
-    datetime_t dt;
+    datetime_t dt = {
+        .year = 2023,
+        .month = 1,
+        .day = 1,
+        .dotw = 0,
+        .hour = 0,
+        .min = 0,
+        .sec = 0,
+    };
 
-    dt.year = 2023;
-    dt.month = 1;
-    dt.day = 1;
-    dt.dotw = 0;
-    dt.hour = 0;
-    dt.min = 0;
-    dt.sec = 0;
+    if (s) {
+        int year;
+        int month;
+        int day;
+        int rc = sscanf(s, "%04d-%02d-%02d", &year, &month, &day);
+
+        if (rc == 3) {
+            dt.year = year;
+            dt.month = month;
+            dt.day = day;
+        }
+    }
 
     return dt;
 }

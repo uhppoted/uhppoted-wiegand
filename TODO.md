@@ -2,33 +2,18 @@
 
 - [ ] github workflow
 
-- [ ] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
+- [x] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
       - [x] Move SDCARD reads to ACL
       - [x] Move SDCARD writes to ACL
       - [x] Return result code from acl_load/save
       - [x] Read from flash
-            - [x] Validate header magic number
-            - [x] Validate cards < 60
-            - [x] Validate header version
-            - [x] Validate header CRC
-            - [x] Populate ACL
-            - [x] Ping-pong sectors
-            - [x] Version rollover
       - [x] Write to flash
-            - [x] Checksum
-            - [x] ~~_revoke_ weirdness (because of message thing?)~~
-            - [x] Bump version
-            - [x] Ping-pong sectors
-
       - [x] Reinstate SD card stuff
-
       - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
       - https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash
       - https://forums.raspberrypi.com/viewtopic.php?t=305570
 
-- [ ] SD card
-      - [ ] Figure out FAT32 stuff
-      - [ ] Fix completely broken ACL read
+- [x] Fix SD card ACL read/write
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict
