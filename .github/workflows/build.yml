@@ -31,12 +31,11 @@ jobs:
         sudo apt update
         sudo apt install -y cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
 
-    # - name: Build
-    #   run: make build-all
-
     - name: Check out project
       uses: actions/checkout@v3
 
     - name: Build
       run: |
         ls -1
+        ls -1 ..
+        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && echo $PATH
