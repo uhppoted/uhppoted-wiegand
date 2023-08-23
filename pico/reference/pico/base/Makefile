@@ -14,7 +14,6 @@ format: ./src/*.c ./include/*.h
 	clang-format -i ./include/*.h
 
 build: format
-	echo ">>>>>>>>>>>>>>>>>> $(SDK)"
 	export PICO_SDK_PATH=$(SDK) && cd build && make clean && make SYSDATE=$(SYSDATE) SYSTIME=$(SYSTIME) FACILITY_CODE=$(FACILITY_CODE)
 
 install: build

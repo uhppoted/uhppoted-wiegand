@@ -45,9 +45,6 @@ jobs:
 
     - name: Build
       run: |
-        echo "---"
-        ls -1
-        echo "---"
-        ls -1 ..
-        echo "---"
-        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && make build-all SDK=$(pwd)/../raspberrypi/pico-sdk
+        echo 'SSID = "XXXX-XXXX-XXXX"' > .credentials
+        echo 'PASSWORD = "zNJAoiLLnzvv8KpPKLyf"' >> .credentials
+        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && make build-all SDK=$(pwd)/../raspberrypi/pico-sdk CREDENTIALS=$(pwd)/.credentials
