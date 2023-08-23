@@ -2,7 +2,7 @@
 
 - [x] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
 - [x] Fix SD card ACL read/write
-- [ ] github workflow
+- [x] github workflow
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict
