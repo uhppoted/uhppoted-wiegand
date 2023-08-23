@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added
+1. Uses on-board flash for ACL
+
+### Updated
+2. Fixed SD card ACL write for missing ACL file.
+
 
 ## [0.8.5](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.5) - 2023-06-14
 

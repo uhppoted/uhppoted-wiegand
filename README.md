@@ -1,3 +1,5 @@
+![build](https://github.com/uhppoted/uhppoted-wiegand/workflows/build/badge.svg)
+
 # uhppoted-wiegand
 
 `uhppoted-wiegand` implements a _Raspberry Pi Pico_ reader/emulator for a Wiegand-26 interface.

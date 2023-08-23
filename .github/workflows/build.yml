@@ -1,0 +1,35 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Install RaspberryPi Pico SDK
+      id: pico-sdk
+      run: |
+        mkdir raspberrypi
+        cd raspberrypi
+        git clone https://github.com/raspberrypi/pico-sdk.git --branch master
+        cd pico-sdk
+        git submodule update --init
+        cd ..
+        ls -1
+
+    - name: Setup toolchain
+      id: toolchain
+      run: |
+        sudo apt update
+        sudo apt install -y cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
+
+    # - name: Build
+    #   run: make build-all

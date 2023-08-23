@@ -1,19 +1,8 @@
 # TODO
 
-- [ ] github workflow
-
 - [x] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
-      - [x] Move SDCARD reads to ACL
-      - [x] Move SDCARD writes to ACL
-      - [x] Return result code from acl_load/save
-      - [x] Read from flash
-      - [x] Write to flash
-      - [x] Reinstate SD card stuff
-      - https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_flash
-      - https://www.makermatrix.com/blog/read-and-write-data-with-the-pi-pico-onboard-flash
-      - https://forums.raspberrypi.com/viewtopic.php?t=305570
-
 - [x] Fix SD card ACL read/write
+- [ ] github workflow
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict
