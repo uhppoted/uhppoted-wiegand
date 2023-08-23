@@ -17,22 +17,12 @@ jobs:
     - name: Install RaspberryPi Pico SDK
       id: pico-sdk
       run: |
-        echo "---"
-        echo "$(pwd)"
-        echo "---"       
         cd .. 
         mkdir raspberrypi
         cd raspberrypi
         git clone https://github.com/raspberrypi/pico-sdk.git --branch master
         cd pico-sdk
         git submodule update --init
-        echo "---"       
-        cd ../
-        ls -1
-        echo "---"       
-        cd ../
-        ls -1
-        echo "---"       
 
     - name: Setup toolchain
       id: toolchain

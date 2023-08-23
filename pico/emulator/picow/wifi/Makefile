@@ -1,4 +1,6 @@
-SDK=$(HOME)/Development/tools/pico/pico-sdk
+SDK ?= $(HOME)/Development/tools/pico/pico-sdk
+CREDENTIALS ?= ../../../.credentials
+
 PORT=/dev/tty.usbmodem14201
 SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
@@ -10,7 +12,7 @@ TCPD_CLIENT_IDLE=120
 TCPD_SERVER_IDLE=300
 TCPD_POLL_INTERVAL=500
 
-include ../../../.credentials
+include $(CREDENTIALS)
 
 clean:
 	rm -rf build

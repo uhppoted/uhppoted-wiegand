@@ -1,4 +1,5 @@
-SDK=$(HOME)/Development/tools/pico/pico-sdk
+SDK ?= $(HOME)/Development/tools/pico/pico-sdk
+
 PORT=/dev/tty.usbmodem14201
 SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
