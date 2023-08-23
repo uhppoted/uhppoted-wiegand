@@ -36,6 +36,9 @@ jobs:
 
     - name: Build
       run: |
+        echo "---"
         ls -1
+        echo "---"
         ls -1 ..
-        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && echo $PATH
+        echo "---"
+        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && echo $PICO_SDK_PATH
