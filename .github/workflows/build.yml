@@ -50,4 +50,4 @@ jobs:
         echo "---"
         ls -1 ..
         echo "---"
-        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && echo $PICO_SDK_PATH
+        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && make build
