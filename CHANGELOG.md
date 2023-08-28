@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## [0.8.6](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.6) - 2023-08-30
 
 ### Added
 1. Uses on-board flash for ACL
