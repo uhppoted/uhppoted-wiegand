@@ -17,14 +17,13 @@ void help(txrx, void *);
 void cli_set_time(char *, txrx, void *);
 void query(txrx, void *);
 void reboot();
-
-void on_card_command(char *cmd, handler fn, txrx, void *);
+void swipe(char *cmd, txrx, void *);
+void keypad(char *cmd, txrx, void *);
 
 void on_door_open(txrx, void *);
 void on_door_close(txrx, void *);
 void on_press_button(txrx, void *);
 void on_release_button(txrx, void *);
-void write(uint32_t, uint32_t, txrx, void *);
 
 void serial(void *context, const char *msg) {
     puts(msg);
@@ -68,7 +67,9 @@ void execw(char *cmd, txrx f, void *context) {
             } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
                 cli_set_time(&cmd[1], f, context);
             } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
-                on_card_command(&cmd[1], write, f, context);
+                swipe(&cmd[1], f, context);
+            } else if ((cmd[0] == 'k') || (cmd[0] == 'K')) {
+                keypad(&cmd[1], f, context);
             } else {
                 help(f, context);
             }
@@ -95,19 +96,6 @@ void query(txrx f, void *context) {
     f(context, s);
 }
 
-/* Write card command.
- *  Extract the facility code and card number pushes it to the emulator queue.
- *
- */
-void write(uint32_t facility_code, uint32_t card, txrx f, void *context) {
-    if ((mode == WRITER) || (mode == EMULATOR)) {
-        write_card(facility_code, card);
-    }
-
-    f(context, "CARD   WRITE OK");
-    logd_log("CARD   WRITE OK");
-}
-
 /* Goes into a tight loop until the watchdog resets the processor.
  *
  */
@@ -132,14 +120,12 @@ void reboot(txrx f, void *context) {
 /* Displays a list of the supported commands.
  *
  */
-/* Displays a list of the supported commands.
- *
- */
 void help(txrx f, void *context) {
     f(context, "-----");
     f(context, "Commands:");
     f(context, "TYYYY-MM-DD HH:mm:ss  Set date/time");
     f(context, "Wnnnnnn               Write card to Wiegand-26 interface");
+    f(context, "Kd                    Keypad digit");
     f(context, "QUERY                 Display last card read/write");
     f(context, "OPEN                  Opens door contact relay");
     f(context, "CLOSE                 Closes door contact relay");
@@ -151,11 +137,11 @@ void help(txrx f, void *context) {
     f(context, "-----");
 }
 
-/* Card command handler.
+/* Card swipe emulation.
  *  Extract the facility code and card number and invokes the handler function.
  *
  */
-void on_card_command(char *cmd, handler fn, txrx f, void *context) {
+void swipe(char *cmd, txrx f, void *context) {
     uint32_t facility_code = FACILITY_CODE;
     uint32_t card = 0;
     int N = strlen(cmd);
@@ -181,7 +167,32 @@ void on_card_command(char *cmd, handler fn, txrx f, void *context) {
         }
     }
 
-    fn(facility_code, card, f, context);
+    if ((mode == WRITER) || (mode == EMULATOR)) {
+        write_card(facility_code, card);
+    }
+
+    f(context, "CARD   WRITE OK");
+    logd_log("CARD   WRITE OK");
+}
+
+/* Keypad emulation.
+ *  Sends the keycode code as 4-bit Wiegand.
+ *
+ */
+void keypad(char *cmd, txrx f, void *context) {
+    int N = strlen(cmd);
+    char s[64];
+
+    if (N > 0) {
+        char key = cmd[0];
+
+        if ((mode == WRITER) || (mode == EMULATOR)) {
+            write_keycode(key);
+        }
+
+        f(context, "KEYPAD OK");
+        logd_log("KEYPAD OK");
+    }
 }
 
 /* Door contact emulation command handler.

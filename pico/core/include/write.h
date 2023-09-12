@@ -7,3 +7,4 @@
 
 extern void write_initialise(enum MODE);
 extern bool write_card(uint32_t facility_code, uint32_t card);
+extern bool write_keycode(char digit);

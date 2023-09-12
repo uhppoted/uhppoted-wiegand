@@ -1,8 +1,6 @@
 # TODO
 
-- [x] Use onboard flash for ACL (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/2)
-- [x] Fix SD card ACL read/write
-- [x] github workflow
+- [ ] Emulate keypad (https://github.com/uhppoted/uhppoted-wiegand/issues/4)
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict
