@@ -125,7 +125,7 @@ void help(txrx f, void *context) {
     f(context, "Commands:");
     f(context, "TYYYY-MM-DD HH:mm:ss  Set date/time");
     f(context, "Wnnnnnn               Write card to Wiegand-26 interface");
-    f(context, "Kd                    Keypad digit");
+    f(context, "Kdddddd               Enter keypad digits");
     f(context, "QUERY                 Display last card read/write");
     f(context, "OPEN                  Opens door contact relay");
     f(context, "CLOSE                 Closes door contact relay");
@@ -176,22 +176,24 @@ void swipe(char *cmd, txrx f, void *context) {
 }
 
 /* Keypad emulation.
- *  Sends the keycode code as 4-bit Wiegand.
+ *  Sends the keycode code as 4-bit burst mode Wiegand.
  *
  */
 void keypad(char *cmd, txrx f, void *context) {
     int N = strlen(cmd);
-    char s[64];
 
-    if (N > 0) {
-        char key = cmd[0];
+    if (((mode == WRITER) || (mode == EMULATOR)) && N > 0) {
+        char s[64];
 
-        if ((mode == WRITER) || (mode == EMULATOR)) {
+        for (int i = 0; i < N; i++) {
+            char key = cmd[i];
+
             write_keycode(key);
         }
 
-        f(context, "KEYPAD OK");
-        logd_log("KEYPAD OK");
+        snprintf(s, sizeof(s), "KEYPAD OK");
+        f(context, s);
+        logd_log(s);
     }
 }
 

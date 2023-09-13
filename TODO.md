@@ -1,6 +1,12 @@
 # TODO
 
 - [ ] Emulate keypad (https://github.com/uhppoted/uhppoted-wiegand/issues/4)
+      - [x] 4-bit burst mode write
+      - [ ] 4-bit burst mode read
+      - [ ] card + PIN writer
+      - [ ] card + PIN read
+      - [ ] 8-bit burst mode write
+      - [ ] 8-bit burst mode read
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

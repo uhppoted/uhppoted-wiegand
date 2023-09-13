@@ -87,6 +87,7 @@ The supported command set comprises:
 | -------------- | --------------------------------------- |
 | T              | Set date/time (YYYY-MM-DD HH:mm:ss)     |
 | Wnnnnnnnn      | Emulates card swipe                     |
+| Kdddddddd      | Emulates keypad                         |
 |                |                                         |
 | GRANT nnnnnn   | Grant card access rights                |
 | REVOKE nnnnnn  | Revoke card access rights               |

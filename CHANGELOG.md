@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+1. Keypad emulation
+
 
 ## [0.8.6](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.6) - 2023-08-30
 
