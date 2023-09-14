@@ -18,31 +18,61 @@ typedef struct reader {
     absolute_time_t delta;
 } reader;
 
+typedef struct buffer {
+    uint32_t word;
+    uint32_t count;
+    alarm_id_t alarm;
+} buffer;
+
+
 int64_t read_timeout(alarm_id_t, void *);
 
 const uint32_t READ_TIMEOUT = 100;
 
+int64_t rxii(alarm_id_t id, void *data) {
+    buffer *b = (buffer *) data;
+    uint32_t v = MSG_DEBUG | (b->word & 0x3fffff);
+
+    if (!queue_is_full(&queue)) {
+        queue_try_add(&queue, &v);
+    }
+
+    return 0;
+}
+
 void rxi() {
-    static uint32_t buffer = 0;
+    static alarm_id_t alarm = 0;
+    static buffer buffer = {
+        .word = 0,
+        .count = 0,
+        .alarm = 0,
+    };
+
+    if (buffer.alarm > 0) {
+        cancel_alarm(buffer.alarm);
+        buffer.alarm = 0;
+    }
 
     uint32_t value = read_program_get(PIO_READER, SM_READER);
 
     switch (value) {
     case 1:
-        buffer <<= 1;
-        buffer |= 0x00000001;
+        buffer.word <<= 1;
+        buffer.word |= 0x00000001;
         break;
 
     case 2:
-        buffer <<= 1;
-        buffer |= 0x00000000;
+        buffer.word <<= 1;
+        buffer.word |= 0x00000000;
         break;
     }
 
-    uint32_t v = MSG_RXI | (buffer & 0x0fffffff);
+    uint32_t v = MSG_RXI | (buffer.word & 0x0fffffff);
     if (!queue_is_full(&queue)) {
         queue_try_add(&queue, &v);
     }
+
+    buffer.alarm = add_alarm_in_ms(10,rxii,&buffer,true);
 }
 
 void read_initialise(enum MODE mode) {
