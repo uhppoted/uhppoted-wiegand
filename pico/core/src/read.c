@@ -23,23 +23,23 @@ int64_t read_timeout(alarm_id_t, void *);
 const uint32_t READ_TIMEOUT = 100;
 
 void rxi() {
-    static uint32_t card = 0;
+    static uint32_t buffer = 0;
 
     uint32_t value = read_program_get(PIO_READER, SM_READER);
 
     switch (value) {
     case 1:
-        card <<= 1;
-        card |= 0x00000001;
+        buffer <<= 1;
+        buffer |= 0x00000001;
         break;
 
     case 2:
-        card <<= 1;
-        card |= 0x00000000;
+        buffer <<= 1;
+        buffer |= 0x00000000;
         break;
     }
 
-    uint32_t v = MSG_RXI | (card & 0x0fffffff);
+    uint32_t v = MSG_RXI | (buffer & 0x0fffffff);
     if (!queue_is_full(&queue)) {
         queue_try_add(&queue, &v);
     }

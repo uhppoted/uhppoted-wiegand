@@ -70,7 +70,9 @@ void execw(char *cmd, txrx f, void *context) {
         int N = strlen(cmd);
 
         if (N > 0) {
-            if (strncasecmp(cmd, "blink", 5) == 0) {
+            if (strncasecmp(cmd, "time ", 5) == 0) {
+                cli_set_time(&cmd[5], f, context);
+            } else if (strncasecmp(cmd, "blink", 5) == 0) {
                 led_blink(5);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
@@ -94,8 +96,6 @@ void execw(char *cmd, txrx f, void *context) {
                 on_card_command(&cmd[6], grant, f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
                 on_card_command(&cmd[7], revoke, f, context);
-            } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
-                cli_set_time(&cmd[1], f, context);
             } else {
                 help(f, context);
             }
@@ -264,25 +264,25 @@ void reboot(txrx f, void *context) {
 void help(txrx f, void *context) {
     f(context, "-----");
     f(context, "Commands:");
-    f(context, "TYYYY-MM-DD HH:mm:ss  Set date/time (YYYY-MM-DD HH:mm:ss)");
-    f(context, "GRANT nnnnnn          Grant card access rights");
-    f(context, "REVOKE nnnnnn         Revoke card access rights");
-    f(context, "LIST ACL              List cards in ACL");
-    f(context, "READ ACL              Read ACL from SD card");
-    f(context, "WRITE ACL             Write ACL to SD card");
-    f(context, "QUERY                 Display last card read/write");
+    f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time (YYYY-MM-DD HH:mm:ss)");
+    f(context, "GRANT nnnnnn              Grant card access rights");
+    f(context, "REVOKE nnnnnn             Revoke card access rights");
+    f(context, "LIST ACL                  List cards in ACL");
+    f(context, "READ ACL                  Read ACL from SD card");
+    f(context, "WRITE ACL                 Write ACL to SD card");
+    f(context, "QUERY                     Display last card read/write");
     f(context, "");
-    f(context, "MOUNT                 Mount SD card");
-    f(context, "UNMOUNT               Unmount SD card");
-    f(context, "FORMAT                Format SD card");
+    f(context, "MOUNT                     Mount SD card");
+    f(context, "UNMOUNT                   Unmount SD card");
+    f(context, "FORMAT                    Format SD card");
     f(context, "");
-    f(context, "UNLOCK                Unlocks door");
-    f(context, "LOCK                  Locks door");
-    f(context, "BLINK                 Blinks reader LED 5 times");
-    f(context, "CLS                   Resets the terminal");
-    f(context, "REBOOT                Reboot");
+    f(context, "UNLOCK                    Unlocks door");
+    f(context, "LOCK                      Locks door");
+    f(context, "BLINK                     Blinks reader LED 5 times");
+    f(context, "CLS                       Resets the terminal");
+    f(context, "REBOOT                    Reboot");
     f(context, "");
-    f(context, "?                     Display list of commands");
+    f(context, "?                         Display list of commands");
     f(context, "-----");
 }
 

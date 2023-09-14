@@ -238,6 +238,11 @@ void sysinit() {
             logd_log("failed to initialise relay monitor");
         }
 
+        // ... set door contact to 'CLOSED'
+        if (mode == WRITER) {
+            relay_door_contact(true);
+        }
+
         // ... setup sys stuff
         add_repeating_timer_ms(1250, watchdog, NULL, &watchdog_rt);
         add_repeating_timer_ms(5000, syscheck, NULL, &syscheck_rt);

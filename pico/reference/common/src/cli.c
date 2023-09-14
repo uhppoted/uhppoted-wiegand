@@ -76,6 +76,8 @@ void execw(char *cmd, txrx f, void *context) {
         if (N > 0) {
             if (strncasecmp(cmd, "reboot", 6) == 0) {
                 reboot(f, context);
+            } else if (strncasecmp(cmd, "time ", 5) == 0) {
+                cli_set_time(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "blink", 5) == 0) {
                 led_blink(5);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
@@ -106,10 +108,8 @@ void execw(char *cmd, txrx f, void *context) {
                 unmount(f, context);
             } else if (strncasecmp(cmd, "format", 6) == 0) {
                 format(f, context);
-            } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
-                on_card_command(&cmd[1], write, f, context);
-            } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
-                cli_set_time(&cmd[1], f, context);
+            } else if (strncasecmp(cmd, "card ", 5) == 0) {
+                on_card_command(&cmd[5], write, f, context);
             } else {
                 help(f, context);
             }
@@ -352,30 +352,30 @@ void reboot(txrx f, void *context) {
 void help(txrx f, void *context) {
     f(context, "-----");
     f(context, "Commands:");
-    f(context, "TYYYY-MM-DD HH:mm:ss  Set date/time");
+    f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time");
     f(context, "");
-    f(context, "Wnnnnnn               Write card to Wiegand-26 interface");
-    f(context, "OPEN                  Opens door contact relay");
-    f(context, "CLOSE                 Closes door contact relay");
-    f(context, "PRESS                 Press pushbutton");
-    f(context, "RELEASE               Release pushbutton");
+    f(context, "CARD nnnnnn               Write card to Wiegand-26 interface");
+    f(context, "OPEN                      Opens door contact relay");
+    f(context, "CLOSE                     Closes door contact relay");
+    f(context, "PRESS                     Press pushbutton");
+    f(context, "RELEASE                   Release pushbutton");
     f(context, "");
-    f(context, "GRANT nnnnnn          Grant card access rights");
-    f(context, "REVOKE nnnnnn         Revoke card access rights");
-    f(context, "READ ACL              Read ACL from SD card");
-    f(context, "WRITE ACL             Write ACL to SD card");
-    f(context, "LIST ACL              Lists the cards in the ACL");
-    f(context, "QUERY                 Display last card read/write");
+    f(context, "GRANT nnnnnn              Grant card access rights");
+    f(context, "REVOKE nnnnnn             Revoke card access rights");
+    f(context, "READ ACL                  Read ACL from SD card");
+    f(context, "WRITE ACL                 Write ACL to SD card");
+    f(context, "LIST ACL                  Lists the cards in the ACL");
+    f(context, "QUERY                     Display last card read/write");
     f(context, "");
-    f(context, "MOUNT                 Mount SD card");
-    f(context, "UNMOUNT               Unmount SD card");
-    f(context, "FORMAT                Format SD card");
+    f(context, "MOUNT                     Mount SD card");
+    f(context, "UNMOUNT                   Unmount SD card");
+    f(context, "FORMAT                    Format SD card");
     f(context, "");
-    f(context, "UNLOCK                Unlocks door");
-    f(context, "BLINK                 Blinks reader LED 5 times");
-    f(context, "CLS                   Resets the terminal");
-    f(context, "REBOOT                Reboot");
-    f(context, "?                     Display list of commands");
+    f(context, "UNLOCK                    Unlocks door");
+    f(context, "BLINK                     Blinks reader LED 5 times");
+    f(context, "CLS                       Resets the terminal");
+    f(context, "REBOOT                    Reboot");
+    f(context, "?                         Display list of commands");
     f(context, "-----");
 }
 

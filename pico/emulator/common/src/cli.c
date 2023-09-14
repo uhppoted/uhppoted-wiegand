@@ -52,7 +52,9 @@ void execw(char *cmd, txrx f, void *context) {
         int N = strlen(cmd);
 
         if (N > 0) {
-            if (strncasecmp(cmd, "query", 5) == 0) {
+            if (strncasecmp(cmd, "time ", 5) == 0) {
+                cli_set_time(&cmd[5], f, context);
+            } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
                 on_door_open(f, context);
@@ -64,11 +66,9 @@ void execw(char *cmd, txrx f, void *context) {
                 on_release_button(f, context);
             } else if (strncasecmp(cmd, "reboot", 6) == 0) {
                 reboot(f, context);
-            } else if ((cmd[0] == 't') || (cmd[0] == 'T')) {
-                cli_set_time(&cmd[1], f, context);
-            } else if ((cmd[0] == 'w') || (cmd[0] == 'W')) {
-                swipe(&cmd[1], f, context);
-            } else if ((cmd[0] == 'k') || (cmd[0] == 'K')) {
+            } else if (strncasecmp(cmd, "card ", 5) == 0) {
+                swipe(&cmd[5], f, context);
+            } else if (strncasecmp(cmd, "code ", 5) == 0) {
                 keypad(&cmd[1], f, context);
             } else {
                 help(f, context);
@@ -123,17 +123,17 @@ void reboot(txrx f, void *context) {
 void help(txrx f, void *context) {
     f(context, "-----");
     f(context, "Commands:");
-    f(context, "TYYYY-MM-DD HH:mm:ss  Set date/time");
-    f(context, "Wnnnnnn               Write card to Wiegand-26 interface");
-    f(context, "Kdddddd               Enter keypad digits");
-    f(context, "QUERY                 Display last card read/write");
-    f(context, "OPEN                  Opens door contact relay");
-    f(context, "CLOSE                 Closes door contact relay");
-    f(context, "PRESS                 Press pushbutton");
-    f(context, "RELEASE               Release pushbutton");
-    f(context, "CLS                   Resets the terminal");
-    f(context, "REBOOT                Reboot");
-    f(context, "?                     Display list of commands");
+    f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time");
+    f(context, "CARD nnnnnn               Write card to Wiegand-26 interface");
+    f(context, "CODE dddddd               Enter keypad digits");
+    f(context, "QUERY                     Display last card read/write");
+    f(context, "OPEN                      Opens door contact relay");
+    f(context, "CLOSE                     Closes door contact relay");
+    f(context, "PRESS                     Press pushbutton");
+    f(context, "RELEASE                   Release pushbutton");
+    f(context, "CLS                       Resets the terminal");
+    f(context, "REBOOT                    Reboot");
+    f(context, "?                         Display list of commands");
     f(context, "-----");
 }
 

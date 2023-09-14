@@ -40,7 +40,6 @@ bool write_card(uint32_t facility_code, uint32_t card) {
  *
  */
 bool write_keycode(char digit) {
-    char s[64];
     uint32_t word = 0;
 
     switch (digit) {
