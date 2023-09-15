@@ -106,10 +106,6 @@ int main() {
             free(b);
         }
 
-        if ((v & MSG) == MSG_RXI) {
-            on_card_rxi(v & 0x0fffffff);
-        }
-
         if ((v & MSG) == MSG_CARD_READ) {
             on_card_read(v & 0x0fffffff);
 

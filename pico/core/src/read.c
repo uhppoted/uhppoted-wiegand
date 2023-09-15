@@ -24,24 +24,34 @@ typedef struct buffer {
     alarm_id_t alarm;
 } buffer;
 
+void rxi();
+int64_t rxii(alarm_id_t, void *);
 
-int64_t read_timeout(alarm_id_t, void *);
+void read_initialise(enum MODE mode) {
+    uint offset = pio_add_program(PIO_READER, &read_program);
 
-const uint32_t READ_TIMEOUT = 100;
+    read_program_init(PIO_READER, SM_READER, offset, READER_D0, READER_D1);
 
-int64_t rxii(alarm_id_t id, void *data) {
-    buffer *b = (buffer *) data;
-    uint32_t v = MSG_DEBUG | (b->word & 0x3fffff);
+    irq_set_exclusive_handler(PIO_READER_IRQ, rxi);
+    irq_set_enabled(PIO_READER_IRQ, true);
+    pio_set_irq0_source_enabled(PIO_READER, IRQ_READER, true);
+}
 
-    if (!queue_is_full(&queue)) {
-        queue_try_add(&queue, &v);
-    }
+void on_card_read(uint32_t v) {
+    int even = bits(v & 0x03ffe000);
+    int odd = bits(v & 0x00001fff);
+    uint32_t card = (v >> 1) & 0x00ffffff;
 
-    return 0;
+    last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
+    last_card.facility_code = (card >> 16) & 0x000000ff;
+    last_card.card_number = card & 0x0000ffff;
+    last_card.granted = UNKNOWN;
+
+    rtc_get_datetime(&last_card.timestamp);
+    blink(last_card.ok ? GOOD_CARD : BAD_CARD);
 }
 
 void rxi() {
-    static alarm_id_t alarm = 0;
     static buffer buffer = {
         .word = 0,
         .count = 0,
@@ -59,94 +69,33 @@ void rxi() {
     case 1:
         buffer.word <<= 1;
         buffer.word |= 0x00000001;
+        buffer.count++;
         break;
 
     case 2:
         buffer.word <<= 1;
         buffer.word |= 0x00000000;
+        buffer.count++;
         break;
     }
 
-    uint32_t v = MSG_RXI | (buffer.word & 0x0fffffff);
-    if (!queue_is_full(&queue)) {
-        queue_try_add(&queue, &v);
-    }
-
-    buffer.alarm = add_alarm_in_ms(10,rxii,&buffer,true);
+    buffer.alarm = add_alarm_in_ms(10, rxii, &buffer, true);
 }
 
-void read_initialise(enum MODE mode) {
-    uint offset = pio_add_program(PIO_READER, &read_program);
+int64_t rxii(alarm_id_t id, void *data) {
+    buffer *b = (buffer *)data;
 
-    read_program_init(PIO_READER, SM_READER, offset, READER_D0, READER_D1);
-
-    irq_set_exclusive_handler(PIO_READER_IRQ, rxi);
-    irq_set_enabled(PIO_READER_IRQ, true);
-    pio_set_irq0_source_enabled(PIO_READER, IRQ_READER, true);
-}
-
-void on_card_rxi(uint32_t v) {
-    static reader rdr = {
-        .card = 0,
-        .bits = 0,
-        .timer = 0,
-        .start = 0,
-    };
-
-    // ... reset reader after 250ms (add_alarm_in_ms is not guaranteed to succeed)
-    absolute_time_t now = get_absolute_time();
-    int64_t dt = absolute_time_diff_us(rdr.start, now) / 1;
-
-    if (rdr.bits == 0 || dt > 250 * 1000) {
-        if (rdr.timer > 0) {
-            cancel_alarm(rdr.timer);
-        }
-
-        rdr.start = get_absolute_time();
-        rdr.bits = 0;
-        rdr.timer = add_alarm_in_ms(READ_TIMEOUT, read_timeout, (reader *)&rdr, true);
-    }
-
-    rdr.card = v & 0x03ffffff;
-    rdr.bits++;
-
-    if (rdr.bits >= 26) {
-        if (rdr.timer > 0) {
-            cancel_alarm(rdr.timer);
-            rdr.timer = 0;
-        }
-
-        uint32_t v = MSG_CARD_READ | (rdr.card & 0x03ffffff);
+    if (b->count == 26) {
+        uint32_t v = MSG_CARD_READ | (b->word & 0x03ffffff);
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }
-
-        rdr.card = 0;
-        rdr.bits = 0;
-        rdr.timer = -1;
+    } else {
+        blink(CARD_TIMEOUT);
     }
-}
 
-void on_card_read(uint32_t v) {
-    int even = bits(v & 0x03ffe000);
-    int odd = bits(v & 0x00001fff);
-    uint32_t card = (v >> 1) & 0x00ffffff;
+    b->word = 0;
+    b->count = 0;
 
-    last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
-    last_card.facility_code = (card >> 16) & 0x000000ff;
-    last_card.card_number = card & 0x0000ffff;
-    last_card.granted = UNKNOWN;
-
-    rtc_get_datetime(&last_card.timestamp);
-    blink(last_card.ok ? GOOD_CARD : BAD_CARD);
-}
-
-int64_t read_timeout(alarm_id_t id, void *data) {
-    reader *r = (reader *)data;
-
-    r->bits = 0;
-    r->card = 0;
-    r->timer = 0;
-
-    blink(CARD_TIMEOUT);
+    return 0;
 }

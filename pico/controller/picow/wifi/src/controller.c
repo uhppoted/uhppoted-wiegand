@@ -45,7 +45,6 @@ const uint32_t MSG_DOOR = 0x70000000;
 const uint32_t MSG_PUSHBUTTON = 0x80000000;
 const uint32_t MSG_LOG = 0xb0000000;
 const uint32_t MSG_TCPD_POLL = 0xc0000000;
-const uint32_t MSG_RXI = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
 
@@ -115,10 +114,6 @@ int main() {
             char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
             puts(b);
             free(b);
-        }
-
-        if ((v & MSG) == MSG_RXI) {
-            on_card_rxi(v & 0x0fffffff);
         }
 
         if ((v & MSG) == MSG_CARD_READ) {
