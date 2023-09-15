@@ -1,22 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "hardware/rtc.h"
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 
-#include "../include/common.h"
-#include "../include/led.h"
-#include "../include/read.h"
+#include <common.h>
+#include <led.h>
+#include <logd.h>
+#include <read.h>
 
 #include <READ.pio.h>
-
-typedef struct reader {
-    uint32_t card;
-    uint32_t bits;
-    int32_t timer;
-    absolute_time_t start;
-    absolute_time_t delta;
-} reader;
 
 typedef struct buffer {
     uint32_t word;
@@ -26,6 +20,9 @@ typedef struct buffer {
 
 void rxi();
 int64_t rxii(alarm_id_t, void *);
+void on_keycode(char *, int);
+
+const char DIGITS[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#'};
 
 void read_initialise(enum MODE mode) {
     uint offset = pio_add_program(PIO_READER, &read_program);
@@ -49,6 +46,30 @@ void on_card_read(uint32_t v) {
 
     rtc_get_datetime(&last_card.timestamp);
     blink(last_card.ok ? GOOD_CARD : BAD_CARD);
+}
+
+void on_keypad_digit(uint32_t v) {
+    static char code[16] = {};
+    static uint32_t index = 0;
+    static alarm_id_t alarm = 0;
+
+    int keycode = v & 0x0000000f;
+
+    if (keycode < sizeof(DIGITS)) {
+        char digit = DIGITS[keycode];
+
+        if (digit == '*' || digit == '#') {
+            on_keycode(code, index);
+            index = 0;
+        } else if (index < sizeof(code)) {
+            code[index++] = digit;
+
+            if (index >= sizeof(code)) {
+                on_keycode(code, index);
+                index = 0;
+            }
+        }
+    }
 }
 
 void rxi() {
@@ -90,6 +111,11 @@ int64_t rxii(alarm_id_t id, void *data) {
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }
+    } else if (b->count == 4) {
+        uint32_t v = MSG_KEYPAD_DIGIT | (b->word & 0x0000000f);
+        if (!queue_is_full(&queue)) {
+            queue_try_add(&queue, &v);
+        }
     } else {
         blink(CARD_TIMEOUT);
     }
@@ -98,4 +124,19 @@ int64_t rxii(alarm_id_t id, void *data) {
     b->count = 0;
 
     return 0;
+}
+
+void on_keycode(char *code, int length) {
+    if (length > 0) {
+        int N = length + 1;
+        char *s;
+
+        if ((s = calloc(N, 1)) != NULL) {
+            snprintf(s, N, "%s", code);
+            uint32_t msg = MSG_CODE | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
+            if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+                free(s);
+            }
+        }
+    }
 }

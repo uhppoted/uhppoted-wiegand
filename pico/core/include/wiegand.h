@@ -77,6 +77,8 @@ extern const uint32_t MSG_SYSINIT;
 extern const uint32_t MSG_SYSCHECK;
 extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_CARD_READ;
+extern const uint32_t MSG_CODE;
+extern const uint32_t MSG_KEYPAD_DIGIT;
 extern const uint32_t MSG_LED;
 extern const uint32_t MSG_RELAY;
 extern const uint32_t MSG_DOOR;
