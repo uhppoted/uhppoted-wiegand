@@ -18,11 +18,19 @@ typedef struct buffer {
     alarm_id_t alarm;
 } buffer;
 
+typedef struct code {
+    char code[16];
+    uint32_t index;
+    alarm_id_t alarm;
+} code;
+
 void rxi();
 int64_t rxii(alarm_id_t, void *);
+int64_t keycode_timeout(alarm_id_t, void *);
 void on_keycode(char *, int);
 
 const char DIGITS[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#'};
+const uint32_t KEYCODE_TIMEOUT = 5000; // ms
 
 void read_initialise(enum MODE mode) {
     uint offset = pio_add_program(PIO_READER, &read_program);
@@ -49,9 +57,16 @@ void on_card_read(uint32_t v) {
 }
 
 void on_keypad_digit(uint32_t v) {
-    static char code[16] = {};
-    static uint32_t index = 0;
-    static alarm_id_t alarm = 0;
+    static code code = {
+        .code = {},
+        .index = 0,
+        .alarm = 0,
+    };
+
+    if (code.alarm > 0) {
+        cancel_alarm(code.alarm);
+        code.alarm = 0;
+    }
 
     int keycode = v & 0x0000000f;
 
@@ -59,14 +74,16 @@ void on_keypad_digit(uint32_t v) {
         char digit = DIGITS[keycode];
 
         if (digit == '*' || digit == '#') {
-            on_keycode(code, index);
-            index = 0;
-        } else if (index < sizeof(code)) {
-            code[index++] = digit;
+            on_keycode(code.code, code.index);
+            code.index = 0;
+        } else if (code.index < sizeof(code.code)) {
+            code.code[code.index++] = digit;
 
-            if (index >= sizeof(code)) {
-                on_keycode(code, index);
-                index = 0;
+            if (code.index >= sizeof(code.code)) {
+                on_keycode(code.code, code.index);
+                code.index = 0;
+            } else {
+                code.alarm = add_alarm_in_ms(KEYCODE_TIMEOUT, keycode_timeout, &code, true);
             }
         }
     }
@@ -122,6 +139,15 @@ int64_t rxii(alarm_id_t id, void *data) {
 
     b->word = 0;
     b->count = 0;
+
+    return 0;
+}
+
+int64_t keycode_timeout(alarm_id_t id, void *data) {
+    code *c = (code *)data;
+
+    on_keycode(c->code, c->index);
+    c->index = 0;
 
     return 0;
 }
