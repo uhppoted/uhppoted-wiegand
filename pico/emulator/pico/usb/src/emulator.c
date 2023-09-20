@@ -115,6 +115,19 @@ int main() {
             logd_log(s);
         }
 
+        if ((v & MSG) == MSG_CODE) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            char s[64];
+
+            snprintf(s, sizeof(s), "CODE   %s", b);
+            logd_log(s);
+            free(b);
+        }
+
+        if ((v & MSG) == MSG_KEYPAD_DIGIT) {
+            on_keypad_digit(v & 0x0fffffff);
+        }
+
         if ((v & MSG) == MSG_LED) {
             led_event(v & 0x0fffffff);
         }

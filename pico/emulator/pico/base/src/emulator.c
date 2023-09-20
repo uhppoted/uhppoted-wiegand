@@ -77,6 +77,7 @@ int main() {
     add_alarm_in_ms(250, startup, NULL, true);
     clear_screen();
 
+    // ... event loop
     while (true) {
         uint32_t v;
         queue_remove_blocking(&queue, &v);

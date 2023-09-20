@@ -84,6 +84,7 @@ int main() {
     add_alarm_in_ms(250, startup, NULL, true);
     clear_screen();
 
+    // ... event loop
     while (true) {
         uint32_t v;
         queue_remove_blocking(&queue, &v);
@@ -119,6 +120,19 @@ int main() {
             char s[64];
             cardf(&last_card, s, sizeof(s), false);
             logd_log(s);
+        }
+
+        if ((v & MSG) == MSG_CODE) {
+            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+            char s[64];
+
+            snprintf(s, sizeof(s), "CODE   %s", b);
+            logd_log(s);
+            free(b);
+        }
+
+        if ((v & MSG) == MSG_KEYPAD_DIGIT) {
+            on_keypad_digit(v & 0x0fffffff);
         }
 
         if ((v & MSG) == MSG_LED) {
