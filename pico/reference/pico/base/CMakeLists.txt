@@ -34,6 +34,7 @@ add_executable(wiegand
   ${CORE}/src/flash.c
   ${CORE}/src/sdcard.c
   ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/cli.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/pico/sysled.c
 )

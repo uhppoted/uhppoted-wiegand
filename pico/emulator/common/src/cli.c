@@ -3,6 +3,7 @@
 
 #include <TPIC6B595.h>
 #include <buzzer.h>
+#include <cli.h>
 #include <common.h>
 #include <logd.h>
 #include <relays.h>
@@ -18,7 +19,6 @@ void cli_set_time(char *, txrx, void *);
 void query(txrx, void *);
 void reboot();
 void swipe(char *cmd, txrx, void *);
-void keypad(char *cmd, txrx, void *);
 
 void on_door_open(txrx, void *);
 void on_door_close(txrx, void *);
@@ -173,28 +173,6 @@ void swipe(char *cmd, txrx f, void *context) {
 
     f(context, "CARD   WRITE OK");
     logd_log("CARD   WRITE OK");
-}
-
-/* Keypad emulation.
- *  Sends the keycode code as 4-bit burst mode Wiegand.
- *
- */
-void keypad(char *cmd, txrx f, void *context) {
-    int N = strlen(cmd);
-
-    if (((mode == WRITER) || (mode == EMULATOR)) && N > 0) {
-        char s[64];
-
-        for (int i = 0; i < N; i++) {
-            char key = cmd[i];
-
-            write_keycode(key);
-        }
-
-        snprintf(s, sizeof(s), "KEYPAD OK");
-        f(context, s);
-        logd_log(s);
-    }
 }
 
 /* Door contact emulation command handler.

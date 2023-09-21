@@ -30,6 +30,7 @@ add_executable(wiegand-emulator
   ${CORE}/src/relays.c
   ${CORE}/src/logd.c
   ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/cli.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/pico/sysled.c
 )

@@ -34,6 +34,7 @@ add_executable(wiegand_picow
   ${CORE}/src/flash.c
   ${CORE}/src/sdcard.c
   ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/cli.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/picow/cyw43.c
   ${CORE}/src/picow/sysled.c

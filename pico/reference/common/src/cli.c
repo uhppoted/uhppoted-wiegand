@@ -110,6 +110,8 @@ void execw(char *cmd, txrx f, void *context) {
                 format(f, context);
             } else if (strncasecmp(cmd, "card ", 5) == 0) {
                 on_card_command(&cmd[5], write, f, context);
+            } else if (strncasecmp(cmd, "code ", 5) == 0) {
+                keypad(&cmd[1], f, context);
             } else {
                 help(f, context);
             }
@@ -355,6 +357,7 @@ void help(txrx f, void *context) {
     f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time");
     f(context, "");
     f(context, "CARD nnnnnn               Write card to Wiegand-26 interface");
+    f(context, "CODE dddddd               Enter keypad digits");
     f(context, "OPEN                      Opens door contact relay");
     f(context, "CLOSE                     Closes door contact relay");
     f(context, "PRESS                     Press pushbutton");

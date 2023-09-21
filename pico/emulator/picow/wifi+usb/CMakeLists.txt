@@ -38,6 +38,7 @@ add_executable(wiegand-emulator-wifi-usb
   ${CORE}/src/relays.c
   ${CORE}/src/logd.c
   ${CORE}/src/TPIC6B595.c
+  ${CORE}/src/cli.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/usb.c
   ${CORE}/src/picow/cyw43.c

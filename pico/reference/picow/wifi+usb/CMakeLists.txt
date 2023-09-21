@@ -43,6 +43,7 @@ add_executable(wiegand_wifi_usb
   ${CORE}/src/sdcard.c
   ${CORE}/src/TPIC6B595.c
   ${CORE}/src/usb.c
+  ${CORE}/src/cli.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/picow/cyw43.c
   ${CORE}/src/picow/sysled.c
