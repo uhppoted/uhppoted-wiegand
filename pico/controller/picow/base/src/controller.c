@@ -92,6 +92,7 @@ int main() {
         uint32_t v;
 
         queue_remove_blocking(&queue, &v);
+        dispatch(v);
 
         if ((v & MSG) == MSG_SYSINIT) {
             sysinit();
@@ -218,6 +219,7 @@ void sysinit() {
 
         logd_initialise(mode);
         read_initialise(mode);
+        // write_initialise(mode); // (DEBUGGING ONLY)
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);

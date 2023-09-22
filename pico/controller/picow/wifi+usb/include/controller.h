@@ -1,3 +1,6 @@
 #pragma once
 
-#include "wiegand.h"
+#include <stdint.h>
+
+extern void dispatch(uint32_t);
+extern void set_sysled_off(void);

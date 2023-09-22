@@ -7,6 +7,7 @@ project(wiegand-controller-wifi-usb C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
 set(CORE "../../../core")
 set(COMMON "../../common")
@@ -30,6 +31,7 @@ pico_sdk_init()
 
 add_executable(wiegand-controller-wifi-usb
   ./src/controller.c
+  ${COMMON}/src/controller.c
   ${CORE}/src/acl.c
   ${CORE}/src/buzzer.c
   ${COMMON}/src/cli.c
@@ -44,6 +46,7 @@ add_executable(wiegand-controller-wifi-usb
   ${CORE}/src/uart.c
   ${CORE}/src/usb.c
   ${CORE}/src/sys.c
+  ${CORE}/src/cli.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/picow/cyw43.c
   ${CORE}/src/picow/sysled.c

@@ -5,9 +5,7 @@
 #include <f_util.h>
 #include <hardware/rtc.h>
 
-#include "TPIC6B595.h"
 #include "acl.h"
-#include "buzzer.h"
 #include "common.h"
 #include "led.h"
 #include "logd.h"
@@ -15,14 +13,18 @@
 #include "sdcard.h"
 #include "sys.h"
 #include "tcpd.h"
-#include "uart.h"
+#include <TPIC6B595.h>
+#include <buzzer.h>
+#include <cli.h>
+#include <uart.h>
+// #include <write.h>
 
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
+void debug(txrx, void *);
 void help(txrx, void *);
 void cli_set_time(char *, txrx, void *);
 void query(txrx, void *);
-void reboot();
 
 void on_card_command(char *cmd, handler fn, txrx, void *);
 
@@ -96,11 +98,28 @@ void execw(char *cmd, txrx f, void *context) {
                 on_card_command(&cmd[6], grant, f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
                 on_card_command(&cmd[7], revoke, f, context);
+            } else if (strncasecmp(cmd, "debug", 5) == 0) {
+                debug(f, context);
             } else {
                 help(f, context);
             }
         }
     }
+}
+
+/* -- DEBUG --
+ *
+ */
+void debug(txrx f, void *context) {
+    // char *code = "12345#";
+    //
+    // for (int i = 0; i < 6; i++) {
+    //     char key = code[i];
+    //
+    //     write_keycode(key);
+    // }
+
+    f(context, ">> DEBUG OK");
 }
 
 /* Sets the system time.
@@ -234,27 +253,6 @@ void write_acl(txrx f, void *context) {
 void on_door_unlock(txrx f, void *context) {
     if (mode == CONTROLLER) {
         door_unlock(5000);
-    }
-}
-
-/* Goes into a tight loop until the watchdog resets the processor.
- *
- */
-void reboot(txrx f, void *context) {
-    while (true) {
-        buzzer_beep(1);
-
-        TPIC_set(RED_LED, false);
-        TPIC_set(YELLOW_LED, false);
-        TPIC_set(ORANGE_LED, false);
-        TPIC_set(GREEN_LED, false);
-        sleep_ms(750);
-
-        TPIC_set(RED_LED, true);
-        TPIC_set(YELLOW_LED, true);
-        TPIC_set(ORANGE_LED, true);
-        TPIC_set(GREEN_LED, true);
-        sleep_ms(750);
     }
 }
 

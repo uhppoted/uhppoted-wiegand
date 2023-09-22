@@ -1,5 +1,7 @@
 # TODO
 
+- (?) Make -Wimplicit-function-declaration an error
+
 - [ ] Emulate keypad (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/4)
       - [x] 4-bit burst mode write
       - [x] 4-bit burst mode read
@@ -8,6 +10,8 @@
       - [ ] 8-bit burst mode read
       - [ ] card + PIN writer
       - [ ] card + PIN read
+
+
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

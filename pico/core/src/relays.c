@@ -34,6 +34,10 @@ int64_t relay_timeout(alarm_id_t, void *);
 bool relay_initialise(enum MODE mode) {
     static repeating_timer_t relay_rt;
 
+    if ((mode == READER) || (mode == CONTROLLER)) {
+        TPIC_set(DOOR_UNLOCK, false);
+    }
+
     return add_repeating_timer_ms(1, relay_monitor, NULL, &relay_rt);
 }
 

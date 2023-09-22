@@ -23,7 +23,6 @@ typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 void help(txrx, void *);
 void cli_set_time(char *, txrx, void *);
 void query(txrx, void *);
-void reboot();
 
 void on_card_command(char *, handler, txrx, void *);
 
@@ -325,27 +324,6 @@ void write_acl(txrx f, void *context) {
     }
 
     f(context, s);
-}
-
-/* Goes into a tight loop until the watchdog resets the processor.
- *
- */
-void reboot(txrx f, void *context) {
-    while (true) {
-        buzzer_beep(1);
-
-        TPIC_set(RED_LED, false);
-        TPIC_set(YELLOW_LED, false);
-        TPIC_set(ORANGE_LED, false);
-        TPIC_set(GREEN_LED, false);
-        sleep_ms(750);
-
-        TPIC_set(RED_LED, true);
-        TPIC_set(YELLOW_LED, true);
-        TPIC_set(ORANGE_LED, true);
-        TPIC_set(GREEN_LED, true);
-        sleep_ms(750);
-    }
 }
 
 /* Displays a list of the supported commands.

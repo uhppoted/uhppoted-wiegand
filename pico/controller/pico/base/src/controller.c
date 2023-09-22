@@ -85,6 +85,7 @@ int main() {
     while (true) {
         uint32_t v;
         queue_remove_blocking(&queue, &v);
+        dispatch(v);
 
         if ((v & MSG) == MSG_SYSINIT) {
             sysinit();

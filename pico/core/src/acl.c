@@ -207,3 +207,19 @@ bool acl_allowed(uint32_t facility_code, uint32_t card) {
 
     return false;
 }
+
+/* Checks a keycode against the ACL passcode.
+ *
+ */
+bool acl_passcode(const char *code) {
+    // for (int i = 0; i < ACL_SIZE; i++) {
+    //     const uint32_t card_number = ACL[i].card_number;
+    //     const bool allowed = ACL[i].allowed;
+    //
+    //     if ((card_number != 0xffffffff) && ((card_number / 100000) == facility_code) && ((card_number % 100000) == card)) {
+    //         return allowed;
+    //     }
+    // }
+
+    return false;
+}

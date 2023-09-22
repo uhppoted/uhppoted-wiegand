@@ -7,6 +7,7 @@ project(wiegand-controller C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
 set(CORE "../../../core")
 set(COMMON "../../common")
@@ -20,6 +21,7 @@ pico_sdk_init()
 
 add_executable(wiegand-controller
   ./src/controller.c
+  ${COMMON}/src/controller.c
   ${COMMON}/src/cli.c
   ${CORE}/src/common.c
   ${CORE}/src/uart.c
@@ -33,6 +35,7 @@ add_executable(wiegand-controller
   ${CORE}/src/sdcard.c
   ${CORE}/src/acl.c
   ${CORE}/src/logd.c
+  ${CORE}/src/cli.c
   ${CORE}/src/hwconfig.c
   ${CORE}/src/pico/sysled.c
 )

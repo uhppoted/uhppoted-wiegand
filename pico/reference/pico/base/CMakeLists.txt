@@ -7,6 +7,7 @@ project(wiegand C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
 set(CORE "../../../core")
 set(COMMON "../../common")

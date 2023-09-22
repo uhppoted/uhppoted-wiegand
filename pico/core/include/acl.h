@@ -10,3 +10,4 @@ extern int acl_list(uint32_t *[]);
 extern bool acl_grant(uint32_t, uint32_t);
 extern bool acl_revoke(uint32_t, uint32_t);
 extern bool acl_allowed(uint32_t, uint32_t);
+extern bool acl_passcode(const char *);

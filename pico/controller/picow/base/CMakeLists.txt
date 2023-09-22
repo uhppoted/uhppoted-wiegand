@@ -7,6 +7,7 @@ project(wiegand-controller-picow C CXX ASM)
 
 set(CMAKE_C_STANDARD   11)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
 set(CORE "../../../core")
 set(COMMON "../../common")
@@ -28,6 +29,7 @@ pico_sdk_init()
 
 add_executable(wiegand-controller-picow
   ./src/controller.c
+  ${COMMON}/src/controller.c
   ${COMMON}/src/cli.c
   ${CORE}/src/common.c
   ${CORE}/src/uart.c
@@ -41,6 +43,8 @@ add_executable(wiegand-controller-picow
   ${CORE}/src/sdcard.c
   ${CORE}/src/acl.c
   ${CORE}/src/logd.c
+  ${CORE}/src/cli.c
+# ${CORE}/src/write.c   (DEBUGGING ONLY)
   ${CORE}/src/hwconfig.c
   ${CORE}/src/picow/cyw43.c
   ${CORE}/src/picow/sysled.c
@@ -54,6 +58,12 @@ pico_generate_pio_header(
     wiegand-controller-picow
     ${CMAKE_CURRENT_LIST_DIR}/${CORE}/src/READ.pio
 )
+
+# (DEBUGGING ONLY)
+# pico_generate_pio_header(
+#     wiegand-controller-picow
+#     ${CMAKE_CURRENT_LIST_DIR}/${CORE}/src/WRITE.pio
+# )
 
 pico_enable_stdio_usb (wiegand-controller-picow 0)
 pico_enable_stdio_uart(wiegand-controller-picow 1)
