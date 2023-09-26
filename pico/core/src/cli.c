@@ -5,6 +5,7 @@
 #include <buzzer.h>
 #include <cli.h>
 #include <logd.h>
+#include <sys.h>
 #include <wiegand.h>
 #include <write.h>
 
@@ -27,6 +28,15 @@ void reboot(txrx f, void *context) {
         TPIC_set(GREEN_LED, true);
         sleep_ms(750);
     }
+}
+
+/* Sets the system time.
+ *
+ */
+void cli_set_time(char *cmd, txrx f, void *context) {
+    sys_settime(cmd);
+
+    f(context, ">> SET TIME OK");
 }
 
 /* Keypad emulation.

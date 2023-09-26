@@ -23,7 +23,6 @@ typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
 void debug(txrx, void *);
 void help(txrx, void *);
-void cli_set_time(char *, txrx, void *);
 void query(txrx, void *);
 
 void on_card_command(char *cmd, handler fn, txrx, void *);
@@ -120,15 +119,6 @@ void debug(txrx f, void *context) {
     // }
 
     f(context, ">> DEBUG OK");
-}
-
-/* Sets the system time.
- *
- */
-void cli_set_time(char *cmd, txrx f, void *context) {
-    sys_settime(cmd);
-
-    f(context, ">> SET TIME OK");
 }
 
 /* Displays the last read/write card, if any.

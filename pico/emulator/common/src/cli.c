@@ -15,7 +15,6 @@
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
 void help(txrx, void *);
-void cli_set_time(char *, txrx, void *);
 void query(txrx, void *);
 void swipe(char *cmd, txrx, void *);
 
@@ -74,15 +73,6 @@ void execw(char *cmd, txrx f, void *context) {
             }
         }
     }
-}
-
-/* Sets the system time.
- *
- */
-void cli_set_time(char *cmd, txrx f, void *context) {
-    sys_settime(cmd);
-
-    f(context, ">> SET TIME OK");
 }
 
 /* Displays the last read/write card, if any.
