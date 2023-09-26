@@ -5,7 +5,10 @@
 - [ ] Emulate keypad (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/4)
       - [x] 4-bit burst mode write
       - [x] 4-bit burst mode read
-      - [ ] controller: execute
+      - [x] controller: execute
+            - [x] unlock on valid passcode
+            - [x] master passcode
+            - [ ] set passcodes
       - [ ] 8-bit burst mode write
       - [ ] 8-bit burst mode read
       - [ ] card + PIN writer

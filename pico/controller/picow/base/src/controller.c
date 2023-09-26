@@ -26,7 +26,6 @@
 #include <sys.h>
 #include <uart.h>
 #include <wiegand.h>
-#include <write.h>
 
 #include "../include/controller.h"
 
@@ -219,7 +218,6 @@ void sysinit() {
 
         logd_initialise(mode);
         read_initialise(mode);
-        // write_initialise(mode); // (DEBUGGING ONLY)
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);

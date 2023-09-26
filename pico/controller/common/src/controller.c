@@ -15,7 +15,7 @@ void dispatch(uint32_t v) {
 
         if (acl_passcode(b)) {
             snprintf(s, sizeof(s), "CODE   OK");
-            led_blink(1);
+            led_blink(8);
             door_unlock(5000);
         } else {
             snprintf(s, sizeof(s), "CODE   INVALID");

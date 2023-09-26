@@ -16,6 +16,7 @@ set(FATFS "../../../lib/no-OS-FatFS-SD-SPI-RPi-Pico")
 add_compile_definitions(SYSDATE=$(SYSDATE))
 add_compile_definitions(SYSTIME=$(SYSTIME))
 add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
+add_compile_definitions(MASTER_PASSCODE=${MASTER_PASSCODE})
 
 pico_sdk_init()
 

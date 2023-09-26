@@ -17,7 +17,6 @@
 #include <buzzer.h>
 #include <cli.h>
 #include <uart.h>
-// #include <write.h>
 
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
@@ -110,13 +109,16 @@ void execw(char *cmd, txrx f, void *context) {
  *
  */
 void debug(txrx f, void *context) {
-    // char *code = "12345#";
-    //
-    // for (int i = 0; i < 6; i++) {
-    //     char key = code[i];
-    //
-    //     write_keycode(key);
-    // }
+    int N = 6;
+    char *s;
+
+    if ((s = calloc(N, 1)) != NULL) {
+        snprintf(s, N, "%s", "12345");
+        uint32_t msg = MSG_CODE | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
+        if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+            free(s);
+        }
+    }
 
     f(context, ">> DEBUG OK");
 }

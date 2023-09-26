@@ -11,7 +11,10 @@
 #include <wiegand.h>
 
 CARD ACL[32];
+uint32_t PASSCODES[4] = {0, 0, 0, 0};
+const uint32_t OVERRIDE = MASTER_PASSCODE;
 const int ACL_SIZE = sizeof(ACL) / sizeof(CARD);
+const int PASSCODES_SIZE = sizeof(PASSCODES) / sizeof(uint32_t);
 
 /* Initialises the ACL.
  *
@@ -208,18 +211,31 @@ bool acl_allowed(uint32_t facility_code, uint32_t card) {
     return false;
 }
 
-/* Checks a keycode against the ACL passcode.
+/* Checks a keycode against the ACL passcode. Falls back to the compiled in master
+ * code if all the passcodes are zero.
  *
  */
 bool acl_passcode(const char *code) {
-    // for (int i = 0; i < ACL_SIZE; i++) {
-    //     const uint32_t card_number = ACL[i].card_number;
-    //     const bool allowed = ACL[i].allowed;
-    //
-    //     if ((card_number != 0xffffffff) && ((card_number / 100000) == facility_code) && ((card_number % 100000) == card)) {
-    //         return allowed;
-    //     }
-    // }
+    const int passcode = atoi(code);
+    char s[64];
+
+    if (passcode != 0) {
+        for (int i = 0; i < PASSCODES_SIZE; i++) {
+            if (passcode == PASSCODES[i]) {
+                return true;
+            }
+        }
+
+        for (int i = 0; i < PASSCODES_SIZE; i++) {
+            if (PASSCODES[i] != 0) {
+                return false;
+            }
+        }
+
+        if (passcode == OVERRIDE) {
+            return true;
+        }
+    }
 
     return false;
 }

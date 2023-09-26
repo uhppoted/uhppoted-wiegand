@@ -5,6 +5,7 @@ PORT=/dev/tty.usbmodem14201
 SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
+MASTER_PASSCODE=54321
 
 CLI_PORT=4242
 LOG_PORT=2424
@@ -24,6 +25,7 @@ clean:
 	export PICO_SDK_PATH=$(SDK) && \
 	       cd build && \
 	       cmake -DPICO_BOARD=pico_w -DSSID="$(SSID)"  -DPASSWORD="$(PASSWORD)" \
+	             -DMASTER_PASSCODE="$(MASTER_PASSCODE)" \
 	             -DTCPD_CLI_PORT="$(CLI_PORT)" \
 	             -DTCPD_LOG_PORT="$(LOG_PORT)" \
 	             -DTCPD_CLIENT_IDLE="$(TCPD_CLIENT_IDLE)" \
