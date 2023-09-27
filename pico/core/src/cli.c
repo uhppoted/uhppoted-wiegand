@@ -1,11 +1,13 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include <TPIC6B595.h>
+#include <acl.h>
 #include <buzzer.h>
 #include <cli.h>
 #include <logd.h>
 #include <sys.h>
+#include <TPIC6B595.h>
 #include <wiegand.h>
 #include <write.h>
 
@@ -37,6 +39,34 @@ void cli_set_time(char *cmd, txrx f, void *context) {
     sys_settime(cmd);
 
     f(context, ">> SET TIME OK");
+}
+
+/* Sets the override passcodes.
+ *
+ */
+void set_passcodes(char *cmd, txrx f, void *context) {
+    uint32_t passcodes[] = {0,0,0,0};
+    int ix = 0;
+    char *token = strtok(cmd," ,");
+    
+    while (token != NULL && ix < 4) {
+        printf(">>>>>>> %s\n",token);
+        char *end = NULL;
+        unsigned long v = strtoul(token, &end, 10);
+
+        if (v > 0 && v < 1000000) {
+            passcodes[ix] = v;            
+        }
+
+        token = strtok (NULL, " ,");
+        ix++;
+    }
+
+    if (acl_set_passcodes(passcodes[0],passcodes[1],passcodes[2],passcodes[3])) {
+        f(context, "ACL    SET PASSCODES OK");
+    } else {
+        f(context, "ACL    SET PASSCODES ERROR");
+    }
 }
 
 /* Keypad emulation.

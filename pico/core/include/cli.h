@@ -6,3 +6,4 @@ typedef void (*txrx)(void *, const char *);
 void reboot();
 void cli_set_time(char *, txrx, void *);
 void keypad(char *, txrx, void *);
+void set_passcodes(char *, txrx, void *);

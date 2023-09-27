@@ -70,7 +70,9 @@ void execw(char *cmd, txrx f, void *context) {
         int N = strlen(cmd);
 
         if (N > 0) {
-            if (strncasecmp(cmd, "time ", 5) == 0) {
+            if (strncasecmp(cmd, "reboot", 6) == 0) {
+                reboot(f, context);
+            } else if (strncasecmp(cmd, "time ", 5) == 0) {
                 cli_set_time(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "blink", 5) == 0) {
                 led_blink(5);
@@ -78,8 +80,6 @@ void execw(char *cmd, txrx f, void *context) {
                 query(f, context);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
                 on_door_unlock(f, context);
-            } else if (strncasecmp(cmd, "reboot", 6) == 0) {
-                reboot(f, context);
             } else if (strncasecmp(cmd, "mount", 5) == 0) {
                 mount(f, context);
             } else if (strncasecmp(cmd, "unmount", 7) == 0) {
@@ -96,6 +96,8 @@ void execw(char *cmd, txrx f, void *context) {
                 on_card_command(&cmd[6], grant, f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
                 on_card_command(&cmd[7], revoke, f, context);
+            } else if (strncasecmp(cmd, "passcodes", 9) == 0) {
+                set_passcodes(&cmd[9], f, context);
             } else if (strncasecmp(cmd, "debug", 5) == 0) {
                 debug(f, context);
             } else {
