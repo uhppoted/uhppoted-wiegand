@@ -1,20 +1,21 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include <TPIC6B595.h>
 #include <acl.h>
 #include <buzzer.h>
 #include <cli.h>
+#include <led.h>
 #include <logd.h>
 #include <sys.h>
-#include <TPIC6B595.h>
 #include <wiegand.h>
 #include <write.h>
 
 /* Goes into a tight loop until the watchdog resets the processor.
  *
  */
-void reboot(txrx f, void *context) {
+void cli_reboot(txrx f, void *context) {
     while (true) {
         buzzer_beep(1);
 
@@ -41,28 +42,34 @@ void cli_set_time(char *cmd, txrx f, void *context) {
     f(context, ">> SET TIME OK");
 }
 
+/* Blinks the blue LED.
+ *
+ */
+void cli_blink(txrx f, void *context) {
+    led_blink(5);
+}
+
 /* Sets the override passcodes.
  *
  */
 void set_passcodes(char *cmd, txrx f, void *context) {
-    uint32_t passcodes[] = {0,0,0,0};
+    uint32_t passcodes[] = {0, 0, 0, 0};
     int ix = 0;
-    char *token = strtok(cmd," ,");
-    
+    char *token = strtok(cmd, " ,");
+
     while (token != NULL && ix < 4) {
-        printf(">>>>>>> %s\n",token);
         char *end = NULL;
         unsigned long v = strtoul(token, &end, 10);
 
         if (v > 0 && v < 1000000) {
-            passcodes[ix] = v;            
+            passcodes[ix] = v;
         }
 
-        token = strtok (NULL, " ,");
+        token = strtok(NULL, " ,");
         ix++;
     }
 
-    if (acl_set_passcodes(passcodes[0],passcodes[1],passcodes[2],passcodes[3])) {
+    if (acl_set_passcodes(passcodes[0], passcodes[1], passcodes[2], passcodes[3])) {
         f(context, "ACL    SET PASSCODES OK");
     } else {
         f(context, "ACL    SET PASSCODES ERROR");

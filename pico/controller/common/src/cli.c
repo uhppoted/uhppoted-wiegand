@@ -7,7 +7,6 @@
 
 #include "acl.h"
 #include "common.h"
-#include "led.h"
 #include "logd.h"
 #include "relays.h"
 #include "sdcard.h"
@@ -71,11 +70,11 @@ void execw(char *cmd, txrx f, void *context) {
 
         if (N > 0) {
             if (strncasecmp(cmd, "reboot", 6) == 0) {
-                reboot(f, context);
+                cli_reboot(f, context);
             } else if (strncasecmp(cmd, "time ", 5) == 0) {
                 cli_set_time(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "blink", 5) == 0) {
-                led_blink(5);
+                cli_blink(f, context);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
@@ -262,6 +261,7 @@ void help(txrx f, void *context) {
     f(context, "LIST ACL                  List cards in ACL");
     f(context, "READ ACL                  Read ACL from SD card");
     f(context, "WRITE ACL                 Write ACL to SD card");
+    f(context, "PASSCODES                 Sets the override passcodes");
     f(context, "QUERY                     Display last card read/write");
     f(context, "");
     f(context, "MOUNT                     Mount SD card");

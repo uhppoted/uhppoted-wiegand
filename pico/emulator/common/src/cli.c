@@ -50,8 +50,12 @@ void execw(char *cmd, txrx f, void *context) {
         int N = strlen(cmd);
 
         if (N > 0) {
-            if (strncasecmp(cmd, "time ", 5) == 0) {
+            if (strncasecmp(cmd, "reboot", 6) == 0) {
+                cli_reboot(f, context);
+            } else if (strncasecmp(cmd, "time ", 5) == 0) {
                 cli_set_time(&cmd[5], f, context);
+            } else if (strncasecmp(cmd, "blink", 5) == 0) {
+                cli_blink(f, context);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
@@ -62,8 +66,6 @@ void execw(char *cmd, txrx f, void *context) {
                 on_press_button(f, context);
             } else if (strncasecmp(cmd, "release", 7) == 0) {
                 on_release_button(f, context);
-            } else if (strncasecmp(cmd, "reboot", 6) == 0) {
-                reboot(f, context);
             } else if (strncasecmp(cmd, "card ", 5) == 0) {
                 swipe(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "code ", 5) == 0) {

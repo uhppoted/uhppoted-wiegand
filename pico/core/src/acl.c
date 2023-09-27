@@ -214,13 +214,13 @@ bool acl_allowed(uint32_t facility_code, uint32_t card) {
 /* Sets the override passcodes.
  *
  */
-bool acl_set_passcodes(uint32_t passcode1,uint32_t passcode2,uint32_t passcode3,uint32_t passcode4) {
+bool acl_set_passcodes(uint32_t passcode1, uint32_t passcode2, uint32_t passcode3, uint32_t passcode4) {
     PASSCODES[0] = passcode1 > 0 && passcode1 < 1000000 ? passcode1 : 0;
     PASSCODES[1] = passcode2 > 0 && passcode2 < 1000000 ? passcode2 : 0;
     PASSCODES[2] = passcode3 > 0 && passcode3 < 1000000 ? passcode3 : 0;
     PASSCODES[3] = passcode4 > 0 && passcode4 < 1000000 ? passcode4 : 0;
 
-    return true;    
+    return true;
 }
 
 /* Checks a keycode against the ACL passcode. Falls back to the compiled in master
