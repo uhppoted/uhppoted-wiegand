@@ -10,7 +10,8 @@
 
 const uint32_t OFFSETS[2] = {
     PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE,
-    PICO_FLASH_SIZE_BYTES - 2 * FLASH_SECTOR_SIZE};
+    PICO_FLASH_SIZE_BYTES - 2 * FLASH_SECTOR_SIZE,
+};
 
 const int PAGES = sizeof(OFFSETS) / sizeof(uint32_t);
 
@@ -36,15 +37,25 @@ uint32_t crc32(const char *, size_t);
 /* Reads the ACL from onboard flash.
  *
  */
-void flash_read_acl(CARD cards[], int *N) {
+void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4]) {
     uint32_t page = flash_get_current_page();
 
     if (page != -1 && page < PAGES) {
         uint32_t addr = XIP_BASE + OFFSETS[page];
         uint32_t size = *(((uint32_t *)addr) + 2);
         uint32_t *p = (uint32_t *)(addr + HEADER_SIZE);
+        uint32_t *q = (uint32_t *)(addr) + 32;
         int ix = 0;
 
+        uint32_t *r = (uint32_t *)(addr);
+
+        // ... get passcodes
+        passcodes[0] = *q++;
+        passcodes[1] = *q++;
+        passcodes[2] = *q++;
+        passcodes[3] = *q++;
+
+        // ... get cards
         for (uint32_t i = 0; i < size && ix < *N; i++) {
             uint32_t card = *(p + 0);
             uint32_t start = *(p + 1);
@@ -60,26 +71,11 @@ void flash_read_acl(CARD cards[], int *N) {
             cards[ix].allowed = allowed;
             snprintf(cards[ix].name, CARD_NAME_SIZE, name);
 
-            // char s[128];
-            //
-            // snprintf(s, sizeof(s), ">>>>   CARD %-2lu %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
-            //          i + 1,
-            //          cards[ix].card_number,
-            //          cards[ix].start.year,
-            //          cards[ix].start.month,
-            //          cards[ix].start.day,
-            //          cards[ix].end.year,
-            //          cards[ix].end.month,
-            //          cards[ix].end.day,
-            //          cards[ix].allowed ? "Y" : "N",
-            //          cards[ix].name);
-            //
-            // logd_debug(s);
-
             ix++;
         }
 
         *N = ix;
+
         return;
     }
 
@@ -91,7 +87,7 @@ void flash_read_acl(CARD cards[], int *N) {
 /* Writes the ACL to onboard flash.
  *
  */
-void flash_write_acl(CARD cards[], int N) {
+void flash_write_acl(CARD cards[], int N, uint32_t passcodes[4]) {
     uint32_t page = flash_get_current_page();
     uint32_t version = flash_get_version(page);
 
@@ -106,6 +102,14 @@ void flash_write_acl(CARD cards[], int N) {
     uint32_t offset = OFFSETS[page];
     uint32_t buffer[FLASH_SECTOR_SIZE / sizeof(uint32_t)];
     struct header header;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    // ... set passcodes
+    buffer[32] = passcodes[0];
+    buffer[32 + 1] = passcodes[1];
+    buffer[32 + 2] = passcodes[2];
+    buffer[32 + 3] = passcodes[3];
 
     // .. fill cards buffer
     uint32_t *p = (uint32_t *)(&buffer[64]);
@@ -143,8 +147,9 @@ void flash_write_acl(CARD cards[], int N) {
     buffer[2] = header.cards;
     buffer[3] = header.crc;
 
-    // // ... write to flash
+    // ... write to flash
     uint32_t interrupts = save_and_disable_interrupts();
+
     flash_range_erase(offset, FLASH_SECTOR_SIZE);
     flash_range_program(offset, (uint8_t *)buffer, FLASH_SECTOR_SIZE);
     restore_interrupts(interrupts);
@@ -164,15 +169,6 @@ int flash_get_current_page() {
         header.version = *p++;
         header.cards = *p++;
         header.crc = *p++;
-
-        // char s[128];
-        //
-        // snprintf(s, sizeof(s), ">>>>   HEADER  magic:%08X version:%lu cards:%lu crc:%08x",
-        //          header.magic,
-        //          header.version,
-        //          header.cards,
-        //          header.crc);
-        // logd_debug(s);
 
         if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
             uint32_t crc = crc32((char *)(addr + HEADER_SIZE), header.cards * 64);

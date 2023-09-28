@@ -212,19 +212,6 @@ int sdcard_read_acl(CARD cards[], int *N) {
                 }
             }
 
-            // char s[128];
-            // snprintf(s, sizeof(s), ">>>>   CARD %-8lu %04d-%02d-%02d %04d-%02d-%02d %s %s",
-            //          cards[ix].card_number,
-            //          cards[ix].start.year,
-            //          cards[ix].start.month,
-            //          cards[ix].start.day,
-            //          cards[ix].end.year,
-            //          cards[ix].end.month,
-            //          cards[ix].end.day,
-            //          cards[ix].allowed ? "Y" : "N",
-            //          cards[ix].name);
-            // logd_debug(s);
-
             ix++;
         }
     }

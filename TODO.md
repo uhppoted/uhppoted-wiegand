@@ -9,6 +9,15 @@
             - [x] unlock on valid passcode
             - [x] master passcode
             - [ ] set passcodes
+                  - [ ] include passcodes in CRC
+                  - (?) clear ACL
+                  - [ ] Weird card after ACL grant/revoke 10058400:
+```
+>  ACL    10058399
+>  ACL    2147483647
+>  ACL    10058444
+```
+
       - [ ] 8-bit burst mode write
       - [ ] 8-bit burst mode read
       - [ ] card + PIN writer

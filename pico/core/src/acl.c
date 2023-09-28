@@ -33,7 +33,7 @@ int acl_load() {
     int N = ACL_SIZE;
     char s[64];
 
-    flash_read_acl(ACL, &N);
+    flash_read_acl(ACL, &N, PASSCODES);
     snprintf(s, sizeof(s), "ACL    LOADED %d CARDS FROM FLASH", N);
     logd_log(s);
 
@@ -76,13 +76,19 @@ int acl_save() {
     char s[64];
 
     for (int i = 0; i < ACL_SIZE; i++) {
+        if (ACL[i].card_number > 99965535) {
+            ACL[i].card_number = 0xffffffff;
+        }
+    }
+
+    for (int i = 0; i < ACL_SIZE; i++) {
         if (ACL[i].card_number != 0xffffffff) {
             N++;
         }
     }
 
     // ... save to flash
-    flash_write_acl(ACL, ACL_SIZE);
+    flash_write_acl(ACL, ACL_SIZE, PASSCODES);
     snprintf(s, sizeof(s), "ACL    STORED %d CARDS TO FLASH", N);
     logd_log(s);
 
@@ -215,10 +221,15 @@ bool acl_allowed(uint32_t facility_code, uint32_t card) {
  *
  */
 bool acl_set_passcodes(uint32_t passcode1, uint32_t passcode2, uint32_t passcode3, uint32_t passcode4) {
+    // ... set in-memory passcodes
     PASSCODES[0] = passcode1 > 0 && passcode1 < 1000000 ? passcode1 : 0;
     PASSCODES[1] = passcode2 > 0 && passcode2 < 1000000 ? passcode2 : 0;
     PASSCODES[2] = passcode3 > 0 && passcode3 < 1000000 ? passcode3 : 0;
     PASSCODES[3] = passcode4 > 0 && passcode4 < 1000000 ? passcode4 : 0;
+
+    // ... save to flash
+    flash_write_acl(ACL, ACL_SIZE, PASSCODES);
+    logd_log("ACL    UPDATED PASSCODES IN FLASH");
 
     return true;
 }

@@ -5,5 +5,5 @@
 
 #include "wiegand.h"
 
-extern void flash_read_acl(CARD[], int *);
-extern void flash_write_acl(CARD[], int);
+extern void flash_read_acl(CARD[], int *, uint32_t[4]);
+extern void flash_write_acl(CARD[], int, uint32_t[4]);
