@@ -9,9 +9,9 @@
             - [x] unlock on valid passcode
             - [x] master passcode
             - [ ] set passcodes
-                  - [ ] include passcodes in CRC
+                  - [x] include passcodes in CRC
                   - (?) clear ACL
-                  - [ ] Weird card after ACL grant/revoke 10058400:
+                  - [ ] Weird card after ACL revoking a card in the middle of a list
 ```
 >  ACL    10058399
 >  ACL    2147483647

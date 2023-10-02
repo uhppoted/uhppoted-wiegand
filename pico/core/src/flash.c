@@ -19,7 +19,10 @@ const uint32_t ACL_MAGIC_WORD = 0xaa5555aa;
 const uint32_t ACL_ALLOWED = 1;
 const uint32_t ACL_DENIED = 0;
 const uint32_t ACL_VERSION = 16384;
-const uint32_t HEADER_SIZE = FLASH_PAGE_SIZE;
+const uint32_t DATA_OFFSET = 128;
+const uint32_t DATA_PREAMBLE = 128;
+const uint32_t PASSCODES_OFFSET = 128;
+const uint32_t CARDS_OFFSET = 256; // FLASH_PAGE_SIZE
 
 typedef struct header {
     uint32_t magic;
@@ -43,8 +46,8 @@ void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4]) {
     if (page != -1 && page < PAGES) {
         uint32_t addr = XIP_BASE + OFFSETS[page];
         uint32_t size = *(((uint32_t *)addr) + 2);
-        uint32_t *p = (uint32_t *)(addr + HEADER_SIZE);
-        uint32_t *q = (uint32_t *)(addr) + 32;
+        uint32_t *p = (uint32_t *)(addr + CARDS_OFFSET);
+        uint32_t *q = (uint32_t *)(addr + PASSCODES_OFFSET);
         int ix = 0;
 
         uint32_t *r = (uint32_t *)(addr);
@@ -139,7 +142,7 @@ void flash_write_acl(CARD cards[], int N, uint32_t passcodes[4]) {
     header.magic = ACL_MAGIC_WORD;
     header.version = version;
     header.cards = count;
-    header.crc = crc32((char *)(&buffer[64]), count * 64);
+    header.crc = crc32((char *)(&buffer[32]), DATA_PREAMBLE + count * 64); // passcodes + cards
 
     // ... copy header to buffer
     buffer[0] = header.magic;
@@ -171,7 +174,7 @@ int flash_get_current_page() {
         header.crc = *p++;
 
         if (header.magic == ACL_MAGIC_WORD && header.version < ACL_VERSION && header.cards <= 60) {
-            uint32_t crc = crc32((char *)(addr + HEADER_SIZE), header.cards * 64);
+            uint32_t crc = crc32((char *)(addr + DATA_OFFSET), DATA_PREAMBLE + header.cards * 64); // passcodes + cards
 
             if (header.crc == crc) {
                 return index % PAGES;

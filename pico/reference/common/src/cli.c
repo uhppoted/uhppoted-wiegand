@@ -24,7 +24,6 @@ void query(txrx, void *);
 
 void on_card_command(char *, handler, txrx, void *);
 
-void on_door_unlock(txrx, void *);
 void on_door_open(txrx, void *);
 void on_door_close(txrx, void *);
 void on_press_button(txrx, void *);
@@ -78,7 +77,7 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "blink", 5) == 0) {
                 cli_blink(f, context);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
-                on_door_unlock(f, context);
+                cli_unlock_door(f, context);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
@@ -380,15 +379,6 @@ void on_card_command(char *cmd, handler fn, txrx f, void *context) {
     }
 
     fn(facility_code, card, f, context);
-}
-
-/* Unlocks door lock for 5 seconds (READER/CONTROLLER mode only).
- *
- */
-void on_door_unlock(txrx f, void *context) {
-    if ((mode == READER) || (mode == CONTROLLER)) {
-        door_unlock(5000);
-    }
 }
 
 /* Door contact emulation command handler.

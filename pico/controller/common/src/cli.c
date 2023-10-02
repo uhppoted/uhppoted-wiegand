@@ -8,7 +8,6 @@
 #include "acl.h"
 #include "common.h"
 #include "logd.h"
-#include "relays.h"
 #include "sdcard.h"
 #include "sys.h"
 #include "tcpd.h"
@@ -24,8 +23,6 @@ void help(txrx, void *);
 void query(txrx, void *);
 
 void on_card_command(char *cmd, handler fn, txrx, void *);
-
-void on_door_unlock(txrx, void *);
 
 void grant(uint32_t, uint32_t, txrx, void *);
 void revoke(uint32_t, uint32_t, txrx, void *);
@@ -78,7 +75,7 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
-                on_door_unlock(f, context);
+                cli_unlock_door(f, context);
             } else if (strncasecmp(cmd, "mount", 5) == 0) {
                 mount(f, context);
             } else if (strncasecmp(cmd, "unmount", 7) == 0) {
@@ -238,15 +235,6 @@ void write_acl(txrx f, void *context) {
     }
 
     f(context, s);
-}
-
-/* Unlocks door lock for 5 seconds.
- *
- */
-void on_door_unlock(txrx f, void *context) {
-    if (mode == CONTROLLER) {
-        door_unlock(5000);
-    }
 }
 
 /* Displays a list of the supported commands.

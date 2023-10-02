@@ -8,6 +8,7 @@
 #include <cli.h>
 #include <led.h>
 #include <logd.h>
+#include <relays.h>
 #include <sys.h>
 #include <wiegand.h>
 #include <write.h>
@@ -47,6 +48,15 @@ void cli_set_time(char *cmd, txrx f, void *context) {
  */
 void cli_blink(txrx f, void *context) {
     led_blink(5);
+}
+
+/* Unlocks door lock for 5 seconds.
+ *
+ */
+void cli_unlock_door(txrx f, void *context) {
+    if ((mode == READER) || (mode == CONTROLLER)) {
+        door_unlock(5000);
+    }
 }
 
 /* Sets the override passcodes.
