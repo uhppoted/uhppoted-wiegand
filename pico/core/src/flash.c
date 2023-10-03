@@ -245,7 +245,7 @@ datetime_t bin2date(uint32_t yyyymmdd) {
 
 // Ref. https://lxp32.github.io/docs/a-simple-example-crc32-calculation
 uint32_t crc32(const char *s, size_t N) {
-    uint32_t crc = 0xFFFFFFFF;
+    uint32_t crc = 0xffffffff;
 
     for (size_t i = 0; i < N; i++) {
         char ch = s[i];

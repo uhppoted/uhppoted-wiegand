@@ -34,7 +34,6 @@ void grant(uint32_t, uint32_t, txrx, void *);
 void revoke(uint32_t, uint32_t, txrx, void *);
 void list_acl(txrx, void *);
 void read_acl(txrx, void *);
-void write_acl(txrx, void *);
 
 void mount(txrx, void *);
 void unmount(txrx, void *);
@@ -88,6 +87,10 @@ void execw(char *cmd, txrx f, void *context) {
                 on_press_button(f, context);
             } else if (strncasecmp(cmd, "release", 7) == 0) {
                 on_release_button(f, context);
+            } else if (strncasecmp(cmd, "list acl", 8) == 0) {
+                list_acl(f, context);
+            } else if (strncasecmp(cmd, "clear acl", 9) == 0) {
+                cli_clear_acl(f, context);
             } else if (strncasecmp(cmd, "grant ", 6) == 0) {
                 on_card_command(&cmd[6], grant, f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
@@ -95,9 +98,7 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "read acl", 8) == 0) {
                 read_acl(f, context);
             } else if (strncasecmp(cmd, "write acl", 9) == 0) {
-                write_acl(f, context);
-            } else if (strncasecmp(cmd, "list acl", 8) == 0) {
-                list_acl(f, context);
+                cli_write_acl(f, context);
             } else if (strncasecmp(cmd, "mount", 5) == 0) {
                 mount(f, context);
             } else if (strncasecmp(cmd, "unmount", 7) == 0) {
@@ -156,7 +157,7 @@ void grant(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     f(context, s);
     logd_log(s);
 
-    write_acl(f, context);
+    cli_write_acl(f, context);
 }
 
 /* Removes a card number from the ACL.
@@ -177,7 +178,7 @@ void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     f(context, s);
     logd_log(s);
 
-    write_acl(f, context);
+    cli_write_acl(f, context);
 }
 
 /* Lists the ACL cards.
@@ -292,28 +293,6 @@ void read_acl(txrx f, void *context) {
     f(context, s);
 }
 
-/* Writes the ACL to the SD card
- *
- */
-void write_acl(txrx f, void *context) {
-    char s[64];
-
-    if (!gpio_get(SD_DET)) {
-        f(context, "DISK NO SDCARD");
-        logd_log("DISK NO SDCARD");
-    }
-
-    int rc = acl_save();
-
-    if (rc < 0) {
-        snprintf(s, sizeof(s), "DISK   ACL WRITE ERROR (%d)", rc);
-    } else {
-        snprintf(s, sizeof(s), "DISK   ACL WRITE OK (%d)", rc);
-    }
-
-    f(context, s);
-}
-
 /* Displays a list of the supported commands.
  *
  */
@@ -331,9 +310,10 @@ void help(txrx f, void *context) {
     f(context, "");
     f(context, "GRANT nnnnnn              Grant card access rights");
     f(context, "REVOKE nnnnnn             Revoke card access rights");
+    f(context, "LIST ACL                  Lists the cards in the ACL");
+    f(context, "CLEAR ACL                 Revoke all cards in ACL");
     f(context, "READ ACL                  Read ACL from SD card");
     f(context, "WRITE ACL                 Write ACL to SD card");
-    f(context, "LIST ACL                  Lists the cards in the ACL");
     f(context, "QUERY                     Display last card read/write");
     f(context, "");
     f(context, "MOUNT                     Mount SD card");

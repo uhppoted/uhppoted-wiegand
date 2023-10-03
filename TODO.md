@@ -8,10 +8,11 @@
       - [x] controller: execute
             - [x] unlock on valid passcode
             - [x] master passcode
-            - [ ] set passcodes
+            - [x] set passcodes
                   - [x] include passcodes in CRC
-                  - (?) clear ACL
-                  - [ ] Weird card after ACL revoking a card in the middle of a list
+            - [x] clear ACL
+            - [ ] Weird card after ACL revoking a card in the middle of a list
+                  - (?) list-acl issue probably
 ```
 >  ACL    10058399
 >  ACL    2147483647
@@ -22,8 +23,6 @@
       - [ ] 8-bit burst mode read
       - [ ] card + PIN writer
       - [ ] card + PIN read
-
-
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

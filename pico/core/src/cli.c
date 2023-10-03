@@ -59,10 +59,75 @@ void cli_unlock_door(txrx f, void *context) {
     }
 }
 
+/* Lists the ACL cards.
+ *
+ */
+void cli_list_acl(txrx f, void *context) {
+    uint32_t *cards;
+    int N = acl_list(&cards);
+
+    if (N == 0) {
+        f(context, "ACL    NO CARDS");
+        logd_log("ACL    NO CARDS");
+    } else {
+        for (int i = 0; i < N; i++) {
+            char s[32];
+            snprintf(s, sizeof(s), "ACL    %u", cards[i]);
+            f(context, s);
+        }
+    }
+
+    free(cards);
+}
+
+/* Removes all cards from the ACL.
+ *
+ */
+void cli_clear_acl(txrx f, void *context) {
+    char s[64];
+
+    bool ok = acl_clear();
+
+    if (ok) {
+        snprintf(s, sizeof(s), "ACL    CLEARED");
+    } else {
+        snprintf(s, sizeof(s), "ACL    CLEAR ERROR");
+    }
+
+    f(context, s);
+    logd_log(s);
+
+    if (ok) {
+        cli_write_acl(f, context);
+    }
+}
+
+/* Writes the ACL to flash/SD card.
+ *
+ */
+void cli_write_acl(txrx f, void *context) {
+    char s[64];
+
+    if (!gpio_get(SD_DET)) {
+        f(context, "DISK NO SDCARD");
+        logd_log("DISK NO SDCARD");
+    }
+
+    int rc = acl_save();
+
+    if (rc < 0) {
+        snprintf(s, sizeof(s), "DISK   ACL WRITE ERROR (%d)", rc);
+    } else {
+        snprintf(s, sizeof(s), "DISK   ACL WRITE OK (%d)", rc);
+    }
+
+    f(context, s);
+}
+
 /* Sets the override passcodes.
  *
  */
-void set_passcodes(char *cmd, txrx f, void *context) {
+void cli_set_passcodes(char *cmd, txrx f, void *context) {
     uint32_t passcodes[] = {0, 0, 0, 0};
     int ix = 0;
     char *token = strtok(cmd, " ,");

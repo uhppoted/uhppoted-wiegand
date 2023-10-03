@@ -129,6 +129,17 @@ int acl_list(uint32_t *list[]) {
     return count;
 }
 
+/* Removes all cards from the ACL.
+ *
+ */
+bool acl_clear() {
+    for (int i = 0; i < ACL_SIZE; i++) {
+        ACL[i].card_number = 0xffffffff;
+    }
+
+    return true;
+}
+
 /* Adds a card to the ACL.
  *
  */
