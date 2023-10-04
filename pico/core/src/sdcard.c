@@ -190,6 +190,8 @@ int sdcard_read_acl(CARD cards[], int *N) {
     while (f_gets(buffer, sizeof(buffer), &file) && ix < *N) {
         buffer[strcspn(buffer, "\n")] = 0;
 
+        printf(">> READ %s\n", buffer);
+
         char *p = strtok(buffer, " ");
 
         if (p && ((card_number = strtol(p, NULL, 10)) != 0)) {
@@ -236,25 +238,31 @@ int sdcard_write_acl(CARD cards[], int N) {
         return fr;
     }
 
-    for (int i = 0; i < N; i++) {
+    int count = 0;
+    for (int i = 0; i < 32 && count < N; i++) {
         CARD card = cards[i];
         char record[64];
 
-        snprintf(record,
-                 sizeof(record),
-                 "%-8u %04d-%02d-%02d %04d-%02d-%02d %c %s",
-                 card.card_number,
-                 card.start.year,
-                 card.start.month,
-                 card.start.day,
-                 card.end.year,
-                 card.end.month,
-                 card.end.day,
-                 card.allowed ? 'Y' : 'N',
-                 card.name);
-        if ((fr = f_printf(&file, "%s\n", record)) < 0) {
-            f_close(&file);
-            return fr;
+        if (card.card_number != 0 && card.card_number != 0xffffffff) {
+            snprintf(record,
+                     sizeof(record),
+                     "%-8u %04d-%02d-%02d %04d-%02d-%02d %c %s",
+                     card.card_number,
+                     card.start.year,
+                     card.start.month,
+                     card.start.day,
+                     card.end.year,
+                     card.end.month,
+                     card.end.day,
+                     card.allowed ? 'Y' : 'N',
+                     card.name);
+
+            if ((fr = f_printf(&file, "%s\n", record)) < 0) {
+                f_close(&file);
+                return fr;
+            }
+
+            count++;
         }
     }
 
