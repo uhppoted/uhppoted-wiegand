@@ -5,6 +5,7 @@
 #include "pico/util/queue.h"
 
 #define CARD_NAME_SIZE 48
+#define MAX_CARDS 32
 
 extern const uint UART0_RX;
 extern const uint UART0_TX;

@@ -10,7 +10,7 @@
 #include <sdcard.h>
 #include <wiegand.h>
 
-CARD ACL[32];
+CARD ACL[MAX_CARDS];
 uint32_t PASSCODES[4] = {0, 0, 0, 0};
 const uint32_t OVERRIDE = MASTER_PASSCODE;
 const int ACL_SIZE = sizeof(ACL) / sizeof(CARD);
@@ -33,7 +33,7 @@ int acl_load() {
     int N = ACL_SIZE;
     char s[64];
 
-    flash_read_acl(ACL, &N, PASSCODES);
+    flash_read_acl(ACL, &N, PASSCODES, PASSCODES_SIZE);
     snprintf(s, sizeof(s), "ACL    LOADED %d CARDS FROM FLASH", N);
     logd_log(s);
 
@@ -88,7 +88,7 @@ int acl_save() {
     }
 
     // ... save to flash
-    flash_write_acl(ACL, ACL_SIZE, PASSCODES);
+    flash_write_acl(ACL, ACL_SIZE, PASSCODES, PASSCODES_SIZE);
     snprintf(s, sizeof(s), "ACL    STORED %d CARDS TO FLASH", N);
     logd_log(s);
 
@@ -239,7 +239,7 @@ bool acl_set_passcodes(uint32_t passcode1, uint32_t passcode2, uint32_t passcode
     PASSCODES[3] = passcode4 > 0 && passcode4 < 1000000 ? passcode4 : 0;
 
     // ... save to flash
-    flash_write_acl(ACL, ACL_SIZE, PASSCODES);
+    flash_write_acl(ACL, ACL_SIZE, PASSCODES, PASSCODES_SIZE);
     logd_log("ACL    UPDATED PASSCODES IN FLASH");
 
     return true;

@@ -3,16 +3,12 @@
 - (?) Make -Wimplicit-function-declaration an error
 
 - [x] Weird card after ACL revoking a card in the middle of a list
+- [x] clear ACL
 
 - [ ] Emulate keypad (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/4)
       - [x] 4-bit burst mode write
       - [x] 4-bit burst mode read
-      - [x] controller: execute
-            - [x] unlock on valid passcode
-            - [x] master passcode
-            - [x] set passcodes
-                  - [x] include passcodes in CRC
-            - [x] clear ACL
+      - [x] controller passcodes
       - [ ] 8-bit burst mode write
       - [ ] 8-bit burst mode read
       - [ ] card + PIN writer

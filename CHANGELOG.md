@@ -4,6 +4,10 @@
 
 ### Added
 1. Keypad emulation
+2. _clear-acl_ command
+
+### Updated
+1. Fixed bug in SD card _store-acl_ logic.
 
 
 ## [0.8.6](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.6) - 2023-08-30

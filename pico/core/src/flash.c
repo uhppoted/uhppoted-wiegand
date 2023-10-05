@@ -40,7 +40,7 @@ uint32_t crc32(const char *, size_t);
 /* Reads the ACL from onboard flash.
  *
  */
-void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4]) {
+void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4], int max_passcodes) {
     uint32_t page = flash_get_current_page();
 
     if (page != -1 && page < PAGES) {
@@ -53,10 +53,9 @@ void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4]) {
         uint32_t *r = (uint32_t *)(addr);
 
         // ... get passcodes
-        passcodes[0] = *q++;
-        passcodes[1] = *q++;
-        passcodes[2] = *q++;
-        passcodes[3] = *q++;
+        for (int i = 0; i < max_passcodes; i++) {
+            passcodes[i] = *q++;
+        }
 
         // ... get cards
         for (uint32_t i = 0; i < size && ix < *N; i++) {
@@ -90,7 +89,7 @@ void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4]) {
 /* Writes the ACL to onboard flash.
  *
  */
-void flash_write_acl(CARD cards[], int N, uint32_t passcodes[4]) {
+void flash_write_acl(CARD cards[], int N, uint32_t passcodes[4], int max_passcodes) {
     uint32_t page = flash_get_current_page();
     uint32_t version = flash_get_version(page);
 
@@ -109,10 +108,9 @@ void flash_write_acl(CARD cards[], int N, uint32_t passcodes[4]) {
     memset(buffer, 0, sizeof(buffer));
 
     // ... set passcodes
-    buffer[32] = passcodes[0];
-    buffer[32 + 1] = passcodes[1];
-    buffer[32 + 2] = passcodes[2];
-    buffer[32 + 3] = passcodes[3];
+    for (int i = 0; i < max_passcodes; i++) {
+        buffer[32 + i] = passcodes[i];
+    }
 
     // .. fill cards buffer
     uint32_t *p = (uint32_t *)(&buffer[64]);

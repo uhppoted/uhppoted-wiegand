@@ -190,11 +190,9 @@ int sdcard_read_acl(CARD cards[], int *N) {
     while (f_gets(buffer, sizeof(buffer), &file) && ix < *N) {
         buffer[strcspn(buffer, "\n")] = 0;
 
-        printf(">> READ %s\n", buffer);
-
         char *p = strtok(buffer, " ");
 
-        if (p && ((card_number = strtol(p, NULL, 10)) != 0)) {
+        if (p && ((card_number = strtol(p, NULL, 10)) != 0) && card_number != 0xffffffff) {
             cards[ix].card_number = card_number;
             cards[ix].start = string2date("2000-01-01");
             cards[ix].end = string2date("2000-12-31");
@@ -239,7 +237,7 @@ int sdcard_write_acl(CARD cards[], int N) {
     }
 
     int count = 0;
-    for (int i = 0; i < 32 && count < N; i++) {
+    for (int i = 0; i < MAX_CARDS && count < N; i++) {
         CARD card = cards[i];
         char record[64];
 
