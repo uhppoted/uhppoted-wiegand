@@ -4,11 +4,12 @@ PORT=/dev/tty.usbmodem14201
 SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
+KEYPAD = 4-bit
 
 clean:
 	rm -rf build
 	mkdir -p build
-	export PICO_SDK_PATH=$(SDK) && cd build && cmake ..
+	export PICO_SDK_PATH=$(SDK) && cd build && cmake -DKEYPAD="$(KEYPAD)" ..
 
 format: src/*.c include/*.h
 	clang-format -i ./src/*.c

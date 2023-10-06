@@ -15,6 +15,7 @@ set(COMMON "../../common")
 add_compile_definitions(SYSDATE=$(SYSDATE))
 add_compile_definitions(SYSTIME=$(SYSTIME))
 add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
+add_compile_definitions(KEYPAD="${KEYPAD}")
 
 add_compile_definitions(SSID=\"${SSID}\")
 add_compile_definitions(PASSWORD=\"${PASSWORD}\")

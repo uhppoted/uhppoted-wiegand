@@ -17,6 +17,7 @@ add_compile_definitions(SYSDATE=$(SYSDATE))
 add_compile_definitions(SYSTIME=$(SYSTIME))
 add_compile_definitions(FACILITY_CODE=$(FACILITY_CODE))
 add_compile_definitions(MASTER_PASSCODE=${MASTER_PASSCODE})
+add_compile_definitions(KEYPAD="${KEYPAD}")
 
 pico_sdk_init()
 

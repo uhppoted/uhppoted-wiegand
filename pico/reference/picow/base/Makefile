@@ -5,13 +5,14 @@ SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
 MASTER_PASSCODE=54321
+KEYPAD = 4-bit
 
 clean:
 	rm -rf build
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && \
 	       cd build && \
-	       cmake -DPICO_BOARD=pico_w -DMASTER_PASSCODE="$(MASTER_PASSCODE)" ..
+	       cmake -DPICO_BOARD=pico_w -DMASTER_PASSCODE="$(MASTER_PASSCODE)" -DKEYPAD="$(KEYPAD)" ..
 
 format: ./src/*.c ./include/*.h
 	clang-format -i ./src/*.c
