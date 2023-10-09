@@ -4,39 +4,12 @@
 #include <WRITE.pio.h>
 #include <buzzer.h>
 #include <common.h>
+#include <keypad.h>
 #include <logd.h>
 #include <write.h>
 
 typedef struct writer {
 } writer;
-
-typedef struct keycode {
-    char digit;
-    uint32_t code4;
-    uint32_t code8;
-} keycode;
-
-enum KEYPADMODE {
-    BITS4 = 4,
-    BITS8 = 8,
-};
-
-enum KEYPADMODE keypadmode = BITS4;
-
-const keycode KEYCODES[] = {
-    {'0', 0, 0x00f0},
-    {'1', 1, 0x00e1},
-    {'2', 2, 0x00d2},
-    {'3', 3, 0x00c3},
-    {'4', 4, 0x00b4},
-    {'5', 5, 0x00a5},
-    {'6', 6, 0x0096},
-    {'7', 7, 0x0087},
-    {'8', 8, 0x0078},
-    {'9', 9, 0x0069},
-    {'*', 10, 0x005a},
-    {'#', 11, 0x004b},
-};
 
 /* Initialises the WRITER PIO.
  *
@@ -78,9 +51,7 @@ bool write_card(uint32_t facility_code, uint32_t card) {
  *
  */
 bool write_keycode(char digit) {
-    int N = sizeof(KEYCODES) / sizeof(keycode);
-
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < KEYCODES_SIZE; i++) {
         if (KEYCODES[i].digit == digit) {
             if (keypadmode == BITS8) {
                 writer_program_put(PIO_WRITER, SM_WRITER, KEYCODES[i].code8, 8);

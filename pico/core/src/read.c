@@ -6,6 +6,7 @@
 #include "pico/util/queue.h"
 
 #include <common.h>
+#include <keypad.h>
 #include <led.h>
 #include <logd.h>
 #include <read.h>
@@ -29,7 +30,6 @@ int64_t rxii(alarm_id_t, void *);
 int64_t keycode_timeout(alarm_id_t, void *);
 void on_keycode(char *, int);
 
-const char DIGITS[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#'};
 const uint32_t KEYCODE_TIMEOUT = 5000; // ms
 
 void read_initialise(enum MODE mode) {
@@ -68,23 +68,27 @@ void on_keypad_digit(uint32_t v) {
         code.alarm = 0;
     }
 
-    int keycode = v & 0x0000000f;
+    int keycode = v & 0x000000ff;
 
-    if (keycode < sizeof(DIGITS)) {
-        char digit = DIGITS[keycode];
+    for (int i = 0; i < KEYCODES_SIZE; i++) {
+        if (KEYCODES[i].code4 == keycode || KEYCODES[i].code8 == keycode) {
+            char digit = KEYCODES[i].digit;
 
-        if (digit == '*' || digit == '#') {
-            on_keycode(code.code, code.index);
-            code.index = 0;
-        } else if (code.index < sizeof(code.code)) {
-            code.code[code.index++] = digit;
-
-            if (code.index >= sizeof(code.code)) {
+            if (digit == '*' || digit == '#') {
                 on_keycode(code.code, code.index);
                 code.index = 0;
-            } else {
-                code.alarm = add_alarm_in_ms(KEYCODE_TIMEOUT, keycode_timeout, &code, true);
+            } else if (code.index < sizeof(code.code)) {
+                code.code[code.index++] = digit;
+
+                if (code.index >= sizeof(code.code)) {
+                    on_keycode(code.code, code.index);
+                    code.index = 0;
+                } else {
+                    code.alarm = add_alarm_in_ms(KEYCODE_TIMEOUT, keycode_timeout, &code, true);
+                }
             }
+
+            break;
         }
     }
 }
@@ -130,6 +134,11 @@ int64_t rxii(alarm_id_t id, void *data) {
         }
     } else if (b->count == 4) {
         uint32_t v = MSG_KEYPAD_DIGIT | (b->word & 0x0000000f);
+        if (!queue_is_full(&queue)) {
+            queue_try_add(&queue, &v);
+        }
+    } else if (b->count == 8) {
+        uint32_t v = MSG_KEYPAD_DIGIT | (b->word & 0x000000ff);
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }

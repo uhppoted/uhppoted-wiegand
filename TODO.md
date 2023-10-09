@@ -9,8 +9,8 @@
       - [x] 4-bit burst mode write
       - [x] 4-bit burst mode read
       - [x] controller passcodes
-      - [ ] 8-bit burst mode write
-      - [ ] 8-bit burst mode read
+      - [x] 8-bit burst mode write
+      - [x] 8-bit burst mode read
       - [ ] card + PIN writer
       - [ ] card + PIN read
 

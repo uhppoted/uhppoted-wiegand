@@ -27,6 +27,7 @@ add_executable(wiegand-emulator-usb
   ${CORE}/src/sys.c
   ${CORE}/src/read.c
   ${CORE}/src/write.c
+  ${CORE}/src/keypad.c
   ${CORE}/src/led.c
   ${CORE}/src/buzzer.c
   ${CORE}/src/relays.c

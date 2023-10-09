@@ -37,6 +37,7 @@ add_executable(wiegand-controller-picow
   ${CORE}/src/uart.c
   ${CORE}/src/sys.c
   ${CORE}/src/read.c
+  ${CORE}/src/keypad.c
   ${CORE}/src/led.c
   ${CORE}/src/buzzer.c
   ${CORE}/src/relays.c

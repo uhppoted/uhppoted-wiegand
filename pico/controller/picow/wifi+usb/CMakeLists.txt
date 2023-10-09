@@ -38,6 +38,7 @@ add_executable(wiegand-controller-wifi-usb
   ${CORE}/src/buzzer.c
   ${COMMON}/src/cli.c
   ${CORE}/src/common.c
+  ${CORE}/src/keypad.c
   ${CORE}/src/led.c
   ${CORE}/src/logd.c
   ${CORE}/src/read.c
