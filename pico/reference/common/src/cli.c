@@ -24,8 +24,6 @@ void query(txrx, void *);
 
 void on_card_command(char *, handler, txrx, void *);
 
-void on_door_open(txrx, void *);
-void on_door_close(txrx, void *);
 void on_press_button(txrx, void *);
 void on_release_button(txrx, void *);
 void write(uint32_t, uint32_t, txrx, void *);
@@ -80,9 +78,9 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
-                on_door_open(f, context);
+                cli_on_door_open(f, context);
             } else if (strncasecmp(cmd, "close", 5) == 0) {
-                on_door_close(f, context);
+                cli_on_door_close(f, context);
             } else if (strncasecmp(cmd, "press", 5) == 0) {
                 on_press_button(f, context);
             } else if (strncasecmp(cmd, "release", 7) == 0) {
@@ -359,18 +357,6 @@ void on_card_command(char *cmd, handler fn, txrx f, void *context) {
     }
 
     fn(facility_code, card, f, context);
-}
-
-/* Door contact emulation command handler.
- *  Opens/closes the door contact emulation relay (in reader mode only).
- *
- */
-void on_door_open(txrx f, void *context) {
-    relay_door_contact(false);
-}
-
-void on_door_close(txrx f, void *context) {
-    relay_door_contact(true);
 }
 
 /* Pushbutton emulation command handler.

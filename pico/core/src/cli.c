@@ -59,6 +59,20 @@ void cli_unlock_door(txrx f, void *context) {
     }
 }
 
+/* Door contact emulation command handler.
+ *  Opens/closes the door contact emulation relay (in reader mode only).
+ *
+ */
+void cli_on_door_open(txrx f, void *context) {
+    relay_door_contact(false);
+    f(context, ">> OPENED");
+}
+
+void cli_on_door_close(txrx f, void *context) {
+    relay_door_contact(true);
+    f(context, ">> CLOSED");
+}
+
 /* Lists the ACL cards.
  *
  */

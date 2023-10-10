@@ -18,8 +18,6 @@ void help(txrx, void *);
 void query(txrx, void *);
 void swipe(char *cmd, txrx, void *);
 
-void on_door_open(txrx, void *);
-void on_door_close(txrx, void *);
 void on_press_button(txrx, void *);
 void on_release_button(txrx, void *);
 
@@ -56,12 +54,10 @@ void execw(char *cmd, txrx f, void *context) {
                 cli_set_time(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "blink", 5) == 0) {
                 cli_blink(f, context);
-            } else if (strncasecmp(cmd, "query", 5) == 0) {
-                query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
-                on_door_open(f, context);
+                cli_on_door_open(f, context);
             } else if (strncasecmp(cmd, "close", 5) == 0) {
-                on_door_close(f, context);
+                cli_on_door_close(f, context);
             } else if (strncasecmp(cmd, "press", 5) == 0) {
                 on_press_button(f, context);
             } else if (strncasecmp(cmd, "release", 7) == 0) {
@@ -70,6 +66,8 @@ void execw(char *cmd, txrx f, void *context) {
                 swipe(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "code ", 5) == 0) {
                 keypad(&cmd[1], f, context);
+            } else if (strncasecmp(cmd, "query", 5) == 0) {
+                query(f, context);
             } else {
                 help(f, context);
             }
@@ -143,20 +141,6 @@ void swipe(char *cmd, txrx f, void *context) {
 
     f(context, "CARD   WRITE OK");
     logd_log("CARD   WRITE OK");
-}
-
-/* Door contact emulation command handler.
- *  Opens/closes the door contact emulation relay (in reader mode only).
- *
- */
-void on_door_open(txrx f, void *context) {
-    relay_door_contact(false);
-    f(context, ">> OPENED");
-}
-
-void on_door_close(txrx f, void *context) {
-    relay_door_contact(true);
-    f(context, ">> CLOSED");
 }
 
 /* Pushbutton emulation command handler.
