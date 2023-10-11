@@ -11,7 +11,7 @@
       - [x] controller passcodes
       - [x] 8-bit burst mode write
       - [x] 8-bit burst mode read
-      - [ ] card + PIN writer
+      - [x] card + PIN writer
       - [ ] card + PIN read
 
 
@@ -26,6 +26,7 @@
    - [ ] Buzzer
    - (?) CLI auth
          - HOTP
+   - (?) Replace CLI with API
    - [ ] tweetnacl/TLS
          - [ ] TCP/IP
          - (?) ACL

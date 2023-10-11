@@ -165,6 +165,56 @@ void cli_set_passcodes(char *cmd, txrx f, void *context) {
     }
 }
 
+/* Card swipe + (optional) keycode emulation.
+ *  Extract the facility code, card number and (optionally) the keycode from
+ *  the command and writes the card and keycode (if present) to the Wiegand
+ *  interface.
+ */
+void cli_swipe(char *cmd, txrx f, void *context) {
+    uint32_t facility_code = FACILITY_CODE;
+    uint32_t card = 0;
+    char *token = strtok(cmd, " ,");
+    char *code;
+
+    if (token != NULL) {
+        int N = strlen(token);
+
+        if (N < 5) {
+            if (sscanf(cmd, "%0u", &card) < 1) {
+                return;
+            }
+        } else {
+            if (sscanf(&token[N - 5], "%05u", &card) < 1) {
+                return;
+            }
+
+            if (N == 6 && sscanf(token, "%01u", &facility_code) < 1) {
+                return;
+            } else if (N == 7 && sscanf(token, "%02u", &facility_code) < 1) {
+                return;
+            } else if (N == 8 && sscanf(token, "%03u", &facility_code) < 1) {
+                return;
+            } else if (N > 8) {
+                return;
+            }
+        }
+
+        if ((mode == WRITER) || (mode == EMULATOR)) {
+            if ((code = strtok(NULL, " ,")) == NULL) {
+                write_card(facility_code, card);
+                f(context, "CARD   WRITE OK");
+                logd_log("CARD   WRITE OK");
+            } else {
+                write_card(facility_code, card);
+                keypad(code, f, context);
+
+                f(context, "CARD+  WRITE OK");
+                logd_log("CARD+  WRITE OK");
+            }
+        }
+    }
+}
+
 /* Keypad emulation.
  *  Sends the keycode code as 4-bit burst mode Wiegand.
  *

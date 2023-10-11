@@ -13,4 +13,6 @@ void cli_list_acl(txrx, void *);
 void cli_clear_acl(txrx, void *);
 void cli_write_acl(txrx, void *);
 void cli_set_passcodes(char *, txrx, void *);
+
+void cli_swipe(char *, txrx f, void *);
 void keypad(char *, txrx, void *);

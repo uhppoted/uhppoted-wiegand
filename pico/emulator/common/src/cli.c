@@ -16,8 +16,6 @@ typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
 void help(txrx, void *);
 void query(txrx, void *);
-void swipe(char *cmd, txrx, void *);
-void swipex(char *cmd, txrx, void *);
 
 void on_press_button(txrx, void *);
 void on_release_button(txrx, void *);
@@ -64,9 +62,7 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "release", 7) == 0) {
                 on_release_button(f, context);
             } else if (strncasecmp(cmd, "card ", 5) == 0) {
-                swipe(&cmd[5], f, context);
-            } else if (strncasecmp(cmd, "card+ ", 6) == 0) {
-                swipex(&cmd[6], f, context);
+                cli_swipe(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "code ", 5) == 0) {
                 keypad(&cmd[1], f, context);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
@@ -95,8 +91,7 @@ void help(txrx f, void *context) {
     f(context, "-----");
     f(context, "Commands:");
     f(context, "TIME yyyy-mm-dd hh:mm:ss  Set date/time");
-    f(context, "CARD nnnnnn               Write card to Wiegand-26 interface");
-    f(context, "CARD+ nnnnnn dddddd       Write card+keycode to Wiegand-26 interface");
+    f(context, "CARD nnnnnn dddddd        Write card + (optional) keycode to the Wiegand interface");
     f(context, "CODE dddddd               Enter keypad digits");
     f(context, "QUERY                     Display last card read/write");
     f(context, "OPEN                      Opens door contact relay");
@@ -107,83 +102,6 @@ void help(txrx f, void *context) {
     f(context, "REBOOT                    Reboot");
     f(context, "?                         Display list of commands");
     f(context, "-----");
-}
-
-/* Card swipe emulation.
- *  Extract the facility code and card number and invokes the handler function.
- *
- */
-void swipe(char *cmd, txrx f, void *context) {
-    uint32_t facility_code = FACILITY_CODE;
-    uint32_t card = 0;
-    int N = strlen(cmd);
-    int rc;
-
-    if (N < 5) {
-        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
-            return;
-        }
-    } else {
-        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
-            return;
-        }
-
-        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
-            return;
-        } else if (N > 8) {
-            return;
-        }
-    }
-
-    if ((mode == WRITER) || (mode == EMULATOR)) {
-        write_card(facility_code, card);
-    }
-
-    f(context, "CARD   WRITE OK");
-    logd_log("CARD   WRITE OK");
-}
-
-/* Card swipe + keycode emulation.
- *  Extract the facility code, card number keycode and invokes the handler function.
- *
- */
-void swipex(char *cmd, txrx f, void *context) {
-    // uint32_t facility_code = FACILITY_CODE;
-    // uint32_t card = 0;
-    // int N = strlen(cmd);
-    // int rc;
-
-    // if (N < 5) {
-    //     if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
-    //         return;
-    //     }
-    // } else {
-    //     if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
-    //         return;
-    //     }
-
-    //     if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
-    //         return;
-    //     } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
-    //         return;
-    //     } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
-    //         return;
-    //     } else if (N > 8) {
-    //         return;
-    //     }
-    // }
-
-    if ((mode == WRITER) || (mode == EMULATOR)) {
-        write_card(100, 58401);
-        keypad("7531#", f, context);
-    }
-
-    f(context, "CARD+  WRITE OK");
-    logd_log("CARD+  WRITE OK");
 }
 
 /* Pushbutton emulation command handler.

@@ -26,7 +26,6 @@ void on_card_command(char *, handler, txrx, void *);
 
 void on_press_button(txrx, void *);
 void on_release_button(txrx, void *);
-void write(uint32_t, uint32_t, txrx, void *);
 
 void grant(uint32_t, uint32_t, txrx, void *);
 void revoke(uint32_t, uint32_t, txrx, void *);
@@ -104,7 +103,7 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "format", 6) == 0) {
                 format(f, context);
             } else if (strncasecmp(cmd, "card ", 5) == 0) {
-                on_card_command(&cmd[5], write, f, context);
+                cli_swipe(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "code ", 5) == 0) {
                 keypad(&cmd[1], f, context);
             } else {
@@ -122,19 +121,6 @@ void query(txrx f, void *context) {
 
     cardf(&last_card, s, sizeof(s), true);
     f(context, s);
-}
-
-/* Write card command.
- *  Extract the facility code and card number pushes it to the emulator queue.
- *
- */
-void write(uint32_t facility_code, uint32_t card, txrx f, void *context) {
-    if ((mode == WRITER) || (mode == EMULATOR)) {
-        write_card(facility_code, card);
-    }
-
-    f(context, "CARD   WRITE OK");
-    logd_log("CARD   WRITE OK");
 }
 
 /* Adds a card number to the ACL.
@@ -299,7 +285,7 @@ void help(txrx f, void *context) {
     f(context, "Commands:");
     f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time");
     f(context, "");
-    f(context, "CARD nnnnnn               Write card to Wiegand-26 interface");
+    f(context, "CARD nnnnnn dddddd        Write card + (optional) keycode to the Wiegand interface");
     f(context, "CODE dddddd               Enter keypad digits");
     f(context, "OPEN                      Opens door contact relay");
     f(context, "CLOSE                     Closes door contact relay");
