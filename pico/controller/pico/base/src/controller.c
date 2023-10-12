@@ -35,8 +35,6 @@ const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
-const uint32_t MSG_CARD_READ = 0x40000000;
-const uint32_t MSG_CODE = 0x50000000;
 const uint32_t MSG_KEYPAD_DIGIT = 0x60000000;
 const uint32_t MSG_LED = 0x70000000;
 const uint32_t MSG_RELAY = 0x80000000;
@@ -112,24 +110,24 @@ int main() {
             free(b);
         }
 
-        if ((v & MSG) == MSG_CARD_READ) {
-            on_card_read(v & 0x0fffffff);
-
-            if (last_card.ok && mode == CONTROLLER) {
-                if (acl_allowed(last_card.facility_code, last_card.card_number)) {
-                    last_card.granted = GRANTED;
-                    led_blink(1);
-                    door_unlock(5000);
-                } else {
-                    last_card.granted = DENIED;
-                    led_blink(3);
-                }
-            }
-
-            char s[64];
-            cardf(&last_card, s, sizeof(s), false);
-            logd_log(s);
-        }
+        // if ((v & MSG) == MSG_CARD) {
+        //     on_card_read(v & 0x0fffffff);
+        //
+        //     if (last_card.ok && mode == CONTROLLER) {
+        //         if (acl_allowed(last_card.facility_code, last_card.card_number)) {
+        //             last_card.granted = GRANTED;
+        //             led_blink(1);
+        //             door_unlock(5000);
+        //         } else {
+        //             last_card.granted = DENIED;
+        //             led_blink(3);
+        //         }
+        //     }
+        //
+        //     char s[64];
+        //     cardf(&last_card, s, sizeof(s), false);
+        //     logd_log(s);
+        // }
 
         if ((v & MSG) == MSG_LED) {
             led_event(v & 0x0fffffff);

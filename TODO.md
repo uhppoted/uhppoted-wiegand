@@ -13,6 +13,7 @@
       - [x] 8-bit burst mode read
       - [x] card + PIN writer
       - [ ] card + PIN read
+      - [ ] FIXME in acl.c
 
 
 - [ ] PicoW+TCP/IP

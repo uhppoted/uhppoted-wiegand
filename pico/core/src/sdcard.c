@@ -195,9 +195,10 @@ int sdcard_read_acl(CARD cards[], int *N) {
         if (p && ((card_number = strtol(p, NULL, 10)) != 0) && card_number != 0xffffffff) {
             cards[ix].card_number = card_number;
             cards[ix].start = string2date("2000-01-01");
-            cards[ix].end = string2date("2000-12-31");
+            cards[ix].end = string2date("2099-12-31");
             cards[ix].allowed = false;
-            snprintf(cards[ix].name, CARD_NAME_SIZE, "****");
+            snprintf(cards[ix].PIN, sizeof(cards[ix].PIN), "");
+            snprintf(cards[ix].name, sizeof(cards[ix].name), "****");
 
             if ((p = strtok(NULL, " ")) != NULL) {
                 cards[ix].start = string2date(p);
@@ -206,7 +207,10 @@ int sdcard_read_acl(CARD cards[], int *N) {
                     if ((p = strtok(NULL, " ")) != NULL) {
                         cards[ix].allowed = strncmp(p, "Y", 1) == 0 || strncmp(p, "y", 1) == 0;
                         if ((p = strtok(NULL, " ")) != NULL) {
-                            snprintf(cards[ix].name, CARD_NAME_SIZE, p);
+                            snprintf(cards[ix].PIN, sizeof(cards[ix].PIN), p);
+                            if ((p = strtok(NULL, " ")) != NULL) {
+                                snprintf(cards[ix].name, sizeof(cards[ix].name), p);
+                            }
                         }
                     }
                 }
@@ -244,7 +248,7 @@ int sdcard_write_acl(CARD cards[], int N) {
         if (card.card_number != 0 && card.card_number != 0xffffffff) {
             snprintf(record,
                      sizeof(record),
-                     "%-8u %04d-%02d-%02d %04d-%02d-%02d %c %s",
+                     "%-8u %04d-%02d-%02d %04d-%02d-%02d %c %s %s",
                      card.card_number,
                      card.start.year,
                      card.start.month,
@@ -253,6 +257,7 @@ int sdcard_write_acl(CARD cards[], int N) {
                      card.end.month,
                      card.end.day,
                      card.allowed ? 'Y' : 'N',
+                     card.PIN,
                      card.name);
 
             if ((fr = f_printf(&file, "%s\n", record)) < 0) {

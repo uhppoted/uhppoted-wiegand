@@ -128,7 +128,7 @@ int64_t rxii(alarm_id_t id, void *data) {
     buffer *b = (buffer *)data;
 
     if (b->count == 26) {
-        uint32_t v = MSG_CARD_READ | (b->word & 0x03ffffff);
+        uint32_t v = MSG_CARD | (b->word & 0x03ffffff);
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }

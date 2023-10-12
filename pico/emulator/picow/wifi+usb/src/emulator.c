@@ -33,7 +33,7 @@ const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
-const uint32_t MSG_CARD_READ = 0x40000000;
+const uint32_t MSG_CARD = 0x40000000;
 const uint32_t MSG_CODE = 0x50000000;
 const uint32_t MSG_KEYPAD_DIGIT = 0x60000000;
 const uint32_t MSG_LED = 0x70000000;
@@ -114,7 +114,7 @@ int main() {
             free(b);
         }
 
-        if ((v & MSG) == MSG_CARD_READ) {
+        if ((v & MSG) == MSG_CARD) {
             on_card_read(v & 0x0fffffff);
 
             char s[64];

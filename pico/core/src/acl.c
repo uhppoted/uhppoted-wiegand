@@ -57,7 +57,8 @@ int acl_load() {
                 ACL[i].start = cards[i].start;
                 ACL[i].end = cards[i].end;
                 ACL[i].allowed = cards[i].allowed;
-                snprintf(ACL[1].name, CARD_NAME_SIZE, cards[i].name);
+                snprintf(ACL[i].PIN, sizeof(cards[i].PIN), "");
+                snprintf(ACL[i].name, sizeof(cards[i].name), cards[i].name);
             }
 
             snprintf(s, sizeof(s), "DISK   LOADED %d CARDS FROM SDCARD", N);
@@ -75,6 +76,7 @@ int acl_save() {
     int N = 0;
     char s[64];
 
+    // FIXME: check facility code and card number correctly
     for (int i = 0; i < ACL_SIZE; i++) {
         if (ACL[i].card_number > 99965535) {
             ACL[i].card_number = 0xffffffff;
@@ -174,7 +176,8 @@ bool acl_grant(uint32_t facility_code, uint32_t card) {
             ACL[i].start = start;
             ACL[i].end = end;
             ACL[i].allowed = true;
-            snprintf(ACL[i].name, CARD_NAME_SIZE, "----");
+            snprintf(ACL[i].PIN, sizeof(ACL[i].PIN), "");
+            snprintf(ACL[i].name, sizeof(ACL[i].name), "----");
             return true;
         }
     }
@@ -185,7 +188,8 @@ bool acl_grant(uint32_t facility_code, uint32_t card) {
             ACL[i].start = start;
             ACL[i].end = end;
             ACL[i].allowed = true;
-            snprintf(ACL[i].name, CARD_NAME_SIZE, "----");
+            snprintf(ACL[i].PIN, sizeof(ACL[i].PIN), "");
+            snprintf(ACL[i].name, sizeof(ACL[i].name), "----");
 
             return true;
         }

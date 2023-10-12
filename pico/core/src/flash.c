@@ -63,7 +63,8 @@ void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4], int max_passcod
             uint32_t start = *(p + 1);
             uint32_t end = *(p + 2);
             bool allowed = *(p + 3) == ACL_ALLOWED;
-            char *name = (char *)(p + 4);
+            char *PIN = (char *)(p + 4);
+            char *name = (char *)(p + 6);
 
             p += 16;
 
@@ -71,7 +72,8 @@ void flash_read_acl(CARD cards[], int *N, uint32_t passcodes[4], int max_passcod
             cards[ix].start = bin2date(start);
             cards[ix].end = bin2date(end);
             cards[ix].allowed = allowed;
-            snprintf(cards[ix].name, CARD_NAME_SIZE, name);
+            snprintf(cards[i].PIN, sizeof(cards[ix].PIN), PIN);
+            snprintf(cards[ix].name, sizeof(cards[ix].name), name);
 
             ix++;
         }
@@ -126,8 +128,11 @@ void flash_write_acl(CARD cards[], int N, uint32_t passcodes[4], int max_passcod
             *(p + 2) = bcd(cards[ix].end);
             *(p + 3) = card.allowed ? ACL_ALLOWED : ACL_DENIED;
 
-            memset((char *)(p + 4), 0, 48);
-            snprintf((char *)(p + 4), 48, "%s", card.name);
+            memset((char *)(p + 4), 0, 8);
+            snprintf((char *)(p + 4), sizeof(card.PIN), "%s", card.PIN);
+
+            memset((char *)(p + 6), 0, sizeof(card.name));
+            snprintf((char *)(p + 6), sizeof(card.name), "%s", card.name);
 
             p += 16;
             count++;

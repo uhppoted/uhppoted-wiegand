@@ -112,11 +112,18 @@ void debug(txrx f, void *context) {
     char *s;
 
     if ((s = calloc(N, 1)) != NULL) {
-        snprintf(s, N, "%s", "12345");
-        uint32_t msg = MSG_CODE | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
-        if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
-            free(s);
+        // ... card
+        uint32_t v = MSG_CARD | (0x0C9C841 & 0x03ffffff); // 10058400
+        if (!queue_is_full(&queue)) {
+            queue_try_add(&queue, &v);
         }
+
+        // // ... keycode
+        // snprintf(s, N, "%s", "12345");
+        // uint32_t msg = MSG_CODE | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
+        // if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+        //     free(s);
+        // }
     }
 
     f(context, ">> DEBUG OK");

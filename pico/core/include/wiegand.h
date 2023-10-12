@@ -4,6 +4,7 @@
 
 #include "pico/util/queue.h"
 
+#define CARD_PIN_SIZE 5
 #define CARD_NAME_SIZE 48
 #define MAX_CARDS 32
 
@@ -39,7 +40,8 @@ typedef struct CARD {
     datetime_t start;
     datetime_t end;
     bool allowed;
-    char name[CARD_NAME_SIZE];
+    char PIN[CARD_PIN_SIZE + 1];
+    char name[CARD_NAME_SIZE + 1];
 } CARD;
 
 typedef struct card {
@@ -77,7 +79,7 @@ extern const uint32_t MSG;
 extern const uint32_t MSG_SYSINIT;
 extern const uint32_t MSG_SYSCHECK;
 extern const uint32_t MSG_WATCHDOG;
-extern const uint32_t MSG_CARD_READ;
+extern const uint32_t MSG_CARD;
 extern const uint32_t MSG_CODE;
 extern const uint32_t MSG_KEYPAD_DIGIT;
 extern const uint32_t MSG_LED;
