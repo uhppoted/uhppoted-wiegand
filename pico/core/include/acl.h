@@ -9,7 +9,7 @@ extern int acl_save();
 
 extern int acl_list(uint32_t *[]);
 extern bool acl_clear();
-extern bool acl_grant(uint32_t, uint32_t);
+extern bool acl_grant(uint32_t, uint32_t, const char *);
 extern bool acl_revoke(uint32_t, uint32_t);
 extern bool acl_allowed(uint32_t, uint32_t);
 

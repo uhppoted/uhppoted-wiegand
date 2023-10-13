@@ -24,7 +24,6 @@ void query(txrx, void *);
 
 void on_card_command(char *cmd, handler fn, txrx, void *);
 
-void grant(uint32_t, uint32_t, txrx, void *);
 void revoke(uint32_t, uint32_t, txrx, void *);
 void list_acl(txrx, void *);
 void read_acl(txrx, void *);
@@ -82,15 +81,15 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "format", 6) == 0) {
                 format(f, context);
             } else if (strncasecmp(cmd, "list acl", 8) == 0) {
-                cli_list_acl(f, context);
+                cli_acl_list(f, context);
             } else if (strncasecmp(cmd, "clear acl", 9) == 0) {
-                cli_clear_acl(f, context);
+                cli_acl_clear(f, context);
             } else if (strncasecmp(cmd, "read acl", 8) == 0) {
                 read_acl(f, context);
             } else if (strncasecmp(cmd, "write acl", 9) == 0) {
-                cli_write_acl(f, context);
+                cli_acl_write(f, context);
             } else if (strncasecmp(cmd, "grant ", 6) == 0) {
-                on_card_command(&cmd[6], grant, f, context);
+                cli_acl_grant(&cmd[6], f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
                 on_card_command(&cmd[7], revoke, f, context);
             } else if (strncasecmp(cmd, "passcodes", 9) == 0) {
@@ -139,27 +138,6 @@ void query(txrx f, void *context) {
     f(context, s);
 }
 
-/* Adds a card number to the ACL.
- *
- */
-void grant(uint32_t facility_code, uint32_t card, txrx f, void *context) {
-    char s[64];
-    char c[16];
-
-    snprintf(c, sizeof(c), "%u%05u", facility_code, card);
-
-    if (acl_grant(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD   %-8s %s", c, "GRANTED");
-    } else {
-        snprintf(s, sizeof(s), "CARD   %-8s %s", c, "ERROR");
-    }
-
-    f(context, s);
-    logd_log(s);
-
-    cli_write_acl(f, context);
-}
-
 /* Removes a card number from the ACL.
  *
  */
@@ -177,7 +155,7 @@ void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
 
     f(context, s);
     logd_log(s);
-    cli_write_acl(f, context);
+    cli_acl_write(f, context);
 }
 
 /* Loads an ACL from the SD card

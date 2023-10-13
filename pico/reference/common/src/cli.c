@@ -27,9 +27,7 @@ void on_card_command(char *, handler, txrx, void *);
 void on_press_button(txrx, void *);
 void on_release_button(txrx, void *);
 
-void grant(uint32_t, uint32_t, txrx, void *);
 void revoke(uint32_t, uint32_t, txrx, void *);
-void list_acl(txrx, void *);
 void read_acl(txrx, void *);
 
 void mount(txrx, void *);
@@ -85,17 +83,17 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "release", 7) == 0) {
                 on_release_button(f, context);
             } else if (strncasecmp(cmd, "list acl", 8) == 0) {
-                list_acl(f, context);
+                cli_acl_list(f, context);
             } else if (strncasecmp(cmd, "clear acl", 9) == 0) {
-                cli_clear_acl(f, context);
+                cli_acl_clear(f, context);
             } else if (strncasecmp(cmd, "grant ", 6) == 0) {
-                on_card_command(&cmd[6], grant, f, context);
+                cli_acl_grant(&cmd[6], f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
                 on_card_command(&cmd[7], revoke, f, context);
             } else if (strncasecmp(cmd, "read acl", 8) == 0) {
                 read_acl(f, context);
             } else if (strncasecmp(cmd, "write acl", 9) == 0) {
-                cli_write_acl(f, context);
+                cli_acl_write(f, context);
             } else if (strncasecmp(cmd, "mount", 5) == 0) {
                 mount(f, context);
             } else if (strncasecmp(cmd, "unmount", 7) == 0) {
@@ -123,27 +121,6 @@ void query(txrx f, void *context) {
     f(context, s);
 }
 
-/* Adds a card number to the ACL.
- *
- */
-void grant(uint32_t facility_code, uint32_t card, txrx f, void *context) {
-    char s[64];
-    char c[16];
-
-    snprintf(c, sizeof(c), "%u%05u", facility_code, card);
-
-    if (acl_grant(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "GRANTED");
-    } else {
-        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "ERROR");
-    }
-
-    f(context, s);
-    logd_log(s);
-
-    cli_write_acl(f, context);
-}
-
 /* Removes a card number from the ACL.
  *
  */
@@ -162,28 +139,7 @@ void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     f(context, s);
     logd_log(s);
 
-    cli_write_acl(f, context);
-}
-
-/* Lists the ACL cards.
- *
- */
-void list_acl(txrx f, void *context) {
-    uint32_t *cards;
-    int N = acl_list(&cards);
-
-    if (N == 0) {
-        f(context, "ACL   NO CARDS");
-        logd_log("ACL   NO CARDS");
-    } else {
-        for (int i = 0; i < N; i++) {
-            char s[32];
-            snprintf(s, sizeof(s), "ACL   %u", cards[i]);
-            f(context, s);
-        }
-    }
-
-    free(cards);
+    cli_acl_write(f, context);
 }
 
 /* Formats the SD card.

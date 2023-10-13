@@ -76,7 +76,7 @@ void cli_on_door_close(txrx f, void *context) {
 /* Lists the ACL cards.
  *
  */
-void cli_list_acl(txrx f, void *context) {
+void cli_acl_list(txrx f, void *context) {
     uint32_t *cards;
     int N = acl_list(&cards);
 
@@ -97,7 +97,7 @@ void cli_list_acl(txrx f, void *context) {
 /* Removes all cards from the ACL.
  *
  */
-void cli_clear_acl(txrx f, void *context) {
+void cli_acl_clear(txrx f, void *context) {
     char s[64];
 
     bool ok = acl_clear();
@@ -112,14 +112,14 @@ void cli_clear_acl(txrx f, void *context) {
     logd_log(s);
 
     if (ok) {
-        cli_write_acl(f, context);
+        cli_acl_write(f, context);
     }
 }
 
 /* Writes the ACL to flash/SD card.
  *
  */
-void cli_write_acl(txrx f, void *context) {
+void cli_acl_write(txrx f, void *context) {
     char s[64];
 
     if (!gpio_get(SD_DET)) {
@@ -136,6 +136,68 @@ void cli_write_acl(txrx f, void *context) {
     }
 
     f(context, s);
+}
+
+/* Grants card permissions.
+ *  Extract the facility code and card number and (optional) PIN and updates
+ *  the ACL.
+ *
+ */
+void cli_acl_grant(char *cmd, txrx f, void *context) {
+    // ... extract facility code, card and (optional) PIN code
+    uint32_t facility_code = FACILITY_CODE;
+    uint32_t card = 0;
+    char *PIN = "";
+
+    // ... facility code and card
+    char *p = strtok(cmd, " ");
+
+    if (p != NULL) {
+        int N = strlen(p);
+        int rc;
+
+        if (N < 5) {
+            if ((rc = sscanf(p, "%0u", &card)) < 1) {
+                return;
+            }
+        } else {
+            if ((rc = sscanf(&p[N - 5], "%05u", &card)) < 1) {
+                return;
+            }
+
+            if (N == 6 && ((rc = sscanf(p, "%01u", &facility_code)) < 1)) {
+                return;
+            } else if (N == 7 && ((rc = sscanf(p, "%02u", &facility_code)) < 1)) {
+                return;
+            } else if (N == 8 && ((rc = sscanf(p, "%03u", &facility_code)) < 1)) {
+                return;
+            } else if (N > 8) {
+                return;
+            }
+        }
+
+        // ... optional PIN code
+        if ((p = strtok(NULL, " ")) != NULL) {
+            PIN = p;
+        }
+
+        // ... grant access
+        char s[64];
+        bool ok = acl_grant(facility_code, card, PIN);
+
+        if (ok) {
+            snprintf(s, sizeof(s), "CARD   %u%05u %s", facility_code, card, "GRANTED");
+        } else {
+            snprintf(s, sizeof(s), "CARD   %u%05u %s", facility_code, card, "ERROR");
+        }
+
+        f(context, s);
+        logd_log(s);
+
+        if (ok) {
+            cli_acl_write(f, context);
+        }
+    }
 }
 
 /* Sets the override passcodes.

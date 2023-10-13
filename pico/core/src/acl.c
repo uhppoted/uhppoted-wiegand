@@ -145,7 +145,7 @@ bool acl_clear() {
 /* Adds a card to the ACL.
  *
  */
-bool acl_grant(uint32_t facility_code, uint32_t card) {
+bool acl_grant(uint32_t facility_code, uint32_t card, const char *PIN) {
     uint32_t v = (facility_code * 100000) + (card % 100000);
     datetime_t now;
 
