@@ -29,13 +29,17 @@ void cardf(const card *c, char *s, int N, bool timestamped) {
         if (!c->ok) {
             snprintf(g, sizeof(g), "INVALID");
         } else {
-            switch (c->granted) {
+            switch (c->access) {
             case GRANTED:
                 snprintf(g, sizeof(g), "ACCESS GRANTED");
                 break;
 
             case DENIED:
                 snprintf(g, sizeof(g), "ACCESS DENIED");
+                break;
+
+            case NEEDS_PIN:
+                snprintf(g, sizeof(g), "PIN REQUIRED");
                 break;
 
             default:

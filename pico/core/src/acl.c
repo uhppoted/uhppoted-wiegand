@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <f_util.h>
 #include <hardware/rtc.h>
@@ -176,7 +177,7 @@ bool acl_grant(uint32_t facility_code, uint32_t card, const char *PIN) {
             ACL[i].start = start;
             ACL[i].end = end;
             ACL[i].allowed = true;
-            snprintf(ACL[i].PIN, sizeof(ACL[i].PIN), "");
+            snprintf(ACL[i].PIN, sizeof(ACL[i].PIN), PIN);
             snprintf(ACL[i].name, sizeof(ACL[i].name), "----");
             return true;
         }
@@ -188,7 +189,7 @@ bool acl_grant(uint32_t facility_code, uint32_t card, const char *PIN) {
             ACL[i].start = start;
             ACL[i].end = end;
             ACL[i].allowed = true;
-            snprintf(ACL[i].PIN, sizeof(ACL[i].PIN), "");
+            snprintf(ACL[i].PIN, sizeof(ACL[i].PIN), PIN);
             snprintf(ACL[i].name, sizeof(ACL[i].name), "----");
 
             return true;
@@ -219,17 +220,29 @@ bool acl_revoke(uint32_t facility_code, uint32_t card) {
 /* Checks a card against the ACL.
  *
  */
-bool acl_allowed(uint32_t facility_code, uint32_t card) {
+enum ACCESS acl_allowed(uint32_t facility_code, uint32_t card, const char *pin) {
     for (int i = 0; i < ACL_SIZE; i++) {
         const uint32_t card_number = ACL[i].card_number;
         const bool allowed = ACL[i].allowed;
 
         if ((card_number != 0xffffffff) && ((card_number / 100000) == facility_code) && ((card_number % 100000) == card)) {
-            return allowed;
+            if (ACL[i].allowed && strncmp(ACL[i].PIN, "", CARD_PIN_SIZE) == 0) {
+                return GRANTED;
+            }
+
+            if (ACL[i].allowed && strncmp(ACL[i].PIN, pin, CARD_PIN_SIZE) == 0) {
+                return GRANTED;
+            }
+
+            if (ACL[i].allowed && strncmp(ACL[i].PIN, "", CARD_PIN_SIZE) != 0 && strncmp(pin, "", CARD_PIN_SIZE) == 0) {
+                return NEEDS_PIN;
+            }
+
+            return DENIED;
         }
     }
 
-    return false;
+    return DENIED;
 }
 
 /* Sets the override passcodes.

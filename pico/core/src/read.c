@@ -50,7 +50,7 @@ void on_card_read(uint32_t v) {
     last_card.ok = (even % 2) == 0 && (odd % 2) == 1;
     last_card.facility_code = (card >> 16) & 0x000000ff;
     last_card.card_number = card & 0x0000ffff;
-    last_card.granted = UNKNOWN;
+    last_card.access = UNKNOWN;
 
     rtc_get_datetime(&last_card.timestamp);
     blink(last_card.ok ? GOOD_CARD : BAD_CARD);

@@ -28,6 +28,8 @@
 #include <wiegand.h>
 #include <write.h>
 
+#include "../include/reference.h"
+
 #define VERSION "v0.8.5"
 
 // GPIO
@@ -91,6 +93,7 @@ int main() {
     while (true) {
         uint32_t v;
         queue_remove_blocking(&queue, &v);
+        dispatch(v);
 
         if ((v & MSG) == MSG_SYSINIT) {
             sysinit();
@@ -121,12 +124,14 @@ int main() {
             on_card_read(v & 0x0fffffff);
 
             if (last_card.ok && ((mode == READER) || (mode == CONTROLLER))) {
-                if (acl_allowed(last_card.facility_code, last_card.card_number)) {
-                    last_card.granted = GRANTED;
+                enum ACCESS access;
+
+                if ((access = acl_allowed(last_card.facility_code, last_card.card_number, "")) == GRANTED) {
+                    last_card.access = GRANTED;
                     led_blink(1);
                     door_unlock(5000);
                 } else {
-                    last_card.granted = DENIED;
+                    last_card.access = DENIED;
                     led_blink(3);
                 }
             }

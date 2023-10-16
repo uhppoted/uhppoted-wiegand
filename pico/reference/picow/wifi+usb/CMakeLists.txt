@@ -32,6 +32,7 @@ pico_sdk_init()
 add_executable(wiegand_wifi_usb
   ./src/reference.c
   ${COMMON}/src/cli.c
+  ${COMMON}/src/reference.c
   ${CORE}/src/common.c
   ${CORE}/src/uart.c
   ${CORE}/src/sys.c

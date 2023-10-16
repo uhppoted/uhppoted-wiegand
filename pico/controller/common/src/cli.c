@@ -84,10 +84,6 @@ void execw(char *cmd, txrx f, void *context) {
                 cli_acl_list(f, context);
             } else if (strncasecmp(cmd, "clear acl", 9) == 0) {
                 cli_acl_clear(f, context);
-            } else if (strncasecmp(cmd, "read acl", 8) == 0) {
-                read_acl(f, context);
-            } else if (strncasecmp(cmd, "write acl", 9) == 0) {
-                cli_acl_write(f, context);
             } else if (strncasecmp(cmd, "grant ", 6) == 0) {
                 cli_acl_grant(&cmd[6], f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
@@ -117,12 +113,12 @@ void debug(txrx f, void *context) {
             queue_try_add(&queue, &v);
         }
 
-        // // ... keycode
-        // snprintf(s, N, "%s", "12345");
-        // uint32_t msg = MSG_CODE | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
-        // if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
-        //     free(s);
-        // }
+        // ... keycode
+        snprintf(s, N, "%s", "12345");
+        uint32_t msg = MSG_CODE | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
+        if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+            free(s);
+        }
     }
 
     f(context, ">> DEBUG OK");
@@ -158,28 +154,6 @@ void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
     cli_acl_write(f, context);
 }
 
-/* Loads an ACL from the SD card
- *
- */
-void read_acl(txrx f, void *context) {
-    int detected = gpio_get(SD_DET);
-    char s[64];
-
-    if (!detected) {
-        f(context, "DISK   NO SDCARD");
-        logd_log("DISK   NO SDCARD");
-    }
-
-    int rc = acl_load();
-    if (rc < 0) {
-        snprintf(s, sizeof(s), "ACL    READ ERROR (%d)", rc);
-    } else {
-        snprintf(s, sizeof(s), "ACL    READ OK (%d CARDS)", rc);
-    }
-
-    f(context, s);
-}
-
 /* Displays a list of the supported commands.
  *
  */
@@ -188,12 +162,10 @@ void help(txrx f, void *context) {
     f(context, "Commands:");
     f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time (YYYY-MM-DD HH:mm:ss)");
     f(context, "");
-    f(context, "GRANT nnnnnn              Grant card access rights");
-    f(context, "REVOKE nnnnnn             Revoke card access rights");
     f(context, "LIST ACL                  List cards in ACL");
     f(context, "CLEAR ACL                 Revoke all cards in ACL");
-    f(context, "READ ACL                  Read ACL from SD card");
-    f(context, "WRITE ACL                 Write ACL to SD card");
+    f(context, "GRANT nnnnnn              Grant card access rights");
+    f(context, "REVOKE nnnnnn             Revoke card access rights");
     f(context, "PASSCODES                 Sets the override passcodes");
     f(context, "QUERY                     Display last card read/write");
     f(context, "");

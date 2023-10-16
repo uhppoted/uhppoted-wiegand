@@ -13,8 +13,9 @@
       - [x] 8-bit burst mode read
       - [x] card + PIN writer
       - [ ] card + PIN read
+            - [ ] timeout on keycode
       - [ ] FIXME in acl.c
-
+      - [ ] Check mode == CONTROLLER in unlock, etc
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

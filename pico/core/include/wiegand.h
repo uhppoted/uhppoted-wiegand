@@ -32,7 +32,8 @@ enum MODE {
 
 enum ACCESS {
     GRANTED = 1,
-    DENIED = 2
+    DENIED = 2,
+    NEEDS_PIN = 3
 };
 
 typedef struct CARD {
@@ -49,7 +50,7 @@ typedef struct card {
     uint32_t facility_code;
     uint32_t card_number;
     bool ok;
-    enum ACCESS granted;
+    enum ACCESS access;
 } card;
 
 extern enum MODE mode;
