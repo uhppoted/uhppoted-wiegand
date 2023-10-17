@@ -247,7 +247,6 @@ void cli_acl_revoke(char *cmd, txrx f, void *context) {
     }
 }
 
-
 /* Sets the override passcodes.
  *
  */

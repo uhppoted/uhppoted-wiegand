@@ -6,16 +6,23 @@
 #include <hardware/rtc.h>
 
 #include <acl.h>
+#include <common.h>
 #include <flash.h>
+#include <led.h>
 #include <logd.h>
 #include <sdcard.h>
 #include <wiegand.h>
 
 CARD ACL[MAX_CARDS];
 uint32_t PASSCODES[4] = {0, 0, 0, 0};
+alarm_id_t acl_PIN_alarm;
+
 const uint32_t OVERRIDE = MASTER_PASSCODE;
 const int ACL_SIZE = sizeof(ACL) / sizeof(CARD);
 const int PASSCODES_SIZE = sizeof(PASSCODES) / sizeof(uint32_t);
+const uint32_t PIN_TIMEOUT = 12500; // ms
+
+int64_t acl_PIN_timeout(alarm_id_t id, void *data);
 
 /* Initialises the ACL.
  *
@@ -221,6 +228,11 @@ bool acl_revoke(uint32_t facility_code, uint32_t card) {
  *
  */
 enum ACCESS acl_allowed(uint32_t facility_code, uint32_t card, const char *pin) {
+    if (acl_PIN_alarm > 0) {
+        cancel_alarm(acl_PIN_alarm);
+        acl_PIN_alarm = 0;
+    }
+
     for (int i = 0; i < ACL_SIZE; i++) {
         const uint32_t card_number = ACL[i].card_number;
         const bool allowed = ACL[i].allowed;
@@ -235,7 +247,9 @@ enum ACCESS acl_allowed(uint32_t facility_code, uint32_t card, const char *pin) 
             }
 
             if (ACL[i].allowed && strncmp(ACL[i].PIN, "", CARD_PIN_SIZE) != 0 && strncmp(pin, "", CARD_PIN_SIZE) == 0) {
-                return NEEDS_PIN;
+                if ((acl_PIN_alarm = add_alarm_in_ms(PIN_TIMEOUT, acl_PIN_timeout, NULL, true)) >= 0) {
+                    return NEEDS_PIN;
+                }
             }
 
             return DENIED;
@@ -289,4 +303,18 @@ bool acl_passcode(const char *code) {
     }
 
     return false;
+}
+
+int64_t acl_PIN_timeout(alarm_id_t id, void *data) {
+    char s[64];
+
+    acl_PIN_alarm = 0;
+
+    last_card.access = DENIED;
+    led_blink(3);
+
+    cardf(&last_card, s, sizeof(s), false);
+    logd_log(s);
+
+    return 0;
 }

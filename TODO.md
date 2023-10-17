@@ -13,8 +13,9 @@
       - [x] 8-bit burst mode read
       - [x] card + PIN writer
       - [ ] card + PIN read
-            - [ ] timeout on keycode
+            - [x] timeout on keycode
             - [ ] _reference_ implementation
+            - [ ] rework ACL as struct (with cards, timer, etc)
       - [ ] FIXME in acl.c
       - [ ] Check mode == CONTROLLER in unlock, etc
 

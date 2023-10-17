@@ -18,7 +18,7 @@
 
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
-void debug(txrx, void *);
+void debug(txrx, void *, int);
 void help(txrx, void *);
 void query(txrx, void *);
 
@@ -84,8 +84,10 @@ void execw(char *cmd, txrx f, void *context) {
                 cli_acl_revoke(&cmd[7], f, context);
             } else if (strncasecmp(cmd, "passcodes", 9) == 0) {
                 cli_set_passcodes(&cmd[9], f, context);
-            } else if (strncasecmp(cmd, "debug", 5) == 0) {
-                debug(f, context);
+            } else if (strncasecmp(cmd, "debugx", 7) == 0) {
+                debug(f, context, 1);
+            } else if (strncasecmp(cmd, "debugy", 7) == 0) {
+                debug(f, context, 2);
             } else {
                 help(f, context);
             }
@@ -96,26 +98,32 @@ void execw(char *cmd, txrx f, void *context) {
 /* -- DEBUG --
  *
  */
-void debug(txrx f, void *context) {
-    int N = 6;
-    char *s;
-
-    if ((s = calloc(N, 1)) != NULL) {
-        // ... card
+void debug(txrx f, void *context, int action) {
+    // ... card
+    if (action == 1) {
         uint32_t v = MSG_CARD | (0x0C9C841 & 0x03ffffff); // 10058400
         if (!queue_is_full(&queue)) {
             queue_try_add(&queue, &v);
         }
 
-        // ... keycode
-        snprintf(s, N, "%s", "12345");
-        uint32_t msg = MSG_CODE | ((uint32_t)s & 0x0fffffff); // SRAM_BASE is 0x20000000
-        if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
-            free(s);
-        }
+        f(context, ">> DEBUG CARD");
     }
 
-    f(context, ">> DEBUG OK");
+    // ... keycode
+    if (action == 2) {
+        int N = 6;
+        char *code;
+
+        if ((code = calloc(N, 1)) != NULL) {
+            snprintf(code, N, "%s", "12345");
+            uint32_t msg = MSG_CODE | ((uint32_t)code & 0x0fffffff); // SRAM_BASE is 0x20000000
+            if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+                free(code);
+            } else {
+                f(context, ">> DEBUG CODE");
+            }
+        }
+    }
 }
 
 /* Displays the last read/write card, if any.
