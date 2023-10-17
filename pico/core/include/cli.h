@@ -11,6 +11,7 @@ void cli_on_door_close(txrx, void *);
 void cli_acl_list(txrx, void *);
 void cli_acl_clear(txrx, void *);
 void cli_acl_grant(char *, txrx, void *);
+void cli_acl_revoke(char *, txrx, void *);
 void cli_acl_write(txrx, void *);
 void cli_set_passcodes(char *, txrx, void *);
 

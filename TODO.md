@@ -14,6 +14,7 @@
       - [x] card + PIN writer
       - [ ] card + PIN read
             - [ ] timeout on keycode
+            - [ ] _reference_ implementation
       - [ ] FIXME in acl.c
       - [ ] Check mode == CONTROLLER in unlock, etc
 

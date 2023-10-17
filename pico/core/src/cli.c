@@ -200,6 +200,54 @@ void cli_acl_grant(char *cmd, txrx f, void *context) {
     }
 }
 
+/* Revokes card permissions.
+ *  Extract the facility code and card number and updates the ACL.
+ *
+ */
+void cli_acl_revoke(char *cmd, txrx f, void *context) {
+    uint32_t facility_code = FACILITY_CODE;
+    uint32_t card = 0;
+    int N = strlen(cmd);
+    int rc;
+
+    if (N < 5) {
+        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
+            return;
+        }
+    } else {
+        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
+            return;
+        }
+
+        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
+            return;
+        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
+            return;
+        } else if (N > 8) {
+            return;
+        }
+    }
+
+    char s[64];
+    bool ok = acl_revoke(facility_code, card);
+
+    if (ok) {
+        snprintf(s, sizeof(s), "CARD   %u%05u %s", facility_code, card, "REVOKED");
+    } else {
+        snprintf(s, sizeof(s), "CARD   %u%05u %s", facility_code, card, "ERROR");
+    }
+
+    f(context, s);
+    logd_log(s);
+
+    if (ok) {
+        cli_acl_write(f, context);
+    }
+}
+
+
 /* Sets the override passcodes.
  *
  */

@@ -22,12 +22,6 @@ void debug(txrx, void *);
 void help(txrx, void *);
 void query(txrx, void *);
 
-void on_card_command(char *cmd, handler fn, txrx, void *);
-
-void revoke(uint32_t, uint32_t, txrx, void *);
-void list_acl(txrx, void *);
-void read_acl(txrx, void *);
-
 void mount(txrx, void *);
 void unmount(txrx, void *);
 void format(txrx, void *);
@@ -87,7 +81,7 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "grant ", 6) == 0) {
                 cli_acl_grant(&cmd[6], f, context);
             } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
-                on_card_command(&cmd[7], revoke, f, context);
+                cli_acl_revoke(&cmd[7], f, context);
             } else if (strncasecmp(cmd, "passcodes", 9) == 0) {
                 cli_set_passcodes(&cmd[9], f, context);
             } else if (strncasecmp(cmd, "debug", 5) == 0) {
@@ -134,26 +128,6 @@ void query(txrx f, void *context) {
     f(context, s);
 }
 
-/* Removes a card number from the ACL.
- *
- */
-void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
-    char s[64];
-    char c[16];
-
-    snprintf(c, sizeof(c), "%u%05u", facility_code, card);
-
-    if (acl_revoke(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD   %-8s %s", c, "REVOKED");
-    } else {
-        snprintf(s, sizeof(s), "CARD   %-8s %s", c, "ERROR");
-    }
-
-    f(context, s);
-    logd_log(s);
-    cli_acl_write(f, context);
-}
-
 /* Displays a list of the supported commands.
  *
  */
@@ -181,39 +155,6 @@ void help(txrx f, void *context) {
     f(context, "");
     f(context, "?                         Display list of commands");
     f(context, "-----");
-}
-
-/* Card command handler.
- *  Extract the facility code and card number and invokes the handler function.
- *
- */
-void on_card_command(char *cmd, handler fn, txrx f, void *context) {
-    uint32_t facility_code = FACILITY_CODE;
-    uint32_t card = 0;
-    int N = strlen(cmd);
-    int rc;
-
-    if (N < 5) {
-        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
-            return;
-        }
-    } else {
-        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
-            return;
-        }
-
-        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
-            return;
-        } else if (N > 8) {
-            return;
-        }
-    }
-
-    fn(facility_code, card, f, context);
 }
 
 /* Mounts the SD card.
