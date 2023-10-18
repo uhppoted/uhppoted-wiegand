@@ -14,7 +14,7 @@
       - [x] card + PIN writer
       - [ ] card + PIN read
             - [x] timeout on keycode
-            - [ ] rework ACL as struct (with cards, timer, etc)
+            - [x] rework ACL as struct (with cards, timer, etc)
             - [ ] _reference_ implementation
       - [x] FIXME in acl.c
       - [ ] Check mode == CONTROLLER in unlock, etc
