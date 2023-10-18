@@ -158,6 +158,7 @@ bool acl_clear() {
  *
  */
 bool acl_grant(uint32_t facility_code, uint32_t card, const char *PIN) {
+    if (facility_code < 256 && card < 65536) {
     uint32_t v = (facility_code * 100000) + (card % 100000);
     datetime_t now;
 
@@ -206,6 +207,7 @@ bool acl_grant(uint32_t facility_code, uint32_t card, const char *PIN) {
             return true;
         }
     }
+}
 
     return false;
 }
