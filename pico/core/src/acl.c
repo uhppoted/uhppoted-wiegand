@@ -84,9 +84,13 @@ int acl_save() {
     int N = 0;
     char s[64];
 
-    // FIXME: check facility code and card number correctly
+    // ... discard invalid cards
     for (int i = 0; i < ACL_SIZE; i++) {
-        if (ACL[i].card_number > 99965535) {
+        uint32_t card = ACL[i].card_number;
+        uint32_t facility_code = card / 100000;
+        uint32_t card_number = card % 100000;
+
+        if (facility_code > 255 || card_number > 65535) {
             ACL[i].card_number = 0xffffffff;
         }
     }

@@ -14,10 +14,12 @@
       - [x] card + PIN writer
       - [ ] card + PIN read
             - [x] timeout on keycode
-            - [ ] _reference_ implementation
             - [ ] rework ACL as struct (with cards, timer, etc)
-      - [ ] FIXME in acl.c
+            - [ ] _reference_ implementation
+      - [x] FIXME in acl.c
       - [ ] Check mode == CONTROLLER in unlock, etc
+      - [ ] README
+      - [ ] CHANGELOG
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

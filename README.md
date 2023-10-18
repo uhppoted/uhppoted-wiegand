@@ -83,36 +83,35 @@ single letter mnemonics and need to be terminated by a carriage return and/or li
 
 The supported command set comprises:
 
-| *Command*      | *Description*                           |
-| -------------- | --------------------------------------- |
-| T              | Set date/time (YYYY-MM-DD HH:mm:ss)     |
-| Wnnnnnnnn      | Emulates card swipe                     |
-| Kdddddddd      | Emulates keypad                         |
-|                |                                         |
-| GRANT nnnnnn   | Grant card access rights                |
-| REVOKE nnnnnn  | Revoke card access rights               |
-| LIST ACL       | List cards in ACL                       |
-| READ ACL       | Read ACL from SD card                   |
-| WRITE ACL      | Write ACL to SD card                    |
-| QUERY          | Display last card read/write            |
-|                |                                         |
-| MOUNT          | Mount SD card                           |
-| UNMOUNT        | Unmount SD card                         |
-| FORMAT         | Format SD card                          |
-|                |                                         |
-| UNLOCK         | Unlocks door for 5 seconds              |
-| OPEN           | Emulates door open contact              |
-| CLOSE          | Emulates door close contact             |
-| PRESS          | Emulates pushbutton press               |
-| RELEASE        | Emulates pushbutton release             |
-|                |                                         |
-| BLINK          | Blinks reader LED 5 times               |
-| CLS            | Reinitialises terminal                  |
-| REBOOT         | Reboot                                  |
-| ?              | Display list of commands                |
+| *Command*             | *Description*                           |
+| --------------------- | --------------------------------------- |
+| T yyyy-mm-dd HH:mm:ss | Set date/time                           |
+| CARD nnnnnnnn         | Emulates card swipe                     |
+| CODE ddddddd          | Emulates keypad                         |
+|                       |                                         |
+| LIST ACL              | List cards in ACL                       |
+| CLEAR ACL             | Deletes all cards in ACL                |
+| GRANT nnnnnn          | Grant card access rights                |
+| REVOKE nnnnnn         | Revoke card access rights               |
+| QUERY                 | Display last card read/write            |
+|                       |                                         |
+| MOUNT                 | Mount SD card                           |
+| UNMOUNT               | Unmount SD card                         |
+| FORMAT                | Format SD card                          |
+|                       |                                         |
+| UNLOCK                | Unlocks door for 5 seconds              |
+| OPEN                  | Emulates door open contact              |
+| CLOSE                 | Emulates door close contact             |
+| PRESS                 | Emulates pushbutton press               |
+| RELEASE               | Emulates pushbutton release             |
+|                       |                                         |
+| BLINK                 | Blinks reader LED 5 times               |
+| CLS                   | Reinitialises terminal                  |
+| REBOOT                | Reboot                                  |
+| ?                     | Display list of commands                |
 
 
-Notes:| |
+Notes:
 1. The default facility code for _emulator_ mode is a build time constant (`FACILITY_CODE` in the _Makefile_) and will
 be used if the _W_ command card number is 5 digits or less.
 
