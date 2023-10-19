@@ -30,9 +30,9 @@ add_compile_definitions(TCPD_POLL_INTERVAL=${TCPD_POLL_INTERVAL})
 pico_sdk_init()
 
 add_executable(wiegand_wifi
-  ./src/reference.c
+  ./src/universal.c
   ${COMMON}/src/cli.c
-  ${COMMON}/src/reference.c
+  ${COMMON}/src/universal.c
   ${CORE}/src/common.c
   ${CORE}/src/uart.c
   ${CORE}/src/sys.c

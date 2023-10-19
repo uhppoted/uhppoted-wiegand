@@ -4,7 +4,9 @@
 
 ### Added
 1. Keypad emulation
-2. _clear-acl_ command
+2. Passcode access override
+3. Card + optional PIN access
+4. _clear-acl_ command
 
 ### Updated
 1. Fixed bug in SD card _store-acl_ logic.

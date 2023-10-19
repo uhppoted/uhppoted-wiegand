@@ -19,16 +19,12 @@
 
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
+void debug(txrx, void *, int);
 void help(txrx, void *);
 void query(txrx, void *);
 
-void on_card_command(char *, handler, txrx, void *);
-
 void on_press_button(txrx, void *);
 void on_release_button(txrx, void *);
-
-void revoke(uint32_t, uint32_t, txrx, void *);
-void read_acl(txrx, void *);
 
 void mount(txrx, void *);
 void unmount(txrx, void *);
@@ -72,6 +68,22 @@ void execw(char *cmd, txrx f, void *context) {
                 cli_blink(f, context);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
                 cli_unlock_door(f, context);
+            } else if (strncasecmp(cmd, "mount", 5) == 0) {
+                mount(f, context);
+            } else if (strncasecmp(cmd, "unmount", 7) == 0) {
+                unmount(f, context);
+            } else if (strncasecmp(cmd, "format", 6) == 0) {
+                format(f, context);
+            } else if (strncasecmp(cmd, "list acl", 8) == 0) {
+                cli_acl_list(f, context);
+            } else if (strncasecmp(cmd, "clear acl", 9) == 0) {
+                cli_acl_clear(f, context);
+            } else if (strncasecmp(cmd, "grant ", 6) == 0) {
+                cli_acl_grant(&cmd[6], f, context);
+            } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
+                cli_acl_revoke(&cmd[7], f, context);
+            } else if (strncasecmp(cmd, "passcodes", 9) == 0) {
+                cli_set_passcodes(&cmd[9], f, context);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else if (strncasecmp(cmd, "open", 4) == 0) {
@@ -82,30 +94,47 @@ void execw(char *cmd, txrx f, void *context) {
                 on_press_button(f, context);
             } else if (strncasecmp(cmd, "release", 7) == 0) {
                 on_release_button(f, context);
-            } else if (strncasecmp(cmd, "list acl", 8) == 0) {
-                cli_acl_list(f, context);
-            } else if (strncasecmp(cmd, "clear acl", 9) == 0) {
-                cli_acl_clear(f, context);
-            } else if (strncasecmp(cmd, "grant ", 6) == 0) {
-                cli_acl_grant(&cmd[6], f, context);
-            } else if (strncasecmp(cmd, "revoke ", 7) == 0) {
-                on_card_command(&cmd[7], revoke, f, context);
-            } else if (strncasecmp(cmd, "read acl", 8) == 0) {
-                read_acl(f, context);
-            } else if (strncasecmp(cmd, "write acl", 9) == 0) {
-                cli_acl_write(f, context);
-            } else if (strncasecmp(cmd, "mount", 5) == 0) {
-                mount(f, context);
-            } else if (strncasecmp(cmd, "unmount", 7) == 0) {
-                unmount(f, context);
-            } else if (strncasecmp(cmd, "format", 6) == 0) {
-                format(f, context);
             } else if (strncasecmp(cmd, "card ", 5) == 0) {
                 cli_swipe(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "code ", 5) == 0) {
                 keypad(&cmd[1], f, context);
+            } else if (strncasecmp(cmd, "debugx", 7) == 0) {
+                debug(f, context, 1);
+            } else if (strncasecmp(cmd, "debugy", 7) == 0) {
+                debug(f, context, 2);
             } else {
                 help(f, context);
+            }
+        }
+    }
+}
+
+/* -- DEBUG --
+ *
+ */
+void debug(txrx f, void *context, int action) {
+    // ... card
+    if (action == 1) {
+        uint32_t v = MSG_CARD | (0x0C9C841 & 0x03ffffff); // 10058400
+        if (!queue_is_full(&queue)) {
+            queue_try_add(&queue, &v);
+        }
+
+        f(context, ">> DEBUG CARD");
+    }
+
+    // ... keycode
+    if (action == 2) {
+        int N = 6;
+        char *code;
+
+        if ((code = calloc(N, 1)) != NULL) {
+            snprintf(code, N, "%s", "12345");
+            uint32_t msg = MSG_CODE | ((uint32_t)code & 0x0fffffff); // SRAM_BASE is 0x20000000
+            if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+                free(code);
+            } else {
+                f(context, ">> DEBUG CODE");
             }
         }
     }
@@ -119,27 +148,6 @@ void query(txrx f, void *context) {
 
     cardf(&last_card, s, sizeof(s), true);
     f(context, s);
-}
-
-/* Removes a card number from the ACL.
- *
- */
-void revoke(uint32_t facility_code, uint32_t card, txrx f, void *context) {
-    char s[64];
-    char c[16];
-
-    snprintf(c, sizeof(c), "%u%05u", facility_code, card);
-
-    if (acl_revoke(facility_code, card)) {
-        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "REVOKED");
-    } else {
-        snprintf(s, sizeof(s), "CARD    %-8s %s", c, "ERROR");
-    }
-
-    f(context, s);
-    logd_log(s);
-
-    cli_acl_write(f, context);
 }
 
 /* Formats the SD card.
@@ -211,35 +219,24 @@ void unmount(txrx f, void *context) {
     logd_log(s);
 }
 
-/* Loads an ACL from the SD card
- *
- */
-void read_acl(txrx f, void *context) {
-    int detected = gpio_get(SD_DET);
-    char s[64];
-
-    if (!detected) {
-        f(context, "DISK   NO SDCARD");
-        logd_log("DISK   NO SDCARD");
-    }
-
-    int rc = acl_load();
-    if (rc < 0) {
-        snprintf(s, sizeof(s), "ACL    READ ERROR (%d)", rc);
-    } else {
-        snprintf(s, sizeof(s), "ACL    READ OK (%d CARDS)", rc);
-    }
-
-    f(context, s);
-}
-
 /* Displays a list of the supported commands.
  *
  */
 void help(txrx f, void *context) {
     f(context, "-----");
     f(context, "Commands:");
-    f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time");
+    f(context, "TIME YYYY-MM-DD HH:mm:ss  Set date/time (YYYY-MM-DD HH:mm:ss)");
+    f(context, "");
+    f(context, "LIST ACL                  List cards in ACL");
+    f(context, "CLEAR ACL                 Revoke all cards in ACL");
+    f(context, "GRANT nnnnnn              Grant card access rights");
+    f(context, "REVOKE nnnnnn             Revoke card access rights");
+    f(context, "PASSCODES                 Sets the override passcodes");
+    f(context, "QUERY                     Display last card read/write");
+    f(context, "");
+    f(context, "MOUNT                     Mount SD card");
+    f(context, "UNMOUNT                   Unmount SD card");
+    f(context, "FORMAT                    Format SD card");
     f(context, "");
     f(context, "CARD nnnnnn dddddd        Write card + (optional) keycode to the Wiegand interface");
     f(context, "CODE dddddd               Enter keypad digits");
@@ -248,57 +245,12 @@ void help(txrx f, void *context) {
     f(context, "PRESS                     Press pushbutton");
     f(context, "RELEASE                   Release pushbutton");
     f(context, "");
-    f(context, "GRANT nnnnnn              Grant card access rights");
-    f(context, "REVOKE nnnnnn             Revoke card access rights");
-    f(context, "LIST ACL                  Lists the cards in the ACL");
-    f(context, "CLEAR ACL                 Revoke all cards in ACL");
-    f(context, "READ ACL                  Read ACL from SD card");
-    f(context, "WRITE ACL                 Write ACL to SD card");
-    f(context, "QUERY                     Display last card read/write");
-    f(context, "");
-    f(context, "MOUNT                     Mount SD card");
-    f(context, "UNMOUNT                   Unmount SD card");
-    f(context, "FORMAT                    Format SD card");
-    f(context, "");
     f(context, "UNLOCK                    Unlocks door");
     f(context, "BLINK                     Blinks reader LED 5 times");
     f(context, "CLS                       Resets the terminal");
     f(context, "REBOOT                    Reboot");
     f(context, "?                         Display list of commands");
     f(context, "-----");
-}
-
-/* Card command handler.
- *  Extract the facility code and card number and invokes the handler function.
- *
- */
-void on_card_command(char *cmd, handler fn, txrx f, void *context) {
-    uint32_t facility_code = FACILITY_CODE;
-    uint32_t card = 0;
-    int N = strlen(cmd);
-    int rc;
-
-    if (N < 5) {
-        if ((rc = sscanf(cmd, "%0u", &card)) < 1) {
-            return;
-        }
-    } else {
-        if ((rc = sscanf(&cmd[N - 5], "%05u", &card)) < 1) {
-            return;
-        }
-
-        if (N == 6 && ((rc = sscanf(cmd, "%01u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 7 && ((rc = sscanf(cmd, "%02u", &facility_code)) < 1)) {
-            return;
-        } else if (N == 8 && ((rc = sscanf(cmd, "%03u", &facility_code)) < 1)) {
-            return;
-        } else if (N > 8) {
-            return;
-        }
-    }
-
-    fn(facility_code, card, f, context);
 }
 
 /* Pushbutton emulation command handler.

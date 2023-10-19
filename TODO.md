@@ -12,15 +12,31 @@
       - [x] 8-bit burst mode write
       - [x] 8-bit burst mode read
       - [x] card + PIN writer
+      - [x] FIXME in acl.c
       - [ ] card + PIN read
             - [x] timeout on keycode
             - [x] rework ACL as struct (with cards, timer, etc)
-            - [ ] _reference_ implementation
-      - [x] FIXME in acl.c
-      - [ ] Check mode == CONTROLLER in unlock, etc
+            - [ ] Update other variants
+                  - [ ] controller
+                        - [ ] picow/wifi
+                        - [ ] picow/wifi+usb
+                        - [ ] pico/base
+                        - [ ] pico/usb
+                  - [ ] universal
+                        - [x] picow/base
+                        - [ ] picow/wifi
+                        - [ ] picow/wifi+usb
+                        - [ ] pico/base
+                        - [ ] pico/usb
+            - [ ] Remove debug stuff
+      - [ ] Check mode == CONTROLLER/READER in unlock, etc
       - [ ] README
-      - [ ] CHANGELOG
-      - [ ] Remove debug stuff
+            - [x] build constants
+            - [ ] _modes_
+            - [ ] keypad modes
+            - [ ] passcodes
+            - [ ] master passcode
+      - [x] CHANGELOG
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

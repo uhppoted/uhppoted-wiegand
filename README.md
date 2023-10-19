@@ -83,37 +83,53 @@ single letter mnemonics and need to be terminated by a carriage return and/or li
 
 The supported command set comprises:
 
-| *Command*             | *Description*                           |
-| --------------------- | --------------------------------------- |
-| T yyyy-mm-dd HH:mm:ss | Set date/time                           |
-| CARD nnnnnnnn         | Emulates card swipe                     |
-| CODE ddddddd          | Emulates keypad                         |
-|                       |                                         |
-| LIST ACL              | List cards in ACL                       |
-| CLEAR ACL             | Deletes all cards in ACL                |
-| GRANT nnnnnn          | Grant card access rights                |
-| REVOKE nnnnnn         | Revoke card access rights               |
-| QUERY                 | Display last card read/write            |
-|                       |                                         |
-| MOUNT                 | Mount SD card                           |
-| UNMOUNT               | Unmount SD card                         |
-| FORMAT                | Format SD card                          |
-|                       |                                         |
-| UNLOCK                | Unlocks door for 5 seconds              |
-| OPEN                  | Emulates door open contact              |
-| CLOSE                 | Emulates door close contact             |
-| PRESS                 | Emulates pushbutton press               |
-| RELEASE               | Emulates pushbutton release             |
-|                       |                                         |
-| BLINK                 | Blinks reader LED 5 times               |
-| CLS                   | Reinitialises terminal                  |
-| REBOOT                | Reboot                                  |
-| ?                     | Display list of commands                |
+| *Command*                | *Mode*       | *Description*                             |
+| -------------------------|--------------|-------------------------------------------|
+| TIME yyyy-mm-dd HH:mm:ss | _ALL_        | Set date/time                             |
+| CARD nnnnnnnn            | _emulator_   | Emulates card swipe                       |
+| CODE dddddd              | _emulator_   | Emulates keypad                           |
+|                          |              |                                           |
+| LIST ACL                 | _controller_ | List cards in ACL                         |
+| CLEAR ACL                | _controller_ | Deletes all cards in ACL                  |
+| GRANT nnnnnn dddddd      | _controller_ | Grant card (+ optional PIN) access rights |
+| REVOKE nnnnnn            | _controller_ | Revoke card access rights                 |
+| QUERY                    | _controller_ | Display last card read/write              |
+|                          |              |                                           |
+| MOUNT                    | _ALL_        | Mount SD card                             |
+| UNMOUNT                  | _ALL_        | Unmount SD card                           |
+| FORMAT                   | _ALL_        | Format SD card                            |
+|                          |              |                                           |
+| UNLOCK                   | _controller_ | Unlocks door for 5 seconds                |
+|                          |              |                                           |
+| OPEN                     | _emulator_   | Emulates door open contact                |
+| CLOSE                    | _emulator_   | Emulates door close contact               |
+| PRESS                    | _emulator_   | Emulates pushbutton press                 |
+| RELEASE                  | _emulator_   | Emulates pushbutton release               |
+|                          |              |                                           |
+| BLINK                    | _ALL_        | Blinks reader LED 5 times                 |
+| CLS                      | _ALL_        | Reinitialises terminal                    |
+| REBOOT                   | _ALL_        | Reboot                                    |
+| ?                        | _ALL_        | Display list of commands                  |
 
 
-Notes:
-1. The default facility code for _emulator_ mode is a build time constant (`FACILITY_CODE` in the _Makefile_) and will
-be used if the _W_ command card number is 5 digits or less.
+## Build constants
+
+The _build constants_ in the _Makefiles_ define the initial operational settings:
+
+| *Constant*           | *Description*                                                                                             |
+|----------------------|-----------------------------------------------------------------------------------------------------------|
+| `FACILITY_CODE`      | The default facility code for _emulator_ mode, used if the _CARD_ command card number is 5 digits or less |
+| `SYSDATE`            | Initial system date                                                                                       |
+| `SYSTIME`            | Initial system time                                                                                       |
+| `MASTER_PASSCODE`    | Default master access override code                                                                       |
+| `KEYPAD`             | Keypad mode ('4-bit' or '8-bit')                                                                          |
+| `SSID`               | WiFi SSID                                                                                                 |
+| `PASSWORD`           | WiFi password                                                                                             |
+| `TCPD_CLI_PORT`      | TCP port for the Telnet CLI                                                                               |
+| `TCPD_LOG_PORT`      | TCP port for the network logger                                                                           |
+| `TCPD_SERVER_IDLE`   | Idle time (seconds) after which the TCP server closes all connections and restarts                        |
+| `TCPD_CLIENT_IDLE`   | Idle time (seconds) after which a Telnet CLI client connection is closed                                  |
+| `TCPD_POLL_INTERVAL` | Internal TCP handler poll interval (ms)                                                                   |
 
 
 ## References and Related Projects

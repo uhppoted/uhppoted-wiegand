@@ -2,31 +2,31 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <hardware/gpio.h>
-#include <hardware/rtc.h>
-#include <hardware/watchdog.h>
+#include "hardware/gpio.h"
+#include "hardware/rtc.h"
+#include "hardware/watchdog.h"
 
-#include <pico/binary_info.h>
-#include <pico/multicore.h>
-#include <pico/stdlib.h>
-#include <pico/util/datetime.h>
+#include "pico/binary_info.h"
+#include "pico/multicore.h"
+#include "pico/stdlib.h"
+#include "pico/util/datetime.h"
 
-#include <TPIC6B595.h>
-#include <acl.h>
-#include <buzzer.h>
-#include <common.h>
-#include <led.h>
-#include <logd.h>
-#include <read.h>
-#include <relays.h>
-#include <sdcard.h>
-#include <sys.h>
-#include <uart.h>
-#include <usb.h>
-#include <wiegand.h>
-#include <write.h>
+#include "TPIC6B595.h"
+#include "acl.h"
+#include "buzzer.h"
+#include "common.h"
+#include "led.h"
+#include "logd.h"
+#include "picow.h"
+#include "read.h"
+#include "relays.h"
+#include "sdcard.h"
+#include "sys.h"
+#include "uart.h"
+#include "wiegand.h"
+#include "write.h"
 
-#include "../include/reference.h"
+#include "../include/universal.h"
 
 #define VERSION "v0.8.7"
 
@@ -36,8 +36,6 @@ const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
-const uint32_t MSG_CARD = 0x40000000;
-const uint32_t MSG_CODE = 0x50000000;
 const uint32_t MSG_KEYPAD_DIGIT = 0x60000000;
 const uint32_t MSG_LED = 0x70000000;
 const uint32_t MSG_RELAY = 0x80000000;
@@ -63,7 +61,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand Reference interface (USB)"));
+    bi_decl(bi_program_description("Pico-Wiegand interface"));
     bi_decl(bi_program_version_string(VERSION));
 
     stdio_init_all();
@@ -74,10 +72,13 @@ int main() {
     rtc_init();
     sleep_us(64);
 
-    // ... initialise FIFO, USB and timers
+    // ... initialise FIFO, UART and timers
     queue_init(&queue, sizeof(uint32_t), 64);
-    setup_usb();
+    setup_uart();
     alarm_pool_init_default();
+
+    // ... initialise CYW43
+    setup_cyw43();
 
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
@@ -111,27 +112,6 @@ int main() {
             char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
             puts(b);
             free(b);
-        }
-
-        if ((v & MSG) == MSG_CARD) {
-            on_card_read(v & 0x0fffffff);
-
-            if (last_card.ok && ((mode == READER) || (mode == CONTROLLER))) {
-                enum ACCESS access;
-
-                if ((access = acl_allowed(last_card.facility_code, last_card.card_number, "")) == GRANTED) {
-                    last_card.access = GRANTED;
-                    led_blink(1);
-                    door_unlock(5000);
-                } else {
-                    last_card.access = DENIED;
-                    led_blink(3);
-                }
-            }
-
-            char s[64];
-            cardf(&last_card, s, sizeof(s), false);
-            logd_log(s);
         }
 
         if ((v & MSG) == MSG_LED) {
@@ -204,7 +184,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION (USB)");
+        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = READER;

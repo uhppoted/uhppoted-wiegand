@@ -22,9 +22,9 @@ add_compile_definitions(KEYPAD="${KEYPAD}")
 pico_sdk_init()
 
 add_executable(wiegand_picow
-  ./src/reference.c
+  ./src/universal.c
   ${COMMON}/src/cli.c
-  ${COMMON}/src/reference.c
+  ${COMMON}/src/universal.c
   ${CORE}/src/common.c
   ${CORE}/src/uart.c
   ${CORE}/src/sys.c

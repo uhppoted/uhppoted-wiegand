@@ -2,35 +2,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <hardware/gpio.h>
-#include <hardware/rtc.h>
-#include <hardware/watchdog.h>
+#include "hardware/gpio.h"
+#include "hardware/rtc.h"
+#include "hardware/watchdog.h"
 
-#include <pico/binary_info.h>
-#include <pico/multicore.h>
-#include <pico/stdlib.h>
-#include <pico/util/datetime.h>
+#include "pico/binary_info.h"
+#include "pico/multicore.h"
+#include "pico/stdlib.h"
+#include "pico/util/datetime.h"
 
-#include <TPIC6B595.h>
-#include <acl.h>
-#include <buzzer.h>
-#include <common.h>
-#include <led.h>
-#include <logd.h>
-#include <picow.h>
-#include <read.h>
-#include <relays.h>
-#include <sdcard.h>
-#include <sys.h>
-#include <tcpd.h>
-#include <uart.h>
-#include <usb.h>
-#include <wiegand.h>
-#include <write.h>
+#include "TPIC6B595.h"
+#include "acl.h"
+#include "buzzer.h"
+#include "common.h"
+#include "led.h"
+#include "logd.h"
+#include "read.h"
+#include "relays.h"
+#include "sdcard.h"
+#include "sys.h"
+#include "uart.h"
+#include "wiegand.h"
+#include "write.h"
 
-#include "../include/reference.h"
+#include "../include/universal.h"
 
-#define VERSION "v0.8.5"
+#define VERSION "v0.8.7"
 
 // GPIO
 const uint32_t MSG = 0xf0000000;
@@ -38,14 +35,11 @@ const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
-const uint32_t MSG_CARD = 0x40000000;
-const uint32_t MSG_CODE = 0x50000000;
 const uint32_t MSG_KEYPAD_DIGIT = 0x60000000;
 const uint32_t MSG_LED = 0x70000000;
 const uint32_t MSG_RELAY = 0x80000000;
 const uint32_t MSG_DOOR = 0x90000000;
 const uint32_t MSG_PUSHBUTTON = 0xa0000000;
-const uint32_t MSG_TCPD_POLL = 0xc0000000;
 const uint32_t MSG_LOG = 0xd0000000;
 const uint32_t MSG_SYSINIT = 0xe0000000;
 const uint32_t MSG_DEBUG = 0xf0000000;
@@ -53,7 +47,6 @@ const uint32_t MSG_DEBUG = 0xf0000000;
 // FUNCTION PROTOTYPES
 
 void setup_gpio(void);
-void setup_cyw43(void);
 void sysinit();
 
 // GLOBALS
@@ -67,7 +60,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand reference interface (USB+WIFI)"));
+    bi_decl(bi_program_description("Pico-Wiegand interface"));
     bi_decl(bi_program_version_string(VERSION));
 
     stdio_init_all();
@@ -78,13 +71,10 @@ int main() {
     rtc_init();
     sleep_us(64);
 
-    // ... initialise FIFO, USB and timers
+    // ... initialise FIFO, UART and timers
     queue_init(&queue, sizeof(uint32_t), 64);
-    setup_usb();
+    setup_uart();
     alarm_pool_init_default();
-
-    // ... initialise CYW43
-    setup_cyw43();
 
     // ... initialise reader/emulator
     add_alarm_in_ms(250, startup, NULL, true);
@@ -160,12 +150,7 @@ int main() {
         if ((v & MSG) == MSG_LOG) {
             char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
             printf("%s", b);
-            tcpd_log(b);
             free(b);
-        }
-
-        if ((v & MSG) == MSG_TCPD_POLL) {
-            tcpd_poll();
         }
 
         if ((v & MSG) == MSG_DEBUG) {
@@ -216,7 +201,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION (USB)");
+        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = READER;
@@ -226,14 +211,12 @@ void sysinit() {
             mode = UNKNOWN;
         }
 
-        logd_initialise(mode);
-        sdcard_initialise(mode, false); // GPIO interrupt conflict with SD card detect
+        sdcard_initialise(mode, true);
         read_initialise(mode);
         write_initialise(mode);
         led_initialise(mode);
         buzzer_initialise(mode);
         TPIC_initialise(mode);
-        tcpd_initialise(mode);
         acl_initialise();
 
         if (!relay_initialise(mode)) {

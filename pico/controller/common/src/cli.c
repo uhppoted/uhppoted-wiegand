@@ -64,8 +64,6 @@ void execw(char *cmd, txrx f, void *context) {
                 cli_set_time(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "blink", 5) == 0) {
                 cli_blink(f, context);
-            } else if (strncasecmp(cmd, "query", 5) == 0) {
-                query(f, context);
             } else if (strncasecmp(cmd, "unlock", 6) == 0) {
                 cli_unlock_door(f, context);
             } else if (strncasecmp(cmd, "mount", 5) == 0) {
@@ -84,6 +82,8 @@ void execw(char *cmd, txrx f, void *context) {
                 cli_acl_revoke(&cmd[7], f, context);
             } else if (strncasecmp(cmd, "passcodes", 9) == 0) {
                 cli_set_passcodes(&cmd[9], f, context);
+            } else if (strncasecmp(cmd, "query", 5) == 0) {
+                query(f, context);
             } else if (strncasecmp(cmd, "debugx", 7) == 0) {
                 debug(f, context, 1);
             } else if (strncasecmp(cmd, "debugy", 7) == 0) {
@@ -146,17 +146,17 @@ void help(txrx f, void *context) {
     f(context, "");
     f(context, "LIST ACL                  List cards in ACL");
     f(context, "CLEAR ACL                 Revoke all cards in ACL");
-    f(context, "GRANT nnnnnn              Grant card access rights");
+    f(context, "GRANT nnnnnn dddddd       Grant card (+ optional PIN) access rights");
     f(context, "REVOKE nnnnnn             Revoke card access rights");
     f(context, "PASSCODES                 Sets the override passcodes");
     f(context, "QUERY                     Display last card read/write");
+    f(context, "");
+    f(context, "UNLOCK                    Unlocks door");
     f(context, "");
     f(context, "MOUNT                     Mount SD card");
     f(context, "UNMOUNT                   Unmount SD card");
     f(context, "FORMAT                    Format SD card");
     f(context, "");
-    f(context, "UNLOCK                    Unlocks door");
-    f(context, "LOCK                      Locks door");
     f(context, "BLINK                     Blinks reader LED 5 times");
     f(context, "CLS                       Resets the terminal");
     f(context, "REBOOT                    Reboot");
