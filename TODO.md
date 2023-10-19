@@ -20,6 +20,7 @@
       - [ ] Check mode == CONTROLLER in unlock, etc
       - [ ] README
       - [ ] CHANGELOG
+      - [ ] Remove debug stuff
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

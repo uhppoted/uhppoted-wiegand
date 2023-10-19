@@ -11,9 +11,9 @@ be useful as a basis for:
 - interfacing non-standard/off-brand readers and keypads to the UHPPOTE L0x access controllers
 
 The project includes:
-- PIO based Wiegand-26 reference reader/writer implementation
 - PIO based Wiegand-26 reader emulator which can write a Wiegand-26 card out to a controller
 - PIO based Wiegand-26 controller emulator which can read from Wiegand-26 reader and unlock a door
+- PIO based Wiegand-26 'universal' reader/writer implementation
 
 ## Raison d'être
 
@@ -24,9 +24,9 @@ the PIO but the code and associated information may be useful for other things.
 ## Status
 
 Breadboarded and Fritzing'ed implementations of:
-- Wiegand-26 reference reader/writer
 - Wiegand-26 reader emulator
 - Wiegand-26 controller emulator
+- Wiegand-26 'universal' reader/writer
 
 Next up:
 - Wiegand-26 relay

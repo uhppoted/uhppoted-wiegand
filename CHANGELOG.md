@@ -8,6 +8,7 @@
 
 ### Updated
 1. Fixed bug in SD card _store-acl_ logic.
+2. Renamed 'reference' implementation to 'universal'
 
 
 ## [0.8.6](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.6) - 2023-08-30

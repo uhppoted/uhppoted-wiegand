@@ -9,7 +9,7 @@ format: core/src/*.c core/include/*.h
 build: format
 
 build-all: clean build
-	cd reference  && make clean && make build-all
+	cd universal  && make clean && make build-all
 	cd controller && make clean && make build-all
 	cd emulator   && make clean && make build-all
 
