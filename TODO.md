@@ -16,16 +16,17 @@
       - [ ] card + PIN read
             - [x] timeout on keycode
             - [x] rework ACL as struct (with cards, timer, etc)
-            - [ ] Update other variants
+            - [ ] Update all variants
                   - [ ] controller
-                        - [ ] picow/wifi
-                        - [ ] picow/wifi+usb
+                        - [x] picow/base
+                        - [x] picow/wifi
+                        - [x] picow/wifi+usb
                         - [ ] pico/base
                         - [ ] pico/usb
                   - [ ] universal
                         - [x] picow/base
-                        - [ ] picow/wifi
-                        - [ ] picow/wifi+usb
+                        - [x] picow/wifi
+                        - [x] picow/wifi+usb
                         - [ ] pico/base
                         - [ ] pico/usb
             - [ ] Remove debug stuff
