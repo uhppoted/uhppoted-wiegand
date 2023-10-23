@@ -60,7 +60,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand interface"));
+    bi_decl(bi_program_description("Pico-Wiegand Universal Interface"));
     bi_decl(bi_program_version_string(VERSION));
 
     stdio_init_all();
@@ -180,7 +180,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION");
+        puts("                     Pico-Wiegand Universal Interface");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = READER;

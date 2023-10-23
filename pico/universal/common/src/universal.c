@@ -19,15 +19,21 @@ void dispatch(uint32_t v) {
         on_card_read(v & 0x0fffffff);
 
         if (last_card.ok && mode == READER) {
-            enum ACCESS access;
-            if ((access = acl_allowed(last_card.facility_code, last_card.card_number, "")) == GRANTED) {
+            enum ACCESS access = acl_allowed(last_card.facility_code, last_card.card_number, "");
+
+            switch (access) {
+            case GRANTED:
                 last_card.access = GRANTED;
                 led_blink(1);
                 door_unlock(5000);
-            } else if (access == NEEDS_PIN) {
+                break;
+
+            case NEEDS_PIN:
                 last_card.access = NEEDS_PIN;
                 led_blink(1);
-            } else {
+                break;
+
+            default:
                 last_card.access = DENIED;
                 led_blink(3);
             }

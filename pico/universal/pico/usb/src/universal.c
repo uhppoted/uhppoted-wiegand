@@ -61,7 +61,7 @@ card last_card = {
 };
 
 int main() {
-    bi_decl(bi_program_description("Pico-Wiegand Reference interface (USB)"));
+    bi_decl(bi_program_description("Pico-Wiegand universal Interface (USB)"));
     bi_decl(bi_program_version_string(VERSION));
 
     stdio_init_all();
@@ -181,7 +181,7 @@ void sysinit() {
     static repeating_timer_t syscheck_rt;
 
     if (!initialised) {
-        puts("                     *** WIEGAND REFERENCE IMPLEMENTATION (USB)");
+        puts("                     Pico-Wiegand Universal Interface");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
             mode = READER;

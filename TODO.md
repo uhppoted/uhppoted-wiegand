@@ -16,19 +16,19 @@
       - [ ] card + PIN read
             - [x] timeout on keycode
             - [x] rework ACL as struct (with cards, timer, etc)
-            - [ ] Update all variants
-                  - [ ] controller
+            - [x] Update all variants
+                  - [x] controller
                         - [x] picow/base
                         - [x] picow/wifi
                         - [x] picow/wifi+usb
-                        - [ ] pico/base
-                        - [ ] pico/usb
-                  - [ ] universal
+                        - [x] pico/base
+                        - [x] pico/usb
+                  - [x] universal
                         - [x] picow/base
                         - [x] picow/wifi
                         - [x] picow/wifi+usb
-                        - [ ] pico/base
-                        - [ ] pico/usb
+                        - [x] pico/base
+                        - [x] pico/usb
             - [ ] Remove debug stuff
       - [ ] Check mode == CONTROLLER/READER in unlock, etc
       - [ ] README

@@ -13,6 +13,8 @@
 #include "../include/sdcard.h"
 #include "../include/wiegand.h"
 
+const char *NO_PIN = "-----";
+
 void spi0_dma_isr();
 datetime_t string2date(const char *);
 
@@ -207,7 +209,10 @@ int sdcard_read_acl(CARD cards[], int *N) {
                     if ((p = strtok(NULL, " ")) != NULL) {
                         cards[ix].allowed = strncmp(p, "Y", 1) == 0 || strncmp(p, "y", 1) == 0;
                         if ((p = strtok(NULL, " ")) != NULL) {
-                            snprintf(cards[ix].PIN, sizeof(cards[ix].PIN), p);
+                            if (strncmp(p, NO_PIN, CARD_PIN_SIZE) != 0) {
+                                snprintf(cards[ix].PIN, sizeof(cards[ix].PIN), p);
+                            }
+
                             if ((p = strtok(NULL, " ")) != NULL) {
                                 snprintf(cards[ix].name, sizeof(cards[ix].name), p);
                             }
@@ -257,7 +262,7 @@ int sdcard_write_acl(CARD cards[], int N) {
                      card.end.month,
                      card.end.day,
                      card.allowed ? 'Y' : 'N',
-                     card.PIN,
+                     strncmp(card.PIN, "", CARD_PIN_SIZE) == 0 ? NO_PIN : card.PIN,
                      card.name);
 
             if ((fr = f_printf(&file, "%s\n", record)) < 0) {

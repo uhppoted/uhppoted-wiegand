@@ -82,7 +82,7 @@ int acl_load() {
                 ACL.cards[i].start = cards[i].start;
                 ACL.cards[i].end = cards[i].end;
                 ACL.cards[i].allowed = cards[i].allowed;
-                snprintf(ACL.cards[i].PIN, sizeof(cards[i].PIN), "");
+                snprintf(ACL.cards[i].PIN, sizeof(cards[i].PIN), cards[i].PIN);
                 snprintf(ACL.cards[i].name, sizeof(cards[i].name), cards[i].name);
             }
 
