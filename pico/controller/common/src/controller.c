@@ -41,28 +41,31 @@ void dispatch(uint32_t v) {
         char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
         enum ACCESS access;
 
-        if (mode == CONTROLLER && last_card.ok && last_card.access == NEEDS_PIN) {
-            if ((access = acl_allowed(last_card.facility_code, last_card.card_number, b)) == GRANTED) {
-                last_card.access = GRANTED;
-                led_blink(1);
+        if (mode == CONTROLLER) {
+            if (mode == CONTROLLER && last_card.ok && last_card.access == NEEDS_PIN) {
+                if ((access = acl_allowed(last_card.facility_code, last_card.card_number, b)) == GRANTED) {
+                    last_card.access = GRANTED;
+                    led_blink(1);
+                    door_unlock(5000);
+                } else {
+                    last_card.access = DENIED;
+                    led_blink(3);
+                }
+
+                cardf(&last_card, s, sizeof(s), false);
+
+            } else if (mode == CONTROLLER && acl_passcode(b)) {
+                snprintf(s, sizeof(s), "CODE   OK");
+                led_blink(8);
                 door_unlock(5000);
             } else {
-                last_card.access = DENIED;
+                snprintf(s, sizeof(s), "CODE   INVALID");
                 led_blink(3);
             }
 
-            cardf(&last_card, s, sizeof(s), false);
-
-        } else if (mode == CONTROLLER && acl_passcode(b)) {
-            snprintf(s, sizeof(s), "CODE   OK");
-            led_blink(8);
-            door_unlock(5000);
-        } else {
-            snprintf(s, sizeof(s), "CODE   INVALID");
-            led_blink(3);
+            logd_log(s);
         }
 
-        logd_log(s);
         free(b);
     }
 

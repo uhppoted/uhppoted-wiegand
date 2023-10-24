@@ -19,7 +19,6 @@
 
 typedef void (*handler)(uint32_t, uint32_t, txrx, void *);
 
-void debug(txrx, void *, int);
 void help(txrx, void *);
 void query(txrx, void *);
 
@@ -98,10 +97,10 @@ void execw(char *cmd, txrx f, void *context) {
                 cli_swipe(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "code ", 5) == 0) {
                 keypad(&cmd[1], f, context);
-            } else if (strncasecmp(cmd, "debugx", 7) == 0) {
-                debug(f, context, 1);
-            } else if (strncasecmp(cmd, "debugy", 7) == 0) {
-                debug(f, context, 2);
+                //          } else if (strncasecmp(cmd, "debugx", 7) == 0) {
+                //              debug(f, context, 1);
+                //          } else if (strncasecmp(cmd, "debugy", 7) == 0) {
+                //              debug(f, context, 2);
             } else {
                 help(f, context);
             }
@@ -109,36 +108,36 @@ void execw(char *cmd, txrx f, void *context) {
     }
 }
 
-/* -- DEBUG --
- *
- */
-void debug(txrx f, void *context, int action) {
-    // ... card
-    if (action == 1) {
-        uint32_t v = MSG_CARD | (0x0C9C841 & 0x03ffffff); // 10058400
-        if (!queue_is_full(&queue)) {
-            queue_try_add(&queue, &v);
-        }
-
-        f(context, ">> DEBUG CARD");
-    }
-
-    // ... keycode
-    if (action == 2) {
-        int N = 6;
-        char *code;
-
-        if ((code = calloc(N, 1)) != NULL) {
-            snprintf(code, N, "%s", "12345");
-            uint32_t msg = MSG_CODE | ((uint32_t)code & 0x0fffffff); // SRAM_BASE is 0x20000000
-            if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
-                free(code);
-            } else {
-                f(context, ">> DEBUG CODE");
-            }
-        }
-    }
-}
+// /* -- DEBUG --
+//  *
+//  */
+// void debug(txrx f, void *context, int action) {
+//     // ... card
+//     if (action == 1) {
+//         uint32_t v = MSG_CARD | (0x0C9C841 & 0x03ffffff); // 10058400
+//         if (!queue_is_full(&queue)) {
+//             queue_try_add(&queue, &v);
+//         }
+//
+//         f(context, ">> DEBUG CARD");
+//     }
+//
+//     // ... keycode
+//     if (action == 2) {
+//         int N = 6;
+//         char *code;
+//
+//         if ((code = calloc(N, 1)) != NULL) {
+//             snprintf(code, N, "%s", "12345");
+//             uint32_t msg = MSG_CODE | ((uint32_t)code & 0x0fffffff); // SRAM_BASE is 0x20000000
+//             if (queue_is_full(&queue) || !queue_try_add(&queue, &msg)) {
+//                 free(code);
+//             } else {
+//                 f(context, ">> DEBUG CODE");
+//             }
+//         }
+//     }
+// }
 
 /* Displays the last read/write card, if any.
  *

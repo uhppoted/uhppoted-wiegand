@@ -13,27 +13,17 @@
       - [x] 8-bit burst mode read
       - [x] card + PIN writer
       - [x] FIXME in acl.c
-      - [ ] card + PIN read
+      - [x] card + PIN read
             - [x] timeout on keycode
             - [x] rework ACL as struct (with cards, timer, etc)
             - [x] Update all variants
                   - [x] controller
-                        - [x] picow/base
-                        - [x] picow/wifi
-                        - [x] picow/wifi+usb
-                        - [x] pico/base
-                        - [x] pico/usb
                   - [x] universal
-                        - [x] picow/base
-                        - [x] picow/wifi
-                        - [x] picow/wifi+usb
-                        - [x] pico/base
-                        - [x] pico/usb
-            - [ ] Remove debug stuff
+            - [x] Remove debug stuff
       - [ ] Check mode == CONTROLLER/READER in unlock, etc
       - [ ] README
             - [x] build constants
-            - [ ] _modes_
+            - [x] _operating modes_
             - [ ] keypad modes
             - [ ] passcodes
             - [ ] master passcode

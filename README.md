@@ -111,6 +111,31 @@ The supported command set comprises:
 | REBOOT                   | _ALL_        | Reboot                                    |
 | ?                        | _ALL_        | Display list of commands                  |
 
+## Operating Modes
+
+The code supports two operating modes:
+- emulator/writer
+- controller/reader
+
+In _emulator_ mode the implementation writes a Wiegand-26 card code (or keypad PIN code) to an external Wiegand-26 interface
+(e.g. a UHPPOTE controller). It also:
+- emulates a door open/closed sensor
+- emulates a door pushbutton
+- detects the door locked/unlocked state
+
+In _controller_ mode the implementation reads a Wiegand-26 card code (or keypad PIN code) from an external Wiegand-26 reader/keypad. It also:
+- detects a door open/closed sensor state change
+- detects a door pushbutton state change
+- emulates a door lock/unlock
+- implements card permissions and keypad passcodes
+
+The operating mode is set by the combination of the code and the JUMPER_READ and JUMPER_WRITE inputs (set in _hwconfig.c_, 
+GPIO7 and GPIO8 by default):
+- the _controller_ binaries expect the JUMPER_READ input to be pulled LOW
+- the _emulator_ binaries expected the JUMPER_WRITE input to be pulled LOW
+- the _universal_ binaries start in _reader_ mode if the JUMPER_READ input is pulled LOW, or in _writer_ mode if the 
+  JUMPER_WRITE is pulled LOW
+- if both JUMPER_READ and JUMPER_WRITE are pulled LOW the operating mode is UNKNOWN.
 
 ## Build constants
 
