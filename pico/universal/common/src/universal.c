@@ -18,7 +18,7 @@ void dispatch(uint32_t v) {
     if ((v & MSG) == MSG_CARD) {
         on_card_read(v & 0x0fffffff);
 
-        if (last_card.ok && mode == READER) {
+        if (last_card.ok && mode == CONTROLLER) {
             enum ACCESS access = acl_allowed(last_card.facility_code, last_card.card_number, "");
 
             switch (access) {
@@ -47,7 +47,7 @@ void dispatch(uint32_t v) {
         char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
         enum ACCESS access;
 
-        if (mode == READER) {
+        if (mode == CONTROLLER) {
             if (last_card.ok && last_card.access == NEEDS_PIN) {
                 if ((access = acl_allowed(last_card.facility_code, last_card.card_number, b)) == GRANTED) {
                     last_card.access = GRANTED;

@@ -137,6 +137,43 @@ GPIO7 and GPIO8 by default):
   JUMPER_WRITE is pulled LOW
 - if both JUMPER_READ and JUMPER_WRITE are pulled LOW the operating mode is UNKNOWN.
 
+## Keypad emulation
+
+The code supports two keypad modes:
+- 4-bit burst mode
+- 8-bit burst mode
+
+In 4 bit burst mode, each keypress is sent as 4 bit code followed by a 28-bit 'space', with keypad digits encoded as follows:
+
+| Digit | 0    | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | *    | #    |
+|-------|------|------|------|------|------|------|------|------|------|------|------|------|
+| Code  | 0000 | 0001 | 0010 | 0011 | 0100 | 0101 | 0110 | 0111 | 1000 | 1001 | 1010 | 1011 |
+
+In 8 bit burst mode, each keypress is sent as 8 bit code followed by a 24-bit 'space', with keypad digits encoded as follows:
+
+| Digit | 0        | 1        | 2        | 3        | 4        | 5        | 6        | 7        | 8        | 9        | *        | #        |
+|-------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|
+| Code  | 11110000 | 11100001 | 11010010 | 11000011 | 10110100 | 10100101 | 10010110 | 10000111 | 01111000 | 01101001 | 01011010 | 01001011 |
+
+- In _emulator_ operating mode, the keypad mode is set by the `KEYPAD` build constant ('4-bit' or '8-bit')
+- In _controller_ operating mode the keypad reader can detect and read both keypad encodings. A keycode is terminated by either a
+  '#' or a 12.5 second timeout.
+
+
+## Supervisor passcodes
+
+The supervisor passcodes are _controller_ operating mode override codes that unconditionally unlocks the door.
+
+The _controller_ operating mode supports up to four user-defined passcodes which can be set (or cleared) using the 
+_PASSCODES_ command in the CLI. The passcodes may be up to 6 digits in length.
+
+
+## Master passcode
+
+In addition to the supervisor passcodes, the _controller_ operating mode provides for a MASTER override code that
+unconditionally unlocks the door. The _MASTER_ override code is set at build time via the `MASTER_PASSCODE` build constant.
+
+
 ## Build constants
 
 The _build constants_ in the _Makefiles_ define the initial operational settings:

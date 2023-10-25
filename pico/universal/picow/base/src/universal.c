@@ -187,9 +187,9 @@ void sysinit() {
         puts("                     PicoW-Wiegand Universal Interface");
 
         if (!gpio_get(JUMPER_READ) && gpio_get(JUMPER_WRITE)) {
-            mode = READER;
+            mode = CONTROLLER;
         } else if (gpio_get(JUMPER_READ) && !gpio_get(JUMPER_WRITE)) {
-            mode = WRITER;
+            mode = EMULATOR;
         } else {
             mode = UNKNOWN;
         }
@@ -207,7 +207,7 @@ void sysinit() {
         }
 
         // ... set door contact to 'CLOSED'
-        if (mode == WRITER) {
+        if (mode == EMULATOR) {
             relay_door_contact(true);
         }
 

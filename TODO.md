@@ -3,7 +3,7 @@
 - (?) Make -Wimplicit-function-declaration an error
 
 - [x] Weird card after ACL revoking a card in the middle of a list
-- [x] clear ACL
+- [x] Clear ACL
 
 - [ ] Emulate keypad (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/4)
       - [x] 4-bit burst mode write
@@ -14,20 +14,21 @@
       - [x] card + PIN writer
       - [x] FIXME in acl.c
       - [x] card + PIN read
-            - [x] timeout on keycode
-            - [x] rework ACL as struct (with cards, timer, etc)
-            - [x] Update all variants
-                  - [x] controller
-                  - [x] universal
-            - [x] Remove debug stuff
-      - [ ] Check mode == CONTROLLER/READER in unlock, etc
-      - [ ] README
+      - [x] CHANGELOG
+      - [x] Check mode == CONTROLLER/READER
+            - [x] unlock
+            - [x] door sensor emulation
+            - [x] pushbutton emulation
+            = [x] LEDs
+            - [x] Replace READER with CONTROLLER
+            - [x] Replace WRITER with EMULATOR
+      - [x] README
             - [x] build constants
             - [x] _operating modes_
-            - [ ] keypad modes
-            - [ ] passcodes
-            - [ ] master passcode
-      - [x] CHANGELOG
+            - [x] keypad modes
+            - [x] passcodes
+            - [x] master passcode
+      - [ ] Restructure emulator CLI
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

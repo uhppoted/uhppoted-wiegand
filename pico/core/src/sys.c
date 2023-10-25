@@ -23,11 +23,8 @@
 
 const char *MODES[] = {
     "UNKNOWN",
-    "READER",
-    "WRITE",
-    "EMULATOR",
     "CONTROLLER",
-};
+    "EMULATOR"};
 
 void sys_start() {
     char s[64];
@@ -40,7 +37,7 @@ void sys_start() {
 void sys_ok() {
     char s[64];
 
-    if (mode <= CONTROLLER) {
+    if (mode <= EMULATOR) {
         snprintf(s, sizeof(s), "%-6s %-8s %s", "SYS", MODES[mode], "OK");
     } else {
         snprintf(s, sizeof(s), "%-6s %-8s %s", "SYS", "???", "OK");

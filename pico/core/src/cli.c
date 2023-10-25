@@ -54,7 +54,7 @@ void cli_blink(txrx f, void *context) {
  *
  */
 void cli_unlock_door(txrx f, void *context) {
-    if ((mode == READER) || (mode == CONTROLLER)) {
+    if (mode == CONTROLLER) {
         door_unlock(5000);
     }
 }
@@ -308,7 +308,7 @@ void cli_swipe(char *cmd, txrx f, void *context) {
             }
         }
 
-        if ((mode == WRITER) || (mode == EMULATOR)) {
+        if (mode == EMULATOR) {
             if ((code = strtok(NULL, " ,")) == NULL) {
                 write_card(facility_code, card);
                 f(context, "CARD   WRITE OK");
@@ -331,7 +331,7 @@ void cli_swipe(char *cmd, txrx f, void *context) {
 void keypad(char *cmd, txrx f, void *context) {
     int N = strlen(cmd);
 
-    if (((mode == WRITER) || (mode == EMULATOR)) && N > 0) {
+    if ((mode == EMULATOR) && N > 0) {
         char s[64];
 
         for (int i = 0; i < N; i++) {

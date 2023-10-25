@@ -34,7 +34,7 @@ int64_t relay_timeout(alarm_id_t, void *);
 bool relay_initialise(enum MODE mode) {
     static repeating_timer_t relay_rt;
 
-    if ((mode == READER) || (mode == CONTROLLER)) {
+    if (mode == CONTROLLER) {
         TPIC_set(DOOR_UNLOCK, false);
     }
 
@@ -181,47 +181,40 @@ void relay_event(uint32_t v) {
     }
 }
 
-/* Sets the DOOR OPEN relay (READER/CONTROLLER mode only).
+/* Sets the DOOR OPEN relay (CONTROLLER mode only).
  *
  */
 void door_unlock(uint32_t delay) {
-    if ((mode == READER) || (mode == CONTROLLER)) {
+    if (mode == CONTROLLER) {
         if (add_alarm_in_ms(delay, relay_timeout, NULL, false) > 0) {
             TPIC_set(DOOR_UNLOCK, true);
         }
     }
 }
 
-/* Releases the DOOR UNLOCK relay.
- *
- */
-void relay_close() {
-    TPIC_set(DOOR_UNLOCK, false);
-}
-
-/* Sets/clears the DOOR CONTACT emulation relay (WRITER/EMULATOR mode only).
+/* Sets/clears the DOOR CONTACT emulation relay (EMULATOR mode only).
  *
  */
 void relay_door_contact(bool closed) {
-    if ((mode == WRITER) || (mode == EMULATOR)) {
+    if (mode == EMULATOR) {
         TPIC_set(DOOR_CONTACT, closed);
     }
 }
 
-/* Sets/clears the PUSHBUTTON emulation relay (WRITER mode only).
+/* Sets/clears the PUSHBUTTON emulation relay (EMULATOR mode only).
  *
  */
 void relay_pushbutton(bool closed) {
-    if ((mode == WRITER) || (mode == EMULATOR)) {
+    if (mode == EMULATOR) {
         TPIC_set(PUSHBUTTON, closed);
     }
 }
 
-/* Timeout handler. Clears the DOOR OPEN relay.
+/* Timeout handler. Clears the DOOR UNLOCK relay.
  *
  */
 int64_t relay_timeout(alarm_id_t id, void *data) {
-    relay_close();
+    TPIC_set(DOOR_UNLOCK, false);
     return 0;
 }
 

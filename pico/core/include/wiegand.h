@@ -23,10 +23,8 @@ extern const enum pio_interrupt_source IRQ_READER;
 
 enum MODE {
     UNKNOWN = 0,
-    READER = 1,
-    WRITER = 2,
-    EMULATOR = 3,
-    CONTROLLER = 4,
+    CONTROLLER = 1,
+    EMULATOR = 2,
     INDETERMINATE = 0xff
 };
 

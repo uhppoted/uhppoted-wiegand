@@ -150,7 +150,7 @@ bool callback(repeating_timer_t *rt) {
 
 /* Initialises the PIO for the emulator LED input and the reader LED
  * output. The PIO is only initialised with the reader LED output
- * program if the mode is READER or CONTROLLER.
+ * program if the mode is CONTROLLER.
  *
  */
 bool led_initialise(enum MODE mode) {
@@ -178,8 +178,8 @@ bool led_initialise(enum MODE mode) {
         ok = false;
     }
 
-    // ... initialise READER LED
-    if ((mode == READER) || (mode == CONTROLLER)) {
+    // ... initialise reader LED
+    if (mode == CONTROLLER) {
         queue_init(&BLINK_STATE.queue, sizeof(int32_t), 16);
 
         if (add_repeating_timer_ms(100, blink_callback, NULL, &BLINK_STATE.timer)) {
