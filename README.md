@@ -113,9 +113,9 @@ The supported command set comprises:
 
 ## Operating Modes
 
-The code supports two operating modes:
-- emulator/writer
-- controller/reader
+The codebase currently supports two operating modes:
+- emulator
+- controller
 
 In _emulator_ mode the implementation writes a Wiegand-26 card code (or keypad PIN code) to an external Wiegand-26 interface
 (e.g. a UHPPOTE controller). It also:
