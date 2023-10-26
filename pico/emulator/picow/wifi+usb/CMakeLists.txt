@@ -29,6 +29,7 @@ pico_sdk_init()
 
 add_executable(wiegand-emulator-wifi-usb
   ./src/emulator.c
+  ${COMMON}/src/emulator.c
   ${COMMON}/src/cli.c
   ${CORE}/src/common.c
   ${CORE}/src/uart.c

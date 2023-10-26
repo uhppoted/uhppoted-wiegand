@@ -5,7 +5,7 @@
 - [x] Weird card after ACL revoking a card in the middle of a list
 - [x] Clear ACL
 
-- [ ] Emulate keypad (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/4)
+- [x] Emulate keypad (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/4)
       - [x] 4-bit burst mode write
       - [x] 4-bit burst mode read
       - [x] controller passcodes
@@ -16,19 +16,8 @@
       - [x] card + PIN read
       - [x] CHANGELOG
       - [x] Check mode == CONTROLLER/READER
-            - [x] unlock
-            - [x] door sensor emulation
-            - [x] pushbutton emulation
-            = [x] LEDs
-            - [x] Replace READER with CONTROLLER
-            - [x] Replace WRITER with EMULATOR
       - [x] README
-            - [x] build constants
-            - [x] _operating modes_
-            - [x] keypad modes
-            - [x] passcodes
-            - [x] master passcode
-      - [ ] Restructure emulator CLI
+      - [x] Restructure emulator
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

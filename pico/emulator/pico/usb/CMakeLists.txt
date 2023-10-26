@@ -22,6 +22,7 @@ pico_sdk_init()
 add_executable(wiegand-emulator-usb
   ../src/emulator.c
   ${COMMON}/src/cli.c
+  ${COMMON}/src/emulator.c
   ${CORE}/src/common.c
   ${CORE}/src/uart.c
   ${CORE}/src/sys.c

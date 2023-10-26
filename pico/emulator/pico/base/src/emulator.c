@@ -22,6 +22,8 @@
 #include <uart.h>
 #include <write.h>
 
+#include "../include/emulator.h"
+
 #define VERSION "v0.8.5"
 
 // GPIO
@@ -30,9 +32,6 @@ const uint32_t MSG_WATCHDOG = 0x00000000;
 const uint32_t MSG_SYSCHECK = 0x10000000;
 const uint32_t MSG_RX = 0x20000000;
 const uint32_t MSG_TX = 0x30000000;
-const uint32_t MSG_CARD = 0x40000000;
-const uint32_t MSG_CODE = 0x50000000;
-const uint32_t MSG_KEYPAD_DIGIT = 0x60000000;
 const uint32_t MSG_LED = 0x70000000;
 const uint32_t MSG_RELAY = 0x80000000;
 const uint32_t MSG_DOOR = 0x90000000;
@@ -81,6 +80,7 @@ int main() {
     while (true) {
         uint32_t v;
         queue_remove_blocking(&queue, &v);
+        dispatch(v);
 
         if ((v & MSG) == MSG_SYSINIT) {
             sysinit();
@@ -107,26 +107,26 @@ int main() {
             free(b);
         }
 
-        if ((v & MSG) == MSG_CARD) {
-            on_card_read(v & 0x0fffffff);
-
-            char s[64];
-            cardf(&last_card, s, sizeof(s), false);
-            logd_log(s);
-        }
-
-        if ((v & MSG) == MSG_CODE) {
-            char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
-            char s[64];
-
-            snprintf(s, sizeof(s), "CODE   %s", b);
-            logd_log(s);
-            free(b);
-        }
-
-        if ((v & MSG) == MSG_KEYPAD_DIGIT) {
-            on_keypad_digit(v & 0x0fffffff);
-        }
+        // if ((v & MSG) == MSG_CARD) {
+        //     on_card_read(v & 0x0fffffff);
+        //
+        //     char s[64];
+        //     cardf(&last_card, s, sizeof(s), false);
+        //     logd_log(s);
+        // }
+        //
+        // if ((v & MSG) == MSG_CODE) {
+        //     char *b = (char *)(SRAM_BASE | (v & 0x0fffffff));
+        //     char s[64];
+        //
+        //     snprintf(s, sizeof(s), "CODE   %s", b);
+        //     logd_log(s);
+        //     free(b);
+        // }
+        //
+        // if ((v & MSG) == MSG_KEYPAD_DIGIT) {
+        //     on_keypad_digit(v & 0x0fffffff);
+        // }
 
         if ((v & MSG) == MSG_LED) {
             led_event(v & 0x0fffffff);
