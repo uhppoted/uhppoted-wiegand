@@ -34,14 +34,20 @@ Next up:
 
 <img width="800" src="documentation/images/fritzing-reference.png"> 
 
-## Releases
+## Release Notes
 
-| *Version* | *Description*                                                                             |
-| --------- | ----------------------------------------------------------------------------------------- |
-| v0.8.6    | Reworked to use on-board flash for ACL (with SD card override)                            |
-| v0.8.5    | Added support for PicoW and a telnet CLI                                                  |
-| v0.8.4    | Initial release of reference, reader emulator and controller emulator                     |
+### Current Release
 
+**[v0.8.7](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.67) - 2023-12-01**
+
+1. Keypad emulation
+2. Passcode access override
+3. Card + optional PIN access
+4. _clear-acl_ command
+5. Fixed bug in SD card _store-acl_ logic.
+6. Renamed 'reference' implementation to 'universal'
+
+## Development
 
 ### Building from source
 
