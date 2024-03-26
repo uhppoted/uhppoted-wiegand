@@ -38,14 +38,10 @@ Next up:
 
 ### Current Release
 
-**[v0.8.7](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.67) - 2023-12-01**
+**[v0.8.8](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.8) - 2024-03-27**
 
-1. Keypad emulation
-2. Passcode access override
-3. Card + optional PIN access
-4. _clear-acl_ command
-5. Fixed bug in SD card _store-acl_ logic.
-6. Renamed 'reference' implementation to 'universal'
+1. Maintenance release
+
 
 ## Development
 
