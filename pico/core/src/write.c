@@ -22,6 +22,8 @@ void write_initialise(enum MODE mode) {
 
     if (strncasecmp(KEYPAD, "8-bit", 5) == 0) {
         keypadmode = BITS8;
+    } else {
+        keypadmode = BITS4;
     }
 
     uint offset = pio_add_program(PIO_WRITER, &writer_program);
@@ -58,6 +60,7 @@ bool write_keycode(char digit) {
             } else {
                 writer_program_put(PIO_WRITER, SM_WRITER, KEYCODES[i].code4, 4);
             }
+
             return true;
         }
     }

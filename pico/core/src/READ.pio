@@ -54,7 +54,7 @@ static inline uint32_t read_program_get(PIO pio, uint sm) {
         return *fifo;
     }
 
-    return -1;
+    return 0;
 }
 
 %}  

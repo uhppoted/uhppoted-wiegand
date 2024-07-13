@@ -4,7 +4,7 @@ PORT=/dev/tty.usbmodem14201
 SYSDATE := \\\"$(shell date '+%Y-%m-%d')\\\"
 SYSTIME := \\\"$(shell date '+%H:%M:%S')\\\"
 FACILITY_CODE = 49
-KEYPAD = 8-bit
+KEYPAD = 4-bit
 
 clean:
 	rm -rf build

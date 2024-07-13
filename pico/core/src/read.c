@@ -146,6 +146,7 @@ int64_t rxii(alarm_id_t id, void *data) {
         blink(CARD_TIMEOUT);
     }
 
+    // FIXME race condition waiting to happen
     b->word = 0;
     b->count = 0;
 

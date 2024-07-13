@@ -64,7 +64,7 @@ void execw(char *cmd, txrx f, void *context) {
             } else if (strncasecmp(cmd, "card ", 5) == 0) {
                 cli_swipe(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "code ", 5) == 0) {
-                keypad(&cmd[1], f, context);
+                keypad(&cmd[5], f, context);
             } else if (strncasecmp(cmd, "query", 5) == 0) {
                 query(f, context);
             } else {
