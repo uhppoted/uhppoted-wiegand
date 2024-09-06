@@ -20,7 +20,7 @@ jobs:
         cd .. 
         mkdir raspberrypi
         cd raspberrypi
-        git clone https://github.com/raspberrypi/pico-sdk.git --branch master
+        git clone https://github.com/raspberrypi/pico-sdk.git --branch v1.1.5
         cd pico-sdk
         git submodule update --init
 
