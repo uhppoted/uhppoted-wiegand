@@ -1,23 +1,8 @@
 # TODO
 
+- [x] Change _rx_ labels in PIO (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/6)
+      
 - (?) Make -Wimplicit-function-declaration an error
-
-- [x] Weird card after ACL revoking a card in the middle of a list
-- [x] Clear ACL
-
-- [x] Emulate keypad (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/4)
-      - [x] 4-bit burst mode write
-      - [x] 4-bit burst mode read
-      - [x] controller passcodes
-      - [x] 8-bit burst mode write
-      - [x] 8-bit burst mode read
-      - [x] card + PIN writer
-      - [x] FIXME in acl.c
-      - [x] card + PIN read
-      - [x] CHANGELOG
-      - [x] Check mode == CONTROLLER/READER
-      - [x] README
-      - [x] Restructure emulator
 
 - [ ] PicoW+TCP/IP
       - [ ] Figure out SD card detect interrupt conflict

@@ -5,10 +5,11 @@ loop:                 ; wait for D0 || D1
     in pins, 2        ;
     set y, 3
     mov x, isr        ;
-    jmp x != y rx     ;
+    jmp x != y rxd    ;
     jmp loop          ;
 
-rx: push block        ; push D0 and D1 to FIFO
+rxd:
+    push block        ; push D0 and D1 to FIFO
 
     set y,31          ; debounce/noise-gate
 lp: nop [31]          ;
