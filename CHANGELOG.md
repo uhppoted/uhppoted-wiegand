@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## [0.8.10](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.10) - 2025-01-31
 
 ### Updated
 1. Updated labels in READ.pio for RP2350 reserved words.
