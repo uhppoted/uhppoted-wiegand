@@ -1,0 +1,70 @@
+.program writer
+
+.wrap_target
+    out pins, 2   ; set D0 and D1
+
+    set y,31      ; delay
+lp1: 
+    nop [31]      ;
+    jmp y-- lp1   ;
+
+    set pins, 3   ; reset D0 and D1
+
+    set y,31      ; delay
+lp2: 
+    nop [31]      ;
+    jmp y-- lp2   ;
+
+.wrap             ; loop
+
+
+% c-sdk {
+
+static inline void writer_program_init(PIO pio, uint sm, uint offset, uint d0, uint d1) {
+    gpio_pull_up(d0);
+    gpio_pull_up(d1);
+
+    uint32_t mask = (0x00000001 << d0) | (0x00000001 << d1);
+    uint32_t dirs = (0x00000001 << d0) | (0x00000001 << d1);
+    uint32_t off  = (0x00000001 << d0) | (0x00000001 << d1);
+
+    pio_gpio_init(pio, d0);
+    pio_gpio_init(pio, d1);
+
+    pio_sm_set_pindirs_with_mask(pio, sm, dirs, mask);
+    pio_sm_set_pins_with_mask(pio,sm,off,mask);
+    
+    pio_sm_config c = writer_program_get_default_config(offset);
+
+    sm_config_set_set_pins(&c, d0, 2);
+    sm_config_set_out_pins(&c, d0, 2);    
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    sm_config_set_clkdiv(&c, 124.0593);  // ~2x1ms per bit
+
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+
+static inline uint32_t writer_program_put(PIO pio, uint sm, uint32_t data, int N) {
+    const uint64_t ZERO =   ((uint64_t) 0x02) << 62;
+    const uint64_t ONE  =   ((uint64_t) 0x01) << 62;
+    const uint64_t MASK = ~(((uint64_t) 0x03) << 62); 
+
+    uint64_t word = 0xffffffffffffffff;
+
+    for (int i=0; i<N; i++) {
+        word >>= 2;
+        word &= MASK; 
+        word |= (data & 0x01) == 0x01 ? ONE : ZERO;
+
+        data >>= 1;
+    }
+
+    pio_sm_put_blocking(pio,sm,(uint32_t) (word >> 32));
+    pio_sm_put_blocking(pio,sm,(uint32_t) (word >> 0));
+
+    return 0;
+}
+
+%}  

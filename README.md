@@ -28,10 +28,6 @@ Breadboarded and Fritzing'ed implementations of:
 - Wiegand-26 controller emulator
 - Wiegand-26 'universal' reader/writer
 
-Next up:
-- Wiegand-26 relay
-- (maybe) KiCad schematics
-
 <img width="800" src="documentation/images/fritzing-reference.png"> 
 
 ## Release Notes
@@ -43,7 +39,7 @@ Next up:
 1. Updated labels in READ.pio for RP2350 reserved words.
 
 
-## Development
+## Breadboard
 
 ### Building from source
 
@@ -58,7 +54,7 @@ Required tools:
 To build using the included _Makefile_:
 ```
 git clone https://github.com/uhppoted/uhppoted-wiegand.git
-cd uhppoted-wiegand/pico
+cd uhppoted-wiegand/breadboard/pico
 make clean
 make build
 ```
@@ -71,14 +67,7 @@ The `build` target produces both a UF2 and an ELF binary for installation on a _
 - The `make install` command installs the binary using _PicoTool_
 - The `make run` command installs the binary using _PicoProbe_ and _OpenOCD_
 
-#### Dependencies
-
-| *Dependency*                                                    | *Description*                       |
-| --------------------------------------------------------------- | ----------------------------------- |
-|                                                                 |                                     |
-|                                                                 |                                     |
-
-## Usage
+### Usage
 
 The provided software includes a **very** bare bones serial port command interface. Commands are (currently)
 single letter mnemonics and need to be terminated by a carriage return and/or line feed.
@@ -113,7 +102,7 @@ The supported command set comprises:
 | REBOOT                   | _ALL_        | Reboot                                    |
 | ?                        | _ALL_        | Display list of commands                  |
 
-## Operating Modes
+### Operating Modes
 
 The codebase currently supports two operating modes:
 - emulator
@@ -139,7 +128,7 @@ GPIO7 and GPIO8 by default):
   JUMPER_WRITE is pulled LOW
 - if both JUMPER_READ and JUMPER_WRITE are pulled LOW the operating mode is UNKNOWN.
 
-## Keypad emulation
+### Keypad emulation
 
 The code supports two keypad modes:
 - 4-bit burst mode
@@ -162,7 +151,7 @@ In 8 bit burst mode, each keypress is sent as 8 bit code followed by a 24-bit 's
   '#' or a 12.5 second timeout.
 
 
-## Supervisor passcodes
+### Supervisor passcodes
 
 The supervisor passcodes are _controller_ operating mode override codes that unconditionally unlocks the door.
 
@@ -170,13 +159,13 @@ The _controller_ operating mode supports up to four user-defined passcodes which
 _PASSCODES_ command in the CLI. The passcodes may be up to 6 digits in length.
 
 
-## Master passcode
+### Master passcode
 
 In addition to the supervisor passcodes, the _controller_ operating mode provides for a MASTER override code that
 unconditionally unlocks the door. The _MASTER_ override code is set at build time via the `MASTER_PASSCODE` build constant.
 
 
-## Build constants
+### Build constants
 
 The _build constants_ in the _Makefiles_ define the initial operational settings:
 
@@ -194,7 +183,6 @@ The _build constants_ in the _Makefiles_ define the initial operational settings
 | `TCPD_SERVER_IDLE`   | Idle time (seconds) after which the TCP server closes all connections and restarts                        |
 | `TCPD_CLIENT_IDLE`   | Idle time (seconds) after which a Telnet CLI client connection is closed                                  |
 | `TCPD_POLL_INTERVAL` | Internal TCP handler poll interval (ms)                                                                   |
-
 
 ## References and Related Projects
 

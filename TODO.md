@@ -1,7 +1,5 @@
 # TODO
 
-- [x] Change _rx_ labels in PIO (cf. https://github.com/uhppoted/uhppoted-wiegand/issues/6)
-      
 - (?) Make -Wimplicit-function-declaration an error
 
 - [ ] PicoW+TCP/IP
