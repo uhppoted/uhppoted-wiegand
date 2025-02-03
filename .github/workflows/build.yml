@@ -35,6 +35,8 @@ jobs:
 
     - name: Build
       run: |
-        echo 'SSID = "XXXX-XXXX-XXXX"' > breadboard/.credentials
-        echo 'PASSWORD = "zNJAoiLLnzvv8KpPKLyf"' >> breadboard/.credentials
-        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && make build-all SDK=$(pwd)/../raspberrypi/pico-sdk CREDENTIALS=$(pwd)/.credentials
+        echo 'SSID = "XXXX-XXXX-XXXX"' > .credentials
+        echo 'PASSWORD = "zNJAoiLLnzvv8KpPKLyf"' >> .credentials
+        ls -la
+        export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && echo ">>>>>>>>> PWD $(pwd)" && ls -la
+        # export PICO_SDK_PATH=$(pwd)/../raspberrypi/pico-sdk && make build-all SDK=$(pwd)/../raspberrypi/pico-sdk CREDENTIALS=$(pwd)/.credentials
