@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "uhppoted")(type "KiCad")(uri "${KICAD_UHPPOTED}/uhppoted.kicad_sym")(options "")(descr ""))
+)

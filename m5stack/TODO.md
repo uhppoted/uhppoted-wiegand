@@ -2,9 +2,15 @@
 
 ## Schematic
 - [ ] WaveShare Tiny library part
-- [ ] PCAL6408APW library part
-- (?) 12V to 5V conversion
-- (?) 5V TX/RX
+- [ ] Opto-isolated I/O
+- [ ] Level shifters
+- [ ] MOVs
+- [ ] Power:
+      - [ ] M5 bus + external for opto-isolators
+      - [ ] M5 bus only
+      - [ ] external + isolated from M5 bus
+- [ ] 12V to 5V conversion
+- (?) 5V TX/RX for external UART
 
 ## PCB
 
