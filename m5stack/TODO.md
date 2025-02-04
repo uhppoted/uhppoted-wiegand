@@ -10,6 +10,7 @@
       - https://forums.raspberrypi.com/viewtopic.php?t=280562
 - [ ] MOVs
 - [ ] Power:
+      - [ ] Isolated grounds
       - [ ] M5 bus + external for opto-isolators
       - [ ] M5 bus only
       - (?) external + isolated from M5 bus
