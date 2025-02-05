@@ -2,11 +2,15 @@
 
 ## Schematic
 - [ ] WaveShare Tiny library part
-      - [ ] Move 5V and 3V3 to top
-      - [ ] Move GND to bottom
+      - [x] Move 5V and 3V3 to top
+      - [x] Move GND to bottom
 
 - [ ] Opto-isolated I/O
       - [ ] Check current
+      - https://www.ti.com/product/ISOW7721
+      - https://www.ti.com/product/ISOW7742
+      - https://www.ti.com/product/ISO7041-Q1
+      - https://www.analog.com/en/products/adum5242.html
       - https://forums.raspberrypi.com/viewtopic.php?t=280562
 - [ ] MOVs
 - [ ] Power:
