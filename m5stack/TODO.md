@@ -12,6 +12,7 @@
       - https://www.ti.com/product/ISO7041-Q1
       - https://www.analog.com/en/products/adum5242.html
       - https://forums.raspberrypi.com/viewtopic.php?t=280562
+      - https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7842FDWER
 - [ ] MOVs
 - [ ] Power:
       - [ ] Isolated grounds
