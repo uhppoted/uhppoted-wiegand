@@ -6,3 +6,6 @@
 4. https://www.ti.com/document-viewer/iso7742ta-q1/datasheet
 5. https://www.ti.com/lit/ug/tiduc29a/tiduc29a.pdf?ts=1738704493564
 6. https://www.analog.com/en/resources/technical-articles/icoupler-products-with-isopower-technology.html
+7. https://dubinko.info/blog/2021/09/raspberry-pi-neopixel-code-wrong
+8. https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them
+9. https://electronics.stackexchange.com/questions/478204/150-ws2812b-leds-with-pi-zero-and-sn74ahct125n
