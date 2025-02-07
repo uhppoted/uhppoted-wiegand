@@ -1,25 +1,36 @@
 # TODO
 
 ## Schematic
-- [x] WaveShare Tiny library part
-      - [x] Move 5V and 3V3 to top
-      - [x] Move GND to bottom
+- [x] WaveShare RP2040-Tiny
 
 - [ ] WS2812-2020
       - [x] SN74HCT1G125
+      - [x] Decoupling capacitors
       - [x] Buffer capacitor
       - [x] Input resistor
+      - [ ] pullups
       - https://blog.adafruit.com/2023/07/06/smd5050-led-mount-light-pipe-3dthursday-3dprinting
       - https://electronics.stackexchange.com/questions/408310/attaching-a-3-mm-fiber-optic-cable-to-a-ws2812-led
 
 - [ ] Isolated I/O
-      - [ ] Check current
+      - [ ] Decoupling capacitors
+      - [ ] Inputs
       - https://www.ti.com/product/ISOW7842
       - https://www.ti.com/product/ISOW7742
       - https://www.ti.com/product/ISO7041-Q1
       - https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7842FDWER
       - https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7742FDFMR
       - Si86xx + Murata
+
+- [ ] Line Driver 
+      - [ ] Decoupling capacitors
+      - [ ] OE
+      - [ ] Pullups
+      - (?) Protection diodes
+      - https://www.mouser.ca/ProductDetail/onsemi/NL27WZ125USG
+      - https://www.microchip.com/en-us/product/TC4427
+      - https://www.ti.com/product/SN74LVC2G17
+      - https://www.ti.com/product/SN74LVC2G126-EP
 
 - [ ] MOVs
 - [ ] Power:
