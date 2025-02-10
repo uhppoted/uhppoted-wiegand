@@ -24,8 +24,6 @@
       - https://electronics.stackexchange.com/questions/535159/will-this-circuit-for-two-wiegand-card-readers-allow-them-to-talk-to-one-control
 
 - [ ] Line Driver 
-      - ???? open collector ???
-            - https://electronics.stackexchange.com/questions/678270/trouble-with-voltage-divider-and-wiegand-reader
       - [ ] Decoupling capacitors
       - [ ] OE
       - [ ] Pullups
