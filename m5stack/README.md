@@ -12,6 +12,12 @@ RP2040 _M5Stack_ module to emulate a Wiegand reader:
 Mostly to avoid having to dig out a breadboard and figure how it worked all over again every time I needed
 to test a Wiegand interface.
 
+## Notes
+
+1. The emulator uses a line driver to interface to the external controller i.e. it is not an open-collector
+   and cannot be "parallelised" (as in e.g. [Will this circuit for two Wiegand card readers allow them to talk to one control board?](https://electronics.stackexchange.com/questions/535159/will-this-circuit-for-two-wiegand-card-readers-allow-them-to-talk-to-one-control)).
+
+
 ## Status
 
 **IN DEVELOPMENT**

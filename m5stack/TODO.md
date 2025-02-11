@@ -13,31 +13,25 @@
       - https://electronics.stackexchange.com/questions/408310/attaching-a-3-mm-fiber-optic-cable-to-a-ws2812-led
 
 - [ ] Isolated I/O
-      - [ ] Decoupling capacitors
-      - [ ] Inputs
+      - [x] Decoupling capacitors
+      - [x] Inputs
+      - (?) Protection diodes
       - https://www.ti.com/product/ISOW7842
-      - https://www.ti.com/product/ISOW7742
-      - https://www.ti.com/product/ISO7041-Q1
       - https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7842FDWER
-      - https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7742FDFMR
-      - Si86xx + Murata
-      - https://electronics.stackexchange.com/questions/535159/will-this-circuit-for-two-wiegand-card-readers-allow-them-to-talk-to-one-control
 
 - [ ] Line Driver 
+      - [ ] Change to ISOW7841 and use additional output for OE
       - [x] LTSpice model
       - [x] SN74LVC2G126-EP
-            - [ ] Move OE to other side of symbol
+            - [x] Move OE to other side of symbol
       - [x] Current limiting resistors 
-      - [ ] OE soft start
-      - [ ] Decoupling capacitors
+      - [x] Decoupling capacitors
+      - [x] MOVs
       - (?) Protection diodes
-      - https://www.mouser.ca/ProductDetail/onsemi/NL27WZ125USG
-      - https://www.microchip.com/en-us/product/TC4427
-      - https://www.ti.com/product/SN74LVC2G17
       - https://www.ti.com/product/SN74LVC2G126-EP
-      - https://www.ranecommercial.com/legacy/note126.html
 
-- [ ] MOVs
+- [ ] 12V to 5V conversion
+
 - [ ] Power:
       - [ ] M5 bus + external
             - https://www.ti.com/product/TPS51388
@@ -45,7 +39,6 @@
       - [ ] M5 bus only
       - [ ] USB
       - [ ] Isolated grounds
-- [ ] 12V to 5V conversion
 - (?) USB mounting holes
 
 ## PCB

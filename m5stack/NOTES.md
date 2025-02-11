@@ -13,11 +13,20 @@
 11. https://www.ranecommercial.com/legacy/note126.html
 12. https://electronics.stackexchange.com/questions/535159/will-this-circuit-for-two-wiegand-card-readers-allow-them-to-talk-to-one-control
 13. https://electronics.stackexchange.com/questions/678270/trouble-with-voltage-divider-and-wiegand-reader
+14. https://www.ti.com/product/ISOW7842
+15. https://www.ti.com/product/ISOW7742
+16. https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7842FDWER
+17. https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7742FDFMR
+18. Si86xx + Murata
+19. https://www.mouser.ca/ProductDetail/onsemi/NL27WZ125USG
+20. https://www.microchip.com/en-us/product/TC4427
+21. https://www.ti.com/product/SN74LVC2G17
+22. https://www.ti.com/product/SN74LVC2G126-EP
 
 ## Isolation
-13. https://medium.com/@jaydesai36/wiegand-interface-517a24107ede
-14. https://www.galaxysys.com/sghelp/Content/C1_QRGs/Galaxy%20Reader%20Wiring%20QRG.htm
-15. https://resources.wolframcloud.com/FormulaRepository/resources/Cable-Capacitance
+1. https://medium.com/@jaydesai36/wiegand-interface-517a24107ede
+2. https://www.galaxysys.com/sghelp/Content/C1_QRGs/Galaxy%20Reader%20Wiring%20QRG.htm
+3. https://resources.wolframcloud.com/FormulaRepository/resources/Cable-Capacitance
 
 1. Options:
    - ~~6N136 + Murata: $2.13 x 4 = $8.52 + 5.26~~
