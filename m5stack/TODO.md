@@ -2,20 +2,13 @@
 
 ## Schematic
 
-- [ ] Isolated I/O
-      - (?) Protection diodes
+- [x] Line Driver 
+      - [x] Protection diodes
 
-- [ ] Line Driver 
-      - (?) Protection diodes
-
-- [ ] 12V to 5V conversion
-      - https://www.ti.com/product/TPS62173
-      - https://www.ti.com/product/TPS629206
-      - https://www.ti.com/product/TPS629210
-
-- (?) USB mounting holes
+- [x] 12V to 5V conversion
 
 ## PCB
+- (?) USB mounting holes
 
 ## Notes
 
