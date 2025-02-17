@@ -28,6 +28,7 @@
 26. https://www.ametherm.com/inrush-current/ptc-thermistors-for-inrush-current-limiting
 27. https://www.st.com/resource/en/application_note/an6114-esd-protection-tvs-versus-mov-efficiency-comparison-stmicroelectronics.pdf
 28. https://www.analog.com/en/resources/analog-dialogue/raqs/raq-issue-187.html
+29. https://www.reddit.com/r/PrintedCircuitBoard/comments/16oiaoh/review_request_first_attempt_at/?rdt=39790
 
 ## Isolation
 1. https://medium.com/@jaydesai36/wiegand-interface-517a24107ede

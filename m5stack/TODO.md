@@ -1,14 +1,10 @@
 # TODO
 
-## Schematic
-
-- [x] Line Driver 
-      - [x] Protection diodes
-
-- [x] 12V to 5V conversion
-
 ## PCB
-- (?) USB mounting holes
+    - [ ] M5 stack mounting holes:
+          - 3.1mm
+          - 2mm
+          - https://forum.digikey.com/t/specify-a-simple-drill-hole-in-pcbnew/4825
 
 ## Notes
 
