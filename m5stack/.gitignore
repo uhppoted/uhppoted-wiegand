@@ -1,6 +1,7 @@
 .DS_Store
 m5stack-wiegand-emulator-backups
 ~m5stack-wiegand-emulator.kicad_sch.lck
+~m5stack-wiegand-emulator.kicad_pcb.lck
 /#auto_saved_files#
 fp-info-cache
 uhppoted.bak
