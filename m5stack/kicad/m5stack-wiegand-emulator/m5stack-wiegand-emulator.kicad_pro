@@ -386,8 +386,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "uhppoted"
+    ],
+    "pinned_symbol_libs": [
+      "uhppoted"
+    ]
   },
   "meta": {
     "filename": "m5stack-wiegand-emulator.kicad_pro",

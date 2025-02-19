@@ -598,7 +598,7 @@
     (property "Value" "WaveShare RP2040-Tiny" (at 12.7 -15.24 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "" (at -11.43 12.7 0)
+    (property "Footprint" "uhppoted:RP2040-TINY" (at -11.43 12.7 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.waveshare.com/wiki/RP2040-Tiny" (at 2.54 -19.05 0)

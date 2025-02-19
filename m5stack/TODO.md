@@ -1,10 +1,9 @@
 # TODO
 
 ## PCB
-    - [ ] M5 stack mounting holes:
-          - 3.1mm
-          - 2mm
-          - https://forum.digikey.com/t/specify-a-simple-drill-hole-in-pcbnew/4825
+    - [x] M5 stack mounting holes
+    - [x] M5 stack conectors
+    - [ ] RP2040
 
 ## Notes
 
@@ -14,3 +13,4 @@
 4. https://www.adafruit.com/product/4978
 5. https://blog.adafruit.com/2023/07/06/smd5050-led-mount-light-pipe-3dthursday-3dprinting
 6. https://electronics.stackexchange.com/questions/408310/attaching-a-3-mm-fiber-optic-cable-to-a-ws2812-led
+7. https://forum.digikey.com/t/specify-a-simple-drill-hole-in-pcbnew/4825
