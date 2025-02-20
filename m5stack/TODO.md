@@ -4,7 +4,7 @@
     - [x] M5 stack mounting holes
     - [x] M5 stack conectors
     - [x] RP2040
-    - [ ] remaining footprints
+    - [x] remaining footprints
 
 ## Notes
 

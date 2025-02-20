@@ -5865,7 +5865,7 @@
     (property "Value" "2.2uH" (at 176.53 33.02 90)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Inductor_SMD:L_TDK_VLP8040" (at 176.53 35.56 0)
+    (property "Footprint" "Inductor_SMD:L_1210_3225Metric_Pad1.42x2.65mm_HandSolder" (at 176.53 35.56 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://product.tdk.com/en/system/files/dam/doc/product/inductor/inductor/smd/catalog/inductor_commercial_power_vls3012cx-1_en.pdf" (at 176.53 35.56 0)
