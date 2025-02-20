@@ -3,7 +3,8 @@
 ## PCB
     - [x] M5 stack mounting holes
     - [x] M5 stack conectors
-    - [ ] RP2040
+    - [x] RP2040
+    - [ ] remaining footprints
 
 ## Notes
 
