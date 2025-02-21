@@ -1,10 +1,14 @@
 # TODO
 
 ## PCB
-    - [x] M5 stack mounting holes
-    - [x] M5 stack conectors
-    - [x] RP2040
-    - [x] remaining footprints
+    - [ ] Replace SMD TranzOrbs with through-hole (for hand soldering)
+    - [ ] DC converter module
+    - [ ] Check M5 stack TX/RX voltage levels
+    - [ ] Fix courtyard for RP2040 (should only surround actual pins)
+    - [ ] Change footprint for off-board connector
+    - [ ] Find 3D model for Molex connector
+    - [ ] Logo/Revision
+    - [ ] Check inductor selection
 
 ## Notes
 

@@ -15,16 +15,19 @@ to test a Wiegand interface.
 ## Notes
 
 1. The emulator uses a line driver to interface to the external controller i.e. it is not an open-collector
-   and cannot be "parallelised" (as in e.g. [Will this circuit for two Wiegand card readers allow them to talk to one control board?](https://electronics.stackexchange.com/questions/535159/will-this-circuit-for-two-wiegand-card-readers-allow-them-to-talk-to-one-control)).
-
+   and cannot be "parallelised" (as in e.g. [Will this circuit for two Wiegand card readers allow them to talk to one control board?](https://electronics.stackexchange.com/questions/535159/will-this-circuit-for-two-wiegand-card-readers-allow-them-to-talk-to-one-control). Which TBH is kindof a weird thing to do but ..).
 
 ## Status
 
 **IN DEVELOPMENT**
 
-## Development Notes
+## Design Notes
 
-### Building from source
+### Rev.0
+
+1. The RP2040 is **way** overkill for this application but makes for a nice development setup.
+2. It's more logicial to have the ISO784x on the other side of the RP2040 but for now it allows for powering via
+   USB during development.
 
 ## References
 
