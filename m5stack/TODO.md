@@ -2,7 +2,7 @@
 
 ## PCB
     - [x] Replace SMD TranzOrbs with through-hole (for hand soldering)
-    - [ ] DC converter module
+    - [x] DC converter module
     - [ ] Use ISO7843 to drive WS2812
     - [ ] Lose the TX/RX jumpers and connect both UARTs
     - (?) Put ISOW7842 on 'other' side of RP2040

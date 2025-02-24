@@ -30,6 +30,7 @@
 28. https://www.analog.com/en/resources/analog-dialogue/raqs/raq-issue-187.html
 29. https://www.reddit.com/r/PrintedCircuitBoard/comments/16oiaoh/review_request_first_attempt_at/?rdt=39790
 30. https://www.digikey.ca/en/articles/protecting-inputs-in-digital-electronics
+31. https://electronics.stackexchange.com/questions/680928/unidirectional-or-bi-directional-tvs-diodes-which-one-to-use
 
 ## Isolation
 1. https://medium.com/@jaydesai36/wiegand-interface-517a24107ede
