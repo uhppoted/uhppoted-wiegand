@@ -7,7 +7,7 @@
     - [x] Lose the TX/RX jumpers and connect both UARTs
     - [x] Solder jumpers on back of board for TX/RX
     - [x] Check M5 stack TX/RX voltage levels
-    - [ ] Use ISO7843 to drive WS2812
+    - [x] Use ISO7843 to drive WS2812
     - [ ] Fix courtyard for RP2040 (should only surround actual pins)
     - [ ] Change footprint for off-board connector
           - https://www.molex.com/en-us/products/connectors/wire-to-board-connectors/mini-fit-connectors
