@@ -3,15 +3,17 @@
 ## PCB
     - [x] Replace SMD TranzOrbs with through-hole (for hand soldering)
     - [x] DC converter module
+    - [x] 10/24/32mA options
+    - [ ] solder jumpers on back of board for TX/RX
     - [ ] Use ISO7843 to drive WS2812
     - [ ] Lose the TX/RX jumpers and connect both UARTs
-    - (?) Put ISOW7842 on 'other' side of RP2040
     - [ ] Check M5 stack TX/RX voltage levels
     - [ ] Fix courtyard for RP2040 (should only surround actual pins)
     - [ ] Change footprint for off-board connector
+          - https://www.molex.com/en-us/products/connectors/wire-to-board-connectors/mini-fit-connectors
     - [ ] 3D model for Molex connector
     - [ ] Logo + revision
-    - [ ] Check inductor selection
+    - (?) Put ISOW7842 on 'other' side of RP2040
 
 ## Notes
 
