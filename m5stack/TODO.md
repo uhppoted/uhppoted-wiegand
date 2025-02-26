@@ -8,13 +8,12 @@
     - [x] Solder jumpers on back of board for TX/RX
     - [x] Check M5 stack TX/RX voltage levels
     - [x] Use ISO7843 to drive WS2812
-    - [ ] Revert to SMD TranzOrbs
-    - [ ] Fix courtyard for RP2040 (should only surround actual pins)
-    - [ ] Change footprint for off-board connector
-          - https://www.molex.com/en-us/products/connectors/wire-to-board-connectors/mini-fit-connectors
-    - [ ] 3D model for Molex connector
+    - [x] Revert to SMD TranzOrbs
+    - [x] Reinstate D4 TranzOrb
+    - [x] Fix courtyard for RP2040 (should only surround actual pins)
+    - [x] Change footprint for off-board connector
+    - [x] 3D model for Molex connector
     - [ ] Logo + revision
-    - (?) Put ISOW7842 on 'other' side of RP2040
 
 ## Notes
 
