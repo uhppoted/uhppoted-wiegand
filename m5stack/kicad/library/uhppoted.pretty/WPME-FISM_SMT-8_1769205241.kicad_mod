@@ -54,4 +54,9 @@
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
   )
+  (model "${KICAD_UHPPOTED}/uhppoted.pretty/WPME-FISM-SMT-8_rev1.stp"
+    (offset (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )

@@ -13,7 +13,8 @@
     - [x] Fix courtyard for RP2040 (should only surround actual pins)
     - [x] Change footprint for off-board connector
     - [x] 3D model for Molex connector
-    - [ ] Logo + revision
+    - [x] Logo + revision
+    - [x] Fiducial marks
 
 ## Notes
 
