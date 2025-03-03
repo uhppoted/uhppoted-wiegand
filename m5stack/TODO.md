@@ -15,6 +15,7 @@
     - [x] 3D model for Molex connector
     - [x] Logo + revision
     - [x] Fiducial marks
+    - [ ] Routing
 
 ## Notes
 
