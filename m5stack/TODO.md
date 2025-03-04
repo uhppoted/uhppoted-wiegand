@@ -16,6 +16,8 @@
     - [x] Logo + revision
     - [x] Fiducial marks
     - [ ] Routing
+          - [ ] Gah! Swap front and back sides :-( :-( :-(
+          - [ ] J3 is flipped
 
 ## Notes
 
