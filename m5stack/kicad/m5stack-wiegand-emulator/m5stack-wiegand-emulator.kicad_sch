@@ -4727,7 +4727,7 @@
     )
   )
 
-  (symbol (lib_id "Device:R_Small") (at 227.33 83.82 90) (unit 1)
+  (symbol (lib_id "Device:R_Small") (at 227.33 83.82 270) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 60c13862-1e58-47b6-8cb2-4f44c3058ed1)
     (property "Reference" "R10" (at 224.79 81.28 90)
