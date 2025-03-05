@@ -1,5 +1,8 @@
 # TODO
 
+## Schematic
+    - [ ] ERC
+
 ## PCB
     - [x] Replace SMD TranzOrbs with through-hole (for hand soldering)
     - [x] DC converter module
@@ -16,8 +19,8 @@
     - [x] Logo + revision
     - [x] Fiducial marks
     - [ ] Routing
-          - [ ] Gah! Swap front and back sides :-( :-( :-(
-          - [ ] J3 is flipped
+          - [x] ~~Gah! Swap front and back sides :-( :-( :-(~~
+          - [x] J3 is flipped
 
 ## Notes
 
