@@ -21,6 +21,14 @@
     - [ ] Routing
           - [x] ~~Gah! Swap front and back sides :-( :-( :-(~~
           - [x] J3 is flipped
+          - [x] D2/D3/D4 should all be oriented the same way
+          - (?) rotate U1/U2
+          - [ ] TranzOrbs 
+                - (?) check spacing
+                - (?) 3D model
+                - (?) revert to THT
+                - respec for transient protection + e.g. 5mA pin current
+          - (?) THT resistors for 10/24/32mA options
 
 ## Notes
 
