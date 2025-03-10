@@ -183,6 +183,9 @@ The _build constants_ in the _Makefiles_ define the initial operational settings
 | `TCPD_SERVER_IDLE`   | Idle time (seconds) after which the TCP server closes all connections and restarts                        |
 | `TCPD_CLIENT_IDLE`   | Idle time (seconds) after which a Telnet CLI client connection is closed                                  |
 | `TCPD_POLL_INTERVAL` | Internal TCP handler poll interval (ms)                                                                   |
+## License
+
+Hardware is licensed under the CERN-OHL-S-2.0-S license, software is licensed under the MIT license.
 
 ## References and Related Projects
 

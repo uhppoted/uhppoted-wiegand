@@ -1,5 +1,7 @@
 # TODO
 
+- [x] Change license
+
 ## Schematic
     - [ ] ERC
 
