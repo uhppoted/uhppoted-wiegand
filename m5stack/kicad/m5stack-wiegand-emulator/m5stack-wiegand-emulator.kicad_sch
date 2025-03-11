@@ -3937,7 +3937,7 @@
     (uuid fee876a1-ff1b-4a6c-af20-8fa5d07a1158)
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 157.48 76.2 0) (unit 3)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 157.48 76.2 0) (unit 6)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 073662da-cc18-47fb-b3e8-d54f310a42c2)
     (property "Reference" "R1" (at 158.75 74.93 0)
@@ -3965,7 +3965,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 3)
+          (reference "R1") (unit 6)
         )
       )
     )
@@ -4028,7 +4028,7 @@
     )
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 163.83 76.2 0) (unit 4)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 163.83 76.2 0) (unit 7)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 12167647-4d36-4440-ae0c-fb739d49a0c6)
     (property "Reference" "R1" (at 165.1 74.93 0)
@@ -4056,7 +4056,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 4)
+          (reference "R1") (unit 7)
         )
       )
     )
@@ -4141,7 +4141,7 @@
     )
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 26.67 153.67 0) (unit 1)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 26.67 153.67 0) (unit 4)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 1f90d672-9087-4d8a-a2cb-600fe6e2a996)
     (property "Reference" "R1" (at 27.94 152.4 0)
@@ -4169,7 +4169,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 1)
+          (reference "R1") (unit 4)
         )
       )
     )
@@ -4200,7 +4200,7 @@
     )
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 106.68 78.74 0) (unit 6)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 106.68 78.74 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 24ff3f36-bd48-4097-bca5-f15943e5eeb1)
     (property "Reference" "R1" (at 107.95 77.47 0)
@@ -4228,7 +4228,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 6)
+          (reference "R1") (unit 1)
         )
       )
     )
@@ -4340,7 +4340,7 @@
     )
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 151.13 76.2 0) (unit 2)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 151.13 76.2 0) (unit 5)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 31dbc753-e285-4356-b574-51332f57367c)
     (property "Reference" "R1" (at 152.4 74.93 0)
@@ -4368,7 +4368,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 2)
+          (reference "R1") (unit 5)
         )
       )
     )
@@ -4621,7 +4621,7 @@
     )
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 93.98 78.74 0) (unit 8)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 93.98 78.74 0) (unit 3)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 52b8316c-4e85-4600-9eeb-60284a7eed15)
     (property "Reference" "R1" (at 95.25 77.47 0)
@@ -4649,7 +4649,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 8)
+          (reference "R1") (unit 3)
         )
       )
     )
@@ -5522,7 +5522,7 @@
     )
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 100.33 78.74 0) (unit 7)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 100.33 78.74 0) (unit 2)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid bad42614-9427-49f0-a6bb-06648fac575d)
     (property "Reference" "R1" (at 101.6 77.47 0)
@@ -5550,7 +5550,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 7)
+          (reference "R1") (unit 2)
         )
       )
     )
@@ -5813,7 +5813,7 @@
     )
   )
 
-  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 113.03 78.74 0) (unit 5)
+  (symbol (lib_id "uhppoted:EXB-D10C103J_Split") (at 113.03 78.74 0) (unit 8)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid e65df780-4540-4606-840f-cab7e8b1f9aa)
     (property "Reference" "R1" (at 114.3 77.47 0)
@@ -5841,7 +5841,7 @@
     (instances
       (project "m5stack-wiegand-emulator"
         (path "/591217c3-ab1f-4851-a185-c0f7ee9f3d97"
-          (reference "R1") (unit 5)
+          (reference "R1") (unit 8)
         )
       )
     )
