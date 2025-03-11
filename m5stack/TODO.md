@@ -1,7 +1,5 @@
 # TODO
 
-- [x] Change license
-
 ## Schematic
     - [ ] ERC
 
@@ -25,13 +23,9 @@
           - [x] J3 is flipped
           - [x] D2/D3/D4 should all be oriented the same way
           - [x] rotate U1/U2
+          - [x] TranzOrbs 3D model
+          - [x] Respecify for transient protection + e.g. 5mA pin current
           - [ ] **route +5VDC**
-          - [ ] TranzOrbs 
-                - (?) check spacing
-                - (?) 3D model
-                - (?) revert to THT
-                - respec for transient protection + e.g. 5mA pin current
-          - (?) THT resistors for 10/24/32mA options
 
 ## Notes
 
