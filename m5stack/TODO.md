@@ -1,7 +1,7 @@
 # TODO
 
 ## Schematic
-    - [ ] ERC
+    - [x] ERC
 
 ## PCB
     - [x] Replace SMD TranzOrbs with through-hole (for hand soldering)
@@ -18,14 +18,8 @@
     - [x] 3D model for Molex connector
     - [x] Logo + revision
     - [x] Fiducial marks
-    - [ ] Routing
-          - [x] ~~Gah! Swap front and back sides :-( :-( :-(~~
-          - [x] J3 is flipped
-          - [x] D2/D3/D4 should all be oriented the same way
-          - [x] rotate U1/U2
-          - [x] TranzOrbs 3D model
-          - [x] Respecify for transient protection + e.g. 5mA pin current
-          - [ ] **route +5VDC**
+    - [x] Routing
+    - [x] DRC
 
 ## Notes
 

@@ -1198,13 +1198,13 @@
     )
   )
   (symbol "Molex 532610571" (pin_names (offset 0.254)) (in_bom yes) (on_board yes)
-    (property "Reference" "J" (at 6.35 3.81 0)
+    (property "Reference" "J" (at 6.35 2.54 0)
       (effects (font (size 1.524 1.524)))
     )
-    (property "Value" "Molex 532610571" (at 20.32 -13.97 0)
+    (property "Value" "Molex 532610571" (at 19.05 -13.97 0)
       (effects (font (size 1.524 1.524)))
     )
-    (property "Footprint" "uhppoted:Molex 532610571" (at 22.86 -16.51 0)
+    (property "Footprint" "uhppoted:Molex 532610571" (at 21.59 -16.51 0)
       (effects (font (size 1.27 1.27) italic) hide)
     )
     (property "Datasheet" "https://www.molex.com/en-us/products/part-detail/532610571" (at 40.64 -19.05 0)
@@ -1217,185 +1217,57 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (symbol "Molex 532610571_1_1"
-      (polyline
-        (pts
-          (xy 5.08 -12.7)
-          (xy 12.7 -12.7)
-        )
-        (stroke (width 0.127) (type default))
+      (rectangle (start 5.08 -10.033) (end 6.35 -10.287)
+        (stroke (width 0.1524) (type default))
         (fill (type none))
       )
-      (polyline
-        (pts
-          (xy 5.08 2.54)
-          (xy 5.08 -12.7)
-        )
-        (stroke (width 0.127) (type default))
+      (rectangle (start 5.08 -7.493) (end 6.35 -7.747)
+        (stroke (width 0.1524) (type default))
         (fill (type none))
       )
-      (polyline
-        (pts
-          (xy 10.16 -10.16)
-          (xy 5.08 -10.16)
-        )
-        (stroke (width 0.127) (type default))
+      (rectangle (start 5.08 -4.953) (end 6.35 -5.207)
+        (stroke (width 0.1524) (type default))
         (fill (type none))
       )
-      (polyline
-        (pts
-          (xy 10.16 -10.16)
-          (xy 8.89 -11.0067)
-        )
-        (stroke (width 0.127) (type default))
+      (rectangle (start 5.08 -2.413) (end 6.35 -2.667)
+        (stroke (width 0.1524) (type default))
         (fill (type none))
       )
-      (polyline
-        (pts
-          (xy 10.16 -10.16)
-          (xy 8.89 -9.3133)
-        )
-        (stroke (width 0.127) (type default))
+      (rectangle (start 5.08 0.127) (end 6.35 -0.127)
+        (stroke (width 0.1524) (type default))
         (fill (type none))
       )
-      (polyline
-        (pts
-          (xy 10.16 -7.62)
-          (xy 5.08 -7.62)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
+      (rectangle (start 5.08 1.27) (end 7.62 -11.43)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
       )
-      (polyline
-        (pts
-          (xy 10.16 -7.62)
-          (xy 8.89 -8.4667)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 -7.62)
-          (xy 8.89 -6.7733)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 -5.08)
-          (xy 5.08 -5.08)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 -5.08)
-          (xy 8.89 -5.9267)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 -5.08)
-          (xy 8.89 -4.2333)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 -2.54)
-          (xy 5.08 -2.54)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 -2.54)
-          (xy 8.89 -3.3867)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 -2.54)
-          (xy 8.89 -1.6933)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 0)
-          (xy 5.08 0)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 0)
-          (xy 8.89 -0.8467)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 10.16 0)
-          (xy 8.89 0.8467)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 12.7 -12.7)
-          (xy 12.7 2.54)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (polyline
-        (pts
-          (xy 12.7 2.54)
-          (xy 5.08 2.54)
-        )
-        (stroke (width 0.127) (type default))
-        (fill (type none))
-      )
-      (pin unspecified line (at 0 0 0) (length 5.08)
+      (pin passive line (at 1.27 0 0) (length 3.81)
         (name "1" (effects (font (size 1.27 1.27))))
         (number "1" (effects (font (size 1.27 1.27))))
       )
-      (pin unspecified line (at 0 -2.54 0) (length 5.08)
+      (pin passive line (at 1.27 -2.54 0) (length 3.81)
         (name "2" (effects (font (size 1.27 1.27))))
         (number "2" (effects (font (size 1.27 1.27))))
       )
-      (pin unspecified line (at 0 -5.08 0) (length 5.08)
+      (pin passive line (at 1.27 -5.08 0) (length 3.81)
         (name "3" (effects (font (size 1.27 1.27))))
         (number "3" (effects (font (size 1.27 1.27))))
       )
-      (pin unspecified line (at 0 -7.62 0) (length 5.08)
+      (pin passive line (at 1.27 -7.62 0) (length 3.81)
         (name "4" (effects (font (size 1.27 1.27))))
         (number "4" (effects (font (size 1.27 1.27))))
       )
-      (pin unspecified line (at 0 -10.16 0) (length 5.08)
+      (pin passive line (at 1.27 -10.16 0) (length 3.81)
         (name "5" (effects (font (size 1.27 1.27))))
         (number "5" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at 8.89 5.08 270) (length 2.54) hide
+      (pin no_connect line (at 6.35 6.35 270) (length 5.08) hide
         (name "MP" (effects (font (size 1.27 1.27))))
-        (number "6" (effects (font (size 1.27 1.27))))
+        (number "MP1" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at 8.89 -15.24 90) (length 2.54) hide
+      (pin no_connect line (at 6.35 -16.51 90) (length 5.08) hide
         (name "MP" (effects (font (size 1.27 1.27))))
-        (number "7" (effects (font (size 1.27 1.27))))
+        (number "MP2" (effects (font (size 1.27 1.27))))
       )
     )
     (symbol "Molex 532610571_1_2"
@@ -1580,7 +1452,7 @@
     (property "Value" "Molex_PicoBlade_1x05" (at 0 -7.62 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector_Molex:Molex_PicoBlade_53261-0571_1x05-1MP_P1.25mm_Horizontal" (at 0 0 0)
+    (property "Footprint" "Connector_Molex:Molex_PicoBlade_53261-0571_1x05-1MP_P1.25mm_Horizontal" (at 0 -10.16 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 0 0 0)
@@ -1640,7 +1512,7 @@
         (name "Pin_5" (effects (font (size 1.27 1.27))))
         (number "5" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at 3.81 5.08 180) (length 1.27) hide
+      (pin no_connect line (at 2.54 5.08 180) (length 1.27) hide
         (name "MP" (effects (font (size 1.27 1.27))))
         (number "MP" (effects (font (size 1.27 1.27))))
       )
@@ -2187,7 +2059,7 @@
         (alternate "SPI0 RX" input line)
         (alternate "UART1 TX" output line)
       )
-      (pin passive line (at 0 -20.32 90) (length 2.54)
+      (pin power_out line (at 0 -20.32 90) (length 2.54)
         (name "GND" (effects (font (size 1.27 1.27))))
         (number "2" (effects (font (size 1.27 1.27))))
       )
