@@ -21,6 +21,20 @@
     - [x] Routing
     - [x] DRC
 
+## Design Review
+   - [x] Merge areas
+   - [x] ~~Vias on the TX/RX jumpers~~
+   - [ ] Check WS2812B footprint + pinout
+   - [ ] Check U2 footprint
+   - [x] Fix J1/J2 pads to include through holes
+   - [x] Add mounting holes to J1/J2
+   - [x] Fix track to U1/16
+   - [x] Cleanup tracks and vias
+
+## Rev.1
+- https://www.ti.com/product/MSPM0C1104
+- Add HWPR as optional power
+
 ## Notes
 
 1. https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/schematic/Core/M5-Core-Schematic(20171206).pdf
