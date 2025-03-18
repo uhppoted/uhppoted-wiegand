@@ -5292,7 +5292,7 @@
     )
   )
 
-  (symbol (lib_id "Device:R_Small") (at 199.39 76.2 0) (unit 1)
+  (symbol (lib_id "Device:R_Small") (at 199.39 76.2 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid d850ae2f-2d5b-4e4a-9daf-16717d4da418)
     (property "Reference" "R9" (at 200.66 74.93 0)
