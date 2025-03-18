@@ -4500,7 +4500,7 @@
     )
   )
 
-  (symbol (lib_id "Jumper:Jumper_2_Open") (at 237.49 35.56 0) (unit 1)
+  (symbol (lib_id "Jumper:Jumper_2_Open") (at 237.49 35.56 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 63a338b3-751b-472a-ae43-4d8ab0ea45fc)
     (property "Reference" "JP8" (at 237.49 33.02 0)
