@@ -30,11 +30,11 @@
    - [x] Cleanup tracks and vias
    - [x] Check WS2812B footprint + pinout
    - [x] Check U2 footprint
-   - (?) Rework layout with U2 at top, J1/LED switched
+   - (?) ~~Rework layout with U2 at top, J1/LED switched~~
 
 ## Rev.1
-- https://www.ti.com/product/MSPM0C1104
-- Add HWPR as optional power
+- (?) https://www.ti.com/product/MSPM0C1104
+- (?) Add HWPR as optional power
 
 ## Notes
 

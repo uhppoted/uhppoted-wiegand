@@ -268,7 +268,7 @@
     (property "Sheetname" "")
     (property "ki_description" "8 resistor network, star topology, bussed resistors, split")
     (property "ki_keywords" "R network star-topology")
-    (path "/52b8316c-4e85-4600-9eeb-60284a7eed15")
+    (path "/e65df780-4540-4606-840f-cab7e8b1f9aa")
     (attr smd)
     (fp_text reference "R1" (at -0.30423 -2.19878 90) (layer "F.SilkS")
         (effects (font (size 1 1) (thickness 0.15)))
