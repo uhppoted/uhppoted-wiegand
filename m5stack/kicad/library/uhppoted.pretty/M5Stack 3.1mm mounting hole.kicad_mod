@@ -1,4 +1,4 @@
-(footprint "M5 Stack 3.1mm mounting hole" (version 20221018) (generator pcbnew)
+(footprint "M5Stack 3.1mm mounting hole" (version 20221018) (generator pcbnew)
   (layer "F.Cu")
   (descr "Mounting Hole 3.1mm, no annular")
   (tags "mounting hole 3.1mm no annular")
@@ -7,7 +7,7 @@
       (effects (font (size 1 1) (thickness 0.15)))
     (tstamp 5c387287-9ac0-4cc4-9497-9ebc258c1a43)
   )
-  (fp_text value "M5 Stack 3.1mm mounting hole" (at 0 5.08) (layer "F.Fab") hide
+  (fp_text value "M5Stack 3.1mm mounting hole" (at 0 5.08) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
     (tstamp d6364151-0fc9-496d-88d1-222e420f79ca)
   )

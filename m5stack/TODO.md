@@ -20,6 +20,7 @@
     - [x] Fiducial marks
     - [x] Routing
     - [x] DRC
+    - [x] Redo M5 bus connector for hand-soldering
 
 ## Design Review
    - [x] Merge areas
