@@ -2,6 +2,7 @@
 
 ## Schematic
     - [x] ERC
+    - [x] GPIO for buttons
 
 ## PCB
     - [x] Replace SMD TranzOrbs with through-hole (for hand soldering)
@@ -36,6 +37,7 @@
 ## Rev.1
 - (?) https://www.ti.com/product/MSPM0C1104
 - (?) Add HWPR as optional power
+- (?) https://www.raspberrypi.com/news/raspberry-pi-poe-injector-on-sale-now-at-25/
 
 ## Notes
 
