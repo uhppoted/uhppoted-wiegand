@@ -4024,7 +4024,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Open") (at 76.2 68.58 0) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 0b60dd54-6fc8-4b19-8e79-9695f6419a73)
     (property "Reference" "JP11" (at 76.2 71.12 0)
       (effects (font (size 1.27 1.27)))
@@ -5119,7 +5119,7 @@
   )
 
   (symbol (lib_id "Connector:TestPoint") (at 194.31 40.64 0) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 72150408-1335-4d7f-b18f-b310aaed5470)
     (property "Reference" "T3" (at 194.31 45.72 0)
       (effects (font (size 1.27 1.27)))
@@ -5376,7 +5376,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Open") (at 76.2 66.04 0) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid 966b6a8e-3265-47f2-89e1-818895630477)
     (property "Reference" "JP10" (at 76.2 63.5 0)
       (effects (font (size 1.27 1.27)))
@@ -5736,7 +5736,7 @@
   )
 
   (symbol (lib_id "Connector:TestPoint") (at 194.31 35.56 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid b80efd90-7e13-41a6-ad8c-fbf88ecb5c66)
     (property "Reference" "T2" (at 194.31 30.48 0)
       (effects (font (size 1.27 1.27)))
@@ -5761,7 +5761,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Open") (at 77.47 100.33 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid b8408b4a-a21a-400d-ba80-7667b21296af)
     (property "Reference" "JP6" (at 77.47 97.79 0)
       (effects (font (size 1.27 1.27)))
@@ -5941,7 +5941,7 @@
   )
 
   (symbol (lib_id "Connector:TestPoint") (at 77.47 45.72 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid d866fda6-0c4d-4195-bca7-be0da973e6e8)
     (property "Reference" "T4" (at 77.47 40.64 0)
       (effects (font (size 1.27 1.27)))
@@ -6033,7 +6033,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Open") (at 77.47 92.71 0) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid e0d9d9f3-ce5e-4a66-9617-8bd48d9b517d)
     (property "Reference" "JP5" (at 77.47 95.25 0)
       (effects (font (size 1.27 1.27)))
@@ -6059,7 +6059,7 @@
   )
 
   (symbol (lib_id "Connector:TestPoint") (at 219.71 35.56 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid e58cb589-2a7d-4229-bc23-a581b9c128ae)
     (property "Reference" "T1" (at 219.71 30.48 0)
       (effects (font (size 1.27 1.27)))
@@ -6334,7 +6334,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Open") (at 77.47 102.87 0) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid f7d3965c-61ed-4c7e-962d-baa4d19e0253)
     (property "Reference" "JP7" (at 77.47 105.41 0)
       (effects (font (size 1.27 1.27)))
@@ -6386,7 +6386,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Open") (at 77.47 90.17 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp no)
     (uuid fcd4384e-5537-49d1-8307-034b7896064c)
     (property "Reference" "JP4" (at 77.47 87.63 0)
       (effects (font (size 1.27 1.27)))
