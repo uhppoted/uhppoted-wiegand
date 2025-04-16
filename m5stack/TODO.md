@@ -1,5 +1,10 @@
 # TODO
 
+- [ ] connectors
+      - 1.0mm pitch JST SH connectors
+        - https://www.pcboard.ca/jst-sh-5-pin-cable
+      - 1.25mm pitch Molex MicroBlade
+
 ## Schematic
     - [x] ERC
     - [x] GPIO for buttons
