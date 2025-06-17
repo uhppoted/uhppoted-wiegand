@@ -33,3 +33,4 @@ to test a Wiegand interface.
 
 1. [M5Stack](https://m5stack.com)
 2. [WaveShare RP2040-Tiny](https://www.waveshare.com/wiki/RP2040-Tiny)
+3. [M5 Core Schematic(20171206)](https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/schematic/Core/M5-Core-Schematic(20171206).pdf)

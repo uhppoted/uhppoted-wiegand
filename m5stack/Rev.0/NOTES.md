@@ -43,3 +43,12 @@
    - ISOW7842DWER: $14.47
    - ISOW7742FDFMR: $15.07
    - Si86xx + Murata: $5.12 + $5.26
+
+
+## References
+1. https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/schematic/Core/M5-Core-Schematic(20171206).pdf
+2. https://www.mouser.ca/ProductDetail/Texas-Instruments/ISOW7841FDWER
+3. https://www.ti.com/product/SN74LVC2G126-EP
+4. https://www.adafruit.com/product/4978
+7. https://forum.digikey.com/t/specify-a-simple-drill-hole-in-pcbnew/4825
+8. https://github.com/splitbrain/pinoutleaf
