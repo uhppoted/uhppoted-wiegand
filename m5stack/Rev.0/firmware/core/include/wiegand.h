@@ -5,6 +5,7 @@
 extern const uint32_t MSG;
 extern const uint32_t MSG_TICK;
 extern const uint32_t MSG_WATCHDOG;
+extern const uint32_t MSG_LOG;
 
 typedef enum {
     MESSAGE_NONE,

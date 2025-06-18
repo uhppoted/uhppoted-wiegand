@@ -12,7 +12,7 @@ set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 add_compile_definitions(PICO_ENTER_USB_BOOT_ON_EXIT=1)
 add_compile_definitions(PARAM_ASSERTIONS_ENABLE_ALL=1)
 
-add_compile_definitions(VERSION=${VERSION})
+add_compile_definitions(VERSION="${VERSION}")
 
 pico_sdk_init()
 
@@ -22,10 +22,14 @@ set(CORE "../core")
 add_executable(${TARGET_NAME}
   src/main.c
   src/sys.c
+  src/hwconfig.c
 
+  ${CORE}/src/wiegand.c
   ${CORE}/src/sys.c
   ${CORE}/src/log.c
-  ${CORE}/src/wiegand.c
+  ${CORE}/src/cli.c
+  ${CORE}/src/ANSI.c
+  ${CORE}/src/usb.c
 )
 
 pico_generate_pio_header(
@@ -55,5 +59,6 @@ target_link_libraries(
 
     pico_stdlib
 
-    hardware_pio 
+    hardware_pio
+    hardware_watchdog
 )

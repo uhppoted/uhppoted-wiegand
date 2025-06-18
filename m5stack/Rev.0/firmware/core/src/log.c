@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <sys.h>
+
+void log_init() {
+}
+
 void debugf(const char *tag, const char *fmt, ...) {
     int N = strlen(fmt);
     char format[N + 32];
@@ -15,7 +20,7 @@ void debugf(const char *tag, const char *fmt, ...) {
     vsnprintf(msg, sizeof(msg), format, args);
     va_end(args);
 
-    printf(msg);
+    print(msg);
 }
 
 void infof(const char *tag, const char *fmt, ...) {
@@ -31,7 +36,7 @@ void infof(const char *tag, const char *fmt, ...) {
     vsnprintf(msg, sizeof(msg), format, args);
     va_end(args);
 
-    printf(msg);
+    print(msg);
 }
 
 void warnf(const char *tag, const char *fmt, ...) {
@@ -47,7 +52,7 @@ void warnf(const char *tag, const char *fmt, ...) {
     vsnprintf(msg, sizeof(msg), format, args);
     va_end(args);
 
-    printf(msg);
+    print(msg);
 }
 
 void errorf(const char *tag, const char *fmt, ...) {
@@ -63,5 +68,5 @@ void errorf(const char *tag, const char *fmt, ...) {
     vsnprintf(msg, sizeof(msg), format, args);
     va_end(args);
 
-    printf(msg);
+    print(msg);
 }

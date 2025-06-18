@@ -1,14 +1,9 @@
 #include <stdio.h>
-// #include <stdlib.h>
-// #include <string.h>
 
-// #include <pico/stdlib.h>
-// #include <pico/sync.h>
-
-// #include <hardware/pio.h>
-// #include <hardware/ticks.h>
-
+#include <cli.h>
+#include <log.h>
 #include <sys.h>
+#include <usb.h>
 #include <wiegand.h>
 
 #include "ws2812.pio.h"
@@ -38,8 +33,18 @@ bool sys_init() {
         return false;
     }
 
+    if (!usb_init()) {
+        return false;
+    }
+
+    log_init();
+    cli_init();
+
     // ... startup message
-    printf("-----  WIEGAND   v%02x.%02x\n", (VERSION >> 8) & 0x00ff, (VERSION >> 0) & 0x00ff);
+    char s[64];
+
+    snprintf(s, sizeof(s), "-----  WIEGAND   %s\n", VERSION);
+    print(s);
 
     return true;
 }
@@ -51,7 +56,7 @@ void sys_tick() {
     sys.LED = !sys.LED;
 
     if (sys.LED) {
-        put_rgb(0, 8, 0);
+        put_rgb(0, 8, 0); // green
     } else {
         put_rgb(0, 0, 0); // off
     }

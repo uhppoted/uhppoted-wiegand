@@ -1,7 +1,7 @@
 SDK ?= $(HOME)/Development/tools/pico/pico-sdk
-PORT ?= /dev/tty.usbmodem14201
+PORT ?= /dev/tty.usbmodem142101
 BUILD ?= Debug
-VERSION ?= 0x0000
+VERSION ?= v0.0
 
 .PHONY: format
 
@@ -17,6 +17,7 @@ clean:
 
 format: 
 	clang-format -i src/*.c
+	clang-format -i ../core/src/*.c ../core/include/*.h
 
 build: format
 	export PICO_SDK_PATH=$(SDK) && cd build && make
