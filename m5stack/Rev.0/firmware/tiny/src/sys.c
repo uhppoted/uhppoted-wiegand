@@ -43,7 +43,7 @@ bool sys_init() {
     // ... startup message
     char s[64];
 
-    snprintf(s, sizeof(s), "-----  WIEGAND   %s\n", VERSION);
+    snprintf(s, sizeof(s), "-----  WIEGAND    %s\n", VERSION);
     print(s);
 
     return true;

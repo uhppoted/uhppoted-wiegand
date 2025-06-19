@@ -5,6 +5,7 @@
 
 #include <pico/sync.h>
 
+#include <cli.h>
 #include <sys.h>
 #include <wiegand.h>
 
@@ -14,6 +15,7 @@
 extern const char *TERMINAL_QUERY_STATUS;
 
 const uint32_t MSG = 0xf0000000;
+const uint32_t MSG_TTY = 0xc0000000;
 const uint32_t MSG_LOG = 0xd0000000;
 const uint32_t MSG_WATCHDOG = 0xe0000000;
 const uint32_t MSG_TICK = 0xf0000000;
@@ -58,6 +60,13 @@ bool sysinit() {
     }
 
     return true;
+}
+
+/* Sets sys.reboot flag to inhibit watchdog reset.
+ *
+ */
+void sys_reboot() {
+    SYSTEM.reboot = true;
 }
 
 bool _tick(repeating_timer_t *t) {
@@ -121,6 +130,12 @@ void dispatch(uint32_t v) {
 
     if ((v & MSG) == MSG_LOG) {
         _flush();
+    }
+
+    if ((v & MSG) == MSG_TTY) {
+        struct buffer *b = (struct buffer *)(SRAM_BASE | (v & 0x0fffffff));
+
+        cli_rx(b);
     }
 }
 

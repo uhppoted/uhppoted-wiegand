@@ -24,6 +24,9 @@
 11. Move resistor network so that RP2040 can be optionally mounted directly on board (castellated)
 12. Replace WS2812B with APA102-S (SPI, 3.3V)
 13. Fix weirdly crossed signal lines between ISOW and line buffer
+14. Relook at ESD/protection diodes
+    - https://hackaday.com/2025/06/19/hacker-tactic-esd-diodes/
+
 
 - (?) https://www.ti.com/product/MSPM0C1104
 - (?) Add HWPR as optional power

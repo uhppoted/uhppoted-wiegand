@@ -20,6 +20,10 @@ bool push(message msg) {
     case MESSAGE_UINT32:
         m |= msg.u32 & 0x0fffffff;
         break;
+
+    case MESSAGE_BUFFER:
+        m |= ((uint32_t)msg.buffer & 0x0fffffff);
+        break;
     }
 
     if (queue_is_full(&queue) || !queue_try_add(&queue, &m)) {

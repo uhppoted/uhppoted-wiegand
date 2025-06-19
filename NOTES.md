@@ -12,6 +12,7 @@
 
 4. Relays - JQC-3FF
    - https://www.futurlec.com/Relays/JQC-3FF-24.shtml 
+   - https://uk.rs-online.com/web/p/signal-relays/6839851
 
 5. Connectors
     - https://www.wago.com/us/pcb-interconnect/pcb-terminal-block/p/2601-1106

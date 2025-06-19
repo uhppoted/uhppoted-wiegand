@@ -5,7 +5,7 @@
 ## [x] Design Review
 
 ## Firmware
-   - [ ] CLI
+   - [x] CLI
    - [ ] wiegand PIO
    - [ ] LED
    - [ ] serial
