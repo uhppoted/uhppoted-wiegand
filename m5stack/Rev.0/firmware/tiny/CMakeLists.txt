@@ -31,6 +31,7 @@ add_executable(${TARGET_NAME}
   ${CORE}/src/ANSI.c
   ${CORE}/src/usb.c
   ${CORE}/src/buffer.c
+  ${CORE}/src/LED.c
 )
 
 pico_generate_pio_header(

@@ -4,6 +4,7 @@
 
 #include "pico/stdlib.h"
 
+#include <LED.h>
 #include <buffer.h>
 #include <cli.h>
 #include <log.h>
@@ -22,11 +23,15 @@ void cpr(char *cmd);
 void display(const char *fmt, ...);
 void exec(char *cmd);
 
+void set_LED(const char *);
 void reboot();
 
 void clear();
 void help();
-void debug();
+void debug(const char *);
+
+extern void sys_debug(uint32_t);
+extern void put_SK6812(uint8_t, uint8_t, uint8_t);
 
 struct {
     int rows;
@@ -92,6 +97,7 @@ const char *HELP[] = {
     "WIEGAND EMULATOR Rev.0",
     "",
     "Commands:",
+    "  set LED <#RGB>",
     "  reboot",
     "",
     "  clear",
@@ -327,21 +333,34 @@ void exec(char *cmd) {
     memmove(cli.last.bytes, cli.buffer.bytes, cli.buffer.ix);
     cli.last.ix = cli.buffer.ix;
 
-    if (strncasecmp(cmd, "reboot", 6) == 0) {
+    if (strncasecmp(cmd, "set LED ", 8) == 0) {
+        set_LED(&cmd[8]);
+    } else if (strncasecmp(cmd, "reboot", 6) == 0) {
         reboot();
     } else if (strncasecmp(cmd, "clear", 5) == 0) {
         clear();
     } else if (strncasecmp(cmd, "help", 4) == 0) {
         help();
     } else if (strncasecmp(cmd, "debug", 5) == 0) {
-        debug();
+        debug(&cmd[5]);
     } else {
         display("unknown command (%s)\n", cmd);
     }
 }
 
-void debug() {
-    debugf(LOGTAG, "-- do weird debugging stuff");
+void debug(const char *cmd) {
+    uint32_t v;
+    int rc;
+
+    if ((rc = sscanf(cmd, " #%x", &v)) == 1) {
+        uint8_t r = (v >> 16) & 0x00ff;
+        uint8_t g = (v >> 8) & 0x00ff;
+        uint8_t b = (v >> 0) & 0x00ff;
+
+        LED_set(r, g, b);
+
+        debugf(LOGTAG, "set LED #%08x r:%u g:%u b:%u", v, r, g, b);
+    }
 }
 
 /* Cancels watchdog updates.
@@ -350,6 +369,24 @@ void debug() {
 void reboot() {
     display("... rebooting ... ");
     sys_reboot();
+}
+
+/* Sets the front panel LED.
+ *
+ */
+void set_LED(const char *cmd) {
+    uint32_t v;
+    int rc;
+
+    if ((rc = sscanf(cmd, "#%x", &v)) == 1) {
+        uint8_t r = (v >> 16) & 0x00ff;
+        uint8_t g = (v >> 8) & 0x00ff;
+        uint8_t b = (v >> 0) & 0x00ff;
+
+        LED_set(r, g, b);
+
+        debugf(LOGTAG, "-- set LED %-10lu #%08x %u %u %u", v, v, r, g, b);
+    }
 }
 
 void help() {

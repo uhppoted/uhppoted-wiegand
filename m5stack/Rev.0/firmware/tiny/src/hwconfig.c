@@ -33,3 +33,6 @@ const uint UART0_RX = GPIO_1;
 
 const uint UART1_TX = GPIO_4;
 const uint UART1_RX = GPIO_5;
+
+const uint SYSLED = GPIO_16;
+const uint WIEGAND_LED = GPIO_8;

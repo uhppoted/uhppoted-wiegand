@@ -8,25 +8,31 @@
 
 #include "ws2812.pio.h"
 
-extern bool sysinit();
+#define LOGTAG "SYS"
 
-void put_rgb(uint8_t red, uint8_t green, uint8_t blue);
+extern bool sysinit();
+extern const uint SYSLED;
+
+void put_WS2812(uint8_t red, uint8_t green, uint8_t blue);
 
 struct {
+    PIO pio;
+    int sm;
     bool LED;
 } sys = {
+    .pio = pio0,
+    .sm = 0,
     .LED = false,
 };
 
 bool sys_init() {
-    // ... WS2812 LED
-    PIO pio = pio0;
-    int sm = 0;
-    uint offset = pio_add_program(pio, &ws2812_program);
+    { // ... SYS LED
+        pio_sm_claim(sys.pio, sys.sm);
+        uint offset = pio_add_program(sys.pio, &ws2812_program);
 
-    ws2812_program_init(pio, sm, offset, 16, 800000, true);
-
-    put_rgb(128, 12, 0);
+        ws2812_program_init(sys.pio, sys.sm, offset, SYSLED, 800000, true);
+        put_WS2812(128, 12, 0);
+    }
 
     // ... initialise
     if (!sysinit()) {
@@ -56,15 +62,14 @@ void sys_tick() {
     sys.LED = !sys.LED;
 
     if (sys.LED) {
-        put_rgb(0, 8, 0); // green
+        put_WS2812(0, 8, 0); // green
     } else {
-        put_rgb(0, 0, 0); // off
+        put_WS2812(0, 0, 0); // off
     }
 }
 
-// NTS: mutex because the LED was occasionally used for debugging
-void put_rgb(uint8_t red, uint8_t green, uint8_t blue) {
+void put_WS2812(uint8_t red, uint8_t green, uint8_t blue) {
     uint32_t rgb = (red << 16u) | (green << 8u) | (blue / 16 << 0u);
 
-    pio_sm_put_blocking(pio0, 0, rgb << 8u);
+    pio_sm_put_blocking(sys.pio, sys.sm, rgb << 8u);
 }

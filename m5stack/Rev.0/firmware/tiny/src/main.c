@@ -7,6 +7,7 @@
 
 #include <hardware/watchdog.h>
 
+#include <LED.h>
 #include <log.h>
 #include <sys.h>
 
@@ -32,6 +33,8 @@ int main() {
     }
 
     watchdog_enable(WATCHDOG_TIMEOUT, true);
+
+    LED_init();
 
     sleep_ms(2500); // FIXME remove - delay to let USB initialise
 
