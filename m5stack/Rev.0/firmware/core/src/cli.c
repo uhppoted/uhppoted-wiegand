@@ -4,7 +4,7 @@
 
 #include "pico/stdlib.h"
 
-#include <LED.h>
+#include <SK6812.h>
 #include <buffer.h>
 #include <cli.h>
 #include <log.h>
@@ -349,18 +349,7 @@ void exec(char *cmd) {
 }
 
 void debug(const char *cmd) {
-    uint32_t v;
-    int rc;
-
-    if ((rc = sscanf(cmd, " #%x", &v)) == 1) {
-        uint8_t r = (v >> 16) & 0x00ff;
-        uint8_t g = (v >> 8) & 0x00ff;
-        uint8_t b = (v >> 0) & 0x00ff;
-
-        LED_set(r, g, b);
-
-        debugf(LOGTAG, "set LED #%08x r:%u g:%u b:%u", v, r, g, b);
-    }
+    debugf(LOGTAG, ">>> ???");
 }
 
 /* Cancels watchdog updates.
@@ -383,7 +372,7 @@ void set_LED(const char *cmd) {
         uint8_t g = (v >> 8) & 0x00ff;
         uint8_t b = (v >> 0) & 0x00ff;
 
-        LED_set(r, g, b);
+        SK6812_set(r, g, b);
 
         debugf(LOGTAG, "-- set LED %-10lu #%08x %u %u %u", v, v, r, g, b);
     }

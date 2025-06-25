@@ -7,8 +7,8 @@
 ## Firmware
    - [x] CLI
    - [ ] LED
-      - [ ] SK6812
-      - [ ] poll GPIO input
+      - [x] SK6812
+      - [ ] read/LPF GPIO input
 
    - [ ] Wiegand PIO
    - [ ] serial

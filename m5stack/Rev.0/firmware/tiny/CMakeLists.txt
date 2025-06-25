@@ -31,12 +31,17 @@ add_executable(${TARGET_NAME}
   ${CORE}/src/ANSI.c
   ${CORE}/src/usb.c
   ${CORE}/src/buffer.c
-  ${CORE}/src/LED.c
+  ${CORE}/src/SK6812.c
 )
 
 pico_generate_pio_header(
     ${TARGET_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/src/ws2812.pio
+)
+
+pico_generate_pio_header(
+    ${TARGET_NAME}
+    ${CMAKE_CURRENT_LIST_DIR}/src/sk6812.pio
 )
 
 pico_set_program_name(${TARGET_NAME} "uhppoted-wiegand-emulator")
