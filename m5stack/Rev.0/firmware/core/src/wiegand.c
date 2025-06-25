@@ -17,6 +17,10 @@ bool push(message msg) {
         m |= msg.none & 0x0fffffff;
         break;
 
+    case MESSAGE_BOOLEAN:
+        m |= msg.boolean ? 0x00000001 : 0x00000000;
+        break;
+
     case MESSAGE_UINT32:
         m |= msg.u32 & 0x0fffffff;
         break;
@@ -27,7 +31,6 @@ bool push(message msg) {
     }
 
     if (queue_is_full(&queue) || !queue_try_add(&queue, &m)) {
-        // syserr_set(ERR_QUEUE, LOGTAG, "queue full");
         return false;
     }
 

@@ -30,8 +30,7 @@ void clear();
 void help();
 void debug(const char *);
 
-extern void sys_debug(uint32_t);
-extern void put_SK6812(uint8_t, uint8_t, uint8_t);
+extern const constants IO;
 
 struct {
     int rows;
@@ -349,7 +348,9 @@ void exec(char *cmd) {
 }
 
 void debug(const char *cmd) {
-    debugf(LOGTAG, ">>> ???");
+    bool v = gpio_get(IO.LED);
+
+    debugf(LOGTAG, ">>> LED %d", v);
 }
 
 /* Cancels watchdog updates.

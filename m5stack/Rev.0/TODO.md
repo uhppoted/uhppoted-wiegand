@@ -13,4 +13,5 @@
    - [ ] Wiegand PIO
    - [ ] serial
    - [ ] GPIO
+   - [ ] 'namespace' GPIO constants
 

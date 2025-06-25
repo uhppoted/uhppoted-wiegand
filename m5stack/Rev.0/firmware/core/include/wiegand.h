@@ -1,8 +1,13 @@
 #pragma once
 
+#include <stdbool.h>
+#include <stdint.h>
+
+#include <hwconfig.h>
 #include <pico/util/queue.h>
 
 extern const uint32_t MSG;
+extern const uint32_t MSG_LED;
 extern const uint32_t MSG_TTY;
 extern const uint32_t MSG_TICK;
 extern const uint32_t MSG_WATCHDOG;
@@ -10,6 +15,7 @@ extern const uint32_t MSG_LOG;
 
 typedef enum {
     MESSAGE_NONE,
+    MESSAGE_BOOLEAN,
     MESSAGE_UINT32,
     MESSAGE_BUFFER,
 } msg_type;
@@ -21,6 +27,7 @@ typedef struct message {
     msg_type tag;
     union {
         uint32_t none;
+        bool boolean;
         uint32_t u32;
         struct buffer *buffer;
     };

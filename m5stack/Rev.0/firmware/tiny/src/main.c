@@ -7,6 +7,7 @@
 
 #include <hardware/watchdog.h>
 
+#include <LED.h>
 #include <SK6812.h>
 #include <log.h>
 #include <sys.h>
@@ -35,6 +36,9 @@ int main() {
     watchdog_enable(WATCHDOG_TIMEOUT, true);
 
     SK6812_init();
+    LED_init();
+
+    LED_start();
 
     sleep_ms(2500); // FIXME remove - delay to let USB initialise
 

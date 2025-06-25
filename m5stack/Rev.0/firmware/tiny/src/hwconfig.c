@@ -1,4 +1,4 @@
-#include <pico/types.h>
+#include <hwconfig.h>
 
 // GPIO
 const uint GPIO_0 = 0;
@@ -34,5 +34,8 @@ const uint UART0_RX = GPIO_1;
 const uint UART1_TX = GPIO_4;
 const uint UART1_RX = GPIO_5;
 
-const uint SYSLED = GPIO_16;
-const uint WIEGAND_LED = GPIO_8;
+const constants IO = {
+    .SYSLED = GPIO_16,
+    .SK6812 = GPIO_8,
+    .LED = GPIO_9,
+};

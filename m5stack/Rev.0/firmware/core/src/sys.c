@@ -6,6 +6,7 @@
 #include <pico/sync.h>
 
 #include <cli.h>
+#include <log.h>
 #include <sys.h>
 #include <wiegand.h>
 
@@ -15,6 +16,7 @@
 extern const char *TERMINAL_QUERY_STATUS;
 
 const uint32_t MSG = 0xf0000000;
+const uint32_t MSG_LED = 0x10000000;
 const uint32_t MSG_TTY = 0xc0000000;
 const uint32_t MSG_LOG = 0xd0000000;
 const uint32_t MSG_WATCHDOG = 0xe0000000;
@@ -122,6 +124,10 @@ void dispatch(uint32_t v) {
             .message = MSG_LOG,
             .tag = MESSAGE_NONE,
         });
+    }
+
+    if ((v & MSG) == MSG_LED) {
+        debugf(LOGTAG, "LED %s", (v & 0x0fffffff) == 0x01 ? "on" : "off");
     }
 
     if ((v & MSG) == MSG_WATCHDOG) {

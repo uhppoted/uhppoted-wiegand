@@ -11,7 +11,7 @@
 #define LOGTAG "SYS"
 
 extern bool sysinit();
-extern const uint SYSLED;
+extern const constants IO;
 
 void put_WS2812(uint8_t red, uint8_t green, uint8_t blue);
 
@@ -30,7 +30,7 @@ bool sys_init() {
         pio_sm_claim(sys.pio, sys.sm);
         uint offset = pio_add_program(sys.pio, &ws2812_program);
 
-        ws2812_program_init(sys.pio, sys.sm, offset, SYSLED, 800000, true);
+        ws2812_program_init(sys.pio, sys.sm, offset, IO.SYSLED, 800000, true);
         put_WS2812(128, 12, 0);
     }
 
