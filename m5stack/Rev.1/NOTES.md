@@ -6,17 +6,17 @@
      - 1.25mm pitch Molex MicroBlade
      - https://www.pcboard.ca/jst-sh-5-pin-cable
 3.  SK6812 pad numbering incorrect
-4.  Recalculate R2,R13,C1, R8
-   - Vdd*R8/(R2+R13+R8) is only 4.1V
-   - LPF 3dB is 7.5kHz (should be < 500Hz)
-   - tentatively R2,R13 1k, C1 0.36uF
-5.  ISOW784xF series has 1.5M pulldowns on inputs (pullups without F-suffix).
-6.  ISOW784x datasheet recommends 0.1uF in parallel with 22uF decoupling on power pins.
+4.  Remove C1 - ISOW7841 requires fast inputs
+   - either leave off altogether
+   - add Schmitt trigger
+5.  Increase R8 - Vdd*R8/(R2+R13+R8) is only 4.1V
+6.  ISOW784xF series has 1.5M pulldowns on inputs (pullups without F-suffix).
+7.  ISOW784x datasheet recommends 0.1uF in parallel with 22uF decoupling on power pins.
    - see layout guidelines
 
-5.  Replace resistor network with discrete resistors (many unused/easier to solder)
-6.  [ADuM320N](https://www.mouser.ca/datasheet/2/609/adum320n_321n-3420518.pdf) instead of ISOW7843
-7.  LED light pipes
+8.  Replace resistor network with discrete resistors (many unused/easier to solder)
+9.  [ADuM320N](https://www.mouser.ca/datasheet/2/609/adum320n_321n-3420518.pdf) instead of ISOW7843
+10. LED light pipes
      - https://electronics.stackexchange.com/questions/408310/attaching-a-3-mm-fiber-optic-cable-to-a-ws2812-led
      - https://www.mouser.ca/c/optoelectronics/led-indication/led-light-pipes/?number%20of%20elements=1%20Element&orientation=Right%20Angle&pg=2
      - (?) right angle LED
@@ -24,13 +24,13 @@
      - https://blog.adafruit.com/2023/07/06/smd5050-led-mount-light-pipe-3dthursday-3dprinting
      - https://electronics.stackexchange.com/questions/408310/attaching-a-3-mm-fiber-optic-cable-to-a-ws2812-led
 
-8.  Relocate R9 closer to U3 and swap pins.
-9.  Make JP4-7 normally closed so they just have to be cut if necessary (i.e. no soldering iron required).
-10.  Larger holes for test points.
-11.  Longer jumpers
-12. MSP4.0A footprint is incorrect (pins are swapped)
-13. Move resistor network so that RP2040 can be optionally mounted directly on board (castellated)
-14. Replace WS2812B with APA102-S/SK9822/NS107S (SPI) - and 2020 package (5050 is **huge**)
+11. Relocate R9 closer to U3 and swap pins.
+12. Make JP4-7 normally closed so they just have to be cut if necessary (i.e. no soldering iron required).
+13. Larger holes for test points.
+14. Longer jumpers (or push pins through header before soldering)
+15. MSP4.0A footprint is incorrect (pins are swapped)
+16. Move resistor network so that RP2040 can be optionally mounted directly on board (castellated)
+17. Replace WS2812B with APA102-S/SK9822/NS107S (SPI) - and 2020 package (5050 is **huge**)
     - txb0108
     - SN74LV1T125
     - 74LVC3G34
@@ -40,8 +40,8 @@
     - https://protosupplies.com/product/hi-speed-spi-logic-level-converter-module
     - https://electronics.stackexchange.com/questions/18186/cheapest-way-to-translate-5v-spi-signal-to-3v-spi
     - https://www.adafruit.com/product/757
-15. Fix weirdly crossed signal lines between ISOW and line buffer
-16. Relook at ESD/protection diodes
+18. Fix weirdly crossed signal lines between ISOW and line buffer
+19. Relook at ESD/protection diodes
     - https://hackaday.com/2025/06/19/hacker-tactic-esd-diodes/
 
 

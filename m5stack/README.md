@@ -29,6 +29,11 @@ to test a Wiegand interface.
 2. It's more logicial to have the ISO784x on the other side of the RP2040 but for now it allows for powering via
    USB during development.
 
+#### Errata
+1. Pads for WS2812/SK6812 are incorrectly numbered.
+2. Pads for D2, D3 and D4 are incorrect (anode and cathode swapped).
+3. ISO7841 doesn't allow RC filter on LED input.
+
 ## References
 
 1. [M5Stack](https://m5stack.com)
