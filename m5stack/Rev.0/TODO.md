@@ -6,9 +6,9 @@
 
 ## Firmware
    - [x] CLI
-   - [ ] LED
+   - [x] LED
       - [x] SK6812
-      - [ ] read/LPF GPIO input
+      - [x] read/LPF GPIO input
 
    - [ ] Wiegand PIO
    - [ ] serial

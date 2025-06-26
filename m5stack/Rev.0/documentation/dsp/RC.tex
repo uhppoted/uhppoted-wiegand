@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\begin{document}
+
+To reduce a 5\,V signal to 2\,V at 500\,Hz using a first-order RC low-pass filter, we need to determine the cutoff frequency \( f_c \) such that the filter attenuates the signal appropriately.
+
+For a first-order RC low-pass filter, the gain at frequency \( f \) is given by:
+
+\[
+|H(f)| = \frac{1}{\sqrt{1 + \left( \frac{f}{f_c} \right)^2 }}
+\]
+
+We require:
+
+\[
+|H(500\,\text{Hz})| = \frac{2}{5} = 0.4
+\]
+
+Solving for \( f_c \):
+
+\[
+0.4 = \frac{1}{\sqrt{1 + \left( \frac{500}{f_c} \right)^2 }}
+\]
+
+\[
+\sqrt{1 + \left( \frac{500}{f_c} \right)^2 } = \frac{1}{0.4} = 2.5
+\]
+
+\[
+1 + \left( \frac{500}{f_c} \right)^2 = 6.25
+\]
+
+\[
+\left( \frac{500}{f_c} \right)^2 = 5.25
+\]
+
+\[
+\frac{500}{f_c} = \sqrt{5.25} \approx 2.291
+\]
+
+\[
+f_c = \frac{500}{2.291} \approx \boxed{218.3\,\text{Hz}}
+\]
+
+Therefore, the filter should be designed with a cutoff frequency of approximately 218\,Hz to achieve the desired attenuation at 500\,Hz.
+
+\end{document}

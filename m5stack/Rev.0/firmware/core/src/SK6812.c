@@ -23,8 +23,7 @@ void SK6812_init() {
 
     sk6812.sm = sm;
 
-    // The SK6812 + ISOW7841 seems to need a little time to stabilise - setting the LED
-    // immediately on startup (e.g. in sys_init) does weird things.
+    // The SK6812 draws power from the ISOW7841 which needs ~2ms for power on soft-start
     sleep_ms(5);
     pio_sm_put_blocking(pio, sm, 0u);
 }

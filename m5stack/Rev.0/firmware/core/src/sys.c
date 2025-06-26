@@ -5,6 +5,7 @@
 
 #include <pico/sync.h>
 
+#include <SK6812.h>
 #include <cli.h>
 #include <log.h>
 #include <sys.h>
@@ -127,7 +128,13 @@ void dispatch(uint32_t v) {
     }
 
     if ((v & MSG) == MSG_LED) {
-        debugf(LOGTAG, "LED %s", (v & 0x0fffffff) == 0x01 ? "on" : "off");
+        infof(LOGTAG, "LED %s", (v & 0x0fffffff) == 0x01 ? "on" : "off");
+
+        if ((v & 0x0fffffff) == 0x01) {
+            SK6812_set(0, 8, 0);
+        } else {
+            SK6812_set(0, 0, 0);
+        }
     }
 
     if ((v & MSG) == MSG_WATCHDOG) {
