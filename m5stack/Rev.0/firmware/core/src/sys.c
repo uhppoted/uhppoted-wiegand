@@ -5,11 +5,11 @@
 
 #include <pico/sync.h>
 
+#include <M5.h>
 #include <SK6812.h>
 #include <cli.h>
 #include <log.h>
 #include <sys.h>
-#include <wiegand.h>
 
 #define LOGTAG "SYS"
 #define PRINT_QUEUE_SIZE 64

@@ -7,10 +7,10 @@
 ## Firmware
    - [x] CLI
    - [x] LED
-      - [x] SK6812
-      - [x] read/LPF GPIO input
-
-   - [ ] Wiegand PIO
+   - [ ] Wiegand 
+      - [x] CLI
+      - [ ] PIO
+      - [ ] get/set keypad mode
    - [ ] serial
    - [ ] GPIO
    - [ ] 'namespace' GPIO constants

@@ -4,6 +4,7 @@
 
 #include "pico/stdlib.h"
 
+#include <M5.h>
 #include <SK6812.h>
 #include <buffer.h>
 #include <cli.h>
@@ -24,6 +25,8 @@ void display(const char *fmt, ...);
 void exec(char *cmd);
 
 void set_LED(const char *);
+void swipe(char *);
+void keypad(const char *);
 void reboot();
 
 void clear();
@@ -96,11 +99,15 @@ const char *HELP[] = {
     "WIEGAND EMULATOR Rev.0",
     "",
     "Commands:",
-    "  set LED <#RGB>",
-    "  reboot",
+    "  CARD nnnnnn dddddd  writes card + (optional) keycode to the",
+    "                      Wiegand interface",
+    "  CODE dddddd         writes keypad code to the Wiegand",
+    "                      interface",
+    "  SET LED <#RGB>      sets the indicator LED colour",
+    "  REBOOT",
     "",
-    "  clear",
-    "  help",
+    "  CLEAR",
+    "  HELP",
     ""};
 
 /** Unified stdin for CLI.
@@ -332,7 +339,11 @@ void exec(char *cmd) {
     memmove(cli.last.bytes, cli.buffer.bytes, cli.buffer.ix);
     cli.last.ix = cli.buffer.ix;
 
-    if (strncasecmp(cmd, "set LED ", 8) == 0) {
+    if (strncasecmp(cmd, "card ", 5) == 0) {
+        swipe(&cmd[5]);
+    } else if (strncasecmp(cmd, "code ", 5) == 0) {
+        keypad(&cmd[5]);
+    } else if (strncasecmp(cmd, "set LED ", 8) == 0) {
         set_LED(&cmd[8]);
     } else if (strncasecmp(cmd, "reboot", 6) == 0) {
         reboot();
@@ -361,6 +372,89 @@ void reboot() {
     sys_reboot();
 }
 
+/* Card swipe + (optional) keycode emulation.
+ *  Extract the facility code, card number and (optionally) the keycode from
+ *  the command and writes the card and keycode (if present) to the Wiegand
+ *  interface.
+ */
+void swipe(char *cmd) {
+    uint32_t facility_code = FACILITY_CODE;
+    uint32_t card = 0;
+    char *token = strtok(cmd, " ,");
+    char *code;
+
+    if (token != NULL) {
+        int N = strlen(token);
+
+        if (N < 5) {
+            if (sscanf(cmd, "%0u", &card) < 1) {
+                return;
+            }
+        } else {
+            if (sscanf(&token[N - 5], "%05u", &card) < 1) {
+                return;
+            }
+
+            if (N == 6 && sscanf(token, "%01u", &facility_code) < 1) {
+                return;
+            } else if (N == 7 && sscanf(token, "%02u", &facility_code) < 1) {
+                return;
+            } else if (N == 8 && sscanf(token, "%03u", &facility_code) < 1) {
+                return;
+            } else if (N > 8) {
+                return;
+            }
+        }
+
+        if ((code = strtok(NULL, " ,")) == NULL) {
+            if (!write_card(facility_code, card)) {
+                debugf(LOGTAG, "card %u%05u error", facility_code, card);
+                return;
+            }
+
+            debugf(LOGTAG, "card %u%05u write ok", facility_code, card);
+        } else {
+            if (!write_card(facility_code, card)) {
+                debugf(LOGTAG, "card %u%05u error", facility_code, card);
+                return;
+            }
+
+            int N = strlen(code);
+            for (int i = 0; i < N; i++) {
+                char key = cmd[i];
+
+                if (!write_keycode(key)) {
+                    debugf(LOGTAG, "keycode %c error", key);
+                    return;
+                }
+            }
+
+            debugf(LOGTAG, "card+ %u%05u + %u write ok", facility_code, card, code);
+        }
+    }
+}
+
+/* Keypad emulation.
+ *  Sends the keycode code as 4-bit/8-bit burst mode Wiegand.
+ *
+ */
+void keypad(const char *cmd) {
+    int N = strlen(cmd);
+
+    if (N > 0) {
+        for (int i = 0; i < N; i++) {
+            char key = cmd[i];
+
+            if (!write_keycode(key)) {
+                debugf(LOGTAG, "keycode %c error", key);
+                return;
+            }
+        }
+
+        debugf(LOGTAG, "keycode %s ok", cmd);
+    }
+}
+
 /* Sets the front panel LED.
  *
  */
@@ -381,7 +475,7 @@ void set_LED(const char *cmd) {
 
 void help() {
     int N = sizeof(HELP) / sizeof(char *);
-    int X = cli.columns - 48;
+    int X = cli.columns - 64;
     int Y = 0;
     char s[128];
 

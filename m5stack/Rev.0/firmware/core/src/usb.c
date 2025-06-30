@@ -1,9 +1,7 @@
 #include <tusb.h>
 
-// #include <wiegand.h>
 #include <log.h>
 #include <sys.h>
-// #include <types/buffer.h>
 #include <usb.h>
 
 #define LOGTAG "USB"

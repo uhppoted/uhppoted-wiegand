@@ -13,6 +13,8 @@ add_compile_definitions(PICO_ENTER_USB_BOOT_ON_EXIT=1)
 add_compile_definitions(PARAM_ASSERTIONS_ENABLE_ALL=1)
 
 add_compile_definitions(VERSION="${VERSION}")
+add_compile_definitions(KEYPAD="${KEYPAD}")
+add_compile_definitions(FACILITY_CODE=${FACILITY_CODE})
 
 pico_sdk_init()
 
@@ -24,7 +26,7 @@ add_executable(${TARGET_NAME}
   src/sys.c
   src/hwconfig.c
 
-  ${CORE}/src/wiegand.c
+  ${CORE}/src/M5.c
   ${CORE}/src/sys.c
   ${CORE}/src/log.c
   ${CORE}/src/cli.c
@@ -33,6 +35,7 @@ add_executable(${TARGET_NAME}
   ${CORE}/src/buffer.c
   ${CORE}/src/SK6812.c
   ${CORE}/src/LED.c
+  ${CORE}/src/wiegand.c
 )
 
 pico_generate_pio_header(
