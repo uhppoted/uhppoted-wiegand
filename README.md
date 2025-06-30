@@ -34,9 +34,9 @@ Breadboarded and Fritzing'ed implementations of:
 
 ### Current Release
 
-**[v0.8.10](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.10) - 2025-01-31**
+**[v0.8.11](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.11) - 2025-07-01**
 
-1. Updated labels in READ.pio for RP2350 reserved words.
+1. Added M5 stack Wiegand emulator (in progress).
 
 
 ## Breadboard

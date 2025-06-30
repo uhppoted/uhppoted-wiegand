@@ -12,7 +12,9 @@
 5.  Increase R8 - Vdd*R8/(R2+R13+R8) is only 4.1V
 6.  ISOW784xF series has 1.5M pulldowns on inputs (pullups without F-suffix).
 7.  ISOW784x datasheet recommends 0.1uF in parallel with 22uF decoupling on power pins.
-   - see layout guidelines
+   - also: see layout guidelines
+   - also: https://e2e.ti.com/support/isolation-group/isolation/f/isolation-forum/836457/isow7841-isow7841-breaks-down/3107471#3107471
+   - also: https://e2e.ti.com/support/isolation-group/isolation/f/isolation-forum/846942/isow7841-isow7841-breaks-down
 
 8.  Replace resistor network with discrete resistors (many unused/easier to solder)
 9.  [ADuM320N](https://www.mouser.ca/datasheet/2/609/adum320n_321n-3420518.pdf) instead of ISOW7843
@@ -31,6 +33,7 @@
 15. MSP4.0A footprint is incorrect (pins are swapped)
 16. Move resistor network so that RP2040 can be optionally mounted directly on board (castellated)
 17. Replace WS2812B with APA102-S/SK9822/NS107S (SPI) - and 2020 package (5050 is **huge**)
+    - [SK6812-SIDE](https://www.adafruit.com/product/4691)
     - txb0108
     - SN74LV1T125
     - 74LVC3G34
@@ -40,6 +43,11 @@
     - https://protosupplies.com/product/hi-speed-spi-logic-level-converter-module
     - https://electronics.stackexchange.com/questions/18186/cheapest-way-to-translate-5v-spi-signal-to-3v-spi
     - https://www.adafruit.com/product/757
+    - https://electronics.stackexchange.com/questions/378574/common-cathode-rgb-led-from-3-3v
+    - https://www.lumissil.com/assets/pdf/core/IS31FL3194_DS.pdf
+    - https://os.mbed.com/users/4180_1/notebook/rgb-leds
+    - https://electronics.stackexchange.com/questions/48522/what-resistor-to-use-with-this-rgb-led
+    - https://electronics.stackexchange.com/questions/373148/resistor-requirement-for-3-3-v-supply
 18. Fix weirdly crossed signal lines between ISOW and line buffer
 19. Relook at ESD/protection diodes
     - https://hackaday.com/2025/06/19/hacker-tactic-esd-diodes/
