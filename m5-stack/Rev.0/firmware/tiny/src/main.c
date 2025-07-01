@@ -11,6 +11,7 @@
 #include <SK6812.h>
 #include <log.h>
 #include <sys.h>
+#include <wiegand.h>
 
 #define LOGTAG "SYS"
 
@@ -37,6 +38,7 @@ int main() {
 
     SK6812_init();
     LED_init();
+    wiegand_init();
 
     LED_start();
 

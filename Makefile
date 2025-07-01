@@ -1,3 +1,5 @@
+VERSION ?= 0.8.12
+
 update:
 	cd breadboard && make update
 

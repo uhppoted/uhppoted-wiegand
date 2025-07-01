@@ -4,14 +4,17 @@
 ## [x] PCB
 ## [x] Design Review
 
-## Firmware
+## [ ] Firmware
    - [x] CLI
    - [x] LED
    - [ ] Wiegand 
       - [x] CLI
-      - [ ] PIO
+      - [x] PIO
       - [ ] get/set keypad mode
+      - [ ] flash SK6812 on write
+   - [ ] hardcode SM assignment
    - [ ] serial
    - [ ] GPIO
    - [ ] 'namespace' GPIO constants
 
+## [ ] Enclosure

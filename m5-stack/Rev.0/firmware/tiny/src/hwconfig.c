@@ -38,4 +38,6 @@ const constants IO = {
     .SYSLED = GPIO_16,
     .SK6812 = GPIO_8,
     .LED = GPIO_9,
+    .DO = GPIO_6,
+    .DI = GPIO_7,
 };

@@ -13,11 +13,7 @@ clean:
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && \
            cd build && \
-           cmake -DCMAKE_BUILD_TYPE=$(BUILD)      \
-           	     -DVERSION=$(VERSION)             \
-           	     -DKEYPAD=$(KEYPAD)               \
-           	     -DFACILITY_CODE=$(FACILITY_CODE) \
-                 ..
+           cmake -DCMAKE_BUILD_TYPE=$(BUILD) -DVERSION=$(VERSION) -DKEYPAD=$(KEYPAD) -DFACILITY_CODE=$(FACILITY_CODE) ..
 
 format: 
 	clang-format -i src/*.c
