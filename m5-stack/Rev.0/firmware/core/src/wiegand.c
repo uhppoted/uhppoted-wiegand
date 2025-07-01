@@ -61,7 +61,7 @@ void wiegand_init() {
     wiegand_program_init(pio, sm, offset, IO.DO, IO.DI);
     wiegand.sm = sm;
 
-    infof(LOGTAG, "wiegand initialised keypad:%s, sm:%d)", KEYPAD, sm);
+    infof(LOGTAG, "wiegand initialised (%s keypad)", KEYPAD);
 }
 
 /* Write card command.
@@ -80,6 +80,8 @@ bool write_card(uint32_t facility_code, uint32_t card) {
 
     wiegand_program_put(pio, sm, word, 26);
     // buzzer_beep(1);
+
+    infof(LOGTAG, "card %u%05u", facility_code, card);
 
     return true;
 }
@@ -102,6 +104,8 @@ bool write_keycode(char digit) {
                 wiegand_program_put(pio, sm, KEYCODES[i].code4, 4);
                 // buzzer_beep(1);
             }
+
+            infof(LOGTAG, "code %c", digit);
 
             return true;
         }
