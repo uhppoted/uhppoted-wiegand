@@ -5,6 +5,7 @@
      - 1.0mm pitch JST SH connectors
      - 1.25mm pitch Molex MicroBlade
      - https://www.pcboard.ca/jst-sh-5-pin-cable
+     - (?) use GROVE (standard for M5)
 3.  SK6812 pad numbering incorrect
 4.  Remove C1 - ISOW7841 requires fast inputs
    - either leave off altogether
@@ -52,6 +53,8 @@
 19. Relook at ESD/protection diodes
     - https://hackaday.com/2025/06/19/hacker-tactic-esd-diodes/
 
+20. Rotate connector side to match protoboard convention.
+21. Additional clearance around mounting holes
 
 - (?) https://www.ti.com/product/MSPM0C1104
 - (?) Add HWPR as optional power

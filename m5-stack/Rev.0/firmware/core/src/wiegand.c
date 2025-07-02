@@ -8,7 +8,7 @@
 
 #define LOGTAG "WIEGAND"
 
-extern const constants IO;
+extern const constants HW;
 
 typedef struct keycode {
     char digit;
@@ -36,10 +36,11 @@ const int KEYCODES_SIZE = sizeof(KEYCODES) / sizeof(keycode);
 struct {
     PIO pio;
     int sm;
+    uint D0;
+    uint D1;
     int keypad;
 } wiegand = {
-    .pio = pio0,
-    .sm = 0,
+    .keypad = 4,
 };
 
 int bits(uint32_t);
@@ -48,18 +49,19 @@ int bits(uint32_t);
  *
  */
 void wiegand_init() {
+    wiegand.pio = HW.wiegand.pio;
+    wiegand.sm = HW.wiegand.sm;
+    wiegand.D0 = HW.wiegand.DO;
+    wiegand.D1 = HW.wiegand.DI;
+
     if (strncasecmp(KEYPAD, "8-bit", 5) == 0) {
         wiegand.keypad = 8;
-    } else {
-        wiegand.keypad = 4;
     }
 
-    PIO pio = wiegand.pio;
-    int sm = pio_claim_unused_sm(pio, true);
-    uint offset = pio_add_program(pio, &wiegand_program);
+    pio_sm_claim(wiegand.pio, wiegand.sm);
+    uint offset = pio_add_program(wiegand.pio, &wiegand_program);
 
-    wiegand_program_init(pio, sm, offset, IO.DO, IO.DI);
-    wiegand.sm = sm;
+    wiegand_program_init(wiegand.pio, wiegand.sm, offset, wiegand.D0, wiegand.D1);
 
     infof(LOGTAG, "wiegand initialised (%s keypad)", KEYPAD);
 }

@@ -7,7 +7,7 @@
 
 #define LOGTAG "LED"
 
-extern const constants IO;
+extern const constants HW;
 
 typedef struct IIR {
     float x₁;
@@ -46,10 +46,10 @@ float lpf₁(IIR *iir, float in);
 void LED_init() {
     debugf(LOGTAG, "init");
 
-    gpio_init(IO.LED);
-    gpio_set_dir(IO.LED, GPIO_IN);
-    gpio_set_input_hysteresis_enabled(IO.LED, true);
-    gpio_pull_down(IO.LED);
+    gpio_init(HW.LED);
+    gpio_set_dir(HW.LED, GPIO_IN);
+    gpio_set_input_hysteresis_enabled(HW.LED, true);
+    gpio_pull_down(HW.LED);
 
     infof(LOGTAG, "initialised - LED %s", LED.state ? "on" : "off");
 }
@@ -61,7 +61,7 @@ void LED_start() {
 }
 
 bool LED_on_update(repeating_timer_t *rt) {
-    float u = gpio_get(IO.LED) ? 1.0 : 0.0;
+    float u = gpio_get(HW.LED) ? 1.0 : 0.0;
     float v = lpf₁(&LED.lpf, u);
     bool state = LED.state;
 

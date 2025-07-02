@@ -33,6 +33,7 @@ to test a Wiegand interface.
 1. Pads for WS2812/SK6812 are incorrectly numbered.
 2. Pads for D2, D3 and D4 are incorrect (anode and cathode swapped).
 3. ISO7841 doesn't allow RC filter on LED input.
+4. Insufficient clearance around mounting holes.
 
 ## References
 

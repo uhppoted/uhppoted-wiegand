@@ -33,7 +33,7 @@ void clear();
 void help();
 void debug(const char *);
 
-extern const constants IO;
+extern const constants HW;
 
 struct {
     int rows;
@@ -359,7 +359,7 @@ void exec(char *cmd) {
 }
 
 void debug(const char *cmd) {
-    bool v = gpio_get(IO.LED);
+    bool v = gpio_get(HW.LED);
 
     debugf(LOGTAG, ">>> LED %d", v);
 }

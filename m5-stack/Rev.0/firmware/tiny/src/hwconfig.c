@@ -34,10 +34,23 @@ const uint UART0_RX = GPIO_1;
 const uint UART1_TX = GPIO_4;
 const uint UART1_RX = GPIO_5;
 
-const constants IO = {
-    .SYSLED = GPIO_16,
-    .SK6812 = GPIO_8,
+const constants HW = {
+    .WS2812 = {
+        .gpio = GPIO_16,
+        .pio = pio0,
+        .sm = 0,
+    },
+    .SK6812 = {
+        .gpio = GPIO_8,
+        .pio = pio0,
+        .sm = 1,
+    },
+    .wiegand = {
+        .pio = pio0,
+        .sm = 2,
+        .DO = GPIO_6,
+        .DI = GPIO_7,
+    },
+
     .LED = GPIO_9,
-    .DO = GPIO_6,
-    .DI = GPIO_7,
 };

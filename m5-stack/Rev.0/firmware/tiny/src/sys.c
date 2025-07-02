@@ -11,26 +11,29 @@
 #define LOGTAG "SYS"
 
 extern bool sysinit();
-extern const constants IO;
+extern const constants HW;
 
 void put_WS2812(uint8_t red, uint8_t green, uint8_t blue);
 
 struct {
     PIO pio;
     int sm;
+    uint gpio;
     bool LED;
 } sys = {
-    .pio = pio0,
-    .sm = 0,
     .LED = false,
 };
 
 bool sys_init() {
     { // ... SYS LED
+        sys.pio = HW.WS2812.pio;
+        sys.sm = HW.WS2812.sm;
+        sys.gpio = HW.WS2812.gpio;
+
         pio_sm_claim(sys.pio, sys.sm);
         uint offset = pio_add_program(sys.pio, &ws2812_program);
 
-        ws2812_program_init(sys.pio, sys.sm, offset, IO.SYSLED, 800000, true);
+        ws2812_program_init(sys.pio, sys.sm, offset, sys.gpio, 800000, true);
         put_WS2812(128, 12, 0);
     }
 
