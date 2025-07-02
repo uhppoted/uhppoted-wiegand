@@ -55,6 +55,8 @@
 
 20. Rotate connector side to match protoboard convention.
 21. Additional clearance around mounting holes
+22. Tie DI and DO high.
+23. Include M5 connectors in solder mask.
 
 - (?) https://www.ti.com/product/MSPM0C1104
 - (?) Add HWPR as optional power

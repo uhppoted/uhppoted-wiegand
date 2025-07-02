@@ -25,6 +25,7 @@ void display(const char *fmt, ...);
 void exec(char *cmd);
 
 void set_LED(const char *);
+void blink_LED(const char *);
 void swipe(char *);
 void keypad(const char *);
 void reboot();
@@ -99,11 +100,11 @@ const char *HELP[] = {
     "WIEGAND EMULATOR Rev.0",
     "",
     "Commands:",
-    "  CARD nnnnnn dddddd  writes card + (optional) keycode to the",
-    "                      Wiegand interface",
-    "  CODE dddddd         writes keypad code to the Wiegand",
-    "                      interface",
-    "  SET LED <#RGB>      sets the indicator LED colour",
+    "  CARD nnnnnn dddddd    writes card + (optional) keycode to the",
+    "                        Wiegand interface",
+    "  CODE dddddd           writes keypad code to the Wiegand interface",
+    "  SET LED <#RGB>        sets the indicator LED colour",
+    "  BLINK <#RGB> <count>  blinks the indicator LED 'count' times",
     "  REBOOT",
     "",
     "  CLEAR",
@@ -345,6 +346,8 @@ void exec(char *cmd) {
         keypad(&cmd[5]);
     } else if (strncasecmp(cmd, "set LED ", 8) == 0) {
         set_LED(&cmd[8]);
+    } else if (strncasecmp(cmd, "blink ", 6) == 0) {
+        blink_LED(&cmd[6]);
     } else if (strncasecmp(cmd, "reboot", 6) == 0) {
         reboot();
     } else if (strncasecmp(cmd, "clear", 5) == 0) {
@@ -469,13 +472,32 @@ void set_LED(const char *cmd) {
 
         SK6812_set(r, g, b);
 
-        debugf(LOGTAG, "-- set LED %-10lu #%08x %u %u %u", v, v, r, g, b);
+        debugf(LOGTAG, "set LED rgb:(%u,%u,%u)", r, g, b);
+    }
+}
+
+/* Blinks the front panel LED.
+ *
+ */
+void blink_LED(const char *cmd) {
+    uint32_t v;
+    int rc;
+    uint N = 1;
+
+    if ((rc = sscanf(cmd, "#%x %u", &v, &N)) > 0) {
+        uint8_t r = (v >> 16) & 0x00ff;
+        uint8_t g = (v >> 8) & 0x00ff;
+        uint8_t b = (v >> 0) & 0x00ff;
+
+        SK6812_blink(r, g, b, N);
+
+        debugf(LOGTAG, "blink LED rgb:(%u,%u,%u) count:%u", r, g, b, N);
     }
 }
 
 void help() {
     int N = sizeof(HELP) / sizeof(char *);
-    int X = cli.columns - 64;
+    int X = cli.columns - 80;
     int Y = 0;
     char s[128];
 

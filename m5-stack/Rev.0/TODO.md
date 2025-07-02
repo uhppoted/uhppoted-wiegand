@@ -7,6 +7,10 @@
 ## [ ] Firmware
    - [x] CLI
    - [x] LED
+   - [ ] SK6812
+         - [x] PIO
+         - [x] blink
+         - [ ] blink queue
    - [ ] Wiegand 
       - [x] CLI
       - [x] PIO
@@ -14,7 +18,6 @@
       - [ ] flash SK6812 on write
    - [ ] serial
    - [ ] GPIO
-   - [ ] 'namespace' GPIO constants
    - [x] hardcode SM assignment
 
 ## [ ] Enclosure

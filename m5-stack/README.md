@@ -30,10 +30,12 @@ to test a Wiegand interface.
    USB during development.
 
 #### Errata
-1. Pads for WS2812/SK6812 are incorrectly numbered.
+1. Pads for SK6812 are incorrectly numbered.
 2. Pads for D2, D3 and D4 are incorrect (anode and cathode swapped).
 3. ISO7841 doesn't allow RC filter on LED input.
 4. Insufficient clearance around mounting holes.
+5. DI and DO are pulled low on power-up (should default to _high_).
+6. Solder mask does not include M5 connectors.
 
 ## References
 
