@@ -7,10 +7,10 @@
 ## [ ] Firmware
    - [x] CLI
    - [x] LED
-   - [ ] SK6812
+   - [x] SK6812
          - [x] PIO
          - [x] blink
-         - [ ] blink queue
+         - [x] blink queue
    - [ ] Wiegand 
       - [x] CLI
       - [x] PIO

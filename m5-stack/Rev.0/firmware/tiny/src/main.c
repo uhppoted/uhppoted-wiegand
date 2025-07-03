@@ -40,6 +40,11 @@ int main() {
     LED_init();
     wiegand_init();
 
+    if (!SK6812_start()) {
+        warnf(LOGTAG, "*** ERROR INITIALISING SK6912");
+        return -1;
+    }
+
     LED_start();
 
     sleep_ms(2500); // FIXME remove - delay to let USB initialise
