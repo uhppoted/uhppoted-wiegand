@@ -51,12 +51,14 @@
     - https://electronics.stackexchange.com/questions/373148/resistor-requirement-for-3-3-v-supply
 18. Fix weirdly crossed signal lines between ISOW and line buffer
 19. Relook at ESD/protection diodes
-    - https://hackaday.com/2025/06/19/hacker-tactic-esd-diodes/
+    - https://hackaday.com/2025/06/19/hacker-tactic-esd-diodes
 
 20. Rotate connector side to match protoboard convention.
 21. Additional clearance around mounting holes
 22. Tie DI and DO high.
 23. Include M5 connectors in solder mask.
+24. Make **every** component hand solderable (looking at you D1 and U6 :-()
+25. Buzzer pins
 
 - (?) https://www.ti.com/product/MSPM0C1104
 - (?) Add HWPR as optional power

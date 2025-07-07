@@ -14,8 +14,8 @@
    - [ ] Wiegand 
       - [x] CLI
       - [x] PIO
-      - [ ] get/set keypad mode
-      - [ ] flash SK6812 on write
+      - [x] get/set keypad mode
+      - [ ] blink SK6812 on write
    - [ ] serial
    - [ ] GPIO
    - [x] hardcode SM assignment

@@ -98,8 +98,8 @@ void SK6812_blink(uint8_t red, uint8_t green, uint8_t blue, uint8_t blinks) {
 //     1       |     1      |   1    |    1
 //
 // simplified:
-//   if (timer <= 0 && (count > 0 || _pop())) { 
-//      _blink(); 
+//   if (timer <= 0 && (count > 0 || _pop())) {
+//      _blink();
 //   }
 bool SK6812_callback(repeating_timer_t *rt) {
     if (SK6812.blink.timer > 0) {

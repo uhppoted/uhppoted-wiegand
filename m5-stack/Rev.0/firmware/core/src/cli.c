@@ -28,6 +28,7 @@ void set_LED(const char *);
 void blink_LED(const char *);
 void swipe(char *);
 void keypad(const char *);
+void set_keypad_mode(const char *);
 void reboot();
 
 void clear();
@@ -105,6 +106,7 @@ const char *HELP[] = {
     "  CODE dddddd           writes keypad code to the Wiegand interface",
     "  SET LED <#RGB>        sets the indicator LED colour",
     "  BLINK <#RGB> <count>  blinks the indicator LED 'count' times",
+    "  SET KEYPAD <4|8>      sets the keypad mode (4-bit or 8-bit)",
     "  REBOOT",
     "",
     "  CLEAR",
@@ -348,6 +350,8 @@ void exec(char *cmd) {
         set_LED(&cmd[8]);
     } else if (strncasecmp(cmd, "blink ", 6) == 0) {
         blink_LED(&cmd[6]);
+    } else if (strncasecmp(cmd, "set keypad ", 11) == 0) {
+        set_keypad_mode(&cmd[11]);
     } else if (strncasecmp(cmd, "reboot", 6) == 0) {
         reboot();
     } else if (strncasecmp(cmd, "clear", 5) == 0) {
@@ -455,6 +459,19 @@ void keypad(const char *cmd) {
         }
 
         debugf(LOGTAG, "keycode %s ok", cmd);
+    }
+}
+/* Sets the keypad mode (4 bit or 8 bit).
+ *
+ */
+void set_keypad_mode(const char *cmd) {
+    uint32_t v;
+    int rc;
+
+    if ((rc = sscanf(cmd, "%u", &v)) == 1) {
+        if (!keypad_mode(v)) {
+            debugf(LOGTAG, "invalid keypad mode (%lu)", v);
+        }
     }
 }
 

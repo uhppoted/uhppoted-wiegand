@@ -6,3 +6,4 @@
 extern void wiegand_init();
 extern bool write_card(uint32_t, uint32_t);
 extern bool write_keycode(char);
+extern bool keypad_mode(uint8_t);

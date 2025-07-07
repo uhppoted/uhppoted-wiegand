@@ -95,7 +95,7 @@ bool write_card(uint32_t facility_code, uint32_t card) {
 bool write_keycode(char digit) {
     PIO pio = wiegand.pio;
     int sm = wiegand.sm;
-    int mode = wiegand.keypad;
+    uint mode = wiegand.keypad;
 
     for (int i = 0; i < KEYCODES_SIZE; i++) {
         if (KEYCODES[i].digit == digit) {
@@ -114,6 +114,25 @@ bool write_keycode(char digit) {
     }
 
     // buzzer_beep(1);
+    return false;
+}
+
+/* Sets the keypad mode to either 4 or 8-bit..
+ *
+ */
+bool keypad_mode(uint8_t mode) {
+    if (mode == 4) {
+        infof(LOGTAG, "keycode - set 4 bit mode");
+        wiegand.keypad = 4;
+        return true;
+    }
+
+    if (mode == 8) {
+        infof(LOGTAG, "keycode - set 8 bit mode");
+        wiegand.keypad = 8;
+        return true;
+    }
+
     return false;
 }
 
