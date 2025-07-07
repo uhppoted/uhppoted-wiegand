@@ -11,11 +11,11 @@
          - [x] PIO
          - [x] blink
          - [x] blink queue
-   - [ ] Wiegand 
+   - [x] Wiegand 
       - [x] CLI
       - [x] PIO
       - [x] get/set keypad mode
-      - [ ] blink SK6812 on write
+      - [x] blink SK6812 on write
    - [ ] serial
    - [ ] GPIO
    - [x] hardcode SM assignment

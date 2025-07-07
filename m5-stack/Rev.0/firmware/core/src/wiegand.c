@@ -3,6 +3,7 @@
 #include "wiegand.pio.h"
 
 #include <M5.h>
+#include <SK6812.h>
 #include <log.h>
 #include <wiegand.h>
 
@@ -81,7 +82,7 @@ bool write_card(uint32_t facility_code, uint32_t card) {
     int sm = wiegand.sm;
 
     wiegand_program_put(pio, sm, word, 26);
-    // buzzer_beep(1);
+    SK6812_blink(136 / 2, 6 / 2, 106 / 2, 1); // french violet
 
     infof(LOGTAG, "card %u%05u", facility_code, card);
 
@@ -101,10 +102,10 @@ bool write_keycode(char digit) {
         if (KEYCODES[i].digit == digit) {
             if (mode == 8) {
                 wiegand_program_put(pio, sm, KEYCODES[i].code8, 8);
-                // buzzer_beep(1);
+                SK6812_blink(255 / 5, 191 / 5, 0 / 5, 1); // amber
             } else {
                 wiegand_program_put(pio, sm, KEYCODES[i].code4, 4);
-                // buzzer_beep(1);
+                SK6812_blink(255 / 5, 191 / 5, 0 / 5, 1); // amber
             }
 
             infof(LOGTAG, "code %c", digit);
@@ -113,7 +114,6 @@ bool write_keycode(char digit) {
         }
     }
 
-    // buzzer_beep(1);
     return false;
 }
 
