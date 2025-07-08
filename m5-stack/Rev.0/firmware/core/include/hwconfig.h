@@ -24,4 +24,9 @@ typedef struct constants {
         PIO pio;
         int sm;
     } wiegand;
+
+    struct {
+        uint IO6;
+        uint IO7;
+    } gpio;
 } constants;

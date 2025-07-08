@@ -7,6 +7,7 @@
 
 #include <hardware/watchdog.h>
 
+#include <GPIO.h>
 #include <LED.h>
 #include <SK6812.h>
 #include <log.h>
@@ -39,6 +40,7 @@ int main() {
     SK6812_init();
     LED_init();
     wiegand_init();
+    GPIO_init();
 
     if (!SK6812_start()) {
         warnf(LOGTAG, "*** ERROR INITIALISING SK6912");
@@ -46,6 +48,7 @@ int main() {
     }
 
     LED_start();
+    GPIO_start();
 
     sleep_ms(2500); // FIXME remove - delay to let USB initialise
 

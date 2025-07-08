@@ -7,8 +7,6 @@
 
 #define LOGTAG "LED"
 
-extern const constants HW;
-
 typedef struct IIR {
     float x₁;
     float y₁;

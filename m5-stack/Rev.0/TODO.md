@@ -8,16 +8,9 @@
    - [x] CLI
    - [x] LED
    - [x] SK6812
-         - [x] PIO
-         - [x] blink
-         - [x] blink queue
    - [x] Wiegand 
-      - [x] CLI
-      - [x] PIO
-      - [x] get/set keypad mode
-      - [x] blink SK6812 on write
+   - [x] GPIO
    - [ ] serial
-   - [ ] GPIO
    - [x] hardcode SM assignment
 
 ## [ ] Enclosure

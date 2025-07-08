@@ -2,8 +2,10 @@ SDK ?= $(HOME)/Development/tools/pico/pico-sdk
 PORT ?= /dev/tty.usbmodem142101
 BUILD ?= Debug
 VERSION ?= v0.0
-FACILITY_CODE = 49
 KEYPAD = 4-bit
+FACILITY_CODE = 100
+CARD_IO6 = 10085399
+CARD_IO7 = 10085400
 
 .PHONY: format
 
@@ -13,7 +15,13 @@ clean:
 	mkdir -p build
 	export PICO_SDK_PATH=$(SDK) && \
            cd build && \
-           cmake -DCMAKE_BUILD_TYPE=$(BUILD) -DVERSION=$(VERSION) -DKEYPAD=$(KEYPAD) -DFACILITY_CODE=$(FACILITY_CODE) ..
+           cmake -DCMAKE_BUILD_TYPE=$(BUILD) \
+           -DVERSION=$(VERSION) \
+           -DKEYPAD=$(KEYPAD) \
+           -DFACILITY_CODE=$(FACILITY_CODE) \
+           -DCARD_IO6=$(CARD_IO6) \
+           -DCARD_IO7=$(CARD_IO7) \
+           ..
 
 format: 
 	clang-format -i src/*.c

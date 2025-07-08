@@ -15,6 +15,8 @@ add_compile_definitions(PARAM_ASSERTIONS_ENABLE_ALL=1)
 add_compile_definitions(VERSION="${VERSION}")
 add_compile_definitions(KEYPAD="${KEYPAD}")
 add_compile_definitions(FACILITY_CODE=${FACILITY_CODE})
+add_compile_definitions(CARD_IO6=${CARD_IO6})
+add_compile_definitions(CARD_IO7=${CARD_IO7})
 
 pico_sdk_init()
 
@@ -35,6 +37,7 @@ add_executable(${TARGET_NAME}
   ${CORE}/src/buffer.c
   ${CORE}/src/SK6812.c
   ${CORE}/src/LED.c
+  ${CORE}/src/GPIO.c
   ${CORE}/src/wiegand.c
 )
 

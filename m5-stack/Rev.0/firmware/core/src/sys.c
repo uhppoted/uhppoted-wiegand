@@ -10,6 +10,7 @@
 #include <cli.h>
 #include <log.h>
 #include <sys.h>
+#include <wiegand.h>
 
 #define LOGTAG "SYS"
 #define PRINT_QUEUE_SIZE 64
@@ -18,6 +19,8 @@ extern const char *TERMINAL_QUERY_STATUS;
 
 const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_LED = 0x10000000;
+const uint32_t MSG_IO6 = 0x20000000;
+const uint32_t MSG_IO7 = 0x30000000;
 const uint32_t MSG_TTY = 0xc0000000;
 const uint32_t MSG_LOG = 0xd0000000;
 const uint32_t MSG_WATCHDOG = 0xe0000000;
@@ -134,6 +137,32 @@ void dispatch(uint32_t v) {
             SK6812_set(0, 8, 0);
         } else {
             SK6812_set(0, 0, 0);
+        }
+    }
+
+    if ((v & MSG) == MSG_IO6) {
+        infof(LOGTAG, "IO6 %s", (v & 0x0fffffff) == 0x01 ? "on" : "off");
+
+        if ((v & 0x0fffffff) == 0x01) {
+            uint32_t facility_code = CARD_IO6 / 100000;
+            uint32_t card = CARD_IO6 % 100000;
+
+            if (!write_card(facility_code, card)) {
+                debugf(LOGTAG, "card %u%05u error", facility_code, card);
+            }
+        }
+    }
+
+    if ((v & MSG) == MSG_IO7) {
+        infof(LOGTAG, "IO7 %s", (v & 0x0fffffff) == 0x01 ? "on" : "off");
+
+        if ((v & 0x0fffffff) == 0x01) {
+            uint32_t facility_code = CARD_IO7 / 100000;
+            uint32_t card = CARD_IO7 % 100000;
+
+            if (!write_card(facility_code, card)) {
+                debugf(LOGTAG, "card %u%05u error", facility_code, card);
+            }
         }
     }
 

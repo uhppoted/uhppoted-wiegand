@@ -8,10 +8,14 @@
 
 extern const uint32_t MSG;
 extern const uint32_t MSG_LED;
+extern const uint32_t MSG_IO6;
+extern const uint32_t MSG_IO7;
 extern const uint32_t MSG_TTY;
 extern const uint32_t MSG_TICK;
 extern const uint32_t MSG_WATCHDOG;
 extern const uint32_t MSG_LOG;
+
+extern const constants HW;
 
 typedef enum {
     MESSAGE_NONE,

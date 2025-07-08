@@ -40,11 +40,13 @@ const constants HW = {
         .pio = pio0,
         .sm = 0,
     },
+
     .SK6812 = {
         .gpio = GPIO_8,
         .pio = pio0,
         .sm = 1,
     },
+
     .wiegand = {
         .pio = pio0,
         .sm = 2,
@@ -53,4 +55,8 @@ const constants HW = {
     },
 
     .LED = GPIO_9,
-};
+
+    .gpio = {
+        .IO6 = GPIO_10,
+        .IO7 = GPIO_11,
+    }};
