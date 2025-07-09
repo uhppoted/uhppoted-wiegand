@@ -11,6 +11,8 @@
    - [x] Wiegand 
    - [x] GPIO
    - [ ] serial
+   - [ ] USB
+      - [ ] bootsel
    - [x] hardcode SM assignment
 
 ## [ ] Enclosure

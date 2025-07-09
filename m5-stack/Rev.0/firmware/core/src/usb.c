@@ -16,12 +16,14 @@ struct {
     // } buffers;
 
     struct {
-        bool usb0;
-    } connected;
+        bool connected;
+        mutex_t guard;
+    } usb0;
 
     struct {
-        mutex_t usb0;
-    } guard;
+        bool connected;
+        mutex_t guard;
+    } usb1;
 } USB = {
     // .buffers = {
     //     .cli = {
@@ -30,8 +32,11 @@ struct {
     //     },
     // },
 
-    .connected = {
-        .usb0 = false,
+    .usb0 = {
+        .connected = false,
+    },
+    .usb1 = {
+        .connected = false,
     },
 
 };
@@ -39,9 +44,11 @@ struct {
 bool on_usb_rx(repeating_timer_t *rt);
 
 bool usb_init() {
-    USB.connected.usb0 = false;
+    USB.usb0.connected = false;
+    USB.usb1.connected = false;
 
-    mutex_init(&USB.guard.usb0);
+    mutex_init(&USB.usb0.guard);
+    mutex_init(&USB.usb1.guard);
 
     add_repeating_timer_ms(50, on_usb_rx, NULL, &USB.usb_timer);
 
@@ -51,16 +58,26 @@ bool usb_init() {
 }
 
 bool on_usb_rx(repeating_timer_t *rt) {
-    if (tud_cdc_n_connected(0) && !USB.connected.usb0) {
-        USB.connected.usb0 = true;
+    if (tud_cdc_n_connected(0) && !USB.usb0.connected) {
+        USB.usb0.connected = true;
 
         infof(LOGTAG, "USB.0 connected");
         stdout_connected(true);
-    } else if (!tud_cdc_n_connected(0) && USB.connected.usb0) {
-        USB.connected.usb0 = false;
+    } else if (!tud_cdc_n_connected(0) && USB.usb0.connected) {
+        USB.usb0.connected = false;
 
         infof(LOGTAG, "USB.0 disconnected");
         stdout_connected(false);
+    }
+
+    if (tud_cdc_n_connected(1) && !USB.usb1.connected) {
+        USB.usb1.connected = true;
+
+        infof(LOGTAG, "USB.1 connected");
+    } else if (!tud_cdc_n_connected(1) && USB.usb1.connected) {
+        USB.usb1.connected = false;
+
+        infof(LOGTAG, "USB.1 disconnected");
     }
 
     tud_task();
