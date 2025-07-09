@@ -1,5 +1,6 @@
 SDK ?= $(HOME)/Development/tools/pico/pico-sdk
 PORT ?= /dev/tty.usbmodem142101
+RPI ?= philw
 BUILD ?= Debug
 VERSION ?= v0.0
 KEYPAD = 4-bit
@@ -40,3 +41,12 @@ reboot:
 
 tty:
 	minicom -b 115200 -o -D $(PORT)
+
+remote-run: build
+	scp build/wiegand.uf2 $(RPI):/tmp
+	ssh $(RPI) "picotool load -v /tmp/wiegand.uf2 -F"
+	ssh $(RPI) "picotool reboot"
+
+reboot-remote: 
+	ssh $(RPI) "picotool reboot --vid 0xcafe --pid 0x4002 -f -u"
+

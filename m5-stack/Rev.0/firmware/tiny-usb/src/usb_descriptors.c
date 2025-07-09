@@ -32,9 +32,9 @@ enum {
 char const *string_desc_arr[] = {
     (const char[]){0x09, 0x04}, // 0: supported language is English (0x0409)
     "uhppoted",                 // 1: manufacturer
-    "breakout",                 // 2: product
+    "wiegand",                  // 2: product
     NULL,                       // 3: serial number (null, uses unique ID)
-    "log"                       // 4: CDC 0 interface
+    "CLI"                       // 4: CDC 0 interface
     "SSMP",                     // 5: CDC 1 interface
     "reset",                    // 6: reset interface
 };

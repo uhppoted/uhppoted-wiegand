@@ -11,7 +11,7 @@
 const uint8_t CDC1 = 1;
 
 struct {
-    repeating_timer_t usb_timer;
+    repeating_timer_t timer;
 
     struct {
         bool connected;
@@ -51,7 +51,7 @@ bool usb_init() {
     mutex_init(&USB.usb0.guard);
     mutex_init(&USB.usb1.guard);
 
-    add_repeating_timer_ms(50, on_usb_rx, NULL, &USB.usb_timer);
+    add_repeating_timer_ms(50, on_usb_rx, NULL, &USB.timer);
 
     infof(LOGTAG, "initialised");
 
