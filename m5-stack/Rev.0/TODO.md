@@ -10,9 +10,9 @@
    - [x] SK6812
    - [x] Wiegand 
    - [x] GPIO
-     [ ] UART
+   - [ ] UART
    - [ ] USB
-      - [ ] bootsel
+      - [x] bootsel
 
 ## [ ] Enclosure
    - https://github.com/uetchy/m5stack-module
