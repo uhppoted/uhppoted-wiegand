@@ -71,6 +71,16 @@ bool on_usb_rx(repeating_timer_t *rt) {
         stdout_connected(false);
     }
 
+    if (tud_cdc_n_connected(1) && !USB.usb1.connected) {
+        USB.usb1.connected = true;
+
+        infof(LOGTAG, "USB.1 connected");
+    } else if (!tud_cdc_n_connected(1) && USB.usb1.connected) {
+        USB.usb1.connected = false;
+
+        infof(LOGTAG, "USB.1 disconnected");
+    }
+
     if (tud_cdc_n_connected(0) && !USB.usb1.connected) {
         USB.usb1.connected = true;
 

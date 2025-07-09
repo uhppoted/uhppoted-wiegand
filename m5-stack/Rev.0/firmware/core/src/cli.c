@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "pico/bootrom.h"
 #include "pico/stdlib.h"
 
 #include <M5.h>
@@ -30,6 +31,7 @@ void swipe(char *);
 void keypad(const char *);
 void set_keypad_mode(const char *);
 void reboot();
+void bootsel();
 
 void clear();
 void help();
@@ -107,10 +109,11 @@ const char *HELP[] = {
     "  SET LED <#RGB>        sets the indicator LED colour",
     "  BLINK <#RGB> <count>  blinks the indicator LED 'count' times",
     "  SET KEYPAD <4|8>      sets the keypad mode (4-bit or 8-bit)",
-    "  REBOOT",
+    "  REBOOT                reboots the board",
+    "  BOOTSEL               reboots the board into BOOTSEL mode",
     "",
-    "  CLEAR",
-    "  HELP",
+    "  CLEAR                 clears the screen",
+    "  HELP                  displays CLI usage information",
     ""};
 
 /** Unified stdin for CLI.
@@ -354,6 +357,8 @@ void exec(char *cmd) {
         set_keypad_mode(&cmd[11]);
     } else if (strncasecmp(cmd, "reboot", 6) == 0) {
         reboot();
+    } else if (strncasecmp(cmd, "bootsel", 7) == 0) {
+        bootsel();
     } else if (strncasecmp(cmd, "clear", 5) == 0) {
         clear();
     } else if (strncasecmp(cmd, "help", 4) == 0) {
@@ -377,6 +382,14 @@ void debug(const char *cmd) {
 void reboot() {
     display("... rebooting ... ");
     sys_reboot();
+}
+
+/* Reboots into USB BOOTSEL mode.
+ *
+ */
+void bootsel() {
+    display("... rebooting to BOOTSEL... ");
+    reset_usb_boot(0, 0);
 }
 
 /* Card swipe + (optional) keycode emulation.
