@@ -13,7 +13,6 @@
    - [ ] UART
    - [ ] USB
       - [x] bootsel
-   - [x] hardcode SM assignment
 
 ## [ ] Enclosure
    - https://github.com/uetchy/m5stack-module
