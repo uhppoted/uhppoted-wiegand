@@ -27,6 +27,7 @@ add_executable(${TARGET_NAME}
   src/main.c
   src/sys.c
   src/hwconfig.c
+  src/usb_descriptors.c
 
   ${CORE}/src/M5.c
   ${CORE}/src/sys.c
@@ -72,4 +73,7 @@ target_link_libraries(
 
     hardware_pio
     hardware_watchdog
+
+    tinyusb_device
+    tinyusb_board
 )

@@ -4,7 +4,6 @@
 #define _PID_MAP(itf, n) ((CFG_TUD_##itf) << (n))
 
 #define USB_VID 0xcafe
-// #define USB_PID (0x4000 | _PID_MAP(CDC, 0) | _PID_MAP(VENDOR, 4))
 #define USB_PID (0x4000 | _PID_MAP(CDC, 0))
 #define USB_BCD 0x0200
 

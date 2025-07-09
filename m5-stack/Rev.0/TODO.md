@@ -11,7 +11,8 @@
    - [x] Wiegand 
    - [x] GPIO
    - [ ] serial
-   - [x] hardcode SM assignment
+      - [ ] USB
+      - [ ] UART
 
 ## [ ] Enclosure
    - https://github.com/uetchy/m5stack-module

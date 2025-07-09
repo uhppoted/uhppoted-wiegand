@@ -5,6 +5,9 @@
 #include <pico/stdlib.h>
 #include <pico/util/queue.h>
 
+#include <bsp/board_api.h>
+#include <tusb.h>
+
 #include <hardware/watchdog.h>
 
 #include <GPIO.h>
@@ -23,6 +26,14 @@ queue_t queue;
 int main() {
     bi_decl(bi_program_description("uhppoted-wiegand-emulator"));
     bi_decl(bi_program_version_string(VERSION));
+
+    // .. TinyUSB
+    board_init();
+    tusb_init();
+
+    if (board_init_after_tusb) {
+        board_init_after_tusb();
+    }
 
     // ... kernel
     stdio_init_all();
