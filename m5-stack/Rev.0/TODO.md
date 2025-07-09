@@ -10,7 +10,9 @@
    - [x] SK6812
    - [x] Wiegand 
    - [x] GPIO
-   - [ ] serial
+   - [ ] UART
+   - [ ] USB
+      - [x] bootsel
    - [x] hardcode SM assignment
 
 ## [ ] Enclosure
