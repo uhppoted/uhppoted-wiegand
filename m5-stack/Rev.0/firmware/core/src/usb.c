@@ -1,5 +1,7 @@
 #include <tusb.h>
 
+#include <M5.h>
+#include <buffer.h>
 #include <log.h>
 #include <sys.h>
 #include <usb.h>
@@ -11,33 +13,32 @@ const uint8_t CDC1 = 1;
 struct {
     repeating_timer_t usb_timer;
 
-    // struct {
-    //     circular_buffer cli;
-    // } buffers;
-
     struct {
         bool connected;
+        buffer buffer;
         mutex_t guard;
     } usb0;
 
     struct {
         bool connected;
+        buffer buffer;
         mutex_t guard;
     } usb1;
 } USB = {
-    // .buffers = {
-    //     .cli = {
-    //         .head = 0,
-    //         .tail = 0,
-    //     },
-    // },
-
     .usb0 = {
         .connected = false,
+        .buffer = {
+            .head = 0,
+            .tail = 0,
+        },
     },
 
     .usb1 = {
         .connected = false,
+        .buffer = {
+            .head = 0,
+            .tail = 0,
+        },
     },
 
 };
@@ -117,33 +118,18 @@ void tud_cdc_rx_cb(uint8_t itf) {
 
     // USB.0 ?
     if (itf == 0 && count > 0) {
-        debugf(LOGTAG, "... USB.0::rx");
-        // for (int i = 0; i < count; i++) {
-        //     buffer_push(&USB.buffers.cli, buf[i]);
-        // }
-        //
-        // message qmsg = {
-        //     .message = MSG_TTY,
-        //     .tag = MESSAGE_BUFFER,
-        //     .buffer = &USB.buffers.cli,
-        // };
-        //
-        // push(qmsg);
+        for (int i = 0; i < count; i++) {
+            buffer_push(&USB.usb0.buffer, buf[i]);
+        }
+
+        push((message){
+            .message = MSG_TTY,
+            .tag = MESSAGE_BUFFER,
+            .buffer = &USB.usb0.buffer,
+        });
     }
 
     // USB.1 ?
     if (itf == 1 && count > 0) {
-        debugf(LOGTAG, "... USB.1::rx");
-        // for (int i = 0; i < count; i++) {
-        //     buffer_push(&USB.buffers.ssmp, buf[i]);
-        // }
-
-        // message qmsg = {
-        //     .message = MSG_RX,
-        //     .tag = MESSAGE_BUFFER,
-        //     .buffer = &USB.buffers.ssmp,
-        // };
-
-        // push(qmsg);
     }
 }
