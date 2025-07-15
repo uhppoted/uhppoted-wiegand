@@ -36,6 +36,7 @@ to test a Wiegand interface.
 4. Insufficient clearance around mounting holes.
 5. DI and DO are pulled low on power-up (should default to _high_).
 6. Solder mask does not include M5 connectors.
+7. GPIO pins are incorrect (IO1 and IO2 instead of IO6 and IO7).
 
 ## References
 
