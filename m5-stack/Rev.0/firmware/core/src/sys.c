@@ -10,6 +10,7 @@
 #include <cli.h>
 #include <log.h>
 #include <sys.h>
+#include <uart.h>
 #include <wiegand.h>
 
 #define LOGTAG "SYS"
@@ -21,6 +22,7 @@ const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_LED = 0x10000000;
 const uint32_t MSG_IO6 = 0x20000000;
 const uint32_t MSG_IO7 = 0x30000000;
+const uint32_t MSG_RX = 0x40000000;
 const uint32_t MSG_TTY = 0xc0000000;
 const uint32_t MSG_LOG = 0xd0000000;
 const uint32_t MSG_WATCHDOG = 0xe0000000;
@@ -164,6 +166,12 @@ void dispatch(uint32_t v) {
                 debugf(LOGTAG, "card %u%05u error", facility_code, card);
             }
         }
+    }
+
+    if ((v & MSG) == MSG_RX) {
+        struct buffer *b = (struct buffer *)(SRAM_BASE | (v & 0x0fffffff));
+
+        UART_rx(b);
     }
 
     if ((v & MSG) == MSG_WATCHDOG) {

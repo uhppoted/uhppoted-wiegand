@@ -1,59 +1,181 @@
+#include <pico/stdlib.h>
 #include <pico/sync.h>
 #include <pico/time.h>
 
+#include <hardware/uart.h>
 #include <tusb.h>
 
+#include <M5.h>
 #include <buffer.h>
 #include <log.h>
 #include <sys.h>
 #include <uart.h>
+#include <wiegand.h>
 
 #define LOGTAG "UART"
+#define BAUD_RATE 115200
+#define DATA_BITS 8
+#define STOP_BITS 1
+#define PARITY UART_PARITY_NONE
+#define CR '\n'
+#define LF '\r'
+
+extern const constants HW;
 
 struct {
     repeating_timer_t timer;
 
     struct {
+        char bytes[64];
+        int ix;
+    } buffer;
+
+    struct {
+        buffer rx;
+    } UART0;
+
+    struct {
         bool connected;
-        buffer buffer;
-        mutex_t guard;
     } usb0;
 } UART = {
-    .usb0 = {
-        .connected = false,
-        .buffer = {
+    .UART0 = {
+        .rx = {
             .head = 0,
             .tail = 0,
         },
     },
+
+    .usb0 = {
+        .connected = false,
+    },
+
+    .buffer = {
+        .bytes = {0},
+        .ix = 0,
+    },
 };
 
-bool on_uart_rx(repeating_timer_t *rt);
+void on_uart0_rx();
+bool on_uart_monitor(repeating_timer_t *);
+void uart_rxchar(uint8_t);
+void uart_exec(char *);
 
-bool uart_initialise() {
-    UART.usb0.connected = false;
+void UART_init() {
+    // ... uart0
+    gpio_pull_up(HW.UART0.tx);
+    gpio_pull_up(HW.UART0.rx);
 
-    mutex_init(&UART.usb0.guard);
+    gpio_set_function(HW.UART0.tx, GPIO_FUNC_UART);
+    gpio_set_function(HW.UART0.rx, GPIO_FUNC_UART);
 
-    add_repeating_timer_ms(50, on_uart_rx, NULL, &UART.timer);
+    uart_init(uart0, BAUD_RATE);
+    uart_set_baudrate(uart0, BAUD_RATE);
+    uart_set_format(uart0, DATA_BITS, STOP_BITS, PARITY);
+    uart_set_hw_flow(uart0, false, false);
+    uart_set_fifo_enabled(uart0, true);
+    uart_set_translate_crlf(uart0, false);
 
+    // ... 'k, done'
     infof(LOGTAG, "initialised");
-
-    return true;
 }
 
-bool on_uart_rx(repeating_timer_t *rt) {
+void UART_start() {
+    irq_set_exclusive_handler(UART0_IRQ, on_uart0_rx);
+    uart_set_irq_enables(uart0, true, false);
+    irq_set_enabled(UART0_IRQ, true);
+
+    add_repeating_timer_ms(50, on_uart_monitor, NULL, &UART.timer);
+}
+
+void on_uart0_rx() {
+    while (uart_is_readable(uart0)) {
+        uint8_t ch = uart_getc(uart0);
+
+        buffer_push(&UART.UART0.rx, ch);
+    }
+
+    push((message){
+        .message = MSG_RX,
+        .tag = MESSAGE_BUFFER,
+        .buffer = &UART.UART0.rx,
+    });
+}
+
+bool on_uart_monitor(repeating_timer_t *rt) {
     if (tud_cdc_n_connected(0) && !UART.usb0.connected) {
         UART.usb0.connected = true;
 
-        infof(LOGTAG, "USB.0 connected");
         stdout_connected(true);
+        infof(LOGTAG, "USB.0 connected");
     } else if (!tud_cdc_n_connected(0) && UART.usb0.connected) {
         UART.usb0.connected = false;
 
-        infof(LOGTAG, "USB.0 disconnected");
         stdout_connected(false);
+        infof(LOGTAG, "USB.0 disconnected");
     }
 
     return true;
 }
+
+void UART_rx(buffer *b) {
+    buffer_flush(b, uart_rxchar);
+}
+
+void uart_rxchar(uint8_t ch) {
+    switch (ch) {
+    case CR:
+    case LF:
+        if (UART.buffer.ix > 0) {
+            uart_exec(UART.buffer.bytes);
+        }
+
+        memset(UART.buffer.bytes, 0, sizeof(UART.buffer.bytes));
+        UART.buffer.ix = 0;
+        break;
+
+    default:
+        if (UART.buffer.ix < (sizeof(UART.buffer.bytes) - 1)) {
+            UART.buffer.bytes[UART.buffer.ix++] = ch;
+            UART.buffer.bytes[UART.buffer.ix] = 0;
+        }
+    }
+}
+
+void uart_exec(char *msg) {
+    char s[64];
+
+    snprintf(s, sizeof(s), "%s", msg);
+    debugf(LOGTAG, s);
+
+    uint32_t card = 0;
+    char *command = strtok(msg, " ");
+
+    if (command != NULL) {
+        if (strcmp(command, "CARD") == 0) {
+            char *arg = strtok(NULL, " ");
+            uint32_t card = 0;
+
+            if (arg != NULL) {
+                if (sscanf(arg, "%0u", &card) == 1) {
+                    uint32_t facility_code = card / 100000;
+                    uint32_t card_number = card % 100000;
+
+                    if (facility_code > 0 && facility_code < 256 && card_number > 0 && card_number < 65536) {
+                        infof(LOGTAG, "card %u%05u", facility_code, card_number);
+                        if (!write_card(facility_code, card_number)) {
+                            errorf(LOGTAG, "card %u%05u error", facility_code, card);
+                        }
+                    } else {
+                        errorf(LOGTAG, "invalid card %lu", card);
+                    }
+                }
+            }
+        }
+    }
+}
+
+// bool uart0_write(const uint8_t *bytes, int N) {
+//     uart_write_blocking(uart0, bytes, N);
+//
+//     return true;
+// }

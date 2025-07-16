@@ -4,7 +4,6 @@
 #include <cli.h>
 #include <log.h>
 #include <sys.h>
-#include <uart.h>
 
 #include "ws2812.pio.h"
 
@@ -39,10 +38,6 @@ bool sys_init() {
 
     // ... initialise
     if (!sysinit()) {
-        return false;
-    }
-
-    if (!uart_initialise()) {
         return false;
     }
 

@@ -12,6 +12,7 @@
 #include <SK6812.h>
 #include <log.h>
 #include <sys.h>
+#include <uart.h>
 #include <wiegand.h>
 
 #define LOGTAG "SYS"
@@ -41,6 +42,7 @@ int main() {
     LED_init();
     wiegand_init();
     GPIO_init();
+    UART_init();
 
     if (!SK6812_start()) {
         warnf(LOGTAG, "*** ERROR INITIALISING SK6912");
@@ -49,6 +51,7 @@ int main() {
 
     LED_start();
     GPIO_start();
+    UART_start();
 
     sleep_ms(2500); // FIXME remove - delay to let USB initialise
 

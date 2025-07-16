@@ -56,6 +56,16 @@ const constants HW = {
 
     .LED = GPIO_9,
 
+    .UART0 = {
+        .tx = GPIO_0,
+        .rx = GPIO_1,
+    },
+
+    .UART1 = {
+        .tx = GPIO_4,
+        .rx = GPIO_5,
+    },
+
     .gpio = {
         .IO6 = GPIO_10,
         .IO7 = GPIO_11,

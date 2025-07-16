@@ -4,8 +4,6 @@
 #include <pico/types.h>
 
 typedef struct constants {
-    uint LED;
-
     struct {
         uint gpio;
         PIO pio;
@@ -24,6 +22,18 @@ typedef struct constants {
         PIO pio;
         int sm;
     } wiegand;
+
+    uint LED;
+
+    struct {
+        uint tx;
+        uint rx;
+    } UART0;
+
+    struct {
+        uint tx;
+        uint rx;
+    } UART1;
 
     struct {
         uint IO6;

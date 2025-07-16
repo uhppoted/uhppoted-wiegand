@@ -11,6 +11,10 @@
    - [x] Wiegand 
    - [x] GPIO
    - [ ] UART
+      - [x] card
+      - [ ] keycode
+      - [ ] card + keycode
+      - [ ] error/ok
    - [ ] USB
       - [x] bootsel
 

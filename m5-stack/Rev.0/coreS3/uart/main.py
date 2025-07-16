@@ -6,7 +6,7 @@ import time
 
 from collections import namedtuple
 from M5 import *
-from machine import Pin
+from machine import Pin, UART
 from utility import print_error_msg
 
 Point = namedtuple("Point", "x y timestamp")
@@ -18,6 +18,7 @@ BORDER = 0xFC0000
 
 IO1 = Pin(1, Pin.OUT)
 IO2 = Pin(2, Pin.OUT)
+uart = UART(1, baudrate=115200, tx=43, rx=44)
 B10058399 = Button(32, 32, 256, 48, "10058399", IO2)
 B10058400 = Button(32, 112, 256, 48, "10058400", IO1)
 
@@ -86,14 +87,12 @@ def loop():
 
             if dt > 250 or abs(dx) > 10 or abs(dy) > 10:
                 if pressed(B10058399):
-                    if press(B10058399):
-                        Speaker.tone(880, 125)  # A5
-                        print(f"pressed  {B10058399.label}")
+                    uart.write("CARD 10058399\n")
+                    Speaker.tone(880, 125)  # A5
 
                 if pressed(B10058400):
-                    if press(B10058400):
-                        Speaker.tone(1046, 125)  # C6'ish
-                        print(f"pressed  {B10058400.label}")
+                    uart.write("CARD 10058400\n")
+                    Speaker.tone(1046, 125)  # C6'ish
     else:
         release()
 

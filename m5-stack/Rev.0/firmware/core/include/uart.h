@@ -2,4 +2,8 @@
 
 #include <stdbool.h>
 
-extern bool uart_initialise();
+struct buffer;
+
+extern void UART_init();
+extern void UART_start();
+extern void UART_rx(struct buffer *);
