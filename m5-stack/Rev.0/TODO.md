@@ -3,6 +3,10 @@
 ## [x] Schematic
 ## [x] PCB
 ## [x] Design Review
+## CoreS3
+   - [x] GPIO
+   - [x] UART1
+   - [x] UART2
 
 ## [ ] Firmware
    - [x] CLI
@@ -11,12 +15,15 @@
    - [x] Wiegand 
    - [x] GPIO
    - [ ] UART
+      - [x] uart0
+      - [x] uart1
       - [x] card
       - [ ] keycode
       - [ ] card + keycode
       - [ ] error/ok
    - [ ] USB
       - [x] bootsel
+
 
 ## [ ] Enclosure
    - https://github.com/uetchy/m5stack-module

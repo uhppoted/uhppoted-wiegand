@@ -22,7 +22,8 @@ const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_LED = 0x10000000;
 const uint32_t MSG_IO6 = 0x20000000;
 const uint32_t MSG_IO7 = 0x30000000;
-const uint32_t MSG_RX = 0x40000000;
+const uint32_t MSG_RX0 = 0x40000000;
+const uint32_t MSG_RX1 = 0x50000000;
 const uint32_t MSG_TTY = 0xc0000000;
 const uint32_t MSG_LOG = 0xd0000000;
 const uint32_t MSG_WATCHDOG = 0xe0000000;
@@ -168,10 +169,16 @@ void dispatch(uint32_t v) {
         }
     }
 
-    if ((v & MSG) == MSG_RX) {
+    if ((v & MSG) == MSG_RX0) {
         struct buffer *b = (struct buffer *)(SRAM_BASE | (v & 0x0fffffff));
 
-        UART_rx(b);
+        UART_rx(uart0, b);
+    }
+
+    if ((v & MSG) == MSG_RX1) {
+        struct buffer *b = (struct buffer *)(SRAM_BASE | (v & 0x0fffffff));
+
+        UART_rx(uart1, b);
     }
 
     if ((v & MSG) == MSG_WATCHDOG) {

@@ -60,6 +60,8 @@
 24. Include M5 connectors in solder mask.
 25. Make **every** component hand solderable (looking at you D1 and U6 :-()
 26. Buzzer IO
+27. SMT headers
+   - https://electronics.stackexchange.com/questions/415542/are-these-tiny-vertical-dual-row-pcb-mounted-connector-pins-standard/719876#719876
 
 - (?) https://www.ti.com/product/MSPM0C1104
 - (?) Add HWPR as optional power

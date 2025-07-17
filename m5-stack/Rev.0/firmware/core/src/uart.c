@@ -22,17 +22,23 @@
 
 extern const constants HW;
 
+typedef struct line {
+    char bytes[64];
+    int ix;
+} line;
+
 struct {
     repeating_timer_t timer;
 
     struct {
-        char bytes[64];
-        int ix;
-    } buffer;
+        buffer rx;
+        line line;
+    } UART0;
 
     struct {
         buffer rx;
-    } UART0;
+        line line;
+    } UART1;
 
     struct {
         bool connected;
@@ -43,21 +49,35 @@ struct {
             .head = 0,
             .tail = 0,
         },
+        .line = {
+            .bytes = {0},
+            .ix = 0,
+        },
+    },
+
+    .UART1 = {
+        .rx = {
+            .head = 0,
+            .tail = 0,
+        },
+        .line = {
+            .bytes = {0},
+            .ix = 0,
+        },
     },
 
     .usb0 = {
         .connected = false,
     },
 
-    .buffer = {
-        .bytes = {0},
-        .ix = 0,
-    },
 };
 
 void on_uart0_rx();
+void on_uart1_rx();
 bool on_uart_monitor(repeating_timer_t *);
-void uart_rxchar(uint8_t);
+void uart0_rxchar(uint8_t);
+void uart1_rxchar(uint8_t);
+void uart_rxchar(uint8_t, line *);
 void uart_exec(char *);
 
 void UART_init() {
@@ -75,6 +95,20 @@ void UART_init() {
     uart_set_fifo_enabled(uart0, true);
     uart_set_translate_crlf(uart0, false);
 
+    // ... uart1
+    gpio_pull_up(HW.UART1.tx);
+    gpio_pull_up(HW.UART1.rx);
+
+    gpio_set_function(HW.UART1.tx, GPIO_FUNC_UART);
+    gpio_set_function(HW.UART1.rx, GPIO_FUNC_UART);
+
+    uart_init(uart1, BAUD_RATE);
+    uart_set_baudrate(uart1, BAUD_RATE);
+    uart_set_format(uart1, DATA_BITS, STOP_BITS, PARITY);
+    uart_set_hw_flow(uart1, false, false);
+    uart_set_fifo_enabled(uart1, true);
+    uart_set_translate_crlf(uart1, false);
+
     // ... 'k, done'
     infof(LOGTAG, "initialised");
 }
@@ -83,6 +117,10 @@ void UART_start() {
     irq_set_exclusive_handler(UART0_IRQ, on_uart0_rx);
     uart_set_irq_enables(uart0, true, false);
     irq_set_enabled(UART0_IRQ, true);
+
+    irq_set_exclusive_handler(UART1_IRQ, on_uart1_rx);
+    uart_set_irq_enables(uart1, true, false);
+    irq_set_enabled(UART1_IRQ, true);
 
     add_repeating_timer_ms(50, on_uart_monitor, NULL, &UART.timer);
 }
@@ -95,9 +133,23 @@ void on_uart0_rx() {
     }
 
     push((message){
-        .message = MSG_RX,
+        .message = MSG_RX0,
         .tag = MESSAGE_BUFFER,
         .buffer = &UART.UART0.rx,
+    });
+}
+
+void on_uart1_rx() {
+    while (uart_is_readable(uart1)) {
+        uint8_t ch = uart_getc(uart1);
+
+        buffer_push(&UART.UART1.rx, ch);
+    }
+
+    push((message){
+        .message = MSG_RX1,
+        .tag = MESSAGE_BUFFER,
+        .buffer = &UART.UART1.rx,
     });
 }
 
@@ -117,26 +169,34 @@ bool on_uart_monitor(repeating_timer_t *rt) {
     return true;
 }
 
-void UART_rx(buffer *b) {
-    buffer_flush(b, uart_rxchar);
+void UART_rx(uart_inst_t *uart, buffer *b) {
+    buffer_flush(b, uart0_rxchar);
 }
 
-void uart_rxchar(uint8_t ch) {
+void uart0_rxchar(uint8_t ch) {
+    uart_rxchar(ch, &UART.UART0.line);
+}
+
+void uart1_rxchar(uint8_t ch) {
+    uart_rxchar(ch, &UART.UART1.line);
+}
+
+void uart_rxchar(uint8_t ch, line *line) {
     switch (ch) {
     case CR:
     case LF:
-        if (UART.buffer.ix > 0) {
-            uart_exec(UART.buffer.bytes);
+        if (line->ix > 0) {
+            uart_exec(line->bytes);
         }
 
-        memset(UART.buffer.bytes, 0, sizeof(UART.buffer.bytes));
-        UART.buffer.ix = 0;
+        memset(line->bytes, 0, sizeof(line->bytes));
+        line->ix = 0;
         break;
 
     default:
-        if (UART.buffer.ix < (sizeof(UART.buffer.bytes) - 1)) {
-            UART.buffer.bytes[UART.buffer.ix++] = ch;
-            UART.buffer.bytes[UART.buffer.ix] = 0;
+        if (line->ix < (sizeof(line->bytes) - 1)) {
+            line->bytes[line->ix++] = ch;
+            line->bytes[line->ix] = 0;
         }
     }
 }
