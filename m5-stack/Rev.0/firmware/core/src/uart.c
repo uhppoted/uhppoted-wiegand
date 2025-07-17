@@ -80,6 +80,9 @@ void uart1_rxchar(uint8_t);
 void uart_rxchar(uint8_t, line *);
 void uart_exec(char *);
 
+void uart_swipe(char *msg);
+void uart_keypad(char *msg);
+
 void UART_init() {
     // ... uart0
     gpio_pull_up(HW.UART0.tx);
@@ -207,29 +210,55 @@ void uart_exec(char *msg) {
     snprintf(s, sizeof(s), "%s", msg);
     debugf(LOGTAG, s);
 
-    uint32_t card = 0;
-    char *command = strtok(msg, " ");
+    if (strncasecmp(msg, "swipe ", 6) == 0) {
+        uart_swipe(&msg[6]);
+    } else if (strncasecmp(msg, "code ", 5) == 0) {
+        uart_keypad(&msg[5]);
+    }
+}
 
-    if (command != NULL) {
-        if (strcmp(command, "CARD") == 0) {
-            char *arg = strtok(NULL, " ");
-            uint32_t card = 0;
+void uart_swipe(char *msg) {
+    char *token = strtok(msg, " ,");
 
-            if (arg != NULL) {
-                if (sscanf(arg, "%0u", &card) == 1) {
-                    uint32_t facility_code = card / 100000;
-                    uint32_t card_number = card % 100000;
+    if (token != NULL) {
+        uint32_t u32;
 
-                    if (facility_code > 0 && facility_code < 256 && card_number > 0 && card_number < 65536) {
-                        infof(LOGTAG, "card %u%05u", facility_code, card_number);
-                        if (!write_card(facility_code, card_number)) {
-                            errorf(LOGTAG, "card %u%05u error", facility_code, card);
-                        }
-                    } else {
-                        errorf(LOGTAG, "invalid card %lu", card);
-                    }
+        if (sscanf(msg, "%u", &u32) < 1) {
+            return;
+        }
+
+        uint32_t facility_code = u32 / 100000;
+        uint32_t card = u32 % 100000;
+        char *code;
+
+        if (facility_code < 1 || facility_code > 255 || card > 65535) {
+            return;
+        }
+
+        if (!write_card(facility_code, card)) {
+            debugf(LOGTAG, "card %u%05u error", facility_code, card);
+            return;
+        }
+
+        if ((code = strtok(NULL, " ,")) != NULL) {
+            int N = strlen(code);
+            for (int i = 0; i < N; i++) {
+                if (!write_keycode(code[i])) {
+                    debugf(LOGTAG, "keycode %c error", code[i]);
+                    return;
                 }
             }
+        }
+    }
+}
+
+void uart_keypad(char *msg) {
+    int N = strlen(msg);
+
+    for (int i = 0; i < N; i++) {
+        if (!write_keycode(msg[i])) {
+            debugf(LOGTAG, "keycode %c error", msg[i]);
+            return;
         }
     }
 }

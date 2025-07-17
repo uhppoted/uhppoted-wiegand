@@ -18,11 +18,15 @@
       - [x] uart0
       - [x] uart1
       - [x] card
-      - [ ] keycode
-      - [ ] card + keycode
+      - [x] keycode
+      - [x] card + keycode
       - [ ] error/ok
    - [ ] USB
       - [x] bootsel
+      - [ ] card
+      - [ ] keycode
+      - [ ] card + keycode
+      - [ ] error/ok
 
 
 ## [ ] Enclosure
