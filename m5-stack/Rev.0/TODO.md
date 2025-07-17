@@ -7,6 +7,7 @@
    - [x] GPIO
    - [x] UART1
    - [x] UART2
+   - [ ] prettify
 
 ## [ ] Firmware
    - [x] CLI
