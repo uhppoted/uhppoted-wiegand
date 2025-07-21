@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import io
 import M5
@@ -11,9 +12,13 @@ from utility import print_error_msg
 
 Point = namedtuple("Point", "x y timestamp")
 Button = namedtuple("Button", "x y w h label pressed")
+Label = namedtuple("Label", "x y w h text")
 
 BLACK = 0x222222
 BACKGROUND = 0xEACDCD
+GRAY = 0x808080
+DARKGRAY = 0x444444
+RED = 0xC04040
 BORDER = 0xFC0000
 
 IO1 = Pin(1, Pin.OUT)
@@ -21,13 +26,15 @@ IO2 = Pin(2, Pin.OUT)
 uart1 = UART(1, baudrate=115200, tx=43, rx=44)
 uart2 = UART(2, baudrate=115200, tx=17, rx=18)
 
-B10058399 = Button(32,        32, 120, 48, '10058399',         lambda: press(IO2))
-B10058400 = Button(32 + 136,  32, 120, 48, '10058400',         lambda: press(IO1))
-B10058401 = Button(32,        96, 120, 48, '10058401',         lambda: swipe(uart1, '10058401', None))
-C1357     = Button(32 + 136,  96, 120, 48, '1357#',            lambda: keypad(uart1, '1357'))
-B10058402 = Button(32,       160, 256, 48, '10058402 + 7531#', lambda: swipe(uart2, '10058402', '7531'))
+B10058399 = Button(32, 8, 120, 48, "10058399", lambda: press(IO2))
+B10058400 = Button(32 + 136, 8, 120, 48, "10058400", lambda: press(IO1))
+B10058401 = Button(32, 8 + 64, 120, 48, "10058401", lambda: swipe(uart1, "10058401", None))
+C1357 = Button(32 + 136, 8 + 64, 120, 48, "1357#", lambda: keypad(uart1, "1357"))
+B10058402 = Button(32, 8 + 128, 256, 48, "10058402 + 7531#", lambda: swipe(uart2, "10058402", "7531"))
+LMSG = Label(0, 216, 320, 24, "")
 
 touched = None
+message = None
 
 
 def setup():
@@ -46,12 +53,19 @@ def screen():
     button(B10058401)
     button(B10058402)
     button(C1357)
+    label(LMSG)
 
 
 def button(b):
-    offset = int(b.w/2 - 12*len(b.label)/2)
+    offset = int(b.w / 2 - 12 * len(b.label) / 2)
     Widgets.Rectangle(b.x, b.y, b.w, b.h, BORDER, BACKGROUND)
     Widgets.Label(b.label, b.x + offset, b.y + 14, 1.0, BLACK, BACKGROUND, Widgets.FONTS.DejaVu18)
+
+
+def label(l):
+    global message
+    Widgets.Rectangle(l.x, l.y, l.w, l.h, DARKGRAY, DARKGRAY)
+    message = Widgets.Label(l.text, l.x + 16, l.y + 8, 1.0, RED, DARKGRAY, Widgets.FONTS.DejaVu12)
 
 
 def pressed(b):
@@ -61,8 +75,10 @@ def pressed(b):
 
 
 def press(pin):
+    message.setText(f"%-48s" % "")
     if pin.value():
         pin.value(False)
+        message.setText(f"%-48s" % "Ok")
         return True
 
     return False
@@ -81,17 +97,58 @@ def release():
 
 
 def swipe(uart, card, code):
-    if code is None:
-        uart.write(f'SWIPE {card}\n')
-    else:
-        uart.write(f'SWIPE {card} {code}#\n')
+    display("")
 
-    return True
+    if code is None:
+        uart.write(f"SWIPE {card}\n")
+    else:
+        uart.write(f"SWIPE {card} {code}#\n")
+
+    return read(uart)
 
 
 def keypad(uart, code):
-    uart.write(f'CODE {code}#\n')
-    return True
+    display("")
+    uart.write(f"CODE {code}#\n")
+
+    return read(uart)
+
+
+def read(uart):
+    timeout = 500  # milliseconds
+    start = time.ticks_ms()
+    response = b""
+
+    while time.ticks_diff(time.ticks_ms(), start) < timeout:
+        if uart.any():
+            response += uart.read()
+            if b"\n" in response:
+                break
+
+    if response:
+        line = response.decode().strip()
+        print(f">>> {line}")
+        if line == "OK":
+            display("Ok")
+            return True
+
+        match = re.compile(r"^ERROR\s+(\d+)\s+(.+)$").match(line)
+        if match:
+            code = int(match.group(1))
+            msg = match.group(2)
+            display(f"** ERROR {code} {msg}")
+            return False
+
+        display("** ERROR <unknown>")
+        return False
+
+    display(f"** ERROR <no reply>")
+    return False
+
+
+def display(msg):
+    global message
+    message.setText(f"%-128s" % f"{msg}")
 
 
 def loop():

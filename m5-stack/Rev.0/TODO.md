@@ -15,13 +15,13 @@
    - [x] SK6812
    - [x] Wiegand 
    - [x] GPIO
-   - [ ] UART
+   - [x] UART
       - [x] uart0
       - [x] uart1
       - [x] card
       - [x] keycode
       - [x] card + keycode
-      - [ ] error/ok
+      - [x] error/ok
    - [ ] USB
       - [x] bootsel
       - [ ] card

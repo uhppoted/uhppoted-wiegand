@@ -22,6 +22,11 @@
 
 extern const constants HW;
 
+const char *ERR_OK = "OK\n";
+const char *ERR_BAD_REQUEST = "ERROR 1000 bad request\n";
+const char *ERR_INVALID_CARD = "ERROR 1001 invalid card\n";
+const char *ERR_WRITE = "ERROR 1002 write failed\n";
+
 typedef struct line {
     char bytes[64];
     int ix;
@@ -77,11 +82,13 @@ void on_uart1_rx();
 bool on_uart_monitor(repeating_timer_t *);
 void uart0_rxchar(uint8_t);
 void uart1_rxchar(uint8_t);
-void uart_rxchar(uint8_t, line *);
-void uart_exec(char *);
+void uart_flush(uint8_t);
+void uart_rxchar(const uart_inst_t *, uint8_t, line *);
+void uart_exec(const uart_inst_t *, char *);
+void uart_write(const uart_inst_t *, const char *);
 
-void uart_swipe(char *msg);
-void uart_keypad(char *msg);
+void uart_swipe(const uart_inst_t *uart, char *msg);
+void uart_keypad(const uart_inst_t *uart, char *msg);
 
 void UART_init() {
     // ... uart0
@@ -173,23 +180,32 @@ bool on_uart_monitor(repeating_timer_t *rt) {
 }
 
 void UART_rx(uart_inst_t *uart, buffer *b) {
-    buffer_flush(b, uart0_rxchar);
+    if (uart == uart0) {
+        buffer_flush(b, uart0_rxchar);
+    } else if (uart == uart1) {
+        buffer_flush(b, uart1_rxchar);
+    } else {
+        buffer_flush(b, uart_flush);
+    }
 }
 
 void uart0_rxchar(uint8_t ch) {
-    uart_rxchar(ch, &UART.UART0.line);
+    uart_rxchar(uart0, ch, &UART.UART0.line);
 }
 
 void uart1_rxchar(uint8_t ch) {
-    uart_rxchar(ch, &UART.UART1.line);
+    uart_rxchar(uart1, ch, &UART.UART1.line);
 }
 
-void uart_rxchar(uint8_t ch, line *line) {
+void uart_flush(uint8_t ch) {
+}
+
+void uart_rxchar(const uart_inst_t *uart, uint8_t ch, line *line) {
     switch (ch) {
     case CR:
     case LF:
         if (line->ix > 0) {
-            uart_exec(line->bytes);
+            uart_exec(uart, line->bytes);
         }
 
         memset(line->bytes, 0, sizeof(line->bytes));
@@ -204,26 +220,27 @@ void uart_rxchar(uint8_t ch, line *line) {
     }
 }
 
-void uart_exec(char *msg) {
+void uart_exec(const uart_inst_t *uart, char *msg) {
     char s[64];
 
     snprintf(s, sizeof(s), "%s", msg);
     debugf(LOGTAG, s);
 
     if (strncasecmp(msg, "swipe ", 6) == 0) {
-        uart_swipe(&msg[6]);
+        uart_swipe(uart, &msg[6]);
     } else if (strncasecmp(msg, "code ", 5) == 0) {
-        uart_keypad(&msg[5]);
+        uart_keypad(uart, &msg[5]);
     }
 }
 
-void uart_swipe(char *msg) {
+void uart_swipe(const uart_inst_t *uart, char *msg) {
     char *token = strtok(msg, " ,");
 
     if (token != NULL) {
         uint32_t u32;
 
         if (sscanf(msg, "%u", &u32) < 1) {
+            uart_write(uart, ERR_BAD_REQUEST);
             return;
         }
 
@@ -232,10 +249,12 @@ void uart_swipe(char *msg) {
         char *code;
 
         if (facility_code < 1 || facility_code > 255 || card > 65535) {
+            uart_write(uart, ERR_BAD_REQUEST);
             return;
         }
 
         if (!write_card(facility_code, card)) {
+            uart_write(uart, ERR_WRITE);
             debugf(LOGTAG, "card %u%05u error", facility_code, card);
             return;
         }
@@ -244,27 +263,39 @@ void uart_swipe(char *msg) {
             int N = strlen(code);
             for (int i = 0; i < N; i++) {
                 if (!write_keycode(code[i])) {
+                    uart_write(uart, ERR_WRITE);
                     debugf(LOGTAG, "keycode %c error", code[i]);
                     return;
                 }
             }
         }
+
+        uart_write(uart, ERR_OK);
     }
 }
 
-void uart_keypad(char *msg) {
+void uart_keypad(const uart_inst_t *uart, char *msg) {
     int N = strlen(msg);
 
-    for (int i = 0; i < N; i++) {
-        if (!write_keycode(msg[i])) {
-            debugf(LOGTAG, "keycode %c error", msg[i]);
-            return;
+    if (N > 0) {
+        for (int i = 0; i < N; i++) {
+            if (!write_keycode(msg[i])) {
+                uart_write(uart, ERR_WRITE);
+                debugf(LOGTAG, "keycode %c error", msg[i]);
+                return;
+            }
         }
+
+        uart_write(uart, ERR_OK);
     }
 }
 
-// bool uart0_write(const uint8_t *bytes, int N) {
-//     uart_write_blocking(uart0, bytes, N);
-//
-//     return true;
-// }
+void uart_write(const uart_inst_t *uart, const char *msg) {
+    int N = strlen(msg);
+
+    if (uart == uart0) {
+        uart_write_blocking(uart0, msg, N);
+    } else if (uart == uart1) {
+        uart_write_blocking(uart1, msg, N);
+    }
+}
