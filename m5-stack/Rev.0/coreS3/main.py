@@ -18,7 +18,7 @@ BLACK = 0x222222
 BACKGROUND = 0xEACDCD
 GRAY = 0x808080
 DARKGRAY = 0x444444
-RED = 0xC04040
+RED = 0xC02020
 BORDER = 0xFC0000
 
 IO1 = Pin(1, Pin.OUT)
@@ -65,7 +65,7 @@ def button(b):
 def label(l):
     global message
     Widgets.Rectangle(l.x, l.y, l.w, l.h, DARKGRAY, DARKGRAY)
-    message = Widgets.Label(l.text, l.x + 16, l.y + 8, 1.0, RED, DARKGRAY, Widgets.FONTS.DejaVu12)
+    message = Widgets.Label(l.text, l.x + 16, l.y + 6, 1.0, RED, DARKGRAY, Widgets.FONTS.DejaVu12)
 
 
 def pressed(b):

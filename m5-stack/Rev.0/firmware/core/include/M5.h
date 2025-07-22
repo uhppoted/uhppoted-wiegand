@@ -10,8 +10,7 @@ extern const uint32_t MSG;
 extern const uint32_t MSG_LED;
 extern const uint32_t MSG_IO6;
 extern const uint32_t MSG_IO7;
-extern const uint32_t MSG_RX0;
-extern const uint32_t MSG_RX1;
+extern const uint32_t MSG_RX;
 extern const uint32_t MSG_TTY;
 extern const uint32_t MSG_TICK;
 extern const uint32_t MSG_WATCHDOG;
@@ -24,9 +23,11 @@ typedef enum {
     MESSAGE_BOOLEAN,
     MESSAGE_UINT32,
     MESSAGE_BUFFER,
+    MESSAGE_RXH,
 } msg_type;
 
 struct buffer;
+struct rxh;
 
 typedef struct message {
     uint32_t message;
@@ -36,7 +37,13 @@ typedef struct message {
         bool boolean;
         uint32_t u32;
         struct buffer *buffer;
+        struct rxh *rxh;
     };
 } message;
+
+typedef struct rxh {
+    struct buffer *buffer;
+    void (*f)(struct buffer *);
+} rhx;
 
 extern bool push(message m);

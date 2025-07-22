@@ -7,6 +7,7 @@ KEYPAD = 4-bit
 FACILITY_CODE = 100
 CARD_IO6 = 10085399
 CARD_IO7 = 10085400
+TRACE ?= 10
 
 .PHONY: format
 
@@ -22,6 +23,7 @@ clean:
            -DFACILITY_CODE=$(FACILITY_CODE) \
            -DCARD_IO6=$(CARD_IO6) \
            -DCARD_IO7=$(CARD_IO7) \
+	       -DTRACE=$(TRACE) \
            ..
 
 format: 

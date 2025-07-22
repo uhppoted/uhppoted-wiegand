@@ -90,6 +90,19 @@ void uart_write(const uart_inst_t *, const char *);
 void uart_swipe(const uart_inst_t *uart, char *msg);
 void uart_keypad(const uart_inst_t *uart, char *msg);
 
+void uart0_rx(buffer *);
+void uart1_rx(buffer *);
+
+struct rxh RXH0 = {
+    .buffer = &UART.UART0.rx,
+    .f = uart0_rx,
+};
+
+struct rxh RXH1 = {
+    .buffer = &UART.UART1.rx,
+    .f = uart1_rx,
+};
+
 void UART_init() {
     // ... uart0
     gpio_pull_up(HW.UART0.tx);
@@ -143,9 +156,9 @@ void on_uart0_rx() {
     }
 
     push((message){
-        .message = MSG_RX0,
-        .tag = MESSAGE_BUFFER,
-        .buffer = &UART.UART0.rx,
+        .message = MSG_RX,
+        .tag = MESSAGE_RXH,
+        .rxh = &RXH0,
     });
 }
 
@@ -157,9 +170,9 @@ void on_uart1_rx() {
     }
 
     push((message){
-        .message = MSG_RX1,
-        .tag = MESSAGE_BUFFER,
-        .buffer = &UART.UART1.rx,
+        .message = MSG_RX,
+        .tag = MESSAGE_RXH,
+        .rxh = &RXH1,
     });
 }
 
@@ -179,18 +192,16 @@ bool on_uart_monitor(repeating_timer_t *rt) {
     return true;
 }
 
-void UART_rx(uart_inst_t *uart, buffer *b) {
-    if (uart == uart0) {
-        buffer_flush(b, uart0_rxchar);
-    } else if (uart == uart1) {
-        buffer_flush(b, uart1_rxchar);
-    } else {
-        buffer_flush(b, uart_flush);
-    }
+void uart0_rx(buffer *b) {
+    buffer_flush(b, uart0_rxchar);
 }
 
 void uart0_rxchar(uint8_t ch) {
     uart_rxchar(uart0, ch, &UART.UART0.line);
+}
+
+void uart1_rx(buffer *b) {
+    buffer_flush(b, uart1_rxchar);
 }
 
 void uart1_rxchar(uint8_t ch) {

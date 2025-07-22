@@ -17,6 +17,7 @@ add_compile_definitions(KEYPAD="${KEYPAD}")
 add_compile_definitions(FACILITY_CODE=${FACILITY_CODE})
 add_compile_definitions(CARD_IO6=${CARD_IO6})
 add_compile_definitions(CARD_IO7=${CARD_IO7})
+add_compile_definitions(TRACE=${TRACE})
 
 pico_sdk_init()
 

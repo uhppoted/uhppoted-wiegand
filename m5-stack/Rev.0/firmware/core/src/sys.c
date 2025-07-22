@@ -1,3 +1,4 @@
+#include <malloc.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -22,8 +23,7 @@ const uint32_t MSG = 0xf0000000;
 const uint32_t MSG_LED = 0x10000000;
 const uint32_t MSG_IO6 = 0x20000000;
 const uint32_t MSG_IO7 = 0x30000000;
-const uint32_t MSG_RX0 = 0x40000000;
-const uint32_t MSG_RX1 = 0x50000000;
+const uint32_t MSG_RX = 0x40000000;
 const uint32_t MSG_TTY = 0xc0000000;
 const uint32_t MSG_LOG = 0xd0000000;
 const uint32_t MSG_WATCHDOG = 0xe0000000;
@@ -33,10 +33,14 @@ extern queue_t queue;
 
 bool _tick(repeating_timer_t *t);
 void _syscheck();
+void _sys_trace();
 
 void _push(const char *);
 void _flush();
 void _print(const char *);
+
+uint32_t get_total_heap();
+uint32_t get_free_heap();
 
 struct {
     repeating_timer_t timer;
@@ -50,13 +54,25 @@ struct {
         char list[PRINT_QUEUE_SIZE][128];
     } queue;
 
+    struct {
+        float interval;
+        absolute_time_t touched;
+        repeating_timer_t timer;
+    } trace;
+
     mutex_t guard;
 } SYSTEM = {
     .reboot = false,
+
     .queue = {
         .connected = false,
         .head = 0,
         .tail = 0,
+    },
+
+    .trace = {
+        .interval = (float)TRACE,
+        .touched = 0,
     },
 };
 
@@ -88,14 +104,7 @@ bool _tick(repeating_timer_t *t) {
 }
 
 void syscheck() {
-    // // ... check memory usage
-    // uint32_t heap = get_total_heap();
-    // uint32_t available = get_free_heap();
-    // float used = 1.0 - ((float)available / (float)heap);
-    //
-    // if (used > 0.5 && !syserr_get(ERR_MEMORY)) {
-    //     syserr_set(ERR_MEMORY, LOGTAG, "memory usage %d%%", (int)(100.0 * used));
-    // }
+    _sys_trace();
 
     // ... kick watchdog
     if (!SYSTEM.reboot) {
@@ -103,6 +112,26 @@ void syscheck() {
             .message = MSG_WATCHDOG,
             .tag = MESSAGE_NONE,
         });
+    }
+}
+
+void _sys_trace() {
+    int64_t interval = (int64_t)(1000.0 * SYSTEM.trace.interval);
+    absolute_time_t now = get_absolute_time();
+    int64_t delta = absolute_time_diff_us(SYSTEM.trace.touched, now) / 1000;
+
+    if (interval > 0 && delta >= interval) {
+        uint32_t heap = get_total_heap();
+        uint32_t available = get_free_heap();
+        float used = 1.0 - ((float)available / (float)heap);
+
+        debugf(LOGTAG, "trace  queue:%u  heap:%u  heap:%u  used:%.1f%%",
+               queue_get_level(&queue),
+               heap,
+               available,
+               100.0f * used);
+
+        SYSTEM.trace.touched = get_absolute_time();
     }
 }
 
@@ -169,16 +198,10 @@ void dispatch(uint32_t v) {
         }
     }
 
-    if ((v & MSG) == MSG_RX0) {
-        struct buffer *b = (struct buffer *)(SRAM_BASE | (v & 0x0fffffff));
+    if ((v & MSG) == MSG_RX) {
+        struct rxh *rxh = (struct rxh *)(SRAM_BASE | (v & 0x0fffffff));
 
-        UART_rx(uart0, b);
-    }
-
-    if ((v & MSG) == MSG_RX1) {
-        struct buffer *b = (struct buffer *)(SRAM_BASE | (v & 0x0fffffff));
-
-        UART_rx(uart1, b);
+        rxh->f(rxh->buffer);
     }
 
     if ((v & MSG) == MSG_WATCHDOG) {
@@ -263,4 +286,19 @@ void _print(const char *msg) {
     }
 
     fflush(stdout);
+}
+
+uint32_t get_total_heap() {
+    extern char __StackLimit, __bss_end__;
+
+    return &__StackLimit - &__bss_end__;
+}
+
+uint32_t get_free_heap() {
+    extern char __StackLimit, __bss_end__;
+
+    uint32_t total = &__StackLimit - &__bss_end__;
+    struct mallinfo m = mallinfo();
+
+    return total - m.uordblks;
 }
