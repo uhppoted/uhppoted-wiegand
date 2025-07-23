@@ -6,6 +6,11 @@
 #include <hwconfig.h>
 #include <pico/util/queue.h>
 
+extern const char *ERR_OK;
+extern const char *ERR_BAD_REQUEST;
+extern const char *ERR_INVALID_CARD;
+extern const char *ERR_WRITE;
+
 extern const uint32_t MSG;
 extern const uint32_t MSG_LED;
 extern const uint32_t MSG_IO6;

@@ -126,7 +126,7 @@ def read(uart):
                 break
 
     if response:
-        line = response.decode().strip()
+        line = response.replace(b'\r', b'').decode().strip()
         print(f">>> {line}")
         if line == "OK":
             display("Ok")

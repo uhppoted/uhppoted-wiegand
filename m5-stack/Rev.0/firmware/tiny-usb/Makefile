@@ -1,6 +1,6 @@
 SDK ?= $(HOME)/Development/tools/pico/pico-sdk
 PORT ?= /dev/tty.usbmodem142101
-RPI ?= philw
+RPI ?= phil
 BUILD ?= Debug
 VERSION ?= v0.0
 KEYPAD = 4-bit
@@ -27,15 +27,15 @@ clean:
            ..
 
 format: 
-	clang-format -i src/*.c
-	clang-format -i ../core/src/*.c ../core/include/*.h
+	clang-format -i --verbose src/*.c
+	clang-format -i --verbose ../core/src/*.c ../core/include/*.h
 
 build: format
 	export PICO_SDK_PATH=$(SDK) && cd build && make
 
 # release: BUILD=Release clean build
 
-run: build
+local-run: build
 	picotool load -v build/wiegand.uf2 -f
 
 reboot: 
@@ -52,3 +52,4 @@ remote-run: build
 reboot-remote: 
 	ssh $(RPI) "picotool reboot --vid 0xcafe --pid 0x4002 -f -u"
 
+run: remote-run

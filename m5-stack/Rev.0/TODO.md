@@ -13,12 +13,13 @@
    - [x] GPIO
    - [x] UART
    - [x] sys: memory usage
-   - [ ] USB
+   - [x] USB
       - [x] bootsel
-      - [ ] card
-      - [ ] keycode
-      - [ ] card + keycode
-      - [ ] error/ok
+      - [x] card
+      - [x] keycode
+      - [x] card + keycode
+      - [x] error/ok
+   - [ ] api.c
 
 
 ## [ ] Enclosure

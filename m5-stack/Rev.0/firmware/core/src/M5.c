@@ -4,6 +4,11 @@
 
 extern queue_t queue;
 
+const char *ERR_OK = "OK\r\n";
+const char *ERR_BAD_REQUEST = "ERROR 1000 bad request\r\n";
+const char *ERR_INVALID_CARD = "ERROR 1001 invalid card\r\n";
+const char *ERR_WRITE = "ERROR 1002 write failed\r\n";
+
 // NTS: SRAM_BASE is 0x20000000
 bool push(message msg) {
     uint32_t m = msg.message;

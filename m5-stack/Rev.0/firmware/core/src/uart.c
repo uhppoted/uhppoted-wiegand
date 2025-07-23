@@ -22,11 +22,6 @@
 
 extern const constants HW;
 
-const char *ERR_OK = "OK\n";
-const char *ERR_BAD_REQUEST = "ERROR 1000 bad request\n";
-const char *ERR_INVALID_CARD = "ERROR 1001 invalid card\n";
-const char *ERR_WRITE = "ERROR 1002 write failed\n";
-
 typedef struct line {
     char bytes[64];
     int ix;
