@@ -21,6 +21,12 @@
       - [x] error/ok
    - [ ] api.c
 
+- [ ] Check power module
+- [x] README 
+   - [x] photos
+
+- [ ] USB + MacOS
+
 
 ## [ ] Enclosure
    - https://github.com/uetchy/m5stack-module
