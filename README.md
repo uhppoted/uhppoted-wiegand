@@ -28,7 +28,7 @@ the PIO but the code and associated information may be useful for other things.
 
 1. Rev.0 Wiegand emulator
 
-<img width="480" src="documentation/images/M5-wiegand-emulator-top.png"><img width="480" src="documentation/images/M5-wiegand-emulator-internal.png"> 
+|<img width="400" src="documentation/images/M5-wiegand-emulator-top.png">|<img width="400" src="documentation/images/M5-wiegand-emulator-internal.png">|
 
 ### Prototype
 
