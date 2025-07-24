@@ -1,26 +1,20 @@
 # TODO
 
-## [x] Schematic
-## [x] PCB
-## [x] Design Review
-## [x] CoreS3
-## [x] Firmware
-   - [x] CLI
-   - [x] LED
-   - [x] SK6812
-   - [x] Wiegand 
-   - [x] GPIO
-   - [x] UART
-   - [x] sys: memory usage
-   - [x] USB
-   - [x] api.c
-
+- [x] Schematic
+- [x] PCB
+- [x] Design Review
+- [x] CoreS3
+- [x] Firmware
 - [x] README 
    - [x] photos
+- [ ] Power
+   - [ ] USB
+   - [ ] M5
+   - [ ] Power module
 
-- [ ] Check power module
-
-- [ ] USB + MacOS
+## USB
+- [x] RaspberryPi
+- [ ] MacOS
 
 
 ## [ ] Enclosure
