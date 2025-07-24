@@ -4,8 +4,7 @@
 ## [x] PCB
 ## [x] Design Review
 ## [x] CoreS3
-
-## [ ] Firmware
+## [x] Firmware
    - [x] CLI
    - [x] LED
    - [x] SK6812
@@ -14,16 +13,12 @@
    - [x] UART
    - [x] sys: memory usage
    - [x] USB
-      - [x] bootsel
-      - [x] card
-      - [x] keycode
-      - [x] card + keycode
-      - [x] error/ok
-   - [ ] api.c
+   - [x] api.c
 
-- [ ] Check power module
 - [x] README 
    - [x] photos
+
+- [ ] Check power module
 
 - [ ] USB + MacOS
 

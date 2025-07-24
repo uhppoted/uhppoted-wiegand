@@ -1,6 +1,7 @@
 #include <tusb.h>
 
 #include <M5.h>
+#include <api.h>
 #include <buffer.h>
 #include <log.h>
 #include <sys.h>
@@ -58,8 +59,8 @@ struct {
 void usb_rx(buffer *);
 void usb_rxchar(uint8_t);
 void usb_exec(char *);
-void usb_keypad(char *);
-void usb_swipe(char *);
+void usb_keycode(const char *);
+void usb_swipe(const char *);
 bool usb_write(const char *);
 
 struct rxh RXH = {
@@ -180,64 +181,23 @@ void usb_exec(char *msg) {
     if (strncasecmp(msg, "swipe ", 6) == 0) {
         usb_swipe(&msg[6]);
     } else if (strncasecmp(msg, "code ", 5) == 0) {
-        usb_keypad(&msg[5]);
+        usb_keycode(&msg[5]);
     }
 }
 
-void usb_swipe(char *msg) {
-    char *token = strtok(msg, " ,");
+void usb_swipe(const char *msg) {
+    const char *reply = swipe(msg);
 
-    if (token != NULL) {
-        uint32_t u32;
-
-        if (sscanf(msg, "%u", &u32) < 1) {
-            usb_write(ERR_BAD_REQUEST);
-            return;
-        }
-
-        uint32_t facility_code = u32 / 100000;
-        uint32_t card = u32 % 100000;
-        char *code;
-
-        if (facility_code < 1 || facility_code > 255 || card > 65535) {
-            usb_write(ERR_BAD_REQUEST);
-            return;
-        }
-
-        if (!write_card(facility_code, card)) {
-            usb_write(ERR_WRITE);
-            debugf(LOGTAG, "card %u%05u error", facility_code, card);
-            return;
-        }
-
-        if ((code = strtok(NULL, " ,")) != NULL) {
-            int N = strlen(code);
-            for (int i = 0; i < N; i++) {
-                if (!write_keycode(code[i])) {
-                    usb_write(ERR_WRITE);
-                    debugf(LOGTAG, "keycode %c error", code[i]);
-                    return;
-                }
-            }
-        }
-
-        usb_write(ERR_OK);
+    if (strlen(reply) > 0) {
+        usb_write(reply);
     }
 }
 
-void usb_keypad(char *msg) {
-    int N = strlen(msg);
+void usb_keycode(const char *msg) {
+    const char *reply = keycode(msg);
 
-    if (N > 0) {
-        for (int i = 0; i < N; i++) {
-            if (!write_keycode(msg[i])) {
-                usb_write(ERR_WRITE);
-                debugf(LOGTAG, "keycode %c error", msg[i]);
-                return;
-            }
-        }
-
-        usb_write(ERR_OK);
+    if (strlen(reply) > 0) {
+        usb_write(reply);
     }
 }
 

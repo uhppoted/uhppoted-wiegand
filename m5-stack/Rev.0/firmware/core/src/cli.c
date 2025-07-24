@@ -27,8 +27,8 @@ void exec(char *cmd);
 
 void set_LED(const char *);
 void blink_LED(const char *);
-void swipe(char *);
-void keypad(const char *);
+void cli_swipe(char *);
+void cli_keypad(const char *);
 void set_keypad_mode(const char *);
 void reboot();
 void bootsel();
@@ -346,9 +346,9 @@ void exec(char *cmd) {
     cli.last.ix = cli.buffer.ix;
 
     if (strncasecmp(cmd, "card ", 5) == 0) {
-        swipe(&cmd[5]);
+        cli_swipe(&cmd[5]);
     } else if (strncasecmp(cmd, "code ", 5) == 0) {
-        keypad(&cmd[5]);
+        cli_keypad(&cmd[5]);
     } else if (strncasecmp(cmd, "set LED ", 8) == 0) {
         set_LED(&cmd[8]);
     } else if (strncasecmp(cmd, "blink ", 6) == 0) {
@@ -397,7 +397,7 @@ void bootsel() {
  *  the command and writes the card and keycode (if present) to the Wiegand
  *  interface.
  */
-void swipe(char *cmd) {
+void cli_swipe(char *cmd) {
     uint32_t facility_code = FACILITY_CODE;
     uint32_t card = 0;
     char *token = strtok(cmd, " ,");
@@ -458,7 +458,7 @@ void swipe(char *cmd) {
  *  Sends the keycode code as 4-bit/8-bit burst mode Wiegand.
  *
  */
-void keypad(const char *cmd) {
+void cli_keypad(const char *cmd) {
     int N = strlen(cmd);
 
     if (N > 0) {

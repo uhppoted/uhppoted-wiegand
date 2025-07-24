@@ -6,6 +6,7 @@
 #include <tusb.h>
 
 #include <M5.h>
+#include <api.h>
 #include <buffer.h>
 #include <log.h>
 #include <sys.h>
@@ -83,7 +84,7 @@ void uart_exec(const uart_inst_t *, char *);
 void uart_write(const uart_inst_t *, const char *);
 
 void uart_swipe(const uart_inst_t *uart, char *msg);
-void uart_keypad(const uart_inst_t *uart, char *msg);
+void uart_keycode(const uart_inst_t *uart, char *msg);
 
 void uart0_rx(buffer *);
 void uart1_rx(buffer *);
@@ -235,64 +236,23 @@ void uart_exec(const uart_inst_t *uart, char *msg) {
     if (strncasecmp(msg, "swipe ", 6) == 0) {
         uart_swipe(uart, &msg[6]);
     } else if (strncasecmp(msg, "code ", 5) == 0) {
-        uart_keypad(uart, &msg[5]);
+        uart_keycode(uart, &msg[5]);
     }
 }
 
 void uart_swipe(const uart_inst_t *uart, char *msg) {
-    char *token = strtok(msg, " ,");
+    const char *reply = swipe(msg);
 
-    if (token != NULL) {
-        uint32_t u32;
-
-        if (sscanf(msg, "%u", &u32) < 1) {
-            uart_write(uart, ERR_BAD_REQUEST);
-            return;
-        }
-
-        uint32_t facility_code = u32 / 100000;
-        uint32_t card = u32 % 100000;
-        char *code;
-
-        if (facility_code < 1 || facility_code > 255 || card > 65535) {
-            uart_write(uart, ERR_BAD_REQUEST);
-            return;
-        }
-
-        if (!write_card(facility_code, card)) {
-            uart_write(uart, ERR_WRITE);
-            debugf(LOGTAG, "card %u%05u error", facility_code, card);
-            return;
-        }
-
-        if ((code = strtok(NULL, " ,")) != NULL) {
-            int N = strlen(code);
-            for (int i = 0; i < N; i++) {
-                if (!write_keycode(code[i])) {
-                    uart_write(uart, ERR_WRITE);
-                    debugf(LOGTAG, "keycode %c error", code[i]);
-                    return;
-                }
-            }
-        }
-
-        uart_write(uart, ERR_OK);
+    if (strlen(reply) > 0) {
+        uart_write(uart, reply);
     }
 }
 
-void uart_keypad(const uart_inst_t *uart, char *msg) {
-    int N = strlen(msg);
+void uart_keycode(const uart_inst_t *uart, char *msg) {
+    const char *reply = keycode(msg);
 
-    if (N > 0) {
-        for (int i = 0; i < N; i++) {
-            if (!write_keycode(msg[i])) {
-                uart_write(uart, ERR_WRITE);
-                debugf(LOGTAG, "keycode %c error", msg[i]);
-                return;
-            }
-        }
-
-        uart_write(uart, ERR_OK);
+    if (strlen(reply) > 0) {
+        uart_write(uart, reply);
     }
 }
 

@@ -40,6 +40,7 @@ add_executable(${TARGET_NAME}
   ${CORE}/src/LED.c
   ${CORE}/src/GPIO.c
   ${CORE}/src/wiegand.c
+  ${CORE}/src/api.c
 )
 
 pico_generate_pio_header(
