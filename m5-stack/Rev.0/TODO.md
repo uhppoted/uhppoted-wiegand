@@ -6,7 +6,6 @@
 - [x] CoreS3
 - [x] Firmware
 - [x] README 
-   - [x] photos
 - [ ] Power
    - [ ] USB
    - [ ] M5

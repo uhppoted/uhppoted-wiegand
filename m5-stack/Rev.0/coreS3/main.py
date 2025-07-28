@@ -43,7 +43,7 @@ def setup():
     IO1.value(True)
     IO2.value(True)
     screen()
-
+    Power.setExtOutput(True)
 
 def screen():
     Widgets.setRotation(1)
