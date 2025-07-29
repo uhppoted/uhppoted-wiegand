@@ -6,10 +6,10 @@
 - [x] CoreS3
 - [x] Firmware
 - [x] README 
-- [ ] Power
-   - [ ] USB
-   - [ ] M5
-   - [ ] Power module
+- [x] Power
+   - [x] USB
+   - [x] M5
+   - [x] Power module
 
 ## USB
 - [x] RaspberryPi
