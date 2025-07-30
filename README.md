@@ -4,23 +4,16 @@
 
 `uhppoted-wiegand` implements a _Raspberry Pi Pico_ reader/emulator for a Wiegand-26 interface.
 
-The project is **mostly** a just-for-fun exploration of the capabilities of the RP2040 PIO but could also 
-be useful as a basis for:
+Utility project to emulate a Wiegand reader/writer using the RaspberryPi RP2040 PIO for:
 
 - testing and debugging
-- interfacing non-standard/off-brand readers and keypads to the UHPPOTE L0x access controllers
+- interfacing non-standard and off-brand readers and keypads to the UHPPOTE L0x access controllers
 
 The project includes:
 - M5Stack Wiegand-26 emulator
 - prototype (breadboard) PIO based Wiegand-26 reader emulator which can write a Wiegand-26 card out to a controller
 - prototype (breadboard) PIO based Wiegand-26 controller emulator which can read from Wiegand-26 reader and unlock a door
 - prototype (breadboard) PIO based Wiegand-26 'universal' reader/writer implementation
-
-## Raison d'être
-
-The RP2040 PIO is an intriguing peripheral and this project was an excuse to explore its capabilities and
-limitations. Wiegand-26 is particularly simple protocol and does not even begin to push the boundaries of
-the PIO but the code and associated information may be useful for other things.
 
 ## Status
 
@@ -39,13 +32,14 @@ Breadboarded and Fritzing'ed implementations of:
 
 <img width="800" src="documentation/images/fritzing-reference.png"> 
 
+
 ## Release Notes
 
 ### Current Release
 
-**[v0.8.11](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.11) - 2025-07-01**
+**[v0.8.11](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.11) - 2025-07-30**
 
-1. Added M5 stack Wiegand emulator (in progress).
+1. Added M5 stack Wiegand emulator Rev.0.
 
 
 ## Breadboard
