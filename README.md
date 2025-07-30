@@ -2,9 +2,7 @@
 
 # uhppoted-wiegand
 
-`uhppoted-wiegand` implements a _Raspberry Pi Pico_ reader/emulator for a Wiegand-26 interface.
-
-Utility project to emulate a Wiegand reader/writer for:
+`uhppoted-wiegand` implements a reader/emulator for a Wiegand-26 interface, based on the RaspberryPi RP2040, for:
 - development, testing and debugging
 - interfacing non-standard and off-brand readers and keypads to the UHPPOTE L0x access controllers
 
