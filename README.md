@@ -4,16 +4,21 @@
 
 `uhppoted-wiegand` implements a _Raspberry Pi Pico_ reader/emulator for a Wiegand-26 interface.
 
-Utility project to emulate a Wiegand reader/writer using the RaspberryPi RP2040 PIO for:
-
-- testing and debugging
+Utility project to emulate a Wiegand reader/writer for:
+- development, testing and debugging
 - interfacing non-standard and off-brand readers and keypads to the UHPPOTE L0x access controllers
 
 The project includes:
-- M5Stack Wiegand-26 emulator
-- prototype (breadboard) PIO based Wiegand-26 reader emulator which can write a Wiegand-26 card out to a controller
-- prototype (breadboard) PIO based Wiegand-26 controller emulator which can read from Wiegand-26 reader and unlock a door
-- prototype (breadboard) PIO based Wiegand-26 'universal' reader/writer implementation
+- _M5Stack_ Wiegand-26 emulator with:
+   - isolated interface capable driving up to 32mA loads
+   - can be powered from M5 bus, USB or external 12VDC supply
+   - emulates both card reader and 4-bit/8-bit keypad modes
+   - can operate either standalone or as an _M5Stack_ module
+
+- breadboard prototypes
+   - PIO based Wiegand-26 reader emulator which can write a Wiegand-26 card out to a controller
+   - PIO based Wiegand-26 controller emulator which can read from Wiegand-26 reader and unlock a door
+   - PIO based Wiegand-26 'universal' reader/writer implementation
 
 ## Status
 
@@ -22,6 +27,20 @@ The project includes:
 1. Rev.0 Wiegand emulator
 
 |<img width="400" src="documentation/images/M5-wiegand-emulator-top.png">|<img width="400" src="documentation/images/M5-wiegand-emulator-internal.png">|
+
+The sub-project includes:
+- KiCad schematic and PCB layout
+- Firmware for Waveshare-Tiny RP2040
+- Example Micropython application for M5Stack CoreS3
+
+#### Errata
+1. Pads for SK6812 are incorrectly numbered.
+2. Pads for D2, D3 and D4 are incorrect (anode and cathode swapped).
+3. ISO7841 doesn't allow RC filter on LED input.
+4. Insufficient clearance around mounting holes.
+5. DI and DO are pulled low on power-up (should default to _high_).
+6. Solder mask does not include M5 connectors.
+7. GPIO pins are incorrect (IO1 and IO2 instead of IO6 and IO7).
 
 ### Prototype
 
