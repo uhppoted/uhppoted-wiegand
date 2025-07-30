@@ -24,18 +24,18 @@ The project includes:
 
 ### M5Stack
 
-1. Rev.0 Wiegand emulator
+1. Wiegand emulator (Rev. 0)
 
 |<img width="400" src="documentation/images/M5-wiegand-emulator-top.png">|<img width="400" src="documentation/images/M5-wiegand-emulator-internal.png">|
 
-The sub-project includes:
+Includes:
 - KiCad schematic and PCB layout
-- Firmware for Waveshare-Tiny RP2040
-- Example Micropython application for M5Stack CoreS3
+- Firmware for _Waveshare Tiny RP2040_
+- Example Micropython application for _M5Stack_ _CoreS3_.
 
 #### Errata
 1. Pads for SK6812 are incorrectly numbered.
-2. Pads for D2, D3 and D4 are incorrect (anode and cathode swapped).
+2. Anode and cathode swapped pads for D2, D3 and D4 are swapped.
 3. ISO7841 doesn't allow RC filter on LED input.
 4. Insufficient clearance around mounting holes.
 5. DI and DO are pulled low on power-up (should default to _high_).
