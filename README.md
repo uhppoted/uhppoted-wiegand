@@ -2,8 +2,8 @@
 
 # uhppoted-wiegand
 
-`uhppoted-wiegand` implements a reader/emulator for a Wiegand-26 interface, based on the RaspberryPi RP2040, for:
-- development, testing and debugging
+`uhppoted-wiegand` implements a RaspberryPi RP2040 based reader/emulator for a Wiegand-26 interface for:
+- development, testing and debugging of access control software
 - interfacing non-standard and off-brand readers and keypads to the UHPPOTE L0x access controllers
 
 The project includes:
