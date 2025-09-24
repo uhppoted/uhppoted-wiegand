@@ -1,5 +1,7 @@
 # NOTES (Rev. 1)
 
+- https://www.vinthewrench.com/p/raspberry-pi-internet-of-things-part-2a8
+
 1.  Use 2mmm or 2.54mm jumpers (and push through when soldering so that jumper is flush)
 2.  Maybe use JST-SH connector (through hole?)
      - 1.0mm pitch JST SH connectors
@@ -65,6 +67,7 @@
 28. PCB notch for CoreS3 power switch
 29. Slot in enclosure for USB cable
 
+- https://hackaday.com/2025/09/09/freecad-foray-from-brick-to-shell/
 - (?) https://www.ti.com/product/MSPM0C1104
 - (?) Add HWPR as optional power
 

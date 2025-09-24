@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased
+
+### Updated
+1. Fixed GPIO card constants.
+
+
 ## [0.8.11](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.11) - 2025-07-30
 
 ### Added
