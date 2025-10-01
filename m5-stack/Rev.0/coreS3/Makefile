@@ -1,4 +1,4 @@
-PORT = /dev/tty.usbmodem142201
+PORT = /dev/tty.usbmodem142101
 # PORT = /dev/cu.usbmodem142201
 
 flash:

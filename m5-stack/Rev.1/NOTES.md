@@ -52,6 +52,9 @@
     - https://os.mbed.com/users/4180_1/notebook/rgb-leds
     - https://electronics.stackexchange.com/questions/48522/what-resistor-to-use-with-this-rgb-led
     - https://electronics.stackexchange.com/questions/373148/resistor-requirement-for-3-3-v-supply
+    - https://electronics.stackexchange.com/questions/756253/ws2811-strip-kinda-works-with-diode-level-shifter-but-not-mosfet
+    - https://electronics.stackexchange.com/questions/756103/is-it-ok-to-place-components-inside-the-pcb
+
 19. Fix weirdly crossed signal lines between ISOW and line buffer
 20. Relook at ESD/protection diodes
     - https://hackaday.com/2025/06/19/hacker-tactic-esd-diodes
@@ -66,6 +69,8 @@
    - https://electronics.stackexchange.com/questions/415542/are-these-tiny-vertical-dual-row-pcb-mounted-connector-pins-standard/719876#719876
 28. PCB notch for CoreS3 power switch
 29. Slot in enclosure for USB cable
+30. WS2812 level translation
+    - https://electronics.stackexchange.com/questions/756253/ws2811-strip-kinda-works-with-diode-level-shifter-but-not-mosfet
 
 - https://hackaday.com/2025/09/09/freecad-foray-from-brick-to-shell/
 - (?) https://www.ti.com/product/MSPM0C1104

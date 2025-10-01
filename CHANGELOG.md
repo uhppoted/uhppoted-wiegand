@@ -4,6 +4,7 @@
 
 ### Updated
 1. Fixed GPIO card constants.
+2. Added second page with keypad to demo application.
 
 
 ## [0.8.11](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.11) - 2025-07-30

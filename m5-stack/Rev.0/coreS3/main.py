@@ -21,21 +21,43 @@ DARKGRAY = 0x444444
 RED = 0xC02020
 BORDER = 0xFC0000
 
+PAGES = 2
+
 IO1 = Pin(1, Pin.OUT)
 IO2 = Pin(2, Pin.OUT)
 uart1 = UART(1, baudrate=115200, tx=43, rx=44)
 uart2 = UART(2, baudrate=115200, tx=17, rx=18)
 
+BTNA = Button(64,  248, 64, 32, "A", lambda: left())
+BTNB =  Button(192, 248, 64, 32, "B", lambda: right())
+
 B10058399 = Button(32, 8, 120, 48, "10058399", lambda: press(IO2))
 B10058400 = Button(32 + 136, 8, 120, 48, "10058400", lambda: press(IO1))
 B10058401 = Button(32, 8 + 64, 120, 48, "10058401", lambda: swipe(uart1, "10058401", None))
-C1357 = Button(32 + 136, 8 + 64, 120, 48, "1357#", lambda: keypad(uart1, "1357"))
-B10058402 = Button(32, 8 + 128, 256, 48, "10058402 + 7531#", lambda: swipe(uart2, "10058402", "7531"))
+C1357 = Button(32 + 136, 8 + 64, 120, 48, "1357#", lambda: keypad(uart1, "1357#"))
+B10058402 = Button(32, 8 + 128, 256, 48, "10058402 + 7531#", lambda: swipe(uart2, "10058402", "7531#"))
 LMSG = Label(0, 216, 320, 24, "")
+
+KEY1 = Button(20,    1, 52, 44, "1", lambda: keypad(uart1, '1'))
+KEY2 = Button(88,    1, 52, 44, "2", lambda: keypad(uart1, '2'))
+KEY3 = Button(156,   1, 52, 44, "3", lambda: keypad(uart1, '3'))
+KEY4 = Button(20,   55, 52, 44, "4", lambda: keypad(uart1, '4'))
+KEY5 = Button(88,   55, 52, 44, "5", lambda: keypad(uart1, '5'))
+KEY6 = Button(156,  55, 52, 44, "6", lambda: keypad(uart1, '6'))
+KEY7 = Button(20,  110, 52, 44, "7", lambda: keypad(uart1, '7'))
+KEY8 = Button(88,  110, 52, 44, "8", lambda: keypad(uart1, '8'))
+KEY9 = Button(156, 110, 52, 44, "9", lambda: keypad(uart1, '9'))
+STAR = Button(20,  165, 52, 44, "*", lambda: keypad(uart1, '*'))
+KEY0 = Button(88,  165, 52, 44, "0", lambda: keypad(uart1, '0'))
+HASH = Button(156, 165, 52, 44, "#", lambda: keypad(uart1, '#'))
+SWIPE = Button(220, 16, 88, 64, "SWIPE",lambda: swipe(uart1, "10058400", None))
 
 touched = None
 message = None
+page = 1
 
+page1 = [ B10058399, B10058400, B10058401, B10058402, C1357 ]
+page2 = [ KEY1, KEY2, KEY3, KEY4, KEY5, KEY6, KEY7, KEY8, KEY9, STAR, KEY0, HASH, SWIPE ]
 
 def setup():
     global IO1, IO2
@@ -46,20 +68,25 @@ def setup():
     # Power.setExtOutput(True)
 
 def screen():
+    global page
+
     Widgets.setRotation(1)
     Widgets.fillScreen(BLACK)
-    button(B10058399)
-    button(B10058400)
-    button(B10058401)
-    button(B10058402)
-    button(C1357)
     label(LMSG)
 
+    if page == 1:
+        for b in page1:
+            button(b)
+
+    if page == 2:
+        for b in page2:
+            button(b)
 
 def button(b):
-    offset = int(b.w / 2 - 12 * len(b.label) / 2)
+    xoffset = int(b.w / 2 - 12 * len(b.label) / 2)
+    yoffset = int(b.h / 2 - 6)
     Widgets.Rectangle(b.x, b.y, b.w, b.h, BORDER, BACKGROUND)
-    Widgets.Label(b.label, b.x + offset, b.y + 14, 1.0, BLACK, BACKGROUND, Widgets.FONTS.DejaVu18)
+    Widgets.Label(b.label, b.x + xoffset, b.y + yoffset, 1.0, BLACK, BACKGROUND, Widgets.FONTS.DejaVu18)
 
 
 def label(l):
@@ -109,7 +136,7 @@ def swipe(uart, card, code):
 
 def keypad(uart, code):
     display("")
-    uart.write(f"CODE {code}#\n")
+    uart.write(f"CODE {code}\n")
 
     return read(uart)
 
@@ -146,10 +173,23 @@ def read(uart):
     return False
 
 
+def left():
+    global page
+    print("LEFT")
+    if page > 1:
+        page = page - 1
+        screen()
+
+def right():
+    global page
+    print("RIGHT")
+    if page < PAGES:
+        page = page + 1
+        screen()
+
 def display(msg):
     global message
     message.setText(f"%-128s" % f"{msg}")
-
 
 def loop():
     global touched
@@ -169,25 +209,40 @@ def loop():
             touched = Point(point[0], point[1], now)
 
             if dt > 250 or abs(dx) > 10 or abs(dy) > 10:
-                if pressed(B10058399):
+                if pressed(BTNA):
+                    BTNA.pressed()
+
+                if pressed(BTNB):
+                    BTNB.pressed()
+
+                if page == 1 and pressed(B10058399):
                     if B10058399.pressed():
                         Speaker.tone(784, 125)  # G5
 
-                if pressed(B10058400):
+                if page == 1 and pressed(B10058400):
                     if B10058400.pressed():
                         Speaker.tone(698, 125)  # F5
 
-                if pressed(B10058401):
+                if page == 1 and pressed(B10058401):
                     if B10058401.pressed():
                         Speaker.tone(880, 125)  # A5
 
-                if pressed(B10058402):
+                if page == 1 and pressed(B10058402):
                     if B10058402.pressed():
                         Speaker.tone(1046, 125)  # C6'ish
 
-                if pressed(C1357):
+                if page == 1 and pressed(C1357):
                     if C1357.pressed():
                         Speaker.tone(1174, 125)  # D6'ish
+
+                if page == 2:
+                    for b in page2:
+                        if pressed(b):
+                            if b.pressed():
+                                Speaker.tone(784, 125)  # G5
+                                break
+
+
     else:
         release()
 
