@@ -14,6 +14,8 @@
 ## USB
 - [x] RaspberryPi
 - [ ] MacOS
+- https://github.com/piersfinlayson/tinyusb-vendor-example
+- https://github.com/piersfinlayson/picoboot
 
 
 ## [ ] Enclosure

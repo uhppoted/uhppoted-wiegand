@@ -17,6 +17,13 @@
 13. https://www.rtl-sdr.com/pi-pico-rx-a-breadboard-software-defined-radio-based-on-the-rp2040-raspberry-pi-pico
 14. https://101-things.readthedocs.io/en/latest/breadboard_radio.html
 15. https://blog.porucha.net/2024/pico-sdr
+16. https://en.wikipedia.org/wiki/Singulation
+17. https://electronics.stackexchange.com/questions/9255/rfid-antenna-array
+18. https://www.microchip.com/en-us/application-notes/an710
+19. https://electronics.stackexchange.com/questions/27357/diy-130khz-rfid-antenna-design-for-reading-tags-in-large-area
+20. https://electronics.stackexchange.com/questions/414681/how-to-design-125khz-antenna-for-1-meter-rfid-reader
+21. https://electronics.stackexchange.com/questions/490243/how-to-transmit-a-125khz-signal
 
 ## R&D
 1. [Lean](https://kuruczgy.com/blog/2024/07/31/lean-esp32)
+

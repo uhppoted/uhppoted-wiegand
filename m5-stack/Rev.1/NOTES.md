@@ -71,6 +71,8 @@
 29. Slot in enclosure for USB cable
 30. WS2812 level translation
     - https://electronics.stackexchange.com/questions/756253/ws2811-strip-kinda-works-with-diode-level-shifter-but-not-mosfet
+31. Maybe put ESD diodes on back?
+    - https://hackaday.com/2025/12/09/pcb-design-review-tinysparrow-a-module-for-can-hacking-v2/
 
 - https://hackaday.com/2025/09/09/freecad-foray-from-brick-to-shell/
 - (?) https://www.ti.com/product/MSPM0C1104
