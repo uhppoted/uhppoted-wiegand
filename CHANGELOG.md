@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Unreleased
+
+
 ## [0.9.0](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.9.0) - 2026-01-27
 
 ### Updated
