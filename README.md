@@ -54,6 +54,10 @@ Breadboarded and Fritzing'ed implementations of:
 
 ### Current Release
 
+**[v0.9.0](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.9.0) - 2026-01-27**
+1. Fixed GPIO card constants.
+2. Added second page with keypad to demo application.
+
 **[v0.8.11](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.11) - 2025-07-30**
 
 1. Added M5 stack Wiegand emulator Rev.0.
