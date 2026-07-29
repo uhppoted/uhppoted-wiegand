@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Updated
+1. Migrated from _github.com/uhppoted/uhppoted-lib-wiegand_ to _codeberg.org/uhppoted/uhppoted-lib-wiegand_.
+
 
 ## [0.9.0](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.9.0) - 2026-01-27
 

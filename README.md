@@ -77,7 +77,7 @@ Required tools:
 
 To build using the included _Makefile_:
 ```
-git clone https://github.com/uhppoted/uhppoted-wiegand.git
+git clone https://codeberg.org/uhppoted/uhppoted-wiegand.git
 cd uhppoted-wiegand/breadboard/pico
 make clean
 make build

@@ -1,5 +1,9 @@
 VERSION ?= 0.8.12
 
+push:
+	git push
+	git push bitbucket
+
 update:
 	cd breadboard && make update
 
