@@ -1,4 +1,5 @@
-![build](https://github.com/uhppoted/uhppoted-wiegand/workflows/build/badge.svg)
+![build](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/twystd/2609d9356470acaf904386ce4a74f54e/raw/uhppoted-wiegand.json)
+
 
 # uhppoted-wiegand
 
@@ -54,14 +55,9 @@ Breadboarded and Fritzing'ed implementations of:
 
 ### Current Release
 
-**[v0.9.0](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.9.0) - 2026-01-27**
+**[v0.9.0](https://codeberg.org/uhppoted/uhppoted-wiegand/releases/tag/v0.9.0) - 2026-01-27**
 1. Fixed GPIO card constants.
 2. Added second page with keypad to demo application.
-
-**[v0.8.11](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.8.11) - 2025-07-30**
-
-1. Added M5 stack Wiegand emulator Rev.0.
-
 
 ## Breadboard
 

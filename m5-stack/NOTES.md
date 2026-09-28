@@ -26,4 +26,5 @@
 
 ## R&D
 1. [Lean](https://kuruczgy.com/blog/2024/07/31/lean-esp32)
+2. https://hackernoon.com/how-i-hacked-and-turned-my-casio-f-91w-into-a-contactless-payment-device
 
