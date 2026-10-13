@@ -1,9 +1,11 @@
 # CHANGELOG
 
-## Unreleased
+## [0.9.1](https://codeberg.org/uhppoted/uhppoted-wiegand/releases/tag/v0.9.1) - 2026-10-13
 
 ### Updated
 1. Migrated from _github.com/uhppoted/uhppoted-wiegand_ to _codeberg.org/uhppoted/uhppoted-wiegand_.
+2. Updated to Go 1.27.
+3. Updated to pico-sdk_2.3.1.
 
 
 ## [0.9.0](https://github.com/uhppoted/uhppoted-wiegand/releases/tag/v0.9.0) - 2026-01-27

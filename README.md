@@ -55,9 +55,12 @@ Breadboarded and Fritzing'ed implementations of:
 
 ### Current Release
 
-**[v0.9.0](https://codeberg.org/uhppoted/uhppoted-wiegand/releases/tag/v0.9.0) - 2026-01-27**
-1. Fixed GPIO card constants.
-2. Added second page with keypad to demo application.
+## [0.9.1](https://codeberg.org/uhppoted/uhppoted-wiegand/releases/tag/v0.9.1) - 2026-10-13
+
+1. Migrated from _github._ to _codeberg_.
+2. Updated to Go 1.27.
+3. Updated to pico-sdk_2.3.1.
+
 
 ## Breadboard
 
