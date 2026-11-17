@@ -1,6 +1,15 @@
 ![build](https://github.com/uhppoted/uhppoted-wiegand/workflows/build/badge.svg)
 
 
+<div align="center">
+
+_The primary repository for this project is hosted on codeberg: https://codeberg.org/uhppoted/uhppoted-wiegand_
+
+_The [github repository](https://github.com/uhppoted/uhppoted-wiegand) will be kept up to date and maintained as a courtesy and for archival
+releases but please use _codeberg_ for reporting issues, etc._
+</div>
+
+
 # uhppoted-wiegand
 
 `uhppoted-wiegand` implements a RaspberryPi RP2040 based reader/emulator for a Wiegand-26 interface for:
